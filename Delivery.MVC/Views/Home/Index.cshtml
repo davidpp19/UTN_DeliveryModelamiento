@@ -1,8 +1,40 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model IEnumerable<Delivery.Modelos.Entidades.Restaurante>
+@{
+    ViewData["Title"] = "Explorar Restaurantes";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center py-5 bg-light mb-4 rounded shadow-sm">
+    <h1 class="display-4 fw-bold text-danger"><i class="bi bi-lightning-charge"></i> RayoExpres</h1>
+    <p class="lead text-muted">La comida más rápida directamente a tu puerta.</p>
+</div>
+
+<h2 class="mb-4">Restaurantes Disponibles</h2>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var r in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                @if (!string.IsNullOrEmpty(r.LogoUrl))
+                {
+                    <img src="@r.LogoUrl" class="card-img-top" alt="Logo de @r.Nombre" style="height: 200px; object-fit: cover;">
+                }
+                else
+                {
+                    <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span><i class="bi bi-shop" style="font-size: 3rem;"></i></span>
+                    </div>
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@r.Nombre</h5>
+                    <p class="card-text text-muted">@r.Categoria</p>
+                    <p class="card-text">
+                        <small><i class="bi bi-geo-alt"></i> @r.Calle, @r.Ciudad</small>
+                    </p>
+                </div>
+                <div class="card-footer bg-white border-top-0 d-grid">
+                    <a asp-action="Restaurante" asp-route-id="@r.Id" class="btn btn-outline-danger">Ver Menú</a>
+                </div>
+            </div>
+        </div>
+    }
 </div>

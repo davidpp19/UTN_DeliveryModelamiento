@@ -1,11 +1,36 @@
 @model Delivery.Modelos.Entidades.Cupon
-<h1>Delete Cupon</h1>
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    @Html.DisplayForModel()
-</div>
+@{ ViewData["Title"] = "Eliminar Cupon"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Codigo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Codigo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ValorDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ValorDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.PedidoMinimo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.PedidoMinimo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaInicio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaInicio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaFin)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaFin)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.LimiteUsos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.LimiteUsos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsosActuales)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsosActuales)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CuponesUsuarios)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CuponesUsuarios)</dd>
+</dl>
 <form asp-action="Delete">
-    <input type="hidden" asp-for="Id" />
-    <input type="submit" value="Delete" /> |
-    <a asp-action="Index">Back to List</a>
+<input type="hidden" asp-for="Id" />
+<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
 </form>

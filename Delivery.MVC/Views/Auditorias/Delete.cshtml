@@ -1,0 +1,24 @@
+@model Delivery.Modelos.Entidades.RegistroAuditoria
+@{ ViewData["Title"] = "Eliminar RegistroAuditoria"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaHora)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaHora)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ModuloAfectado)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ModuloAfectado)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoAccion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoAccion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Detalles)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Detalles)</dd>
+</dl>
+<form asp-action="Delete">
+<input type="hidden" asp-for="Id" />
+<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>

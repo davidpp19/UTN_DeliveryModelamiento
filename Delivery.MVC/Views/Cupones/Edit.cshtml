@@ -1,9 +1,58 @@
 @model Delivery.Modelos.Entidades.Cupon
-<h1>Edit Cupon</h1>
+@{ ViewData["Title"] = "Editar Cupon"; }
+<h1 class="my-4">Editar Cupon</h1><hr />
+<div class="row"><div class="col-md-6">
 <form asp-action="Edit">
-    @Html.HiddenFor(m => m.Id)
-    @Html.EditorForModel()
-    <br/>
-    <input type="submit" value="Save" />
-</form>
-<a asp-action="Index">Back to List</a>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="Id" />
+<div class="mb-3">
+<label asp-for="Codigo" class="form-label"></label>
+<input asp-for="Codigo" class="form-control" />
+<span asp-validation-for="Codigo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TipoDescuento" class="form-label"></label>
+<input asp-for="TipoDescuento" class="form-control" />
+<span asp-validation-for="TipoDescuento" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ValorDescuento" class="form-label"></label>
+<input asp-for="ValorDescuento" class="form-control" />
+<span asp-validation-for="ValorDescuento" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="PedidoMinimo" class="form-label"></label>
+<input asp-for="PedidoMinimo" class="form-control" />
+<span asp-validation-for="PedidoMinimo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FechaInicio" class="form-label"></label>
+<input asp-for="FechaInicio" class="form-control" type="datetime-local" />
+<span asp-validation-for="FechaInicio" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FechaFin" class="form-label"></label>
+<input asp-for="FechaFin" class="form-control" type="datetime-local" />
+<span asp-validation-for="FechaFin" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="LimiteUsos" class="form-label"></label>
+<input asp-for="LimiteUsos" class="form-control" />
+<span asp-validation-for="LimiteUsos" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="UsosActuales" class="form-label"></label>
+<input asp-for="UsosActuales" class="form-control" />
+<span asp-validation-for="UsosActuales" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Activo" class="form-label"></label>
+<input asp-for="Activo" class="form-check-input" type="checkbox" />
+<span asp-validation-for="Activo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="RestauranteId" class="form-label"></label>
+<input asp-for="RestauranteId" class="form-control" />
+<span asp-validation-for="RestauranteId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Restaurante" class="form-label"></label>
+<input asp-for="Restaurante" class="form-control" />
+<span asp-validation-for="Restaurante" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CuponesUsuarios" class="form-label"></label>
+<input asp-for="CuponesUsuarios" class="form-control" />
+<span asp-validation-for="CuponesUsuarios" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

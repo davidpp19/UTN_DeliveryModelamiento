@@ -1,6 +1,21 @@
 @model Delivery.Modelos.Entidades.RegistroAuditoria
-<h1>Details Auditoría</h1>
-<div>
-    @Html.DisplayForModel()
-</div>
-<a asp-action="Index">Back to List</a>
+@{ ViewData["Title"] = "Detalles RegistroAuditoria"; }
+<h1 class="my-4">Detalles RegistroAuditoria</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaHora)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaHora)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ModuloAfectado)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ModuloAfectado)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoAccion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoAccion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Detalles)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Detalles)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>

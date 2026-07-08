@@ -1,7 +1,29 @@
 @model Delivery.Modelos.Entidades.Vehiculo
-<h1>Details Vehiculo</h1>
-<div>
-    @Html.DisplayForModel()
-</div>
-<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-<a asp-action="Index">Back to List</a>
+@{ ViewData["Title"] = "Detalles Vehiculo"; }
+<h1 class="my-4">Detalles Vehiculo</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RepartidorId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RepartidorId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoVehiculo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoVehiculo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Placa)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Placa)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Marca)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Marca)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Modelo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Modelo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Anio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Anio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Color)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Color)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FotoVehiculoUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FotoVehiculoUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Repartidor)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Repartidor)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>

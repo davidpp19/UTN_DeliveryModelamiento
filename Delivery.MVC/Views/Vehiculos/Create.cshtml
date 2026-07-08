@@ -1,8 +1,49 @@
 @model Delivery.Modelos.Entidades.Vehiculo
-<h1>Create Vehiculo</h1>
+@{ ViewData["Title"] = "Crear Vehiculo"; }
+<h1 class="my-4">Crear Vehiculo</h1><hr />
+<div class="row"><div class="col-md-6">
 <form asp-action="Create">
-    @Html.EditorForModel()
-    <br/>
-    <input type="submit" value="Create" />
-</form>
-<a asp-action="Index">Back to List</a>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="RepartidorId" class="form-label"></label>
+<input asp-for="RepartidorId" class="form-control" />
+<span asp-validation-for="RepartidorId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TipoVehiculo" class="form-label"></label>
+<input asp-for="TipoVehiculo" class="form-control" />
+<span asp-validation-for="TipoVehiculo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Placa" class="form-label"></label>
+<input asp-for="Placa" class="form-control" />
+<span asp-validation-for="Placa" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Marca" class="form-label"></label>
+<input asp-for="Marca" class="form-control" />
+<span asp-validation-for="Marca" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Modelo" class="form-label"></label>
+<input asp-for="Modelo" class="form-control" />
+<span asp-validation-for="Modelo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Anio" class="form-label"></label>
+<input asp-for="Anio" class="form-control" />
+<span asp-validation-for="Anio" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Color" class="form-label"></label>
+<input asp-for="Color" class="form-control" />
+<span asp-validation-for="Color" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FotoVehiculoUrl" class="form-label"></label>
+<input asp-for="FotoVehiculoUrl" class="form-control" />
+<span asp-validation-for="FotoVehiculoUrl" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CreadoEn" class="form-label"></label>
+<input asp-for="CreadoEn" class="form-control" type="datetime-local" />
+<span asp-validation-for="CreadoEn" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Repartidor" class="form-label"></label>
+<input asp-for="Repartidor" class="form-control" />
+<span asp-validation-for="Repartidor" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

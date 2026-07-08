@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Delivery.Modelos.Entidades;
 using Delivery.Servicios.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Delivery.API.Controllers
 {

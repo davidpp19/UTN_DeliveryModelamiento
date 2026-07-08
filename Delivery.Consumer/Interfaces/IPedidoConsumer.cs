@@ -11,5 +11,7 @@ namespace Delivery.Consumer.Interfaces
         Task<Pedido> CreateAsync(Pedido entity);
         Task<bool> UpdateAsync(long id, Pedido entity);
         Task<bool> DeleteAsync(long id);
+        Task<Pedido?> ActualizarEstadoRestauranteAsync(long id, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long restauranteId);
+        Task<Pedido?> ActualizarEstadoRepartidorAsync(long id, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long repartidorId);
     }
 }

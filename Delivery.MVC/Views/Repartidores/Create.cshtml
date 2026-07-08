@@ -1,8 +1,69 @@
 @model Delivery.Modelos.Entidades.Repartidor
-<h1>Create Repartidor</h1>
+@{ ViewData["Title"] = "Crear Repartidor"; }
+<h1 class="my-4">Crear Repartidor</h1><hr />
+<div class="row"><div class="col-md-6">
 <form asp-action="Create">
-    @Html.EditorForModel()
-    <br/>
-    <input type="submit" value="Create" />
-</form>
-<a asp-action="Index">Back to List</a>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="UsuarioId" class="form-label"></label>
+<input asp-for="UsuarioId" class="form-control" />
+<span asp-validation-for="UsuarioId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="LicenciaConducir" class="form-label"></label>
+<input asp-for="LicenciaConducir" class="form-control" />
+<span asp-validation-for="LicenciaConducir" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FotoLicenciaUrl" class="form-label"></label>
+<input asp-for="FotoLicenciaUrl" class="form-control" />
+<span asp-validation-for="FotoLicenciaUrl" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="EstadoAprobacion" class="form-label"></label>
+<input asp-for="EstadoAprobacion" class="form-control" />
+<span asp-validation-for="EstadoAprobacion" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="AprobadoPor" class="form-label"></label>
+<input asp-for="AprobadoPor" class="form-control" />
+<span asp-validation-for="AprobadoPor" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FechaAprobacion" class="form-label"></label>
+<input asp-for="FechaAprobacion" class="form-control" type="datetime-local" />
+<span asp-validation-for="FechaAprobacion" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Disponible" class="form-label"></label>
+<input asp-for="Disponible" class="form-check-input" type="checkbox" />
+<span asp-validation-for="Disponible" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CalificacionPromedio" class="form-label"></label>
+<input asp-for="CalificacionPromedio" class="form-control" />
+<span asp-validation-for="CalificacionPromedio" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CreadoEn" class="form-label"></label>
+<input asp-for="CreadoEn" class="form-control" type="datetime-local" />
+<span asp-validation-for="CreadoEn" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ActualizadoEn" class="form-label"></label>
+<input asp-for="ActualizadoEn" class="form-control" type="datetime-local" />
+<span asp-validation-for="ActualizadoEn" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Usuario" class="form-label"></label>
+<input asp-for="Usuario" class="form-control" />
+<span asp-validation-for="Usuario" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="UsuarioAprobador" class="form-label"></label>
+<input asp-for="UsuarioAprobador" class="form-control" />
+<span asp-validation-for="UsuarioAprobador" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Vehiculos" class="form-label"></label>
+<input asp-for="Vehiculos" class="form-control" />
+<span asp-validation-for="Vehiculos" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="UbicacionActual" class="form-label"></label>
+<input asp-for="UbicacionActual" class="form-control" />
+<span asp-validation-for="UbicacionActual" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="HistorialAsignaciones" class="form-label"></label>
+<input asp-for="HistorialAsignaciones" class="form-control" />
+<span asp-validation-for="HistorialAsignaciones" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

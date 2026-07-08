@@ -1,0 +1,25 @@
+@model IEnumerable<Delivery.Modelos.Entidades.Favorito>
+@{ ViewData["Title"] = "ClienteFavoritos"; }
+<h1 class="my-4">ClienteFavoritos</h1>
+<p><a asp-action="Create" class="btn btn-primary">Crear Nuevo</a></p>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle">
+<thead class="table-dark"><tr>
+<th>UsuarioId</th>
+<th>RestauranteId</th>
+<th>FechaAgregado</th>
+<th>Usuario</th>
+<th>Restaurante</th>
+<th>Acciones</th></tr></thead><tbody>
+@foreach (var item in Model) {<tr>
+<td>@Html.DisplayFor(modelItem => item.UsuarioId)</td>
+<td>@Html.DisplayFor(modelItem => item.RestauranteId)</td>
+<td>@Html.DisplayFor(modelItem => item.FechaAgregado)</td>
+<td>@Html.DisplayFor(modelItem => item.RestauranteId)</td>
+<td>@Html.DisplayFor(modelItem => item.FechaAgregado)</td>
+<td>
+<a asp-action="Edit" asp-route-id="@item.RestauranteId" class="btn btn-sm btn-warning">Editar</a>
+<a asp-action="Details" asp-route-id="@item.RestauranteId" class="btn btn-sm btn-info text-white">Detalles</a>
+<a asp-action="Delete" asp-route-id="@item.RestauranteId" class="btn btn-sm btn-danger">Eliminar</a>
+</td></tr>}
+</tbody></table></div>

@@ -1,7 +1,37 @@
 @model Delivery.Modelos.Entidades.Repartidor
-<h1>Details Repartidor</h1>
-<div>
-    @Html.DisplayForModel()
-</div>
-<a asp-action="Edit" asp-route-id="@Model.UsuarioId">Edit</a> |
-<a asp-action="Index">Back to List</a>
+@{ ViewData["Title"] = "Detalles Repartidor"; }
+<h1 class="my-4">Detalles Repartidor</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.LicenciaConducir)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.LicenciaConducir)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FotoLicenciaUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FotoLicenciaUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoAprobacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.EstadoAprobacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.AprobadoPor)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.AprobadoPor)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaAprobacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaAprobacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Disponible)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Disponible)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CalificacionPromedio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CalificacionPromedio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioAprobador)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioAprobador)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Vehiculos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Vehiculos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UbicacionActual)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UbicacionActual)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.HistorialAsignaciones)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.HistorialAsignaciones)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.UsuarioId" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>

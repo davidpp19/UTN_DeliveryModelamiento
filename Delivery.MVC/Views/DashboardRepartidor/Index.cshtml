@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Panel de Repartidor";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary"><i class="bi bi-bicycle"></i> Panel de Repartidor</h1>
+    <p class="lead">Bienvenido a tu panel de control. Gestiona tus entregas y actualiza tu ubicación.</p>
+    <hr />
+
+    <div class="row row-cols-1 row-cols-md-2 g-4 mt-2">
+        <div class="col">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Pedidos Asignados</h5>
+                    <p class="card-text">Revisa las entregas que tienes asignadas y cambia su estado (ej. Entregado).</p>
+                    <a asp-controller="RepartidorPedidos" asp-action="Index" class="btn btn-danger">Ir a Mis Pedidos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Actualizar Ubicación</h5>
+                    <p class="card-text">Actualiza tu latitud y longitud actuales para que el cliente te rastree.</p>
+                    <a asp-controller="RepartidorUbicacion" asp-action="Index" class="btn btn-success">Actualizar Ubicación</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

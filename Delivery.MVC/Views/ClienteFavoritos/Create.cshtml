@@ -1,0 +1,29 @@
+@model Delivery.Modelos.Entidades.Favorito
+@{ ViewData["Title"] = "Crear Favorito"; }
+<h1 class="my-4">Crear Favorito</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Create">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="UsuarioId" class="form-label"></label>
+<input asp-for="UsuarioId" class="form-control" />
+<span asp-validation-for="UsuarioId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="RestauranteId" class="form-label"></label>
+<input asp-for="RestauranteId" class="form-control" />
+<span asp-validation-for="RestauranteId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FechaAgregado" class="form-label"></label>
+<input asp-for="FechaAgregado" class="form-control" type="datetime-local" />
+<span asp-validation-for="FechaAgregado" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Usuario" class="form-label"></label>
+<input asp-for="Usuario" class="form-control" />
+<span asp-validation-for="Usuario" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Restaurante" class="form-label"></label>
+<input asp-for="Restaurante" class="form-control" />
+<span asp-validation-for="Restaurante" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

@@ -1,7 +1,33 @@
 @model Delivery.Modelos.Entidades.Cupon
-<h1>Details Cupon</h1>
-<div>
-    @Html.DisplayForModel()
-</div>
-<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-<a asp-action="Index">Back to List</a>
+@{ ViewData["Title"] = "Detalles Cupon"; }
+<h1 class="my-4">Detalles Cupon</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Codigo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Codigo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ValorDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ValorDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.PedidoMinimo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.PedidoMinimo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaInicio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaInicio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaFin)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaFin)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.LimiteUsos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.LimiteUsos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsosActuales)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsosActuales)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CuponesUsuarios)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CuponesUsuarios)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>

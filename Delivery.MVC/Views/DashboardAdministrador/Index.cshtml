@@ -1,0 +1,111 @@
+@{
+    ViewData["Title"] = "Panel de Administrador";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary"><i class="bi bi-speedometer2"></i> Panel de Administración</h1>
+    <p class="lead">Bienvenido al centro de control de RayoExpres. Desde aquí puedes gestionar todos los módulos del sistema.</p>
+    <hr />
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
+        <div class="col">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Usuarios</h5>
+                    <p class="card-text">Gestiona los usuarios, clientes, y administradores.</p>
+                    <a asp-controller="Usuarios" asp-action="Index" class="btn btn-primary">Ir a Usuarios</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Restaurantes</h5>
+                    <p class="card-text">Administra los restaurantes afiliados al sistema.</p>
+                    <a asp-controller="Restaurantes" asp-action="Index" class="btn btn-success">Ir a Restaurantes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Productos</h5>
+                    <p class="card-text">Control general del catálogo de productos.</p>
+                    <a asp-controller="Productos" asp-action="Index" class="btn btn-info text-white">Ir a Productos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-warning">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Categorías</h5>
+                    <p class="card-text">Gestión de categorías de productos.</p>
+                    <a asp-controller="CategoriasProducto" asp-action="Index" class="btn btn-warning">Ir a Categorías</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Pedidos</h5>
+                    <p class="card-text">Visualiza todos los pedidos generados.</p>
+                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-danger">Ir a Pedidos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-secondary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Repartidores</h5>
+                    <p class="card-text">Gestión de repartidores y sus estados.</p>
+                    <a asp-controller="Repartidores" asp-action="Index" class="btn btn-secondary">Ir a Repartidores</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-dark">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Vehículos</h5>
+                    <p class="card-text">Gestión de vehículos de los repartidores.</p>
+                    <a asp-controller="Vehiculos" asp-action="Index" class="btn btn-dark">Ir a Vehículos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Cupones</h5>
+                    <p class="card-text">Administración de promociones y cupones.</p>
+                    <a asp-controller="Cupones" asp-action="Index" class="btn btn-outline-primary">Ir a Cupones</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Pagos</h5>
+                    <p class="card-text">Historial de transacciones y pagos.</p>
+                    <a asp-controller="Pagos" asp-action="Index" class="btn btn-outline-success">Ir a Pagos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-warning">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Calificaciones</h5>
+                    <p class="card-text">Moderación de reseñas a restaurantes y repartidores.</p>
+                    <a asp-controller="Resenas" asp-action="Index" class="btn btn-outline-warning">Ir a Reseñas</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Auditoría</h5>
+                    <p class="card-text">Registros de acciones importantes en el sistema.</p>
+                    <a asp-controller="Auditorias" asp-action="Index" class="btn btn-outline-danger">Ir a Auditoría</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

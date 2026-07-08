@@ -1,10 +1,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Delivery.Modelos.Entidades;
 using Delivery.Consumer.Interfaces;
 
 namespace Delivery.MVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RepartidoresController : Controller
     {
         private readonly IRepartidorConsumer _consumer;

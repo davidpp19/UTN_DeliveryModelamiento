@@ -1,0 +1,62 @@
+@model Delivery.Modelos.Entidades.Restaurante
+@{
+    ViewData["Title"] = Model.Nombre;
+    var productos = ViewBag.Productos as IEnumerable<Delivery.Modelos.Entidades.Producto>;
+}
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-danger">
+            <div class="card-body text-center">
+                <h3 class="text-danger">@Model.Nombre</h3>
+                <p class="text-muted">@Model.Categoria</p>
+                <p><i class="bi bi-geo-alt text-secondary"></i> @Model.Calle, @Model.Ciudad</p>
+                @if(Model.HoraApertura.HasValue && Model.HoraCierre.HasValue)
+                {
+                    <p><i class="bi bi-clock text-secondary"></i> @Model.HoraApertura - @Model.HoraCierre</p>
+                }
+                <p><i class="bi bi-truck text-secondary"></i> Envío desde: $@Model.CostoEnvioBase.ToString("0.00")</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <h3 class="mb-4">Menú del Restaurante</h3>
+        @if (productos != null && productos.Any())
+        {
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                @foreach (var p in productos)
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">@p.Nombre</h5>
+                                <p class="card-text small text-muted">@p.Descripcion</p>
+                                <h6 class="text-success fw-bold">$@p.Precio.ToString("0.00")</h6>
+                            </div>
+                            <div class="card-footer bg-white border-top-0 d-grid">
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+                                {
+                                    <form asp-controller="ClienteCarrito" asp-action="Agregar" method="post">
+                                        <input type="hidden" name="ProductoId" value="@p.Id" />
+                                        <input type="hidden" name="Cantidad" value="1" />
+                                        <input type="hidden" name="RestauranteId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-danger w-100"><i class="bi bi-cart-plus"></i> Añadir al Carrito</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary w-100">Inicia sesión para pedir</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-secondary">Este restaurante aún no tiene productos disponibles.</div>
+        }
+    </div>
+</div>

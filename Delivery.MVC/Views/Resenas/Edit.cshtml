@@ -1,9 +1,62 @@
 @model Delivery.Modelos.Entidades.Resena
-<h1>Edit Resena</h1>
+@{ ViewData["Title"] = "Editar Resena"; }
+<h1 class="my-4">Editar Resena</h1><hr />
+<div class="row"><div class="col-md-6">
 <form asp-action="Edit">
-    @Html.HiddenFor(m => m.Id)
-    @Html.EditorForModel()
-    <br/>
-    <input type="submit" value="Save" />
-</form>
-<a asp-action="Index">Back to List</a>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="Id" />
+<div class="mb-3">
+<label asp-for="PedidoId" class="form-label"></label>
+<input asp-for="PedidoId" class="form-control" />
+<span asp-validation-for="PedidoId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="UsuarioId" class="form-label"></label>
+<input asp-for="UsuarioId" class="form-control" />
+<span asp-validation-for="UsuarioId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="RestauranteId" class="form-label"></label>
+<input asp-for="RestauranteId" class="form-control" />
+<span asp-validation-for="RestauranteId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="RepartidorId" class="form-label"></label>
+<input asp-for="RepartidorId" class="form-control" />
+<span asp-validation-for="RepartidorId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CalificacionRestaurante" class="form-label"></label>
+<input asp-for="CalificacionRestaurante" class="form-control" />
+<span asp-validation-for="CalificacionRestaurante" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ComentarioRestaurante" class="form-label"></label>
+<input asp-for="ComentarioRestaurante" class="form-control" />
+<span asp-validation-for="ComentarioRestaurante" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CalificacionRepartidor" class="form-label"></label>
+<input asp-for="CalificacionRepartidor" class="form-control" />
+<span asp-validation-for="CalificacionRepartidor" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ComentarioRepartidor" class="form-label"></label>
+<input asp-for="ComentarioRepartidor" class="form-control" />
+<span asp-validation-for="ComentarioRepartidor" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FechaResena" class="form-label"></label>
+<input asp-for="FechaResena" class="form-control" type="datetime-local" />
+<span asp-validation-for="FechaResena" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Pedido" class="form-label"></label>
+<input asp-for="Pedido" class="form-control" />
+<span asp-validation-for="Pedido" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Usuario" class="form-label"></label>
+<input asp-for="Usuario" class="form-control" />
+<span asp-validation-for="Usuario" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Restaurante" class="form-label"></label>
+<input asp-for="Restaurante" class="form-control" />
+<span asp-validation-for="Restaurante" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Repartidor" class="form-label"></label>
+<input asp-for="Repartidor" class="form-control" />
+<span asp-validation-for="Repartidor" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

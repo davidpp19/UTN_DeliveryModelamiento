@@ -1,0 +1,34 @@
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using Delivery.Modelos.DTOs;
+using Delivery.Consumer.Interfaces;
+
+namespace Delivery.Consumer.Implementaciones
+{
+    public class AuthConsumer : IAuthConsumer
+    {
+        private readonly HttpClient _httpClient;
+
+        public AuthConsumer(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
+        public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Auth/login", dto);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+            }
+            return null;
+        }
+
+        public async Task<bool> RecuperarPasswordAsync(string email)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Auth/recuperar-password", email);
+            return response.IsSuccessStatusCode;
+        }
+    }
+}

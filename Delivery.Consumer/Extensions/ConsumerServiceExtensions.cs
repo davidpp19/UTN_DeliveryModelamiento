@@ -19,6 +19,7 @@ namespace Delivery.Consumer.Extensions
             services.AddHttpClient<IVehiculoConsumer, VehiculoConsumer>(configureClient);
             services.AddHttpClient<IUbicacionActualRepartidorConsumer, UbicacionActualRepartidorConsumer>(configureClient);
             services.AddHttpClient<IHistorialAsignacionesRepartidorConsumer, HistorialAsignacionesRepartidorConsumer>(configureClient);
+            services.AddHttpClient<IAuthConsumer, AuthConsumer>(configureClient);
             services.AddHttpClient<IPedidoConsumer, PedidoConsumer>(configureClient);
             services.AddHttpClient<IDetallePedidoConsumer, DetallePedidoConsumer>(configureClient);
             services.AddHttpClient<IPagoConsumer, PagoConsumer>(configureClient);
@@ -28,6 +29,7 @@ namespace Delivery.Consumer.Extensions
             services.AddHttpClient<IFavoritoConsumer, FavoritoConsumer>(configureClient);
             services.AddHttpClient<IAuditoriaConsumer, AuditoriaConsumer>(configureClient);
             services.AddHttpClient<IDashboardConsumer, DashboardConsumer>(configureClient);
+            services.AddHttpClient<ICarritoConsumer, CarritoConsumer>(configureClient);
 
             return services;
         }

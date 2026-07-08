@@ -1,7 +1,35 @@
 @model Delivery.Modelos.Entidades.Usuario
-<h1>Details Usuario</h1>
-<div>
-    @Html.DisplayForModel()
-</div>
-<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-<a asp-action="Index">Back to List</a>
+@{ ViewData["Title"] = "Detalles Usuario"; }
+<h1 class="my-4">Detalles Usuario</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RolId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RolId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Apellidos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Apellidos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.PasswordHash)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.PasswordHash)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Telefono)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoUsuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoUsuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FotoPerfilUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FotoPerfilUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Rol)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Rol)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Direcciones)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Direcciones)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>

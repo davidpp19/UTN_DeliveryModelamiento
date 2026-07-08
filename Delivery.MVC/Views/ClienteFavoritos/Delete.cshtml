@@ -1,0 +1,20 @@
+@model Delivery.Modelos.Entidades.Favorito
+@{ ViewData["Title"] = "Eliminar Favorito"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaAgregado)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaAgregado)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+</dl>
+<form asp-action="Delete">
+<input type="hidden" asp-for="RestauranteId" name="id" />
+<input type="submit" value="Eliminar" class="btn btn-danger" />
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>

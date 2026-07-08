@@ -1,8 +1,61 @@
 @model Delivery.Modelos.Entidades.Usuario
-<h1>Create Usuario</h1>
+@{ ViewData["Title"] = "Crear Usuario"; }
+<h1 class="my-4">Crear Usuario</h1><hr />
+<div class="row"><div class="col-md-6">
 <form asp-action="Create">
-    @Html.EditorForModel()
-    <br/>
-    <input type="submit" value="Create" />
-</form>
-<a asp-action="Index">Back to List</a>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="RolId" class="form-label"></label>
+<input asp-for="RolId" class="form-control" />
+<span asp-validation-for="RolId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Nombre" class="form-label"></label>
+<input asp-for="Nombre" class="form-control" />
+<span asp-validation-for="Nombre" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Apellidos" class="form-label"></label>
+<input asp-for="Apellidos" class="form-control" />
+<span asp-validation-for="Apellidos" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Email" class="form-label"></label>
+<input asp-for="Email" class="form-control" />
+<span asp-validation-for="Email" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="PasswordHash" class="form-label"></label>
+<input asp-for="PasswordHash" class="form-control" />
+<span asp-validation-for="PasswordHash" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Telefono" class="form-label"></label>
+<input asp-for="Telefono" class="form-control" />
+<span asp-validation-for="Telefono" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TipoUsuario" class="form-label"></label>
+<input asp-for="TipoUsuario" class="form-control" />
+<span asp-validation-for="TipoUsuario" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Activo" class="form-label"></label>
+<input asp-for="Activo" class="form-check-input" type="checkbox" />
+<span asp-validation-for="Activo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FotoPerfilUrl" class="form-label"></label>
+<input asp-for="FotoPerfilUrl" class="form-control" />
+<span asp-validation-for="FotoPerfilUrl" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CreadoEn" class="form-label"></label>
+<input asp-for="CreadoEn" class="form-control" type="datetime-local" />
+<span asp-validation-for="CreadoEn" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ActualizadoEn" class="form-label"></label>
+<input asp-for="ActualizadoEn" class="form-control" type="datetime-local" />
+<span asp-validation-for="ActualizadoEn" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Rol" class="form-label"></label>
+<input asp-for="Rol" class="form-control" />
+<span asp-validation-for="Rol" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Direcciones" class="form-label"></label>
+<input asp-for="Direcciones" class="form-control" />
+<span asp-validation-for="Direcciones" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

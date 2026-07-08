@@ -1,0 +1,33 @@
+@model Delivery.Modelos.Entidades.RegistroAuditoria
+@{ ViewData["Title"] = "Crear RegistroAuditoria"; }
+<h1 class="my-4">Crear RegistroAuditoria</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Create">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="UsuarioId" class="form-label"></label>
+<input asp-for="UsuarioId" class="form-control" />
+<span asp-validation-for="UsuarioId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Usuario" class="form-label"></label>
+<input asp-for="Usuario" class="form-control" />
+<span asp-validation-for="Usuario" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FechaHora" class="form-label"></label>
+<input asp-for="FechaHora" class="form-control" type="datetime-local" />
+<span asp-validation-for="FechaHora" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ModuloAfectado" class="form-label"></label>
+<input asp-for="ModuloAfectado" class="form-control" />
+<span asp-validation-for="ModuloAfectado" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TipoAccion" class="form-label"></label>
+<input asp-for="TipoAccion" class="form-control" />
+<span asp-validation-for="TipoAccion" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Detalles" class="form-label"></label>
+<input asp-for="Detalles" class="form-control" />
+<span asp-validation-for="Detalles" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

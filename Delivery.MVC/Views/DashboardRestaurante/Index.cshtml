@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Panel de Restaurante";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-success"><i class="bi bi-shop"></i> Panel de Restaurante</h1>
+    <p class="lead">Bienvenido a la gestión de tu restaurante. Aquí puedes administrar tus productos y visualizar los pedidos asignados a ti.</p>
+    <hr />
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
+        <div class="col">
+            <div class="card h-100 shadow-sm border-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Mis Productos</h5>
+                    <p class="card-text">Gestiona tu catálogo de productos y precios.</p>
+                    <a asp-controller="RestauranteProductos" asp-action="Index" class="btn btn-info text-white">Ir a Mis Productos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-warning">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Mis Categorías</h5>
+                    <p class="card-text">Administra las categorías de tu menú.</p>
+                    <a asp-controller="RestauranteCategorias" asp-action="Index" class="btn btn-warning">Ir a Categorías</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Pedidos Activos</h5>
+                    <p class="card-text">Revisa los pedidos de los clientes y cambia sus estados.</p>
+                    <a asp-controller="RestaurantePedidos" asp-action="Index" class="btn btn-danger">Ir a Pedidos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

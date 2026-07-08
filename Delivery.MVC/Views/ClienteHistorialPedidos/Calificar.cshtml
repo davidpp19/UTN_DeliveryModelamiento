@@ -1,0 +1,39 @@
+@model Delivery.Modelos.Entidades.Resena
+@{
+    ViewData["Title"] = "Calificar Pedido";
+}
+
+<h1 class="my-4"><i class="bi bi-star-fill text-warning"></i> Calificar Pedido #@Model.PedidoId</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Calificar" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="RestauranteId" />
+            <input type="hidden" asp-for="PedidoId" />
+
+            <div class="mb-3">
+                <label asp-for="CalificacionRestaurante" class="form-label">Calificación (1 a 5 estrellas)</label>
+                <select asp-for="CalificacionRestaurante" class="form-select">
+                    <option value="5">5 - Excelente</option>
+                    <option value="4">4 - Muy Bueno</option>
+                    <option value="3">3 - Bueno</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="1">1 - Malo</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ComentarioRestaurante" class="form-label">Comentario (Opcional)</label>
+                <textarea asp-for="ComentarioRestaurante" class="form-control" rows="3" placeholder="¿Qué te pareció la comida y el servicio?"></textarea>
+                <span asp-validation-for="ComentarioRestaurante" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-warning fw-bold">Enviar Calificación</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

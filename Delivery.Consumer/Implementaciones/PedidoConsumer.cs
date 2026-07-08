@@ -44,5 +44,25 @@ namespace Delivery.Consumer.Implementaciones
             var response = await _httpClient.DeleteAsync($"api/Pedidos/{id}");
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<Pedido?> ActualizarEstadoRestauranteAsync(long id, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long restauranteId)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/Pedidos/{id}/estado-restaurante?restauranteId={restauranteId}", nuevoEstado);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<Pedido>();
+            }
+            return null;
+        }
+
+        public async Task<Pedido?> ActualizarEstadoRepartidorAsync(long id, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long repartidorId)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/Pedidos/{id}/estado-repartidor?repartidorId={repartidorId}", nuevoEstado);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<Pedido>();
+            }
+            return null;
+        }
     }
 }

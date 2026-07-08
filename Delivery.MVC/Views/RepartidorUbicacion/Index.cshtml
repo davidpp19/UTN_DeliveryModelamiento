@@ -1,0 +1,39 @@
+@model Delivery.Modelos.Entidades.UbicacionActualRepartidor
+@{
+    ViewData["Title"] = "Actualizar Ubicación";
+}
+
+<h1 class="my-4"><i class="bi bi-geo-alt"></i> Mi Ubicación Actual</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="UpdateLocation" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="mb-3">
+                <label asp-for="Latitud" class="form-label">Latitud</label>
+                <input asp-for="Latitud" class="form-control" type="number" step="any" placeholder="Ej: -0.180653" required />
+                <span asp-validation-for="Latitud" class="text-danger"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label asp-for="Longitud" class="form-label">Longitud</label>
+                <input asp-for="Longitud" class="form-control" type="number" step="any" placeholder="Ej: -78.467834" required />
+                <span asp-validation-for="Longitud" class="text-danger"></span>
+            </div>
+            
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar Ubicación</button>
+                <a asp-controller="DashboardRepartidor" asp-action="Index" class="btn btn-outline-secondary ms-2">Volver</a>
+            </div>
+        </form>
+
+        @if (Model.ActualizadoEn.HasValue)
+        {
+            <div class="alert alert-info mt-4">
+                <strong>Última actualización:</strong> @Model.ActualizadoEn.Value.ToLocalTime().ToString("g")
+            </div>
+        }
+    </div>
+</div>

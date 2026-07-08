@@ -1,11 +1,32 @@
 @model Delivery.Modelos.Entidades.Vehiculo
-<h1>Delete Vehiculo</h1>
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    @Html.DisplayForModel()
-</div>
+@{ ViewData["Title"] = "Eliminar Vehiculo"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RepartidorId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RepartidorId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoVehiculo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoVehiculo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Placa)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Placa)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Marca)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Marca)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Modelo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Modelo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Anio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Anio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Color)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Color)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FotoVehiculoUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FotoVehiculoUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Repartidor)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Repartidor)</dd>
+</dl>
 <form asp-action="Delete">
-    <input type="hidden" asp-for="Id" />
-    <input type="submit" value="Delete" /> |
-    <a asp-action="Index">Back to List</a>
+<input type="hidden" asp-for="Id" />
+<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
 </form>
