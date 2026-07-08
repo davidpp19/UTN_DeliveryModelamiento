@@ -6,6 +6,7 @@ using Delivery.Servicios.Interfaces;
 
 namespace Delivery.API.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuditoriasController : ControllerBase

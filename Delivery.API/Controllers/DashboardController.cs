@@ -5,6 +5,7 @@ using Delivery.Servicios.Interfaces;
 
 namespace Delivery.API.Controllers
 {
+    [Authorize(Roles = "Admin,Gerente")]
     [Route("api/[controller]")]
     [ApiController]
     public class DashboardController : ControllerBase

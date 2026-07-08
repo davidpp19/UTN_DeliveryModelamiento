@@ -58,5 +58,29 @@ namespace Delivery.API.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{id}/estado-restaurante")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Restaurante")]
+        public async Task<ActionResult<Pedido>> ActualizarEstadoRestaurante(long id, [FromBody] Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, [FromQuery] long restauranteId)
+        {
+            var pedido = await _pedidoService.ActualizarEstadoRestauranteAsync(id, nuevoEstado, restauranteId);
+            return Ok(pedido);
+        }
+
+        [HttpPut("{id}/estado-repartidor")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Repartidor")]
+        public async Task<ActionResult<Pedido>> ActualizarEstadoRepartidor(long id, [FromBody] Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, [FromQuery] long repartidorId)
+        {
+            var pedido = await _pedidoService.ActualizarEstadoRepartidorAsync(id, nuevoEstado, repartidorId);
+            return Ok(pedido);
+        }
+
+        [HttpGet("historial/usuario/{usuarioId}")]
+        [Microsoft.AspNetCore.Authorization.Authorize]
+        public async Task<ActionResult<IEnumerable<Pedido>>> GetHistorialUsuario(long usuarioId)
+        {
+            var historial = await _pedidoService.GetHistorialUsuarioAsync(usuarioId);
+            return Ok(historial);
+        }
     }
 }

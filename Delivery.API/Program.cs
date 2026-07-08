@@ -61,6 +61,8 @@ builder.Services.AddScoped<IPasarelaPagoService, PasarelaPagoService>();
 builder.Services.AddScoped<IGeolocalizacionService, GeolocalizacionService>();
 builder.Services.AddScoped<IBusquedaService, BusquedaService>();
 builder.Services.AddScoped<ISeguridadService, SeguridadService>();
+builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<ICarritoService, CarritoService>();
 
 // Configuración de JWT
 var keyConfig = builder.Configuration["Jwt:Key"] ?? "ClaveSuperSecretaParaDesarrolloQueDeberiaEstarEnAppsettings.123456789";

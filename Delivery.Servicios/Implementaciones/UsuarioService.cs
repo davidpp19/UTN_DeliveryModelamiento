@@ -10,10 +10,12 @@ namespace Delivery.Servicios.Implementaciones
     public class UsuarioService : IUsuarioService
     {
         private readonly DeliveryDbContext _context;
+        private readonly ISeguridadService _seguridadService;
 
-        public UsuarioService(DeliveryDbContext context)
+        public UsuarioService(DeliveryDbContext context, ISeguridadService seguridadService)
         {
             _context = context;
+            _seguridadService = seguridadService;
         }
 
         public async Task<IEnumerable<Usuario>> GetAllAsync()
@@ -26,8 +28,14 @@ namespace Delivery.Servicios.Implementaciones
             return await _context.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<Usuario?> GetByEmailAsync(string email)
+        {
+            return await _context.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+        }
+
         public async Task<Usuario> CreateAsync(Usuario usuario)
         {
+            usuario.PasswordHash = _seguridadService.HashearPassword(usuario.PasswordHash);
             usuario.CreadoEn = System.DateTime.UtcNow;
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
@@ -43,7 +51,13 @@ namespace Delivery.Servicios.Implementaciones
             existingUsuario.Nombre = usuario.Nombre;
             existingUsuario.Apellidos = usuario.Apellidos;
             existingUsuario.Email = usuario.Email;
-            existingUsuario.PasswordHash = usuario.PasswordHash;
+            
+            // Si la contraseña cambió (no es hash), la hasheamos.
+            if (!usuario.PasswordHash.StartsWith("$2a$") && !usuario.PasswordHash.StartsWith("$2b$") && !usuario.PasswordHash.StartsWith("$2y$"))
+            {
+                existingUsuario.PasswordHash = _seguridadService.HashearPassword(usuario.PasswordHash);
+            }
+
             existingUsuario.Telefono = usuario.Telefono;
             existingUsuario.TipoUsuario = usuario.TipoUsuario;
             existingUsuario.Activo = usuario.Activo;

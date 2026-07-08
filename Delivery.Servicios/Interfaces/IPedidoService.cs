@@ -11,5 +11,9 @@ namespace Delivery.Servicios.Interfaces
         Task<Pedido> CreateAsync(Pedido pedido);
         Task<Pedido> UpdateAsync(Pedido pedido);
         Task<bool> DeleteAsync(long id);
+        
+        Task<Pedido> ActualizarEstadoRestauranteAsync(long pedidoId, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long restauranteId);
+        Task<Pedido> ActualizarEstadoRepartidorAsync(long pedidoId, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long repartidorId);
+        Task<IEnumerable<Pedido>> GetHistorialUsuarioAsync(long usuarioId);
     }
 }

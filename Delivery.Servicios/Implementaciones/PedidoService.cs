@@ -75,5 +75,66 @@ namespace Delivery.Servicios.Implementaciones
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Pedido> ActualizarEstadoRestauranteAsync(long pedidoId, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long restauranteId)
+        {
+            var pedido = await _context.Pedidos.FindAsync(pedidoId);
+            if (pedido == null) throw new Delivery.Modelos.Excepciones.BusinessException("Pedido no encontrado.");
+            
+            if (pedido.RestauranteId != restauranteId)
+                throw new Delivery.Modelos.Excepciones.BusinessException("El pedido no pertenece a este restaurante.");
+
+            if (nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.Aceptado &&
+                nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.EnPreparacion &&
+                nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.Cancelado)
+            {
+                throw new Delivery.Modelos.Excepciones.BusinessException("Estado no válido para el restaurante.");
+            }
+
+            pedido.EstadoPedido = nuevoEstado;
+            pedido.ActualizadoEn = System.DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return pedido;
+        }
+
+        public async Task<Pedido> ActualizarEstadoRepartidorAsync(long pedidoId, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long repartidorId)
+        {
+            var pedido = await _context.Pedidos.FindAsync(pedidoId);
+            if (pedido == null) throw new Delivery.Modelos.Excepciones.BusinessException("Pedido no encontrado.");
+            
+            if (pedido.RepartidorId != repartidorId)
+                throw new Delivery.Modelos.Excepciones.BusinessException("El pedido no está asignado a este repartidor.");
+
+            if (nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino &&
+                nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
+            {
+                throw new Delivery.Modelos.Excepciones.BusinessException("Estado no válido para el repartidor.");
+            }
+
+            pedido.EstadoPedido = nuevoEstado;
+            if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
+            {
+                pedido.FechaEntregaReal = System.DateTime.UtcNow;
+            }
+
+            pedido.ActualizadoEn = System.DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return pedido;
+        }
+
+        public async Task<IEnumerable<Pedido>> GetHistorialUsuarioAsync(long usuarioId)
+        {
+            return await _context.Pedidos
+                .Include(p => p.Detalles)
+                .ThenInclude(d => d.Producto)
+                .Include(p => p.Restaurante)
+                .Where(p => p.UsuarioId == usuarioId && 
+                           (p.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado || 
+                            p.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Cancelado))
+                .OrderByDescending(p => p.FechaPedido)
+                .ToListAsync();
+        }
     }
 }
