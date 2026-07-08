@@ -105,4 +105,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Inicializar la Base de Datos (Seed)
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<Delivery.Modelos.DeliveryDbContext>();
+    var seguridadService = scope.ServiceProvider.GetRequiredService<Delivery.Servicios.Interfaces.ISeguridadService>();
+    await Delivery.API.Data.DbSeeder.SeedAsync(context, seguridadService);
+}
+
 app.Run();

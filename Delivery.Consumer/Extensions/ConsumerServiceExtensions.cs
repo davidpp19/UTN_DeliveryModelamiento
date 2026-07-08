@@ -9,27 +9,31 @@ namespace Delivery.Consumer.Extensions
     {
         public static IServiceCollection AddDeliveryConsumers(this IServiceCollection services, Action<HttpClient> configureClient)
         {
-            services.AddHttpClient<IRolConsumer, RolConsumer>(configureClient);
-            services.AddHttpClient<IUsuarioConsumer, UsuarioConsumer>(configureClient);
-            services.AddHttpClient<IDireccionConsumer, DireccionConsumer>(configureClient);
-            services.AddHttpClient<IRestauranteConsumer, RestauranteConsumer>(configureClient);
-            services.AddHttpClient<ICategoriaProductoConsumer, CategoriaProductoConsumer>(configureClient);
-            services.AddHttpClient<IProductoConsumer, ProductoConsumer>(configureClient);
-            services.AddHttpClient<IRepartidorConsumer, RepartidorConsumer>(configureClient);
-            services.AddHttpClient<IVehiculoConsumer, VehiculoConsumer>(configureClient);
-            services.AddHttpClient<IUbicacionActualRepartidorConsumer, UbicacionActualRepartidorConsumer>(configureClient);
-            services.AddHttpClient<IHistorialAsignacionesRepartidorConsumer, HistorialAsignacionesRepartidorConsumer>(configureClient);
-            services.AddHttpClient<IAuthConsumer, AuthConsumer>(configureClient);
-            services.AddHttpClient<IPedidoConsumer, PedidoConsumer>(configureClient);
-            services.AddHttpClient<IDetallePedidoConsumer, DetallePedidoConsumer>(configureClient);
-            services.AddHttpClient<IPagoConsumer, PagoConsumer>(configureClient);
-            services.AddHttpClient<IResenaConsumer, ResenaConsumer>(configureClient);
-            services.AddHttpClient<ICuponConsumer, CuponConsumer>(configureClient);
-            services.AddHttpClient<ICuponUsuarioConsumer, CuponUsuarioConsumer>(configureClient);
-            services.AddHttpClient<IFavoritoConsumer, FavoritoConsumer>(configureClient);
-            services.AddHttpClient<IAuditoriaConsumer, AuditoriaConsumer>(configureClient);
-            services.AddHttpClient<IDashboardConsumer, DashboardConsumer>(configureClient);
-            services.AddHttpClient<ICarritoConsumer, CarritoConsumer>(configureClient);
+            // Registrar IHttpContextAccessor y AuthTokenHandler
+            services.AddHttpContextAccessor();
+            services.AddTransient<AuthTokenHandler>();
+
+            // Configurar cada HttpClient con el Handler de Autenticación
+            services.AddHttpClient<IRolConsumer, RolConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IUsuarioConsumer, UsuarioConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IDireccionConsumer, DireccionConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IRestauranteConsumer, RestauranteConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<ICategoriaProductoConsumer, CategoriaProductoConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IProductoConsumer, ProductoConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IRepartidorConsumer, RepartidorConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IVehiculoConsumer, VehiculoConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IUbicacionActualRepartidorConsumer, UbicacionActualRepartidorConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IAuthConsumer, AuthConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IPedidoConsumer, PedidoConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IDetallePedidoConsumer, DetallePedidoConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IPagoConsumer, PagoConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IResenaConsumer, ResenaConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<ICuponConsumer, CuponConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<ICuponUsuarioConsumer, CuponUsuarioConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IFavoritoConsumer, FavoritoConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IAuditoriaConsumer, AuditoriaConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<IDashboardConsumer, DashboardConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<ICarritoConsumer, CarritoConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
 
             return services;
         }

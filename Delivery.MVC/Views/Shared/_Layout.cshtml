@@ -20,13 +20,39 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="#como-funciona">Cómo Funciona</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="#beneficios">Beneficios</a>
-                        </li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            if (User.IsInRole("Cliente"))
+                            {
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Restaurantes</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" href="#categorias">Categorías</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="ClienteCarrito" asp-action="Index">Mi Carrito</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="ClientePedidos" asp-action="Index">Mis Pedidos</a></li>
+                            }
+                            else if (User.IsInRole("Administrador"))
+                            {
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="AdminDashboard" asp-action="Index">Dashboard Admin</a></li>
+                            }
+                            else if (User.IsInRole("Restaurante"))
+                            {
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="RestauranteDashboard" asp-action="Index">Panel Restaurante</a></li>
+                            }
+                            else if (User.IsInRole("Repartidor"))
+                            {
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="RepartidorDashboard" asp-action="Index">Entregas</a></li>
+                            }
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark" href="#como-funciona">Cómo Funciona</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" href="#restaurantes">Restaurantes</a></li>
+                        }
                     </ul>
+                    
+                    <form class="d-flex me-3" asp-controller="Home" asp-action="Buscar" method="get">
+                        <input class="form-control me-2" type="search" placeholder="Buscar pizza, sushi..." aria-label="Search" name="q" value="@ViewBag.Query">
+                        <button class="btn btn-outline-primary" type="submit">Buscar</button>
+                    </form>
                     <ul class="navbar-nav">
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
@@ -82,5 +108,6 @@
     </footer>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

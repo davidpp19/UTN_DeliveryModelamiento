@@ -35,7 +35,7 @@
                                 <h6 class="text-success fw-bold">$@p.Precio.ToString("0.00")</h6>
                             </div>
                             <div class="card-footer bg-white border-top-0 d-grid">
-                                @if (User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+                                @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
                                 {
                                     <form asp-controller="ClienteCarrito" asp-action="Agregar" method="post">
                                         <input type="hidden" name="ProductoId" value="@p.Id" />

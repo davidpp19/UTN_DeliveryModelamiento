@@ -18,19 +18,32 @@ namespace Delivery.Consumer.Implementaciones
 
         public async Task<IEnumerable<RegistroAuditoria>> GetAllAsync()
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<RegistroAuditoria>>("api/Auditorias") ?? new List<RegistroAuditoria>();
+            var response = await _httpClient.GetAsync("api/Auditorias");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<RegistroAuditoria>>() ?? new List<RegistroAuditoria>();
+            }
+            return new List<RegistroAuditoria>();
         }
 
         public async Task<RegistroAuditoria?> GetByIdAsync(long id)
         {
-            return await _httpClient.GetFromJsonAsync<RegistroAuditoria>($"api/Auditorias/{id}");
+            var response = await _httpClient.GetAsync($"api/Auditorias/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<RegistroAuditoria>();
+            }
+            return null;
         }
 
         public async Task<RegistroAuditoria> CreateAsync(RegistroAuditoria entity)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Auditorias", entity);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<RegistroAuditoria>() ?? entity;
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<RegistroAuditoria>() ?? entity;
+            }
+            return entity;
         }
     }
 }

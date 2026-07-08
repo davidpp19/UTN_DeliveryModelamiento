@@ -20,6 +20,10 @@
                         <input asp-for="Password" class="form-control" type="password" placeholder="********" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label">Recordarme</label>
+                    </div>
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Ingresar</button>
                     </div>

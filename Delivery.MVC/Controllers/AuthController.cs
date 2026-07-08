@@ -89,29 +89,35 @@ namespace Delivery.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registro(Usuario usuario)
+        public async Task<IActionResult> Registro(RegistroDto dto)
         {
             if (!ModelState.IsValid)
             {
-                return View(usuario);
+                return View(dto);
             }
 
-            usuario.TipoUsuario = Delivery.Modelos.Enums.TipoUsuarioEnum.Cliente;
-            // Por defecto, asignaremos un rol. En la API debe existir el rol Cliente.
-            // Asumiendo que RolId 4 es Cliente o que la API lo maneja.
-            usuario.RolId = 4; 
-            usuario.Activo = true;
+            var usuario = new Usuario
+            {
+                Nombre = dto.Nombre,
+                Apellidos = dto.Apellidos,
+                Email = dto.Email,
+                Telefono = dto.Telefono,
+                PasswordHash = dto.Password, // Se hashea en la API/Servicio
+                TipoUsuario = Delivery.Modelos.Enums.TipoUsuarioEnum.Cliente,
+                RolId = 4, // Cliente
+                Activo = true
+            };
 
             var created = await _usuarioConsumer.CreateAsync(usuario);
             if (created != null)
             {
                 // Auto-login después de registro exitoso
-                var loginDto = new LoginDto { Email = usuario.Email, Password = usuario.PasswordHash };
+                var loginDto = new LoginDto { Email = dto.Email, Password = dto.Password };
                 return await Login(loginDto);
             }
 
-            ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario.");
-            return View(usuario);
+            ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario. Es posible que el correo ya esté en uso.");
+            return View(dto);
         }
 
         [HttpGet]
