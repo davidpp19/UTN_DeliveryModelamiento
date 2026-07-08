@@ -9,8 +9,7 @@ using Delivery.Consumer.Interfaces;
 
 namespace Delivery.MVC.Controllers
 {
-    [Authorize(Roles = "Repartidor")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Repartidor,Admin")]
     public class RepartidorPedidosController : Controller
     {
         private readonly IPedidoConsumer _pedidoConsumer;

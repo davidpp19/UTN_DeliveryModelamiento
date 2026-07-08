@@ -30,5 +30,15 @@ namespace Delivery.Consumer.Implementaciones
             var response = await _httpClient.PostAsJsonAsync("api/Auth/recuperar-password", email);
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<AuthResponseDto?> RegistroRepartidorAsync(RegistroRepartidorDto dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Auth/registro-repartidor", dto);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+            }
+            return null;
+        }
     }
 }

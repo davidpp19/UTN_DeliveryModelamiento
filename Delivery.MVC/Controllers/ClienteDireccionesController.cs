@@ -8,8 +8,7 @@ using Delivery.Consumer.Interfaces;
 
 namespace Delivery.MVC.Controllers
 {
-    [Authorize(Roles = "Cliente")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Cliente,Admin")]
     public class ClienteDireccionesController : Controller
     {
         private readonly IDireccionConsumer _direccionConsumer;

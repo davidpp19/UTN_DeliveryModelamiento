@@ -1,0 +1,103 @@
+@model Delivery.Modelos.DTOs.RegistroRepartidorDto
+@{
+    ViewData["Title"] = "Registro de Repartidor";
+}
+
+<h1>Registro de Repartidor</h1>
+<p>Completa el formulario para unirte como repartidor de RayoExpres. Tu cuenta será revisada por el equipo antes de ser activada.</p>
+<hr />
+
+<form asp-action="Index" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <h4>Datos Personales</h4>
+
+    <div>
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control" placeholder="Tu nombre" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Apellidos"></label>
+        <input asp-for="Apellidos" class="form-control" placeholder="Tus apellidos" />
+        <span asp-validation-for="Apellidos" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" placeholder="correo@ejemplo.com" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Telefono"></label>
+        <input asp-for="Telefono" class="form-control" placeholder="0991234567" />
+        <span asp-validation-for="Telefono" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Password">Contraseña</label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="ConfirmPassword">Confirmar Contraseña</label>
+        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <hr />
+    <h4>Datos de Licencia</h4>
+
+    <div>
+        <label asp-for="LicenciaConducir">Número de Licencia de Conducir</label>
+        <input asp-for="LicenciaConducir" class="form-control" placeholder="Ej: LIC-IMB-1234567" />
+        <span asp-validation-for="LicenciaConducir" class="text-danger"></span>
+    </div>
+
+    <hr />
+    <h4>Datos del Vehículo</h4>
+
+    <div>
+        <label asp-for="TipoVehiculo">Tipo de Vehículo</label>
+        <select asp-for="TipoVehiculo" class="form-select"
+                asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.TipoVehiculoEnum>()">
+        </select>
+        <span asp-validation-for="TipoVehiculo" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Placa"></label>
+        <input asp-for="Placa" class="form-control" placeholder="Ej: PBX-1234" />
+        <span asp-validation-for="Placa" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Marca"></label>
+        <input asp-for="Marca" class="form-control" placeholder="Ej: Honda" />
+        <span asp-validation-for="Marca" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Modelo"></label>
+        <input asp-for="Modelo" class="form-control" placeholder="Ej: Wave110" />
+        <span asp-validation-for="Modelo" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Color"></label>
+        <input asp-for="Color" class="form-control" placeholder="Ej: Rojo" />
+        <span asp-validation-for="Color" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Anio">Año</label>
+        <input asp-for="Anio" type="number" class="form-control" placeholder="Ej: 2022" min="1990" max="2030" />
+    </div>
+
+    <br />
+    <button type="submit" class="btn btn-primary">Registrarme como Repartidor</button>
+    <a asp-controller="Auth" asp-action="Login">¿Ya tienes cuenta? Iniciar Sesión</a>
+</form>

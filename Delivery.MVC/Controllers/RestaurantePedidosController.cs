@@ -9,8 +9,7 @@ using Delivery.Consumer.Interfaces;
 
 namespace Delivery.MVC.Controllers
 {
-    [Authorize(Roles = "Restaurante")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Restaurante,Admin")]
     public class RestaurantePedidosController : Controller
     {
         private readonly IPedidoConsumer _pedidoConsumer;

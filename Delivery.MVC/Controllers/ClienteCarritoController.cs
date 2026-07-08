@@ -1,11 +1,11 @@
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Delivery.Modelos.DTOs;
 using Delivery.Consumer.Interfaces;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Delivery.MVC.Controllers
 {
@@ -32,10 +32,20 @@ namespace Delivery.MVC.Controllers
         {
             var userId = GetMyUsuarioId();
             var carrito = await _carritoConsumer.GetCarritoAsync(userId);
-            
-            var direcciones = await _direccionConsumer.GetAllAsync();
-            var misDirecciones = direcciones.Where(d => d.UsuarioId == userId).ToList();
-            ViewBag.Direcciones = new SelectList(misDirecciones, "Id", "Calle");
+
+            var todasDirecciones = await _direccionConsumer.GetAllAsync();
+            var misDirecciones = todasDirecciones.Where(d => d.UsuarioId == userId).ToList();
+
+            // Si no tiene dirección, mostramos un aviso en la vista
+            if (!misDirecciones.Any())
+            {
+                ViewBag.SinDireccion = true;
+            }
+            else
+            {
+                ViewBag.SinDireccion = false;
+                ViewBag.Direcciones = new SelectList(misDirecciones, "Id", "Calle");
+            }
 
             return View(carrito);
         }
@@ -60,14 +70,39 @@ namespace Delivery.MVC.Controllers
         public async Task<IActionResult> Confirmar(long direccionId)
         {
             var userId = GetMyUsuarioId();
+
+            // Validar que la dirección sea real y pertenezca al usuario
+            if (direccionId <= 0)
+            {
+                TempData["Error"] = "Debes seleccionar una dirección de entrega válida.";
+                return RedirectToAction("Index");
+            }
+
+            var todasDirecciones = await _direccionConsumer.GetAllAsync();
+            var misDirecciones = todasDirecciones.Where(d => d.UsuarioId == userId).ToList();
+
+            if (!misDirecciones.Any())
+            {
+                TempData["Error"] = "Necesitas registrar una dirección de entrega antes de confirmar tu pedido.";
+                return RedirectToAction("Index", "ClienteDirecciones");
+            }
+
+            var direccionValida = misDirecciones.Any(d => d.Id == direccionId);
+            if (!direccionValida)
+            {
+                TempData["Error"] = "La dirección seleccionada no es válida.";
+                return RedirectToAction("Index");
+            }
+
             var pedidoConfirmado = await _carritoConsumer.ConfirmarCarritoAsync(userId, direccionId);
-            
+
             if (pedidoConfirmado != null)
             {
+                TempData["Exito"] = "¡Tu pedido fue confirmado exitosamente!";
                 return RedirectToAction("Index", "ClienteHistorialPedidos");
             }
-            
-            ModelState.AddModelError(string.Empty, "Hubo un problema al confirmar el carrito.");
+
+            TempData["Error"] = "Hubo un problema al confirmar el carrito. Verifica que tengas productos agregados.";
             return RedirectToAction("Index");
         }
     }

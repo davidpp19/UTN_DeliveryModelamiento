@@ -7,5 +7,6 @@ namespace Delivery.Consumer.Interfaces
     {
         Task<AuthResponseDto?> LoginAsync(LoginDto dto);
         Task<bool> RecuperarPasswordAsync(string email);
+        Task<AuthResponseDto?> RegistroRepartidorAsync(RegistroRepartidorDto dto);
     }
 }
