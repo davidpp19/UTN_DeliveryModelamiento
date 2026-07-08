@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Crear Cuenta en RayoExpres";
+}
+
+<h1>Crear Cuenta en RayoExpres</h1>
+<p>Selecciona el tipo de cuenta que deseas crear:</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>Soy Cliente</h3>
+        <p>Quiero pedir comida a domicilio desde mi restaurante favorito.</p>
+        <a asp-controller="Auth" asp-action="Registro">Registrarme como Cliente</a>
+    </div>
+    <div class="col-md-4">
+        <h3>Soy Repartidor</h3>
+        <p>Quiero hacer entregas y ganar dinero con mi vehículo.</p>
+        <a asp-controller="RegistroRepartidor" asp-action="Index">Registrarme como Repartidor</a>
+    </div>
+    <div class="col-md-4">
+        <h3>Tengo un Restaurante</h3>
+        <p>Quiero publicar mi negocio y recibir pedidos en línea.</p>
+        <a asp-controller="RegistroRestaurante" asp-action="Index">Registrar mi Restaurante</a>
+    </div>
+</div>
+
+<hr />
+<p>¿Ya tienes cuenta? <a asp-controller="Auth" asp-action="Login">Iniciar Sesión</a></p>

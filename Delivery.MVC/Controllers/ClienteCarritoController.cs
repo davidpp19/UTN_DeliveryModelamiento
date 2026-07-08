@@ -6,19 +6,35 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Delivery.Modelos.DTOs;
 using Delivery.Consumer.Interfaces;
+using Delivery.MVC.Helpers;
 
 namespace Delivery.MVC.Controllers
 {
+    /// <summary>
+    /// Carrito basado en Session del servidor.
+    /// Flujo:
+    ///   Agregar → modifica Session (NO toca base de datos)
+    ///   Quitar  → modifica Session (NO toca base de datos)
+    ///   Confirmar → llama API crear-desde-carrito (aquí sí se crea el Pedido)
+    /// </summary>
     [Authorize(Roles = "Cliente")]
     public class ClienteCarritoController : Controller
     {
-        private readonly ICarritoConsumer _carritoConsumer;
         private readonly IDireccionConsumer _direccionConsumer;
+        private readonly IProductoConsumer _productoConsumer;
+        private readonly IRestauranteConsumer _restauranteConsumer;
+        private readonly IPedidoConsumer _pedidoConsumer;
 
-        public ClienteCarritoController(ICarritoConsumer carritoConsumer, IDireccionConsumer direccionConsumer)
+        public ClienteCarritoController(
+            IDireccionConsumer direccionConsumer,
+            IProductoConsumer productoConsumer,
+            IRestauranteConsumer restauranteConsumer,
+            IPedidoConsumer pedidoConsumer)
         {
-            _carritoConsumer = carritoConsumer;
             _direccionConsumer = direccionConsumer;
+            _productoConsumer = productoConsumer;
+            _restauranteConsumer = restauranteConsumer;
+            _pedidoConsumer = pedidoConsumer;
         }
 
         private long GetMyUsuarioId()
@@ -28,81 +44,163 @@ namespace Delivery.MVC.Controllers
             return userId;
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // VER CARRITO
+        // ─────────────────────────────────────────────────────────────────────
         public async Task<IActionResult> Index()
         {
-            var userId = GetMyUsuarioId();
-            var carrito = await _carritoConsumer.GetCarritoAsync(userId);
+            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session)
+                          ?? new CarritoSesionDto();
 
+            var userId = GetMyUsuarioId();
             var todasDirecciones = await _direccionConsumer.GetAllAsync();
             var misDirecciones = todasDirecciones.Where(d => d.UsuarioId == userId).ToList();
 
-            // Si no tiene dirección, mostramos un aviso en la vista
-            if (!misDirecciones.Any())
-            {
-                ViewBag.SinDireccion = true;
-            }
-            else
-            {
-                ViewBag.SinDireccion = false;
-                ViewBag.Direcciones = new SelectList(misDirecciones, "Id", "Calle");
-            }
+            ViewBag.SinDireccion = !misDirecciones.Any();
+            ViewBag.Direcciones  = new SelectList(misDirecciones, "Id", "Calle");
 
             return View(carrito);
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // AGREGAR PRODUCTO → SOLO modifica Session, NO toca la base de datos
+        // ─────────────────────────────────────────────────────────────────────
         [HttpPost]
-        public async Task<IActionResult> Agregar(AgregarAlCarritoDto dto)
+        public async Task<IActionResult> Agregar(long productoId, long restauranteId, int cantidad = 1)
         {
-            dto.UsuarioId = GetMyUsuarioId();
-            await _carritoConsumer.AgregarProductoAsync(dto);
+            // Verificar que el producto exista
+            var producto = await _productoConsumer.GetByIdAsync(productoId);
+            if (producto == null || !producto.Disponible)
+            {
+                TempData["Error"] = "El producto no está disponible.";
+                return RedirectToAction("Restaurante", "Home", new { id = restauranteId });
+            }
+
+            // Verificar que el restaurante exista
+            var restaurante = await _restauranteConsumer.GetByIdAsync(restauranteId);
+            if (restaurante == null)
+            {
+                TempData["Error"] = "El restaurante no existe.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session)
+                          ?? new CarritoSesionDto();
+
+            // Si el carrito tiene ítems de otro restaurante, impedir mezcla
+            if (carrito.RestauranteId != 0 && carrito.RestauranteId != restauranteId && carrito.Items.Any())
+            {
+                TempData["Error"] = "No puedes mezclar productos de diferentes restaurantes. Vacía el carrito primero.";
+                return RedirectToAction("Index");
+            }
+
+            carrito.RestauranteId     = restauranteId;
+            carrito.NombreRestaurante = restaurante.Nombre;
+
+            // Si el producto ya está en el carrito, incrementar cantidad
+            var itemExistente = carrito.Items.FirstOrDefault(i => i.ProductoId == productoId);
+            if (itemExistente != null)
+            {
+                itemExistente.Cantidad += cantidad;
+            }
+            else
+            {
+                carrito.Items.Add(new CarritoItemSesionDto
+                {
+                    ProductoId      = productoId,
+                    NombreProducto  = producto.Nombre,
+                    Cantidad        = cantidad,
+                    PrecioUnitario  = producto.Precio
+                });
+            }
+
+            // Guardar en Session → NADA en base de datos
+            CarritoSessionHelper.GuardarCarrito(HttpContext.Session, carrito);
+            TempData["Exito"] = $"'{producto.Nombre}' agregado al carrito.";
+
             return RedirectToAction("Index");
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // QUITAR PRODUCTO → SOLO modifica Session
+        // ─────────────────────────────────────────────────────────────────────
         [HttpPost]
-        public async Task<IActionResult> Quitar(long detallePedidoId)
+        public IActionResult Quitar(long productoId)
         {
-            var userId = GetMyUsuarioId();
-            await _carritoConsumer.QuitarProductoAsync(userId, detallePedidoId);
+            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
+            if (carrito != null)
+            {
+                carrito.Items.RemoveAll(i => i.ProductoId == productoId);
+                if (!carrito.Items.Any())
+                {
+                    // Carrito vacío → limpiar restaurante también
+                    carrito = new CarritoSesionDto();
+                }
+                CarritoSessionHelper.GuardarCarrito(HttpContext.Session, carrito);
+            }
             return RedirectToAction("Index");
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // VACIAR CARRITO
+        // ─────────────────────────────────────────────────────────────────────
+        [HttpPost]
+        public IActionResult Vaciar()
+        {
+            CarritoSessionHelper.LimpiarCarrito(HttpContext.Session);
+            return RedirectToAction("Index");
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // CONFIRMAR COMPRA → Aquí se crea el Pedido real en base de datos
+        // ─────────────────────────────────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> Confirmar(long direccionId)
         {
-            var userId = GetMyUsuarioId();
+            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
 
-            // Validar que la dirección sea real y pertenezca al usuario
+            if (carrito == null || !carrito.Items.Any())
+            {
+                TempData["Error"] = "Tu carrito está vacío.";
+                return RedirectToAction("Index");
+            }
+
             if (direccionId <= 0)
             {
                 TempData["Error"] = "Debes seleccionar una dirección de entrega válida.";
                 return RedirectToAction("Index");
             }
 
+            var userId = GetMyUsuarioId();
+
+            // Verificar que la dirección pertenezca al usuario
             var todasDirecciones = await _direccionConsumer.GetAllAsync();
             var misDirecciones = todasDirecciones.Where(d => d.UsuarioId == userId).ToList();
 
             if (!misDirecciones.Any())
             {
-                TempData["Error"] = "Necesitas registrar una dirección de entrega antes de confirmar tu pedido.";
+                TempData["Error"] = "Necesitas registrar una dirección antes de confirmar tu pedido.";
                 return RedirectToAction("Index", "ClienteDirecciones");
             }
 
-            var direccionValida = misDirecciones.Any(d => d.Id == direccionId);
-            if (!direccionValida)
+            if (!misDirecciones.Any(d => d.Id == direccionId))
             {
                 TempData["Error"] = "La dirección seleccionada no es válida.";
                 return RedirectToAction("Index");
             }
 
-            var pedidoConfirmado = await _carritoConsumer.ConfirmarCarritoAsync(userId, direccionId);
+            // *** ÚNICO PUNTO donde se crea el Pedido en base de datos ***
+            var pedidoCreado = await _pedidoConsumer.CrearDesdeCarritoAsync(userId, direccionId, carrito);
 
-            if (pedidoConfirmado != null)
+            if (pedidoCreado != null)
             {
-                TempData["Exito"] = "¡Tu pedido fue confirmado exitosamente!";
+                // Limpiar el carrito de sesión después de confirmar
+                CarritoSessionHelper.LimpiarCarrito(HttpContext.Session);
+                TempData["Exito"] = $"¡Pedido #{pedidoCreado.Id} confirmado exitosamente! El restaurante lo está procesando.";
                 return RedirectToAction("Index", "ClienteHistorialPedidos");
             }
 
-            TempData["Error"] = "Hubo un problema al confirmar el carrito. Verifica que tengas productos agregados.";
+            TempData["Error"] = "Hubo un problema al procesar tu pedido. Por favor intenta de nuevo.";
             return RedirectToAction("Index");
         }
     }

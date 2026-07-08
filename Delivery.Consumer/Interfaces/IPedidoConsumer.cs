@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Delivery.Modelos.DTOs;
 using Delivery.Modelos.Entidades;
 
 namespace Delivery.Consumer.Interfaces
@@ -13,5 +14,6 @@ namespace Delivery.Consumer.Interfaces
         Task<bool> DeleteAsync(long id);
         Task<Pedido?> ActualizarEstadoRestauranteAsync(long id, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long restauranteId);
         Task<Pedido?> ActualizarEstadoRepartidorAsync(long id, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long repartidorId);
+        Task<Pedido?> CrearDesdeCarritoAsync(long usuarioId, long direccionId, CarritoSesionDto carrito);
     }
 }

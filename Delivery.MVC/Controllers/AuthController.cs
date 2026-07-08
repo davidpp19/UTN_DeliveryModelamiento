@@ -78,6 +78,14 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpGet]
+        public IActionResult SeleccionTipoRegistro()
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+                return RedirectToRoleDashboard();
+            return View();
+        }
+
+        [HttpGet]
         public IActionResult Registro()
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)

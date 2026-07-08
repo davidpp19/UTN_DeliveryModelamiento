@@ -1,4 +1,4 @@
-@model Delivery.Modelos.Entidades.Pedido
+@model Delivery.Modelos.DTOs.CarritoSesionDto
 @{
     ViewData["Title"] = "Mi Carrito";
 }
@@ -15,74 +15,79 @@
     <div class="alert alert-success">@TempData["Exito"]</div>
 }
 
-@if (Model == null || !Model.Detalles.Any())
+@if (Model == null || !Model.Items.Any())
 {
     <div class="alert alert-info">
         <h4>Tu carrito está vacío</h4>
-        <p>Explora nuestros restaurantes y agrega productos.</p>
+        <p>Explora los restaurantes y agrega productos para comenzar tu pedido.</p>
         <a asp-controller="Home" asp-action="Index">Ver Restaurantes</a>
     </div>
 }
 else
 {
-    <div class="row">
-        <div class="col-md-8">
-            <h4>Productos en el Carrito</h4>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Subtotal</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var detalle in Model.Detalles)
-                    {
-                        <tr>
-                            <td>@(detalle.Producto?.Nombre ?? "Producto Desconocido")</td>
-                            <td>@detalle.Cantidad</td>
-                            <td>$@detalle.Subtotal.ToString("0.00")</td>
-                            <td>
-                                <form asp-action="Quitar" method="post">
-                                    <input type="hidden" name="detallePedidoId" value="@detalle.Id" />
-                                    <button type="submit">Quitar</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <p><strong>Subtotal:</strong> $@Model.Subtotal.ToString("0.00")</p>
-            <p><strong>Costo de Envío:</strong> $@Model.CostoEnvio.ToString("0.00")</p>
-            <p><strong>Total:</strong> $@Model.Total.ToString("0.00")</p>
-        </div>
+    <p><strong>Restaurante:</strong> @Model.NombreRestaurante</p>
 
-        <div class="col-md-4">
-            <h4>Confirmar Pedido</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio Unitario</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.NombreProducto</td>
+                    <td>$@item.PrecioUnitario.ToString("0.00")</td>
+                    <td>@item.Cantidad</td>
+                    <td>$@item.Subtotal.ToString("0.00")</td>
+                    <td>
+                        <form asp-action="Quitar" method="post" style="display:inline;">
+                            <input type="hidden" name="productoId" value="@item.ProductoId" />
+                            <button type="submit">Quitar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3"><strong>Total</strong></td>
+                <td colspan="2"><strong>$@Model.Subtotal.ToString("0.00")</strong></td>
+            </tr>
+        </tfoot>
+    </table>
 
-            @if (ViewBag.SinDireccion == true)
-            {
-                <div class="alert alert-warning">
-                    <strong>No tienes ninguna dirección registrada.</strong><br />
-                    Debes agregar una dirección de entrega antes de confirmar tu pedido.
-                </div>
-                <a asp-controller="ClienteDirecciones" asp-action="Create">Agregar Dirección de Entrega</a>
-            }
-            else
-            {
-                <form asp-action="Confirmar" method="post">
-                    <div>
-                        <label for="direccionId">Dirección de Entrega</label>
-                        <select name="direccionId" id="direccionId" asp-items="ViewBag.Direcciones" required>
-                            <option value="">Selecciona una dirección...</option>
-                        </select>
-                    </div>
-                    <br />
-                    <button type="submit">Confirmar Pedido</button>
-                </form>
-            }
+    <form asp-action="Vaciar" method="post" style="display:inline;">
+        <button type="submit">Vaciar Carrito</button>
+    </form>
+
+    <hr />
+
+    @if (ViewBag.SinDireccion == true)
+    {
+        <div class="alert alert-warning">
+            <strong>No tienes ninguna dirección de entrega registrada.</strong><br />
+            Debes agregar una dirección antes de confirmar tu pedido.
         </div>
-    </div>
+        <a asp-controller="ClienteDirecciones" asp-action="Create">Agregar Mi Primera Dirección</a>
+    }
+    else
+    {
+        <h4>Confirmar Pedido</h4>
+        <form asp-action="Confirmar" method="post">
+            <div>
+                <label for="direccionId">Selecciona tu Dirección de Entrega</label><br />
+                <select name="direccionId" id="direccionId" asp-items="ViewBag.Direcciones" required>
+                    <option value="">-- Selecciona una dirección --</option>
+                </select>
+            </div>
+            <br />
+            <button type="submit">Confirmar Pedido</button>
+        </form>
+    }
 }

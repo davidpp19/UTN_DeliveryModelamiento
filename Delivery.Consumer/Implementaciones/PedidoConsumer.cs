@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Delivery.Modelos.DTOs;
 using Delivery.Modelos.Entidades;
 using Delivery.Consumer.Interfaces;
 
@@ -49,9 +50,7 @@ namespace Delivery.Consumer.Implementaciones
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Pedidos/{id}/estado-restaurante?restauranteId={restauranteId}", nuevoEstado);
             if (response.IsSuccessStatusCode)
-            {
                 return await response.Content.ReadFromJsonAsync<Pedido>();
-            }
             return null;
         }
 
@@ -59,10 +58,22 @@ namespace Delivery.Consumer.Implementaciones
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Pedidos/{id}/estado-repartidor?repartidorId={repartidorId}", nuevoEstado);
             if (response.IsSuccessStatusCode)
-            {
                 return await response.Content.ReadFromJsonAsync<Pedido>();
-            }
+            return null;
+        }
+
+        /// <summary>
+        /// Llama al endpoint que crea el Pedido real desde el carrito de sesión.
+        /// Solo se llama cuando el usuario presiona "Confirmar Compra".
+        /// </summary>
+        public async Task<Pedido?> CrearDesdeCarritoAsync(long usuarioId, long direccionId, CarritoSesionDto carrito)
+        {
+            var url = $"api/Pedidos/crear-desde-carrito?usuarioId={usuarioId}&direccionId={direccionId}";
+            var response = await _httpClient.PostAsJsonAsync(url, carrito);
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<Pedido>();
             return null;
         }
     }
 }
+

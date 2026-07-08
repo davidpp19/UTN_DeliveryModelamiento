@@ -39,6 +39,23 @@ namespace Delivery.API.Controllers
             return CreatedAtAction(nameof(GetPedido), new { id = created.Id }, created);
         }
 
+        /// <summary>
+        /// Crea el pedido real desde el carrito de sesión del MVC.
+        /// Este es el ÚNICO endpoint que crea registros en la tabla pedidos para el flujo del cliente.
+        /// </summary>
+        [HttpPost("crear-desde-carrito")]
+        public async Task<ActionResult<Pedido>> CrearDesdeCarrito(
+            [FromQuery] long usuarioId,
+            [FromQuery] long direccionId,
+            [FromBody] Delivery.Modelos.DTOs.CarritoSesionDto carritoSesion)
+        {
+            if (carritoSesion == null || !carritoSesion.Items.Any())
+                return BadRequest(new { message = "El carrito está vacío." });
+
+            var pedido = await _pedidoService.CrearDesdeSesionAsync(usuarioId, direccionId, carritoSesion);
+            return CreatedAtAction(nameof(GetPedido), new { id = pedido.Id }, pedido);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedido(long id, Pedido pedido)
         {

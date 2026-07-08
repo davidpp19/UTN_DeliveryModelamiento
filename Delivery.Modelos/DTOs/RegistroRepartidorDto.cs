@@ -29,6 +29,10 @@ namespace Delivery.Modelos.DTOs
         [Phone]
         public string Telefono { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "La cédula es requerida")]
+        [StringLength(20, ErrorMessage = "Máximo 20 caracteres")]
+        public string Cedula { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "El número de licencia es requerido")]
         [StringLength(50)]
         public string LicenciaConducir { get; set; } = string.Empty;
