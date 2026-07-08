@@ -26,6 +26,8 @@ namespace Delivery.Consumer.Extensions
             services.AddHttpClient<ICuponConsumer, CuponConsumer>(configureClient);
             services.AddHttpClient<ICuponUsuarioConsumer, CuponUsuarioConsumer>(configureClient);
             services.AddHttpClient<IFavoritoConsumer, FavoritoConsumer>(configureClient);
+            services.AddHttpClient<IAuditoriaConsumer, AuditoriaConsumer>(configureClient);
+            services.AddHttpClient<IDashboardConsumer, DashboardConsumer>(configureClient);
 
             return services;
         }

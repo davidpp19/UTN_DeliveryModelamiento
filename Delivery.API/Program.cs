@@ -3,6 +3,9 @@ using Delivery.Servicios.Interfaces;
 using Delivery.Servicios.Implementaciones;
 using Microsoft.EntityFrameworkCore;
 using Delivery.Modelos.Enums;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +31,7 @@ dataSourceBuilder.MapEnum<EstadoPedidoEnum>();
 dataSourceBuilder.MapEnum<TipoMetodoPagoEnum>();
 dataSourceBuilder.MapEnum<EstadoPagoEnum>();
 dataSourceBuilder.MapEnum<TipoDescuentoEnum>();
+dataSourceBuilder.MapEnum<TipoAccionAuditoriaEnum>();
 var dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddDbContext<DeliveryDbContext>(options =>
@@ -50,8 +54,39 @@ builder.Services.AddScoped<IResenaService, ResenaService>();
 builder.Services.AddScoped<ICuponService, CuponService>();
 builder.Services.AddScoped<ICuponUsuarioService, CuponUsuarioService>();
 builder.Services.AddScoped<IFavoritoService, FavoritoService>();
+builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<INotificacionService, NotificacionService>();
+builder.Services.AddScoped<IPasarelaPagoService, PasarelaPagoService>();
+builder.Services.AddScoped<IGeolocalizacionService, GeolocalizacionService>();
+builder.Services.AddScoped<IBusquedaService, BusquedaService>();
+builder.Services.AddScoped<ISeguridadService, SeguridadService>();
+
+// Configuración de JWT
+var keyConfig = builder.Configuration["Jwt:Key"] ?? "ClaveSuperSecretaParaDesarrolloQueDeberiaEstarEnAppsettings.123456789";
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "DeliveryAPI",
+        ValidAudience = builder.Configuration["Jwt:Audience"] ?? "DeliveryClient",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyConfig))
+    };
+});
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+app.UseMiddleware<Delivery.API.Middlewares.ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -63,6 +98,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -29,6 +29,7 @@ namespace Delivery.Modelos
         public DbSet<Cupon> Cupones { get; set; } = null!;
         public DbSet<CuponUsuario> CuponesUsuarios { get; set; } = null!;
         public DbSet<Favorito> Favoritos { get; set; } = null!;
+        public DbSet<RegistroAuditoria> RegistrosAuditoria { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,6 +43,7 @@ namespace Delivery.Modelos
             modelBuilder.HasPostgresEnum<TipoMetodoPagoEnum>();
             modelBuilder.HasPostgresEnum<EstadoPagoEnum>();
             modelBuilder.HasPostgresEnum<TipoDescuentoEnum>();
+            modelBuilder.HasPostgresEnum<TipoAccionAuditoriaEnum>();
 
             // Configuración Fluent API
             modelBuilder.Entity<Usuario>()
@@ -233,6 +235,13 @@ namespace Delivery.Modelos
                 .WithMany()
                 .HasForeignKey(f => f.RestauranteId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Registro Auditoria
+            modelBuilder.Entity<RegistroAuditoria>()
+                .HasOne(ra => ra.Usuario)
+                .WithMany()
+                .HasForeignKey(ra => ra.UsuarioId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

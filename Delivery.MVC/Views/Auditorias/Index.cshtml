@@ -1,0 +1,26 @@
+@model IEnumerable<Delivery.Modelos.Entidades.RegistroAuditoria>
+<h1>Auditoría - Index</h1>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Fecha/Hora</th>
+            <th>Módulo</th>
+            <th>Acción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.FechaHora</td>
+            <td>@item.ModuloAfectado</td>
+            <td>@item.TipoAccion</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

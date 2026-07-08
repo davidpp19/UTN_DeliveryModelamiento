@@ -1,0 +1,56 @@
+@model Delivery.Modelos.DTOs.DashboardEstadisticasDto
+
+<h1>Dashboard Administrativo</h1>
+<hr />
+<div>
+    <h3>Resumen General</h3>
+    <ul>
+        <li><strong>Usuarios Registrados:</strong> @Model?.UsuariosRegistrados</li>
+        <li><strong>Restaurantes Activos:</strong> @Model?.RestaurantesActivos</li>
+        <li><strong>Productos Registrados:</strong> @Model?.ProductosRegistrados</li>
+        <li><strong>Productos Disponibles:</strong> @Model?.ProductosDisponibles</li>
+        <li><strong>Repartidores Activos:</strong> @Model?.RepartidoresActivos</li>
+    </ul>
+
+    <h3>Pedidos y Ventas</h3>
+    <ul>
+        <li><strong>Pedidos del Día:</strong> @Model?.PedidosDelDia</li>
+        <li><strong>Pedidos Pendientes:</strong> @Model?.PedidosPendientes</li>
+        <li><strong>Pedidos Entregados:</strong> @Model?.PedidosEntregados</li>
+        <li><strong>Ventas del Día:</strong> @Model?.VentasDelDia.ToString("C")</li>
+        <li><strong>Ventas del Mes:</strong> @Model?.VentasDelMes.ToString("C")</li>
+    </ul>
+
+    <h3>Restaurantes con más pedidos</h3>
+    <ul>
+        @if(Model?.RestaurantesConMasPedidos != null)
+        {
+            foreach(var rest in Model.RestaurantesConMasPedidos)
+            {
+                <li>@rest</li>
+            }
+        }
+    </ul>
+
+    <h3>Productos más vendidos</h3>
+    <ul>
+        @if(Model?.ProductosMasVendidos != null)
+        {
+            foreach(var prod in Model.ProductosMasVendidos)
+            {
+                <li>@prod</li>
+            }
+        }
+    </ul>
+
+    <h3>Clientes con más compras</h3>
+    <ul>
+        @if(Model?.ClientesConMasCompras != null)
+        {
+            foreach(var cli in Model.ClientesConMasCompras)
+            {
+                <li>@cli</li>
+            }
+        }
+    </ul>
+</div>

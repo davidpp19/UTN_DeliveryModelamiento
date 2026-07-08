@@ -41,10 +41,12 @@ namespace Delivery.Modelos.Entidades
         [Column("longitud", TypeName = "numeric(11,8)")]
         public decimal? Longitud { get; set; }
 
+        [Phone]
         [Column("telefono")]
         [StringLength(20)]
         public string? Telefono { get; set; }
 
+        [EmailAddress]
         [Column("email")]
         [StringLength(150)]
         public string? Email { get; set; }

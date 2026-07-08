@@ -27,6 +27,7 @@ namespace Delivery.Modelos.Entidades
         public string Apellidos { get; set; } = null!;
 
         [Required]
+        [EmailAddress]
         [Column("email")]
         [StringLength(150)]
         public string Email { get; set; } = null!;
@@ -36,6 +37,7 @@ namespace Delivery.Modelos.Entidades
         [StringLength(255)]
         public string PasswordHash { get; set; } = null!;
 
+        [Phone]
         [Column("telefono")]
         [StringLength(20)]
         public string? Telefono { get; set; }
