@@ -1,0 +1,23 @@
+@model IEnumerable<Delivery.Modelos.Entidades.UbicacionActualRepartidor>
+<h1>UbicacionActualRepartidor - Index</h1>
+<p><a asp-action="Create">Create New</a></p>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Id / Info</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.RepartidorId)</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.RepartidorId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.RepartidorId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.RepartidorId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

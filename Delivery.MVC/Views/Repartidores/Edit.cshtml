@@ -1,0 +1,9 @@
+@model Delivery.Modelos.Entidades.Repartidor
+<h1>Edit Repartidor</h1>
+<form asp-action="Edit">
+    @Html.HiddenFor(m => m.UsuarioId)
+    @Html.EditorForModel()
+    <br/>
+    <input type="submit" value="Save" />
+</form>
+<a asp-action="Index">Back to List</a>

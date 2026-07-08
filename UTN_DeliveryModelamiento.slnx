@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Delivery.API/Delivery.API.csproj" />
+  <Project Path="Delivery.Modelos/Delivery.Modelos.csproj" />
+  <Project Path="Delivery.Servicios/Delivery.Servicios.csproj" />
+  <Project Path="Delivery.Consumer/Delivery.Consumer.csproj" />
+  <Project Path="Delivery.MVC/Delivery.MVC.csproj" />
+</Solution>

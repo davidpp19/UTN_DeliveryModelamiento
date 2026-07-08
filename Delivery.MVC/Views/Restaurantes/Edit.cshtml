@@ -1,0 +1,9 @@
+@model Delivery.Modelos.Entidades.Restaurante
+<h1>Edit Restaurante</h1>
+<form asp-action="Edit">
+    @Html.HiddenFor(m => m.Id)
+    @Html.EditorForModel()
+    <br/>
+    <input type="submit" value="Save" />
+</form>
+<a asp-action="Index">Back to List</a>
