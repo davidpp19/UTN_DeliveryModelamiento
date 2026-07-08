@@ -5,77 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - RayoExpres</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand fw-bold text-primary" asp-area="" asp-controller="Home" asp-action="Index">RayoExpres</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Navegación">
+                <a class="navbar-brand fw-bold text-primary" asp-controller="Home" asp-action="Index">RayoExpres</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Navegación">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                    @* ─── MENÚ IZQUIERDO POR ROL ─── *@
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
-                        </li>
+
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
+                            @* ── CLIENTE ── *@
                             if (User.IsInRole("Cliente"))
                             {
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Restaurantes</a></li>
-                                <li class="nav-item"><a class="nav-link text-dark" href="#categorias">Categorías</a></li>
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="ClienteCarrito" asp-action="Index">Mi Carrito</a></li>
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="ClienteHistorialPedidos" asp-action="Index">Mis Pedidos</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Restaurantes</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteCarrito" asp-action="Index">Mi Carrito</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteHistorialPedidos" asp-action="Index">Mis Pedidos</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteDirecciones" asp-action="Index">Mis Direcciones</a></li>
                             }
-                            else if (User.IsInRole("Administrador"))
+                            @* ── ADMINISTRADOR ── *@
+                            else if (User.IsInRole("Admin"))
                             {
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="AdminDashboard" asp-action="Index">Dashboard Admin</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="DashboardAdministrador" asp-action="Index">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminUsuarios" asp-action="Index">Usuarios</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminRestaurantes" asp-action="Index">Restaurantes</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminRepartidores" asp-action="Index">Repartidores</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminProductos" asp-action="Index">Productos</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminPedidos" asp-action="Index">Pedidos</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="AdminCupones" asp-action="Index">Cupones</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Auditorias" asp-action="Index">Auditoría</a></li>
                             }
+                            @* ── RESTAURANTE ── *@
                             else if (User.IsInRole("Restaurante"))
                             {
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="RestauranteDashboard" asp-action="Index">Panel Restaurante</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="DashboardRestaurante" asp-action="Index">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="RestauranteProductos" asp-action="Index">Productos</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="RestaurantePedidos" asp-action="Index">Pedidos</a></li>
                             }
+                            @* ── REPARTIDOR ── *@
                             else if (User.IsInRole("Repartidor"))
                             {
-                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="RepartidorDashboard" asp-action="Index">Entregas</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="DashboardRepartidor" asp-action="Index">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="RepartidorPedidos" asp-action="Index">Mis Entregas</a></li>
                             }
                         }
                         else
                         {
-                            <li class="nav-item"><a class="nav-link text-dark" href="#como-funciona">Cómo Funciona</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" href="#restaurantes">Restaurantes</a></li>
+                            @* ── VISITANTE ── *@
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#como-funciona">Cómo Funciona</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#restaurantes">Restaurantes</a></li>
                         }
                     </ul>
-                    
-                    <form class="d-flex me-3" asp-controller="Home" asp-action="Buscar" method="get">
-                        <input class="form-control me-2" type="search" placeholder="Buscar pizza, sushi..." aria-label="Search" name="q" value="@ViewBag.Query">
-                        <button class="btn btn-outline-primary" type="submit">Buscar</button>
-                    </form>
+
+                    @* ─── BARRA DE BÚSQUEDA — Solo visible para Clientes ─── *@
+                    @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+                    {
+                        <form class="d-flex me-3" asp-controller="Home" asp-action="Buscar" method="get">
+                            <input class="form-control me-2" type="search" placeholder="Buscar pizza, sushi..." name="q" value="@ViewBag.Query" />
+                            <button class="btn btn-outline-primary" type="submit">Buscar</button>
+                        </form>
+                    }
+
+                    @* ─── MENÚ DERECHO (usuario / login) ─── *@
                     <ul class="navbar-nav">
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            var userName = User.Identity.Name;
-                            var role = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
-                            var dashboardAction = "Index";
-                            var dashboardController = role switch
-                            {
-                                "Admin" => "DashboardAdministrador",
-                                "Restaurante" => "DashboardRestaurante",
-                                "Repartidor" => "DashboardRepartidor",
-                                _ => "Home" // O Cliente
-                            };
-
                             <li class="nav-item">
-                                <span class="nav-link text-dark fw-bold me-3">Hola, @userName</span>
+                                <span class="nav-link fw-bold">Hola, @User.Identity.Name</span>
                             </li>
-                            if (role != "Cliente")
-                            {
-                                <li class="nav-item">
-                                    <a class="btn btn-outline-primary me-2" asp-controller="@dashboardController" asp-action="@dashboardAction">Mi Panel</a>
-                                </li>
-                            }
                             <li class="nav-item">
                                 <a class="btn btn-danger" asp-controller="Auth" asp-action="Logout">Cerrar Sesión</a>
                             </li>
@@ -86,10 +94,12 @@
                                 <a class="btn btn-outline-primary me-2" asp-controller="Auth" asp-action="Login">Iniciar Sesión</a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-primary" asp-controller="Auth" asp-action="Registro">Registrarse</a>
+                                @* Registrarse lleva a la pantalla de selección de tipo de cuenta *@
+                                <a class="btn btn-primary" asp-controller="Auth" asp-action="SeleccionTipoRegistro">Registrarse</a>
                             </li>
                         }
                     </ul>
+
                 </div>
             </div>
         </nav>

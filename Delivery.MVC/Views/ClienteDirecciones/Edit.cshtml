@@ -1,58 +1,66 @@
 @model Delivery.Modelos.Entidades.Direccion
-@{ ViewData["Title"] = "Editar Direccion"; }
-<h1 class="my-4">Editar Direccion</h1><hr />
-<div class="row"><div class="col-md-6">
+@{ ViewData["Title"] = "Editar Dirección"; }
+
+<h1>Editar Dirección</h1>
+<hr />
+
 <form asp-action="Edit">
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<input type="hidden" asp-for="Id" />
-<div class="mb-3">
-<label asp-for="UsuarioId" class="form-label"></label>
-<input asp-for="UsuarioId" class="form-control" />
-<span asp-validation-for="UsuarioId" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Alias" class="form-label"></label>
-<input asp-for="Alias" class="form-control" />
-<span asp-validation-for="Alias" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Calle" class="form-label"></label>
-<input asp-for="Calle" class="form-control" />
-<span asp-validation-for="Calle" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Numero" class="form-label"></label>
-<input asp-for="Numero" class="form-control" />
-<span asp-validation-for="Numero" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Ciudad" class="form-label"></label>
-<input asp-for="Ciudad" class="form-control" />
-<span asp-validation-for="Ciudad" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Referencia" class="form-label"></label>
-<input asp-for="Referencia" class="form-control" />
-<span asp-validation-for="Referencia" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Latitud" class="form-label"></label>
-<input asp-for="Latitud" class="form-control" />
-<span asp-validation-for="Latitud" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Longitud" class="form-label"></label>
-<input asp-for="Longitud" class="form-control" />
-<span asp-validation-for="Longitud" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="EsPrincipal" class="form-label"></label>
-<input asp-for="EsPrincipal" class="form-check-input" type="checkbox" />
-<span asp-validation-for="EsPrincipal" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="CreadoEn" class="form-label"></label>
-<input asp-for="CreadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="CreadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="ActualizadoEn" class="form-label"></label>
-<input asp-for="ActualizadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="ActualizadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Usuario" class="form-label"></label>
-<input asp-for="Usuario" class="form-control" />
-<span asp-validation-for="Usuario" class="text-danger"></span></div>
-<div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
-</form></div></div>
-<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UsuarioId" />
+
+    <div>
+        <label asp-for="Alias">Alias (Casa, Trabajo, Universidad…)</label>
+        <input asp-for="Alias" placeholder="Ej: Casa" />
+        <span asp-validation-for="Alias" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Calle">Calle Principal</label>
+        <input asp-for="Calle" placeholder="Ej: Av. 17 de Julio" />
+        <span asp-validation-for="Calle" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Numero">Número</label>
+        <input asp-for="Numero" placeholder="Ej: 5-32" />
+        <span asp-validation-for="Numero" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Ciudad">Ciudad</label>
+        <input asp-for="Ciudad" placeholder="Ej: Ibarra" />
+        <span asp-validation-for="Ciudad" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Referencia">Referencia</label>
+        <input asp-for="Referencia" placeholder="Ej: Frente al parque central" />
+        <span asp-validation-for="Referencia" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Latitud">Latitud (opcional)</label>
+        <input asp-for="Latitud" />
+        <span asp-validation-for="Latitud" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Longitud">Longitud (opcional)</label>
+        <input asp-for="Longitud" />
+        <span asp-validation-for="Longitud" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="EsPrincipal">¿Es mi dirección principal?</label>
+        <input asp-for="EsPrincipal" type="checkbox" />
+    </div>
+
+    <br />
+    <button type="submit">Actualizar Dirección</button>
+    <a asp-action="Index">Cancelar</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

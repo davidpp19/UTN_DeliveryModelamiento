@@ -9,64 +9,49 @@
 {
     <!-- HOME CLIENTE -->
     <div class="container mt-4">
-        <div class="alert alert-primary shadow-sm" role="alert">
-            <h4 class="alert-heading">¡Hola, @User.Identity?.Name!</h4>
+        <div class="alert alert-primary" role="alert">
+            <h4>¡Hola, @User.Identity?.Name!</h4>
             <p>Bienvenido de vuelta a RayoExpres. ¿Qué se te antoja hoy?</p>
         </div>
 
         @if (Model.Cupones.Any())
         {
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h5>Tus Cupones Activos</h5>
-                    <div class="d-flex flex-row overflow-auto gap-3 pb-2">
-                        @foreach (var cupon in Model.Cupones)
-                        {
-                            <div class="card border-success shadow-sm" style="min-width: 250px;">
-                                <div class="card-body text-center bg-success text-white rounded">
-                                    <h5 class="card-title fw-bold">@cupon.Codigo</h5>
-                                    <p class="card-text mb-0">@(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje ? $"{cupon.ValorDescuento}%" : $"${cupon.ValorDescuento}") de descuento</p>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-
-        <h3 class="mb-3" id="categorias">Categorías</h3>
-        @if (Model.Categorias.Any())
-        {
-            <div class="d-flex flex-wrap gap-2 mb-4">
-                @foreach (var cat in Model.Categorias)
+            <h5>Tus Cupones Activos</h5>
+            <div class="d-flex flex-row overflow-auto gap-3 pb-2 mb-4">
+                @foreach (var cupon in Model.Cupones)
                 {
-                    <a href="/Home/Buscar?q=@cat.Nombre" class="btn btn-outline-secondary rounded-pill">@cat.Nombre</a>
+                    <div class="card border-success" style="min-width: 220px;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@cupon.Codigo</h5>
+                            <p>@(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje ? $"{cupon.ValorDescuento}%" : $"${cupon.ValorDescuento}") de descuento</p>
+                        </div>
+                    </div>
                 }
             </div>
         }
-        else
-        {
-            <div class="alert alert-secondary">No existen categorías disponibles.</div>
-        }
 
-        <h3 class="mb-3">Restaurantes Destacados</h3>
+        <h3 id="restaurantes">Restaurantes Disponibles</h3>
         @if (Model.RestaurantesDestacados.Any())
         {
             <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
                 @foreach (var res in Model.RestaurantesDestacados)
                 {
                     <div class="col">
-                        <div class="card h-100 shadow-sm">
-                            <img src="@res.LogoUrl" class="card-img-top" alt="@res.Nombre" style="height: 150px; object-fit: cover;">
+                        <div class="card h-100">
+                            <img src="@res.LogoUrl" class="card-img-top" alt="@res.Nombre" style="height: 160px; object-fit: cover;"
+                                 onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80'" />
                             <div class="card-body">
-                                <h5 class="card-title">@res.Nombre <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> 4.5</span></h5>
-                                <p class="card-text text-muted">@res.Categoria</p>
-                                <p class="small mb-1"><i class="bi bi-geo-alt"></i> @res.Calle, @res.Ciudad</p>
-                                <p class="small mb-1"><i class="bi bi-clock"></i> ~30 min</p>
-                                <p class="small text-success"><i class="bi bi-truck"></i> Envío: $@res.CostoEnvioBase.ToString("0.00")</p>
+                                <h5 class="card-title">@res.Nombre</h5>
+                                <p class="text-muted">@res.Categoria</p>
+                                <p class="small">@res.Calle, @res.Ciudad</p>
+                                @if (res.HoraApertura.HasValue && res.HoraCierre.HasValue)
+                                {
+                                    <p class="small">Horario: @res.HoraApertura?.ToString(@"hh\:mm") — @res.HoraCierre?.ToString(@"hh\:mm")</p>
+                                }
+                                <p class="small">Envío: $@res.CostoEnvioBase.ToString("0.00")</p>
                             </div>
-                            <div class="card-footer bg-white border-top-0 d-grid">
-                                <a asp-action="Restaurante" asp-route-id="@res.Id" class="btn btn-primary">Ver Menú</a>
+                            <div class="card-footer">
+                                <a asp-action="Restaurante" asp-route-id="@res.Id">Ver Menú</a>
                             </div>
                         </div>
                     </div>
@@ -75,7 +60,7 @@
         }
         else
         {
-            <div class="alert alert-secondary">No existen restaurantes destacados disponibles.</div>
+            <p>No hay restaurantes disponibles en este momento.</p>
         }
 
         <h3 class="mb-3">Productos Populares</h3>
@@ -85,16 +70,15 @@
                 @foreach (var prod in Model.ProductosDestacados)
                 {
                     <div class="col">
-                        <div class="card h-100 shadow-sm border-0">
-                            <img src="@prod.ImagenUrl" class="card-img-top rounded" alt="@prod.Nombre" style="height: 120px; object-fit: cover;">
-                            <div class="card-body p-2">
-                                <h6 class="card-title mb-1">@prod.Nombre</h6>
-                                <p class="text-success fw-bold mb-2">$@prod.Precio.ToString("0.00")</p>
-                                <form asp-controller="ClienteCarrito" asp-action="Agregar" method="post" class="d-grid">
-                                    <input type="hidden" name="ProductoId" value="@prod.Id" />
-                                    <input type="hidden" name="Cantidad" value="1" />
-                                    <input type="hidden" name="RestauranteId" value="@prod.RestauranteId" />
-                                    <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-cart-plus"></i> Agregar</button>
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6>@prod.Nombre</h6>
+                                <p class="text-success">$@prod.Precio.ToString("0.00")</p>
+                                <form asp-controller="ClienteCarrito" asp-action="Agregar" method="post">
+                                    <input type="hidden" name="productoId" value="@prod.Id" />
+                                    <input type="hidden" name="cantidad" value="1" />
+                                    <input type="hidden" name="restauranteId" value="@prod.RestauranteId" />
+                                    <button type="submit">Agregar al Carrito</button>
                                 </form>
                             </div>
                         </div>
@@ -102,23 +86,20 @@
                 }
             </div>
         }
-        else
-        {
-            <div class="alert alert-secondary">No existen productos registrados.</div>
-        }
     </div>
 }
 else
 {
-    <!-- HOME PÚBLICO -->
-    <div class="p-5 mb-4 bg-light rounded-3 shadow text-center mt-3" style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);">
+    <!-- HOME PÚBLICO (visitante, admin, repartidor, restaurante) -->
+    <div class="p-5 mb-4 bg-light rounded-3 text-center mt-3">
         <div class="container-fluid py-5">
             <h1 class="display-4 fw-bold text-primary">RayoExpres</h1>
             <p class="col-md-8 mx-auto fs-4 text-muted">Tu comida favorita, entregada en Ibarra a la velocidad del rayo.</p>
             <p class="lead">Pide de los mejores restaurantes, con pagos seguros y entregas ultrarrápidas.</p>
             <div class="mt-4">
-                <a asp-controller="Auth" asp-action="Registro" class="btn btn-primary btn-lg px-4 me-md-2">Regístrate Ahora</a>
-                <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary btn-lg px-4">Iniciar Sesión</a>
+                @* Registrarse lleva a selección de tipo de cuenta *@
+                <a asp-controller="Auth" asp-action="SeleccionTipoRegistro" class="btn btn-primary btn-lg me-2">Regístrate Ahora</a>
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary btn-lg">Iniciar Sesión</a>
             </div>
         </div>
     </div>
@@ -126,19 +107,16 @@ else
     <div class="container mt-5">
         <div class="row text-center mb-5" id="beneficios">
             <div class="col-md-4">
-                <i class="bi bi-lightning-charge text-warning" style="font-size: 3rem;"></i>
-                <h4 class="mt-3">Entregas Rápidas</h4>
+                <h4>Entregas Rápidas</h4>
                 <p class="text-muted">Nuestros repartidores están siempre cerca para que tu comida llegue caliente.</p>
             </div>
             <div class="col-md-4">
-                <i class="bi bi-shield-lock text-success" style="font-size: 3rem;"></i>
-                <h4 class="mt-3">Pagos Seguros</h4>
+                <h4>Pagos Seguros</h4>
                 <p class="text-muted">Múltiples métodos de pago avalados por estrictos estándares de seguridad.</p>
             </div>
             <div class="col-md-4">
-                <i class="bi bi-shop text-primary" style="font-size: 3rem;"></i>
-                <h4 class="mt-3">Los Mejores Locales</h4>
-                <p class="text-muted">Más de 50 restaurantes en Ibarra confían en RayoExpres.</p>
+                <h4>Los Mejores Locales</h4>
+                <p class="text-muted">Los mejores restaurantes de Ibarra en un solo lugar.</p>
             </div>
         </div>
 
@@ -148,22 +126,22 @@ else
             <h3 class="text-center mb-4">¿Cómo funciona RayoExpres?</h3>
             <div class="row text-center">
                 <div class="col-md-3">
-                    <h1 class="text-muted">1</h1>
+                    <h2 class="text-muted">1</h2>
                     <h5>Busca</h5>
                     <p class="small">Encuentra el restaurante o platillo que deseas.</p>
                 </div>
                 <div class="col-md-3">
-                    <h1 class="text-muted">2</h1>
+                    <h2 class="text-muted">2</h2>
                     <h5>Pide</h5>
                     <p class="small">Agrega a tu carrito y aplica tus cupones.</p>
                 </div>
                 <div class="col-md-3">
-                    <h1 class="text-muted">3</h1>
+                    <h2 class="text-muted">3</h2>
                     <h5>Paga</h5>
                     <p class="small">Usa efectivo, tarjeta o transferencia de forma segura.</p>
                 </div>
                 <div class="col-md-3">
-                    <h1 class="text-muted">4</h1>
+                    <h2 class="text-muted">4</h2>
                     <h5>Disfruta</h5>
                     <p class="small">Recibe tu pedido en minutos.</p>
                 </div>
@@ -172,22 +150,34 @@ else
 
         <hr />
 
+        @* ──── TODOS LOS RESTAURANTES (vista pública) ──── *@
         <div id="restaurantes" class="my-5">
-            <h3 class="mb-4 text-center">Nuevos Restaurantes en Ibarra</h3>
-            @if (Model.NuevosRestaurantes.Any())
+            <h3 class="mb-4 text-center">Restaurantes Aliados en Ibarra</h3>
+
+            @if (Model.TodosRestaurantes.Any())
             {
                 <div class="row row-cols-1 row-cols-md-3 g-4">
-                    @foreach (var res in Model.NuevosRestaurantes)
+                    @foreach (var res in Model.TodosRestaurantes)
                     {
                         <div class="col">
-                            <div class="card h-100 shadow-sm border-0">
-                                <img src="@res.LogoUrl" class="card-img-top" alt="@res.Nombre" style="height: 200px; object-fit: cover;">
+                            <div class="card h-100">
+                                <img src="@res.LogoUrl"
+                                     class="card-img-top"
+                                     alt="@res.Nombre"
+                                     style="height: 200px; object-fit: cover;"
+                                     onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80'" />
                                 <div class="card-body">
                                     <h5 class="card-title">@res.Nombre</h5>
                                     <p class="text-muted small">@res.Categoria</p>
+                                    <p class="small">@res.Calle, @res.Ciudad</p>
+                                    @if (res.HoraApertura.HasValue && res.HoraCierre.HasValue)
+                                    {
+                                        <p class="small">Horario: @res.HoraApertura?.ToString(@"hh\:mm") — @res.HoraCierre?.ToString(@"hh\:mm")</p>
+                                    }
+                                    <p class="small">Costo envío: $@res.CostoEnvioBase.ToString("0.00")</p>
                                 </div>
-                                <div class="card-footer bg-white border-0 text-center pb-3">
-                                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-primary w-100">Ver Menú</a>
+                                <div class="card-footer text-center">
+                                    <a asp-controller="Auth" asp-action="Login">Inicia sesión para ver el menú</a>
                                 </div>
                             </div>
                         </div>
@@ -196,7 +186,7 @@ else
             }
             else
             {
-                <div class="alert alert-secondary">No existen restaurantes disponibles por el momento.</div>
+                <div class="alert alert-secondary text-center">No hay restaurantes disponibles en este momento.</div>
             }
         </div>
     </div>

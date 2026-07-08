@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -43,14 +44,25 @@ namespace Delivery.MVC.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            return View(new Direccion());
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Direccion entity)
         {
+            // El UsuarioId siempre viene del usuario autenticado, nunca del formulario
             var userId = GetMyUsuarioId();
             entity.UsuarioId = userId;
+            entity.CreadoEn  = DateTime.UtcNow;
+
+            // Eliminar el UsuarioId del ModelState para que no cause error de validación
+            ModelState.Remove(nameof(entity.UsuarioId));
+            ModelState.Remove(nameof(entity.CreadoEn));
+
+            if (!ModelState.IsValid)
+                return View(entity);
+
             await _direccionConsumer.CreateAsync(entity);
             return RedirectToAction(nameof(Index));
         }

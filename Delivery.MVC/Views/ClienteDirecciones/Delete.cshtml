@@ -1,36 +1,29 @@
 @model Delivery.Modelos.Entidades.Direccion
-@{ ViewData["Title"] = "Eliminar Direccion"; }
-<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
-<dl class="row">
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Alias)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Alias)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Calle)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Calle)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Numero)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Numero)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Ciudad)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Ciudad)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Referencia)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Referencia)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Latitud)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Latitud)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Longitud)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Longitud)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.EsPrincipal)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.EsPrincipal)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+@{ ViewData["Title"] = "Eliminar Dirección"; }
+
+<h1>Eliminar Dirección</h1>
+<p>¿Estás seguro de que deseas eliminar esta dirección?</p>
+<hr />
+
+<dl>
+    <dt>Alias</dt>
+    <dd>@Model.Alias</dd>
+
+    <dt>Dirección</dt>
+    <dd>@Model.Calle @Model.Numero</dd>
+
+    <dt>Ciudad</dt>
+    <dd>@Model.Ciudad</dd>
+
+    <dt>Referencia</dt>
+    <dd>@Model.Referencia</dd>
+
+    <dt>Dirección Principal</dt>
+    <dd>@(Model.EsPrincipal ? "Sí" : "No")</dd>
 </dl>
+
 <form asp-action="Delete">
-<input type="hidden" asp-for="Id" />
-<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
-<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+    <input type="hidden" asp-for="Id" />
+    <button type="submit">Confirmar Eliminación</button>
+    <a asp-action="Index">Cancelar</a>
 </form>
