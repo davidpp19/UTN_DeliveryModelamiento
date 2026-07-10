@@ -1,0 +1,128 @@
+@model Delivery.Modelos.Entidades.Pedido
+@{
+    ViewData["Title"] = "Detalle del Pedido";
+}
+
+<div class="container mt-4">
+    <h2>Detalles de tu Pedido #@Model.Id</h2>
+    <hr />
+
+    <div class="row">
+        <!-- Columna Izquierda: Info General -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Información General</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Restaurante</dt>
+                        <dd class="col-sm-8">@(Model.Restaurante?.Nombre ?? "N/A")</dd>
+
+                        <dt class="col-sm-4">Fecha Pedido</dt>
+                        <dd class="col-sm-8">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-info text-dark">@Model.EstadoPedido.ToString()</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Dirección</dt>
+                        <dd class="col-sm-8">
+                            @(Model.DireccionEntrega?.Calle) @(Model.DireccionEntrega?.Numero)
+                            <br /><small class="text-muted">@(Model.DireccionEntrega?.Referencia)</small>
+                        </dd>
+                        
+                        <dt class="col-sm-4">Método de Pago</dt>
+                        <dd class="col-sm-8">@Model.TipoMetodoPago.ToString()</dd>
+
+                        @if (Model.Repartidor != null && Model.Repartidor.Usuario != null)
+                        {
+                            <dt class="col-sm-4">Repartidor</dt>
+                            <dd class="col-sm-8">
+                                @Model.Repartidor.Usuario.Nombre @Model.Repartidor.Usuario.Apellidos
+                                <br /><small>Licencia: @Model.Repartidor.LicenciaConducir</small>
+                            </dd>
+                        }
+                        
+                        @if (!string.IsNullOrWhiteSpace(Model.Notas))
+                        {
+                            <dt class="col-sm-4">Notas</dt>
+                            <dd class="col-sm-8">@Model.Notas</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resumen Financiero y Productos -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Resumen del Pedido</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cant.</th>
+                                <th class="text-end">Precio</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Detalles != null && Model.Detalles.Any())
+                            {
+                                foreach (var detalle in Model.Detalles)
+                                {
+                                    <tr>
+                                        <td>@(detalle.Producto?.Nombre ?? "Producto ID " + detalle.ProductoId)</td>
+                                        <td>@detalle.Cantidad</td>
+                                        <td class="text-end">$@detalle.PrecioUnitario.ToString("0.00")</td>
+                                        <td class="text-end fw-bold">$@detalle.Subtotal.ToString("0.00")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">No hay detalles de productos disponibles.</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="3" class="text-end">Subtotal Productos:</td>
+                                <td class="text-end">$@Model.Subtotal.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-end">Costo Envío:</td>
+                                <td class="text-end">$@Model.CostoEnvio.ToString("0.00")</td>
+                            </tr>
+                            @if (Model.MontoDescuento > 0)
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-end text-danger">Descuento:</td>
+                                    <td class="text-end text-danger">-$@Model.MontoDescuento.ToString("0.00")</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td colspan="3" class="text-end fw-bold">TOTAL:</td>
+                                <td class="text-end fw-bold fs-5 text-primary">$@Model.Total.ToString("0.00")</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
+        {
+            <a asp-action="Calificar" asp-route-id="@Model.Id" class="btn btn-warning me-2">Calificar Pedido</a>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary">Volver al Historial</a>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Delivery.Modelos.DTOs;
+using Delivery.Consumer.Interfaces;
+
+namespace Delivery.MVC.Controllers
+{
+    public class RegistroRestauranteController : Controller
+    {
+        private readonly IAuthConsumer _authConsumer;
+
+        public RegistroRestauranteController(IAuthConsumer authConsumer)
+        {
+            _authConsumer = authConsumer;
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View(new RegistroRestauranteDto());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(RegistroRestauranteDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(dto);
+            }
+
+            var response = await _authConsumer.RegistroRestauranteAsync(dto);
+
+            if (response == null)
+            {
+                ModelState.AddModelError(string.Empty, "Hubo un error en el registro. Verifique que el correo o RUC no estén en uso.");
+                return View(dto);
+            }
+
+            // Auto-login
+            var claims = new System.Collections.Generic.List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, response.UsuarioId.ToString()),
+                new Claim(ClaimTypes.Name, response.Nombre),
+                new Claim(ClaimTypes.Email, response.Email),
+                new Claim(ClaimTypes.Role, response.Rol),
+                new Claim("JwtToken", response.Token)
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            return RedirectToAction("Index", "DashboardRestaurante");
+        }
+    }
+}

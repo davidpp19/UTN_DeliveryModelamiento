@@ -40,5 +40,15 @@ namespace Delivery.Consumer.Implementaciones
             }
             return null;
         }
+
+        public async Task<AuthResponseDto?> RegistroRestauranteAsync(RegistroRestauranteDto dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Auth/registro-restaurante", dto);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+            }
+            return null;
+        }
     }
 }

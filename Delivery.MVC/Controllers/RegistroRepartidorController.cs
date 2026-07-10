@@ -29,10 +29,23 @@ namespace Delivery.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(RegistroRepartidorDto dto)
+        public async Task<IActionResult> Index(RegistroRepartidorDto dto, string? accion = null)
         {
+            if (accion == "actualizar")
+            {
+                ModelState.Clear();
+                return View(dto);
+            }
+
             if (!ModelState.IsValid)
                 return View(dto);
+
+            // If Bicicleta, we don't need Placa and Licencia, so we can ignore or clear them.
+            if (dto.TipoVehiculo == Delivery.Modelos.Enums.TipoVehiculoEnum.Bicicleta)
+            {
+                dto.LicenciaConducir = "N/A";
+                dto.Placa = "N/A";
+            }
 
             var authResponse = await _authConsumer.RegistroRepartidorAsync(dto);
             if (authResponse != null)

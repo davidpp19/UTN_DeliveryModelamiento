@@ -25,6 +25,11 @@ namespace Delivery.Modelos.Entidades
         [StringLength(50)]
         public string? Categoria { get; set; }
 
+        [Column("ruc")]
+        [StringLength(20)]
+        public string? Ruc { get; set; }
+
+
         [Required]
         [Column("calle")]
         [StringLength(150)]

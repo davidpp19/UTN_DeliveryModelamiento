@@ -30,6 +30,14 @@ namespace Delivery.MVC.Controllers
         {
             var userId = GetMyUsuarioId();
             var repartidor = await _repartidorConsumer.GetByIdAsync(userId);
+            if (repartidor != null && repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Pendiente)
+            {
+                return RedirectToAction("EnRevision", "Home");
+            }
+            if (repartidor != null && repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Rechazado)
+            {
+                return RedirectToAction("Rechazado", "Home");
+            }
 
             var todos = await _pedidoConsumer.GetAllAsync();
             var misPedidos = todos.Where(p => p.RepartidorId == userId)

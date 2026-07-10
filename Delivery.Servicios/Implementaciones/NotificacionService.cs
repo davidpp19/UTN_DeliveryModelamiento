@@ -1,53 +1,82 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Delivery.Modelos;
 using Delivery.Modelos.DTOs;
+using Delivery.Modelos.Entidades;
 using Delivery.Servicios.Interfaces;
 
 namespace Delivery.Servicios.Implementaciones
 {
     public class NotificacionService : INotificacionService
     {
-        // En un futuro, aquí se inyectarán las fábricas o clientes de Stripe, Firebase, Twilio, SendGrid, etc.
+        private readonly DeliveryDbContext _context;
 
-        public NotificacionService()
+        public NotificacionService(DeliveryDbContext context)
         {
+            _context = context;
         }
 
         public async Task EnviarNotificacionAsync(MensajeNotificacionDto mensaje)
         {
-            // Simulación arquitectónica (Facade / Adapter preparado)
-            // Switch case basado en el mensaje.Canal
-            
-            /*
-            switch (mensaje.Canal)
+            // Insertar en la BD para que quede registrada
+            var entity = new Notificacion
             {
-                case Modelos.Enums.CanalNotificacionEnum.Email:
-                    // Await _emailService.SendAsync(...)
-                    break;
-                case Modelos.Enums.CanalNotificacionEnum.SMS:
-                    // Await _smsService.SendAsync(...)
-                    break;
-                case Modelos.Enums.CanalNotificacionEnum.WhatsApp:
-                    // Await _whatsappService.SendAsync(...)
-                    break;
-                case Modelos.Enums.CanalNotificacionEnum.Push:
-                    // Await _firebaseService.SendPushAsync(...)
-                    break;
-                case Modelos.Enums.CanalNotificacionEnum.SignalR:
-                    // Await _signalRHub.Clients.User(userId).SendAsync(...)
-                    break;
-            }
-            */
+                UsuarioId = mensaje.UsuarioDestinoId,
+                Titulo = mensaje.Asunto,
+                Mensaje = mensaje.Contenido,
+                CreadaEn = DateTime.UtcNow,
+                Leida = false
+            };
 
-            await Task.CompletedTask;
+            _context.Notificaciones.Add(entity);
+            await _context.SaveChangesAsync();
+
+            // Aquí en un futuro se enviaría el email, SMS o push real.
         }
 
         public async Task EnviarNotificacionMultiCanalAsync(MensajeNotificacionDto mensaje, params Delivery.Modelos.Enums.CanalNotificacionEnum[] canales)
         {
-            foreach (var canal in canales)
+            // Almacenamos una sola vez en BD, asumiendo que los canales son medios de entrega, pero la notificación lógica es una sola.
+            var entity = new Notificacion
             {
-                mensaje.Canal = canal;
-                await EnviarNotificacionAsync(mensaje);
+                UsuarioId = mensaje.UsuarioDestinoId,
+                Titulo = mensaje.Asunto,
+                Mensaje = mensaje.Contenido,
+                CreadaEn = DateTime.UtcNow,
+                Leida = false
+            };
+            
+            _context.Notificaciones.Add(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<NotificacionDto>> GetNotificacionesByUsuarioAsync(long usuarioId)
+        {
+            return await _context.Notificaciones
+                .Where(n => n.UsuarioId == usuarioId)
+                .OrderByDescending(n => n.CreadaEn)
+                .Select(n => new NotificacionDto
+                {
+                    Id = n.Id,
+                    UsuarioId = n.UsuarioId,
+                    Titulo = n.Titulo,
+                    Mensaje = n.Mensaje,
+                    Leida = n.Leida,
+                    CreadaEn = n.CreadaEn
+                })
+                .ToListAsync();
+        }
+
+        public async Task MarcarComoLeidaAsync(long notificacionId, long usuarioId)
+        {
+            var notificacion = await _context.Notificaciones.FirstOrDefaultAsync(n => n.Id == notificacionId && n.UsuarioId == usuarioId);
+            if (notificacion != null)
+            {
+                notificacion.Leida = true;
+                await _context.SaveChangesAsync();
             }
         }
     }

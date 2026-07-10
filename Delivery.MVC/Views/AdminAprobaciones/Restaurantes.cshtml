@@ -1,0 +1,52 @@
+@model IEnumerable<Delivery.Modelos.Entidades.Restaurante>
+@{
+    ViewData["Title"] = "Aprobaciones de Restaurantes";
+}
+
+<div class="container mt-4">
+    <h2>Solicitudes de Restaurantes Pendientes</h2>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">@TempData["Mensaje"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No hay solicitudes pendientes en este momento.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Restaurante</th>
+                    <th>RUC</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>Fecha Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Nombre</td>
+                        <td>@item.Ruc</td>
+                        <td>@item.Calle, @item.Ciudad</td>
+                        <td>@item.Telefono</td>
+                        <td>@item.CreadoEn.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <form method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" asp-action="AprobarRestaurante" class="btn btn-sm btn-success">Aprobar</button>
+                                <button type="submit" asp-action="RechazarRestaurante" class="btn btn-sm btn-danger ms-1">Rechazar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

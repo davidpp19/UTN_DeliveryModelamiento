@@ -36,14 +36,25 @@
                             @* ── ADMINISTRADOR ── *@
                             else if (User.IsInRole("Admin"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="DashboardAdministrador" asp-action="Index">Dashboard</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="AdminUsuarios" asp-action="Index">Usuarios</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="AdminRestaurantes" asp-action="Index">Restaurantes</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="AdminRepartidores" asp-action="Index">Repartidores</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="AdminProductos" asp-action="Index">Productos</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="AdminPedidos" asp-action="Index">Pedidos</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="AdminCupones" asp-action="Index">Cupones</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Auditorias" asp-action="Index">Auditoría</a></li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Administración
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                                        <li><a class="dropdown-item" asp-controller="DashboardAdministrador" asp-action="Index">Dashboard</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminUsuarios" asp-action="Index">Usuarios</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminRestaurantes" asp-action="Index">Restaurantes</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminRepartidores" asp-action="Index">Repartidores</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminProductos" asp-action="Index">Productos</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminPedidos" asp-action="Index">Pedidos</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminCupones" asp-action="Index">Cupones</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Repartidores">Sol. Repartidores</a></li>
+                                        <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Restaurantes">Sol. Restaurantes</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-controller="Auditorias" asp-action="Index">Auditoría</a></li>
+                                    </ul>
+                                </li>
                             }
                             @* ── RESTAURANTE ── *@
                             else if (User.IsInRole("Restaurante"))

@@ -1,0 +1,118 @@
+@model Delivery.Modelos.DTOs.RegistroRestauranteDto
+@{
+    ViewData["Title"] = "Registro de Restaurante";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Registra tu Restaurante en RayoExpres</h2>
+            
+            <form asp-action="Index" method="post" class="card shadow-sm p-4">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <h4 class="mb-3">Datos del Propietario</h4>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="NombrePropietario" class="form-label">Nombres</label>
+                        <input asp-for="NombrePropietario" class="form-control" />
+                        <span asp-validation-for="NombrePropietario" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ApellidosPropietario" class="form-label">Apellidos</label>
+                        <input asp-for="ApellidosPropietario" class="form-control" />
+                        <span asp-validation-for="ApellidosPropietario" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Email" class="form-label">Correo Electrónico</label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Telefono" class="form-label">Teléfono</label>
+                        <input asp-for="Telefono" class="form-control" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Password" class="form-label">Contraseña</label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ConfirmarPassword" class="form-label">Confirmar Contraseña</label>
+                        <input asp-for="ConfirmarPassword" type="password" class="form-control" />
+                        <span asp-validation-for="ConfirmarPassword" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+                <h4 class="mb-3">Datos del Restaurante</h4>
+
+                <div class="mb-3">
+                    <label asp-for="NombreRestaurante" class="form-label">Nombre del Restaurante</label>
+                    <input asp-for="NombreRestaurante" class="form-control" />
+                    <span asp-validation-for="NombreRestaurante" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Descripcion" class="form-label">Descripción</label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="RUC" class="form-label">RUC</label>
+                        <input asp-for="RUC" class="form-control" />
+                        <span asp-validation-for="RUC" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Categoria" class="form-label">Categoría (ej: Pizza, Sushi)</label>
+                        <input asp-for="Categoria" class="form-control" />
+                        <span asp-validation-for="Categoria" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Calle" class="form-label">Dirección (Calle Principal)</label>
+                        <input asp-for="Calle" class="form-control" />
+                        <span asp-validation-for="Calle" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Ciudad" class="form-label">Ciudad</label>
+                        <input asp-for="Ciudad" class="form-control" />
+                        <span asp-validation-for="Ciudad" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="HoraApertura" class="form-label">Hora de Apertura</label>
+                        <input asp-for="HoraApertura" type="time" class="form-control" />
+                        <span asp-validation-for="HoraApertura" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="HoraCierre" class="form-label">Hora de Cierre</label>
+                        <input asp-for="HoraCierre" type="time" class="form-control" />
+                        <span asp-validation-for="HoraCierre" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Registrar Restaurante</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

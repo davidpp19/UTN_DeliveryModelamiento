@@ -57,24 +57,35 @@
     </div>
 
     <hr />
-    <h4>Datos de Licencia</h4>
-
-    <div>
-        <label asp-for="LicenciaConducir">Número de Licencia de Conducir</label>
-        <input asp-for="LicenciaConducir" placeholder="Ej: LIC-IMB-1234567" />
-        <span asp-validation-for="LicenciaConducir" class="text-danger"></span>
-    </div>
-
-    <hr />
     <h4>Datos del Vehículo</h4>
 
     <div>
         <label asp-for="TipoVehiculo">Tipo de Vehículo</label>
-        <select asp-for="TipoVehiculo"
-                asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.TipoVehiculoEnum>()">
-        </select>
+        <div class="d-flex align-items-center">
+            <select asp-for="TipoVehiculo"
+                    asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.TipoVehiculoEnum>()" class="form-control" style="width: auto; margin-right: 10px;">
+            </select>
+            <button type="submit" name="accion" value="actualizar" formnovalidate class="btn btn-secondary btn-sm">Confirmar Tipo</button>
+        </div>
         <span asp-validation-for="TipoVehiculo" class="text-danger"></span>
+        <small class="text-muted d-block">Selecciona y haz clic en "Confirmar Tipo" para actualizar los campos requeridos.</small>
     </div>
+
+    @if (Model != null && Model.TipoVehiculo != Delivery.Modelos.Enums.TipoVehiculoEnum.Bicicleta)
+    {
+        <hr />
+        <h4>Datos de Licencia (Requerido para @Model.TipoVehiculo.ToString())</h4>
+        <div>
+            <label asp-for="LicenciaConducir">Número de Licencia de Conducir</label>
+            <input asp-for="LicenciaConducir" placeholder="Ej: LIC-IMB-1234567" />
+            <span asp-validation-for="LicenciaConducir" class="text-danger"></span>
+        </div>
+    }
+    else
+    {
+        <!-- Hidden para que pase la validación del modelo que espera string -->
+        <input type="hidden" asp-for="LicenciaConducir" value="N/A" />
+    }
 
     <div>
         <label asp-for="Marca">Marca</label>
@@ -94,11 +105,18 @@
         <span asp-validation-for="Color" class="text-danger"></span>
     </div>
 
-    <div>
-        <label asp-for="Placa">Placa</label>
-        <input asp-for="Placa" placeholder="Ej: PBX-1234" />
-        <span asp-validation-for="Placa" class="text-danger"></span>
-    </div>
+    @if (Model != null && Model.TipoVehiculo != Delivery.Modelos.Enums.TipoVehiculoEnum.Bicicleta)
+    {
+        <div>
+            <label asp-for="Placa">Placa</label>
+            <input asp-for="Placa" placeholder="Ej: PBX-1234" />
+            <span asp-validation-for="Placa" class="text-danger"></span>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" asp-for="Placa" value="N/A" />
+    }
 
     <div>
         <label asp-for="Anio">Año del Vehículo</label>
@@ -106,7 +124,7 @@
     </div>
 
     <br />
-    <button type="submit">Registrarme como Repartidor</button>
+    <button type="submit" name="accion" value="registrar" class="btn btn-primary">Registrarme como Repartidor</button>
 </form>
 
 @section Scripts {

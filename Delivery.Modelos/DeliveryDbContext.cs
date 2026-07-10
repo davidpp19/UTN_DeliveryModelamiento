@@ -30,6 +30,7 @@ namespace Delivery.Modelos
         public DbSet<CuponUsuario> CuponesUsuarios { get; set; } = null!;
         public DbSet<Favorito> Favoritos { get; set; } = null!;
         public DbSet<RegistroAuditoria> RegistrosAuditoria { get; set; } = null!;
+        public DbSet<Notificacion> Notificaciones { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -242,6 +243,14 @@ namespace Delivery.Modelos
                 .WithMany()
                 .HasForeignKey(ra => ra.UsuarioId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Notificaciones
+            modelBuilder.Entity<Notificacion>()
+                .HasOne(n => n.Usuario)
+                .WithMany()
+                .HasForeignKey(n => n.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
+

@@ -17,20 +17,24 @@ namespace Delivery.API.Controllers
         private readonly IRepartidorService _repartidorService;
         private readonly IVehiculoService _vehiculoService;
         private readonly IRolService _rolService;
+        private readonly IRestauranteService _restauranteService;
 
         public AuthController(
             ISeguridadService seguridadService,
             IUsuarioService usuarioService,
             IRepartidorService repartidorService,
             IVehiculoService vehiculoService,
-            IRolService rolService)
+            IRolService rolService,
+            IRestauranteService restauranteService)
         {
             _seguridadService = seguridadService;
             _usuarioService = usuarioService;
             _repartidorService = repartidorService;
             _vehiculoService = vehiculoService;
             _rolService = rolService;
+            _restauranteService = restauranteService;
         }
+
 
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginDto loginDto)
@@ -68,6 +72,18 @@ namespace Delivery.API.Controllers
             var existente = await _usuarioService.GetByEmailAsync(dto.Email);
             if (existente != null)
                 return BadRequest(new { message = "El correo ya está registrado." });
+
+            // Validar Placa y Licencia únicas si no es bicicleta
+            if (dto.TipoVehiculo != TipoVehiculoEnum.Bicicleta)
+            {
+                var vehiculos = await _vehiculoService.GetAllAsync();
+                if (vehiculos.Any(v => v.Placa == dto.Placa))
+                    return BadRequest(new { message = "La placa ya está registrada en el sistema." });
+
+                var repartidores = await _repartidorService.GetAllAsync();
+                if (repartidores.Any(r => r.LicenciaConducir == dto.LicenciaConducir))
+                    return BadRequest(new { message = "La licencia ya está registrada en el sistema." });
+            }
 
             // Obtener rol Repartidor
             var roles = await _rolService.GetAllAsync();
@@ -130,6 +146,81 @@ namespace Delivery.API.Controllers
                 Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
                 Email    = usuarioCreado.Email,
                 Rol      = "Repartidor"
+            });
+        }
+
+        [HttpPost("registro-restaurante")]
+        public async Task<ActionResult<AuthResponseDto>> RegistroRestaurante([FromBody] RegistroRestauranteDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Verificar email único
+            var existente = await _usuarioService.GetByEmailAsync(dto.Email);
+            if (existente != null)
+                return BadRequest(new { message = "El correo ya está registrado." });
+
+            // Verificar RUC único
+            var restaurantes = await _restauranteService.GetAllAsync();
+            if (restaurantes.Any(r => r.Ruc == dto.RUC))
+                return BadRequest(new { message = "El RUC ya está registrado." });
+
+            // Obtener rol Restaurante
+            var roles = await _rolService.GetAllAsync();
+            var rolRestaurante = System.Linq.Enumerable.FirstOrDefault(roles, r => r.Nombre == "Restaurante");
+            if (rolRestaurante == null)
+                return StatusCode(500, new { message = "El rol Restaurante no está configurado en el sistema." });
+
+            var ahora = DateTime.UtcNow;
+
+            // 1. Crear Usuario
+            var usuario = new Usuario
+            {
+                Nombre       = dto.NombrePropietario,
+                Apellidos    = dto.ApellidosPropietario,
+                Email        = dto.Email,
+                Telefono     = dto.Telefono,
+                PasswordHash = _seguridadService.HashearPassword(dto.Password),
+                RolId        = rolRestaurante.Id,
+                TipoUsuario  = TipoUsuarioEnum.Restaurante,
+                Activo       = true,
+                CreadoEn     = ahora
+            };
+            var usuarioCreado = await _usuarioService.CreateAsync(usuario);
+            if (usuarioCreado == null)
+                return StatusCode(500, new { message = "Error al crear el usuario." });
+
+            // 2. Crear Restaurante
+            var restaurante = new Restaurante
+            {
+                Nombre       = dto.NombreRestaurante,
+                Descripcion  = dto.Descripcion,
+                Categoria    = dto.Categoria,
+                Ruc          = dto.RUC,
+                Calle        = dto.Calle,
+                Ciudad       = dto.Ciudad,
+                Telefono     = dto.Telefono,
+                Email        = dto.Email,
+                HoraApertura = dto.HoraApertura,
+                HoraCierre   = dto.HoraCierre,
+                Estado       = EstadoRestauranteEnum.Pendiente,
+                Abierto      = false,
+                CreadoPor    = usuarioCreado.Id,
+                CreadoEn     = ahora
+            };
+            var restauranteCreado = await _restauranteService.CreateAsync(restaurante);
+            if (restauranteCreado == null)
+                return StatusCode(500, new { message = "Error al crear el perfil de restaurante." });
+
+            // 3. Devolver token para auto-login
+            var token = _seguridadService.GenerarTokenJwt(usuarioCreado.Id, usuarioCreado.Email, "Restaurante");
+            return Ok(new AuthResponseDto
+            {
+                Token    = token,
+                UsuarioId = usuarioCreado.Id,
+                Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
+                Email    = usuarioCreado.Email,
+                Rol      = "Restaurante"
             });
         }
 
