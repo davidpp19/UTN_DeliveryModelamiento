@@ -36,15 +36,10 @@ namespace Delivery.Modelos
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.HasPostgresEnum<TipoUsuarioEnum>();
-            modelBuilder.HasPostgresEnum<EstadoRestauranteEnum>();
-            modelBuilder.HasPostgresEnum<EstadoAprobacionEnum>();
-            modelBuilder.HasPostgresEnum<TipoVehiculoEnum>();
-            modelBuilder.HasPostgresEnum<EstadoPedidoEnum>();
-            modelBuilder.HasPostgresEnum<TipoMetodoPagoEnum>();
-            modelBuilder.HasPostgresEnum<EstadoPagoEnum>();
-            modelBuilder.HasPostgresEnum<TipoDescuentoEnum>();
-            modelBuilder.HasPostgresEnum<TipoAccionAuditoriaEnum>();
+            // NOTA: Las columnas de estado/tipo en la BD son INTEGER.
+            // Se omite HasPostgresEnum para que EF Core convierta int <-> enum correctamente.
+            // Si se usa HasPostgresEnum, Npgsql espera columnas de tipo texto nativo, lo que
+            // produce fallos silenciosos al filtrar con LINQ.
 
             // Configuración Fluent API
             modelBuilder.Entity<Usuario>()

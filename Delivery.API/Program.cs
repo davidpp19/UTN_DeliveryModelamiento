@@ -2,7 +2,6 @@ using Delivery.Modelos;
 using Delivery.Servicios.Interfaces;
 using Delivery.Servicios.Implementaciones;
 using Microsoft.EntityFrameworkCore;
-using Delivery.Modelos.Enums;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -10,32 +9,25 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORRECCIÓN: Las columnas de estado/tipo son INTEGER en la BD (no tipo enum nativo PostgreSQL).
+// El mapeo MapEnum<>() de Npgsql espera un tipo texto nativo, lo cual generaba
+// incompatibilidad y hacía que los filtros LINQ (.Where) fallaran silenciosamente.
+// Al usar simplemente la cadena de conexión, EF Core convierte los enteros a enums C# correctamente.
 var connectionString = "Server=127.0.0.1;Port=5432;Database=UTN_DeliveryModelamiento;User Id=postgres;Password=Megustanlosgatos:3S;";
-var dataSourceBuilder = new Npgsql.NpgsqlDataSourceBuilder(connectionString);
-dataSourceBuilder.MapEnum<TipoUsuarioEnum>();
-dataSourceBuilder.MapEnum<EstadoRestauranteEnum>();
-dataSourceBuilder.MapEnum<EstadoAprobacionEnum>();
-dataSourceBuilder.MapEnum<TipoVehiculoEnum>();
-dataSourceBuilder.MapEnum<EstadoPedidoEnum>();
-dataSourceBuilder.MapEnum<TipoMetodoPagoEnum>();
-dataSourceBuilder.MapEnum<EstadoPagoEnum>();
-dataSourceBuilder.MapEnum<TipoDescuentoEnum>();
-dataSourceBuilder.MapEnum<TipoAccionAuditoriaEnum>();
-var dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddDbContext<DeliveryDbContext>(options =>
-    options.UseNpgsql(dataSource));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IRolService, RolService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
