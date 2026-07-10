@@ -58,5 +58,12 @@ namespace Delivery.API.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("{id}/notificaciones")]
+        public async Task<IActionResult> GetNotificaciones(long id, [FromServices] Delivery.Servicios.Interfaces.INotificacionService _notificacionService)
+        {
+            var notificaciones = await _notificacionService.GetByUsuarioIdAsync(id);
+            return Ok(notificaciones);
+        }
     }
 }

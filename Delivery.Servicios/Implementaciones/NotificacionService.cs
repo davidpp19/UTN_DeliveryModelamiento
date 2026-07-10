@@ -19,22 +19,20 @@ namespace Delivery.Servicios.Implementaciones
             _context = context;
         }
 
-        public async Task EnviarNotificacionAsync(MensajeNotificacionDto mensaje)
+        public async Task<bool> EnviarNotificacionAsync(MensajeNotificacionDto mensajeDto)
         {
-            // Insertar en la BD para que quede registrada
-            var entity = new Notificacion
+            var notificacion = new Notificacion
             {
-                UsuarioId = mensaje.UsuarioDestinoId,
-                Titulo = mensaje.Asunto,
-                Mensaje = mensaje.Contenido,
+                UsuarioId = mensajeDto.UsuarioDestinoId,
+                Titulo = mensajeDto.Asunto,
+                Mensaje = mensajeDto.Contenido,
                 CreadaEn = DateTime.UtcNow,
                 Leida = false
             };
 
-            _context.Notificaciones.Add(entity);
+            _context.Notificaciones.Add(notificacion);
             await _context.SaveChangesAsync();
-
-            // Aquí en un futuro se enviaría el email, SMS o push real.
+            return true;
         }
 
         public async Task EnviarNotificacionMultiCanalAsync(MensajeNotificacionDto mensaje, params Delivery.Modelos.Enums.CanalNotificacionEnum[] canales)
@@ -51,6 +49,14 @@ namespace Delivery.Servicios.Implementaciones
             
             _context.Notificaciones.Add(entity);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Notificacion>> GetByUsuarioIdAsync(long usuarioId)
+        {
+            return await _context.Notificaciones
+                .Where(n => n.UsuarioId == usuarioId)
+                .OrderByDescending(n => n.CreadaEn)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<NotificacionDto>> GetNotificacionesByUsuarioAsync(long usuarioId)

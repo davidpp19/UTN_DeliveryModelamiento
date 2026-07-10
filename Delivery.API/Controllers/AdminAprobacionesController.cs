@@ -82,7 +82,7 @@ namespace Delivery.API.Controllers
         }
 
         [HttpPost("repartidores/{id}/rechazar")]
-        public async Task<IActionResult> RechazarRepartidor(long id)
+        public async Task<IActionResult> RechazarRepartidor(long id, [FromQuery] string? motivo = null)
         {
             var repartidor = await _repartidorService.GetByIdAsync(id);
             if (repartidor == null) return NotFound();
@@ -90,11 +90,13 @@ namespace Delivery.API.Controllers
             repartidor.EstadoAprobacion = EstadoAprobacionEnum.Rechazado;
             await _repartidorService.UpdateAsync(repartidor);
 
+            var textoMotivo = !string.IsNullOrEmpty(motivo) ? $" Motivo: {motivo}" : "";
+
             await _notificacionService.EnviarNotificacionAsync(new MensajeNotificacionDto
             {
                 UsuarioDestinoId = repartidor.UsuarioId,
                 Asunto = "Solicitud Rechazada",
-                Contenido = "Lamentablemente tu solicitud como repartidor ha sido rechazada.",
+                Contenido = $"Lamentablemente tu solicitud como repartidor ha sido rechazada.{textoMotivo}",
                 Canal = CanalNotificacionEnum.Email
             });
 
@@ -127,7 +129,7 @@ namespace Delivery.API.Controllers
         }
 
         [HttpPost("restaurantes/{id}/rechazar")]
-        public async Task<IActionResult> RechazarRestaurante(long id)
+        public async Task<IActionResult> RechazarRestaurante(long id, [FromQuery] string? motivo = null)
         {
             var restaurante = await _restauranteService.GetByIdAsync(id);
             if (restaurante == null) return NotFound();
@@ -135,13 +137,15 @@ namespace Delivery.API.Controllers
             restaurante.Estado = EstadoRestauranteEnum.Rechazado;
             await _restauranteService.UpdateAsync(restaurante);
 
+            var textoMotivo = !string.IsNullOrEmpty(motivo) ? $" Motivo: {motivo}" : "";
+
             if (restaurante.CreadoPor.HasValue)
             {
                 await _notificacionService.EnviarNotificacionAsync(new MensajeNotificacionDto
                 {
                     UsuarioDestinoId = restaurante.CreadoPor.Value,
                     Asunto = "Restaurante Rechazado",
-                    Contenido = "La solicitud de registro de tu restaurante ha sido rechazada.",
+                    Contenido = $"La solicitud de registro de tu restaurante ha sido rechazada.{textoMotivo}",
                     Canal = CanalNotificacionEnum.Email
                 });
             }

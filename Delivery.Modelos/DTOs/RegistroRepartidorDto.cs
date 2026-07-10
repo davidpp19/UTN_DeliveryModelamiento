@@ -58,5 +58,7 @@ namespace Delivery.Modelos.DTOs
         public string Modelo { get; set; } = string.Empty;
 
         public short? Anio { get; set; }
+
+        public string? FotoLicenciaBase64 { get; set; }
     }
 }

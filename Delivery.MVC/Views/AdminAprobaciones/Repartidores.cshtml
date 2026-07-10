@@ -23,6 +23,7 @@
                     <th>Nombre</th>
                     <th>Email</th>
                     <th>Licencia</th>
+                    <th>Foto Licencia</th>
                     <th>Fecha Registro</th>
                     <th>Acciones</th>
                 </tr>
@@ -34,12 +35,28 @@
                         <td>@(item.Usuario?.Nombre) @(item.Usuario?.Apellidos)</td>
                         <td>@(item.Usuario?.Email)</td>
                         <td>@item.LicenciaConducir</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.FotoLicenciaUrl))
+                            {
+                                <a href="@item.FotoLicenciaUrl" target="_blank">
+                                    <img src="@item.FotoLicenciaUrl" alt="Licencia" style="max-height: 50px; max-width: 80px;" />
+                                </a>
+                            }
+                            else
+                            {
+                                <span>No aplica</span>
+                            }
+                        </td>
                         <td>@item.CreadoEn.ToString("dd/MM/yyyy")</td>
                         <td>
                             <form method="post" class="d-inline">
                                 <input type="hidden" name="id" value="@item.UsuarioId" />
-                                <button type="submit" asp-action="AprobarRepartidor" class="btn btn-sm btn-success">Aprobar</button>
-                                <button type="submit" asp-action="RechazarRepartidor" class="btn btn-sm btn-danger ms-1">Rechazar</button>
+                                <button type="submit" asp-action="AprobarRepartidor" class="btn btn-sm btn-success mb-1">Aprobar</button>
+                                
+                                <div class="input-group input-group-sm mt-1">
+                                    <input type="text" name="motivoRechazo" class="form-control" placeholder="Motivo de rechazo" required />
+                                    <button type="submit" asp-action="RechazarRepartidor" class="btn btn-danger">Rechazar</button>
+                                </div>
                             </form>
                         </td>
                     </tr>

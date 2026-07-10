@@ -31,9 +31,9 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RechazarRepartidor(long id)
+        public async Task<IActionResult> RechazarRepartidor(long id, string motivoRechazo)
         {
-            await _aprobacionesConsumer.RechazarRepartidorAsync(id);
+            await _aprobacionesConsumer.RechazarRepartidorAsync(id, motivoRechazo);
             TempData["Mensaje"] = "Repartidor rechazado.";
             return RedirectToAction(nameof(Repartidores));
         }
@@ -54,9 +54,9 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RechazarRestaurante(long id)
+        public async Task<IActionResult> RechazarRestaurante(long id, string motivoRechazo)
         {
-            await _aprobacionesConsumer.RechazarRestauranteAsync(id);
+            await _aprobacionesConsumer.RechazarRestauranteAsync(id, motivoRechazo);
             TempData["Mensaje"] = "Restaurante rechazado.";
             return RedirectToAction(nameof(Restaurantes));
         }

@@ -115,6 +115,9 @@ namespace Delivery.API.Controllers
             {
                 UsuarioId        = usuarioCreado.Id,
                 LicenciaConducir = dto.LicenciaConducir,
+                FotoLicenciaUrl  = !string.IsNullOrEmpty(dto.FotoLicenciaBase64) 
+                                   ? $"data:image/jpeg;base64,{dto.FotoLicenciaBase64}" 
+                                   : null,
                 EstadoAprobacion = EstadoAprobacionEnum.Pendiente,
                 Disponible       = false,
                 CreadoEn         = ahora

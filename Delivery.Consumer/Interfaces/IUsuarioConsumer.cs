@@ -11,5 +11,6 @@ namespace Delivery.Consumer.Interfaces
         Task<Usuario> CreateAsync(Usuario entity);
         Task<bool> UpdateAsync(long id, Usuario entity);
         Task<bool> DeleteAsync(long id);
+        Task<IEnumerable<Delivery.Modelos.Entidades.Notificacion>> GetNotificacionesAsync(long id);
     }
 }

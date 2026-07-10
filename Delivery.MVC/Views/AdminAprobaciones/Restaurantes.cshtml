@@ -40,8 +40,12 @@
                         <td>
                             <form method="post" class="d-inline">
                                 <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" asp-action="AprobarRestaurante" class="btn btn-sm btn-success">Aprobar</button>
-                                <button type="submit" asp-action="RechazarRestaurante" class="btn btn-sm btn-danger ms-1">Rechazar</button>
+                                <button type="submit" asp-action="AprobarRestaurante" class="btn btn-sm btn-success mb-1">Aprobar</button>
+                                
+                                <div class="input-group input-group-sm mt-1">
+                                    <input type="text" name="motivoRechazo" class="form-control" placeholder="Motivo de rechazo" required />
+                                    <button type="submit" asp-action="RechazarRestaurante" class="btn btn-danger">Rechazar</button>
+                                </div>
                             </form>
                         </td>
                     </tr>

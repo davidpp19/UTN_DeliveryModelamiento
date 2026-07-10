@@ -9,8 +9,8 @@ namespace Delivery.Consumer.Interfaces
         Task<IEnumerable<Repartidor>> GetRepartidoresPendientesAsync();
         Task<IEnumerable<Restaurante>> GetRestaurantesPendientesAsync();
         Task<bool> AprobarRepartidorAsync(long id);
-        Task<bool> RechazarRepartidorAsync(long id);
+        Task<bool> RechazarRepartidorAsync(long id, string? motivo = null);
         Task<bool> AprobarRestauranteAsync(long id);
-        Task<bool> RechazarRestauranteAsync(long id);
+        Task<bool> RechazarRestauranteAsync(long id, string? motivo = null);
     }
 }

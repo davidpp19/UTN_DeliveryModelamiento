@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Delivery.Modelos.Entidades;
 using Delivery.Consumer.Interfaces;
@@ -43,6 +44,18 @@ namespace Delivery.Consumer.Implementaciones
         {
             var response = await _httpClient.DeleteAsync($"api/Usuarios/{id}");
             return response.IsSuccessStatusCode;
+        }
+
+        public async Task<IEnumerable<Delivery.Modelos.Entidades.Notificacion>> GetNotificacionesAsync(long id)
+        {
+            var response = await _httpClient.GetAsync($"api/Usuarios/{id}/notificaciones");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<IEnumerable<Delivery.Modelos.Entidades.Notificacion>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
+                       ?? new List<Delivery.Modelos.Entidades.Notificacion>();
+            }
+            return new List<Delivery.Modelos.Entidades.Notificacion>();
         }
     }
 }

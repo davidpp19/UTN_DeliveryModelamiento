@@ -29,7 +29,7 @@ namespace Delivery.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(RegistroRepartidorDto dto, string? accion = null)
+        public async Task<IActionResult> Index(RegistroRepartidorDto dto, Microsoft.AspNetCore.Http.IFormFile? fotoLicencia, string? accion = null)
         {
             if (accion == "actualizar")
             {
@@ -45,6 +45,24 @@ namespace Delivery.MVC.Controllers
             {
                 dto.LicenciaConducir = "N/A";
                 dto.Placa = "N/A";
+                dto.FotoLicenciaBase64 = null;
+            }
+            else
+            {
+                if (fotoLicencia != null && fotoLicencia.Length > 0)
+                {
+                    using (var ms = new System.IO.MemoryStream())
+                    {
+                        await fotoLicencia.CopyToAsync(ms);
+                        var fileBytes = ms.ToArray();
+                        dto.FotoLicenciaBase64 = System.Convert.ToBase64String(fileBytes);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "La fotografía de la licencia es obligatoria para motos y carros.");
+                    return View(dto);
+                }
             }
 
             var authResponse = await _authConsumer.RegistroRepartidorAsync(dto);

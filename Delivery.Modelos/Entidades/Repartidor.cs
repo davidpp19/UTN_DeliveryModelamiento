@@ -21,6 +21,7 @@ namespace Delivery.Modelos.Entidades
         [Column("foto_licencia_url", TypeName = "text")]
         public string? FotoLicenciaUrl { get; set; }
 
+
         [Column("estado_aprobacion")]
         public EstadoAprobacionEnum EstadoAprobacion { get; set; }
 

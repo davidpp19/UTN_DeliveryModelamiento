@@ -8,8 +8,7 @@ using Delivery.Consumer.Interfaces;
 
 namespace Delivery.MVC.Controllers
 {
-    [Authorize(Roles = "Restaurante")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Restaurante,Admin")]
     public class RestauranteProductosController : Controller
     {
         private readonly IProductoConsumer _productoConsumer;
@@ -37,6 +36,14 @@ namespace Delivery.MVC.Controllers
         {
             var restauranteId = await GetMyRestauranteId();
             if (restauranteId == null) return View("SinRestaurante");
+
+            var restaurantes = await _restauranteConsumer.GetAllAsync();
+            var miRestaurante = restaurantes.FirstOrDefault(r => r.Id == restauranteId.Value);
+            if (miRestaurante != null && (miRestaurante.Estado == Delivery.Modelos.Enums.EstadoRestauranteEnum.Pendiente ||
+                                          miRestaurante.Estado == Delivery.Modelos.Enums.EstadoRestauranteEnum.Rechazado))
+            {
+                return RedirectToAction("Index", "DashboardRestaurante");
+            }
 
             var todos = await _productoConsumer.GetAllAsync();
             var misProductos = todos.Where(p => p.RestauranteId == restauranteId.Value);

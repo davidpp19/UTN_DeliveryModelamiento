@@ -32,14 +32,14 @@ namespace Delivery.MVC.Controllers
         {
             var userId = GetMyUsuarioId();
             var repartidor = await _repartidorConsumer.GetByIdAsync(userId);
-            if (repartidor != null && repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Pendiente)
-                return RedirectToAction("EnRevision", "Home");
-            if (repartidor != null && repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Rechazado)
-                return RedirectToAction("Rechazado", "Home");
+            if (repartidor != null && (repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Pendiente || 
+                                       repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Rechazado))
+            {
+                return RedirectToAction("Index", "DashboardRepartidor");
+            }
 
             var todos = await _pedidoConsumer.GetAllAsync();
-            // Filtrar pedidos donde el RepartidorId coincida con el UsuarioId del repartidor logueado
-            var misPedidos = todos.Where(p => p.RepartidorId == userId).OrderByDescending(p => p.FechaPedido);
+            var misPedidos = todos.Where(p => p.RepartidorId == userId);
             return View(misPedidos);
         }
 

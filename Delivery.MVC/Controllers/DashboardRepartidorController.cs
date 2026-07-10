@@ -26,17 +26,22 @@ namespace Delivery.MVC.Controllers
             return userId;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromServices] IUsuarioConsumer usuarioConsumer)
         {
             var userId = GetMyUsuarioId();
+            
+            var notificaciones = await usuarioConsumer.GetNotificacionesAsync(userId);
+            ViewBag.Notificaciones = notificaciones.OrderByDescending(n => n.Id).Take(5).ToList();
+
             var repartidor = await _repartidorConsumer.GetByIdAsync(userId);
-            if (repartidor != null && repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Pendiente)
+            if (repartidor != null)
             {
-                return RedirectToAction("EnRevision", "Home");
-            }
-            if (repartidor != null && repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Rechazado)
-            {
-                return RedirectToAction("Rechazado", "Home");
+                ViewBag.Estado = repartidor.EstadoAprobacion.ToString();
+                if (repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Pendiente || 
+                    repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Rechazado)
+                {
+                    return View(); // Return view early without loading operational data
+                }
             }
 
             var todos = await _pedidoConsumer.GetAllAsync();

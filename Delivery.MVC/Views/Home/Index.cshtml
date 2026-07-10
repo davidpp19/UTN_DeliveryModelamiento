@@ -97,9 +97,18 @@ else
             <p class="col-md-8 mx-auto fs-4 text-muted">Tu comida favorita, entregada en Ibarra a la velocidad del rayo.</p>
             <p class="lead">Pide de los mejores restaurantes, con pagos seguros y entregas ultrarrápidas.</p>
             <div class="mt-4">
-                @* Registrarse lleva a selección de tipo de cuenta *@
-                <a asp-controller="Auth" asp-action="SeleccionTipoRegistro" class="btn btn-primary btn-lg me-2">Regístrate Ahora</a>
-                <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary btn-lg">Iniciar Sesión</a>
+                @if (!isAuthenticated)
+                {
+                    <a asp-controller="Auth" asp-action="SeleccionTipoRegistro" class="btn btn-primary btn-lg me-2">Regístrate Ahora</a>
+                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary btn-lg">Iniciar Sesión</a>
+                }
+                else
+                {
+                    var dashboardController = User.IsInRole("Admin") ? "DashboardAdministrador" :
+                                              User.IsInRole("Repartidor") ? "DashboardRepartidor" :
+                                              User.IsInRole("Restaurante") ? "DashboardRestaurante" : "Home";
+                    <a asp-controller="@dashboardController" asp-action="Index" class="btn btn-primary btn-lg">Ir a mi Panel</a>
+                }
             </div>
         </div>
     </div>

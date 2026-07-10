@@ -1,0 +1,12 @@
+@model IEnumerable<Delivery.Modelos.Entidades.Repartidor>
+@{ ViewData["Title"] = "Gestión de Repartidores"; }
+<h1>Repartidores Registrados</h1>
+<div class="alert alert-info">Vista básica para el administrador. Para aprobar o rechazar, ir a Solicitudes.</div>
+<table class="table">
+    <thead><tr><th>ID</th><th>Licencia</th><th>Estado</th></tr></thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr><td>@item.UsuarioId</td><td>@item.LicenciaConducir</td><td>@item.EstadoAprobacion</td></tr>
+        }
+    </tbody>
+</table>
