@@ -23,11 +23,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Auth/Login";
         options.AccessDeniedPath = "/Auth/AccesoDenegado";
+        options.ExpireTimeSpan = TimeSpan.FromHours(2);
+        options.SlidingExpiration = false; // Disable sliding expiration to strictly match JWT
     });
 
 builder.Services.AddDeliveryConsumers(client => 
 {
-    client.BaseAddress = new Uri("http://localhost:5141/");
+    // Cambiamos a HTTPS para evitar que HttpClient pierda el header Authorization
+    // al seguir una redirección 307 (HTTP -> HTTPS).
+    client.BaseAddress = new Uri("https://localhost:7278/");
 });
 
 var app = builder.Build();

@@ -87,7 +87,11 @@ namespace Delivery.MVC.Controllers
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new System.Security.Claims.ClaimsPrincipal(claimsIdentity),
-                    new AuthenticationProperties { IsPersistent = true });
+                    new AuthenticationProperties 
+                    { 
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddHours(2)
+                    });
 
                 TempData["Exito"] = "Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador.";
                 return RedirectToAction("Index", "DashboardRepartidor");
