@@ -105,7 +105,7 @@ namespace Delivery.API.Controllers
                 Email        = dto.Email,
                 Telefono     = dto.Telefono,
                 Cedula       = dto.Cedula,
-                PasswordHash = _seguridadService.HashearPassword(dto.Password),
+                PasswordHash = dto.Password, // Se hashea en UsuarioService
                 RolId        = rolRepartidor.Id,
                 TipoUsuario  = TipoUsuarioEnum.Repartidor,
                 Activo       = true,
@@ -193,7 +193,7 @@ namespace Delivery.API.Controllers
                 Email        = dto.Email,
                 Telefono     = dto.Telefono,
                 Cedula       = dto.Cedula,
-                PasswordHash = _seguridadService.HashearPassword(dto.Password),
+                PasswordHash = dto.Password, // Se hashea en UsuarioService
                 RolId        = rolRestaurante.Id,
                 TipoUsuario  = TipoUsuarioEnum.Restaurante,
                 Activo       = true,
