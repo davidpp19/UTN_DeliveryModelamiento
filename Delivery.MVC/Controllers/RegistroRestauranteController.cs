@@ -55,6 +55,11 @@ namespace Delivery.MVC.Controllers
                 new Claim("JwtToken", response.Token)
             };
 
+            if (!string.IsNullOrEmpty(response.FotoPerfilUrl))
+            {
+                claims.Add(new Claim("FotoPerfilUrl", response.FotoPerfilUrl));
+            }
+
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 

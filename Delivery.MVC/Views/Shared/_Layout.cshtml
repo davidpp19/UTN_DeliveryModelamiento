@@ -93,8 +93,13 @@
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle fw-bold" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Hola, @User.Identity.Name
+                                <a class="nav-link dropdown-toggle fw-bold d-flex align-items-center" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @{
+                                        var fotoPerfilClaim = User.FindFirst("FotoPerfilUrl")?.Value;
+                                        var avatarUrl = !string.IsNullOrEmpty(fotoPerfilClaim) ? fotoPerfilClaim : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(User.Identity.Name ?? "U") + "&background=random";
+                                    }
+                                    <img src="@avatarUrl" alt="Avatar" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" />
+                                    <span>Hola, @User.Identity.Name</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUser">
                                     @if (User.IsInRole("Cliente"))

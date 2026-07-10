@@ -52,6 +52,11 @@ namespace Delivery.MVC.Controllers
                     new Claim("JwtToken", authResponse.Token) // Guardamos el token por si el frontend lo necesita
                 };
 
+                if (!string.IsNullOrEmpty(authResponse.FotoPerfilUrl))
+                {
+                    claims.Add(new Claim("FotoPerfilUrl", authResponse.FotoPerfilUrl));
+                }
+
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {

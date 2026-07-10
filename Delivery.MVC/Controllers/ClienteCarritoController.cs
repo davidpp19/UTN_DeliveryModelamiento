@@ -112,6 +112,7 @@ namespace Delivery.MVC.Controllers
                 {
                     ProductoId      = productoId,
                     NombreProducto  = producto.Nombre,
+                    ImagenUrl       = producto.ImagenUrl,
                     Cantidad        = cantidad,
                     PrecioUnitario  = producto.Precio
                 });

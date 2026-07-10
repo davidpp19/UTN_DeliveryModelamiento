@@ -18,5 +18,7 @@ namespace Delivery.Modelos.DTOs
         public string NombresPropietario { get; set; } = string.Empty;
         public string ApellidosPropietario { get; set; } = string.Empty;
         public string EmailPropietario { get; set; } = string.Empty;
+        public string? LogoUrl { get; set; }
+        public string? FotoPerfilUrl { get; set; }
     }
 }

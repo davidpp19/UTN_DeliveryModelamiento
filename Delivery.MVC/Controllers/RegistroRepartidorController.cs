@@ -78,6 +78,11 @@ namespace Delivery.MVC.Controllers
                     new Claim("JwtToken", authResponse.Token)
                 };
 
+                if (!string.IsNullOrEmpty(authResponse.FotoPerfilUrl))
+                {
+                    claims.Add(new Claim("FotoPerfilUrl", authResponse.FotoPerfilUrl));
+                }
+
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,

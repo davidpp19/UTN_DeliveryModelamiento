@@ -77,8 +77,16 @@
                                 foreach (var detalle in Model.Detalles)
                                 {
                                     <tr>
-                                        <td>@(detalle.Producto?.Nombre ?? "Producto ID " + detalle.ProductoId)</td>
-                                        <td>@detalle.Cantidad</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @if (detalle.Producto != null && !string.IsNullOrEmpty(detalle.Producto.ImagenUrl))
+                                                {
+                                                    <img src="@detalle.Producto.ImagenUrl" alt="Producto" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                                                }
+                                                <span>@(detalle.Producto?.Nombre ?? "Producto ID " + detalle.ProductoId)</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">@detalle.Cantidad</td>
                                         <td class="text-end">$@detalle.PrecioUnitario.ToString("0.00")</td>
                                         <td class="text-end fw-bold">$@detalle.Subtotal.ToString("0.00")</td>
                                     </tr>

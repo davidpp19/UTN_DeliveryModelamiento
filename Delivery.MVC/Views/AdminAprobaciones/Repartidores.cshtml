@@ -17,53 +17,121 @@
     }
     else
     {
-        <table class="table table-striped table-hover mt-3">
+        <table class="table table-striped table-hover mt-3 align-middle">
             <thead class="table-dark">
                 <tr>
+                    <th>Perfil</th>
                     <th>Nombre</th>
                     <th>Email</th>
                     <th>Cédula</th>
-                    <th>Vehículo / Placa</th>
-                    <th>Licencia</th>
-                    <th>Foto Licencia</th>
                     <th>Fecha Registro</th>
-                    <th>Acciones</th>
+                    <th class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
+                    var avatarUrl = !string.IsNullOrEmpty(item.FotoPerfilUrl) ? item.FotoPerfilUrl : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(item.Nombres) + "&background=random";
+                    var modalId = "modalRepartidor" + item.Id;
+                    var modalRechazoId = "modalRechazo" + item.Id;
+
                     <tr>
+                        <td>
+                            <img src="@avatarUrl" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
+                        </td>
                         <td>@(item.Nombres) @(item.Apellidos)</td>
                         <td>@item.Email</td>
                         <td>@item.Cedula</td>
-                        <td>@item.TipoVehiculo - @item.Placa</td>
-                        <td>@item.LicenciaConducir</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.FotoLicenciaUrl))
-                            {
-                                <a href="@item.FotoLicenciaUrl" target="_blank">
-                                    <img src="@item.FotoLicenciaUrl" alt="Licencia" style="max-height: 50px; max-width: 80px;" />
-                                </a>
-                            }
-                            else
-                            {
-                                <span>No aplica</span>
-                            }
-                        </td>
                         <td>@item.CreadoEn.ToString("dd/MM/yyyy")</td>
-                        <td>
-                            <form method="post" class="d-inline">
+                        <td class="text-center">
+                            <!-- Botón Mostrar Información -->
+                            <button type="button" class="btn btn-sm btn-info text-white me-1" data-bs-toggle="modal" data-bs-target="#@modalId">
+                                <i class="bi bi-eye"></i> Mostrar información
+                            </button>
+
+                            <!-- Formulario Aprobar -->
+                            <form method="post" asp-action="AprobarRepartidor" class="d-inline">
                                 <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" asp-action="AprobarRepartidor" class="btn btn-sm btn-success mb-1">Aprobar</button>
-                                
-                                <div class="input-group input-group-sm mt-1">
-                                    <input type="text" name="motivoRechazo" class="form-control" placeholder="Motivo de rechazo" required />
-                                    <button type="submit" asp-action="RechazarRepartidor" class="btn btn-danger">Rechazar</button>
-                                </div>
+                                <button type="submit" class="btn btn-sm btn-success me-1">
+                                    <i class="bi bi-check-circle"></i> Aprobar
+                                </button>
                             </form>
+                            
+                            <!-- Botón Denegar (Abre Modal de Rechazo) -->
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#@modalRechazoId">
+                                <i class="bi bi-x-circle"></i> Denegar
+                            </button>
                         </td>
                     </tr>
+
+                    <!-- Modal Mostrar Información -->
+                    <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@(modalId)Label" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="@(modalId)Label">Información del Repartidor</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-4 text-center mb-3">
+                                    <img src="@avatarUrl" alt="Avatar" class="img-thumbnail rounded-circle mb-2" style="width: 150px; height: 150px; object-fit: cover;" />
+                                    <h5 class="mt-2">@item.Nombres @item.Apellidos</h5>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6>Datos Personales</h6>
+                                    <p><strong>Cédula:</strong> @item.Cedula</p>
+                                    <p><strong>Email:</strong> @item.Email</p>
+                                    <p><strong>Teléfono:</strong> @item.Telefono</p>
+                                    <hr />
+                                    <h6>Datos del Vehículo</h6>
+                                    <p><strong>Tipo:</strong> @item.TipoVehiculo</p>
+                                    <p><strong>Placa:</strong> @item.Placa</p>
+                                    <p><strong>Licencia:</strong> @item.LicenciaConducir</p>
+                                    @if (!string.IsNullOrEmpty(item.FotoLicenciaUrl))
+                                    {
+                                        <div class="mt-2">
+                                            <strong>Foto de Licencia:</strong><br/>
+                                            <a href="@item.FotoLicenciaUrl" target="_blank">
+                                                <img src="@item.FotoLicenciaUrl" class="img-fluid rounded mt-1" style="max-height: 200px;" />
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal Rechazar -->
+                    <div class="modal fade" id="@modalRechazoId" tabindex="-1" aria-labelledby="@(modalRechazoId)Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form method="post" asp-action="RechazarRepartidor">
+                              <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="@(modalRechazoId)Label">Denegar Solicitud</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <p>¿Estás seguro que deseas denegar la solicitud de <strong>@item.Nombres @item.Apellidos</strong>?</p>
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <div class="mb-3">
+                                    <label class="form-label">Motivo del rechazo (obligatorio)</label>
+                                    <textarea name="motivoRechazo" class="form-control" rows="3" required></textarea>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-danger">Confirmar Denegación</button>
+                              </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
                 }
             </tbody>
         </table>

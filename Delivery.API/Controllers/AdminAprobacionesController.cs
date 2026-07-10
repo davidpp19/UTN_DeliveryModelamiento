@@ -62,7 +62,8 @@ namespace Delivery.API.Controllers
                     FotoLicenciaUrl = r.FotoLicenciaUrl,
                     CreadoEn = r.CreadoEn,
                     TipoVehiculo = r.Vehiculos?.FirstOrDefault()?.TipoVehiculo.ToString() ?? "",
-                    Placa = r.Vehiculos?.FirstOrDefault()?.Placa ?? ""
+                    Placa = r.Vehiculos?.FirstOrDefault()?.Placa ?? "",
+                    FotoPerfilUrl = r.Usuario?.FotoPerfilUrl
                 })
                 .ToList();
             return Ok(pendientes);
@@ -85,14 +86,16 @@ namespace Delivery.API.Controllers
                     Descripcion = r.Descripcion,
                     Categoria = r.Categoria ?? "",
                     Ruc = r.Ruc ?? "",
-                    Calle = r.Calle,
-                    Ciudad = r.Ciudad,
+                    Calle = r.Calle ?? "",
+                    Ciudad = r.Ciudad ?? "",
                     Telefono = r.Telefono,
                     Email = r.Email,
                     CreadoEn = r.CreadoEn,
                     NombresPropietario = usuario?.Nombre ?? "",
                     ApellidosPropietario = usuario?.Apellidos ?? "",
-                    EmailPropietario = usuario?.Email ?? ""
+                    EmailPropietario = usuario?.Email ?? "",
+                    LogoUrl = r.LogoUrl,
+                    FotoPerfilUrl = usuario?.FotoPerfilUrl
                 });
             }
             return Ok(pendientes);

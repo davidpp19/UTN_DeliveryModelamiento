@@ -14,6 +14,7 @@ namespace Delivery.Modelos.DTOs
         public string Cedula { get; set; } = string.Empty;
         public string LicenciaConducir { get; set; } = string.Empty;
         public string? FotoLicenciaUrl { get; set; }
+        public string? FotoPerfilUrl { get; set; }
         public DateTime CreadoEn { get; set; }
         public string TipoVehiculo { get; set; } = string.Empty;
         public string Placa { get; set; } = string.Empty;

@@ -20,6 +20,7 @@ namespace Delivery.Servicios.Implementaciones
         {
             return await _context.Repartidores
                 .Include(r => r.Usuario)
+                .Include(r => r.Vehiculos)
                 .ToListAsync();
         }
 

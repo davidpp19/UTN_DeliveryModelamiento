@@ -58,7 +58,8 @@ namespace Delivery.API.Controllers
                 UsuarioId = usuario.Id,
                 Nombre = $"{usuario.Nombre} {usuario.Apellidos}".Trim(),
                 Email = usuario.Email,
-                Rol = rolNombre
+                Rol = rolNombre,
+                FotoPerfilUrl = usuario.FotoPerfilUrl
             });
         }
 
@@ -152,7 +153,8 @@ namespace Delivery.API.Controllers
                 UsuarioId = usuarioCreado.Id,
                 Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
                 Email    = usuarioCreado.Email,
-                Rol      = "Repartidor"
+                Rol      = "Repartidor",
+                FotoPerfilUrl = usuarioCreado.FotoPerfilUrl
             });
         }
 
@@ -231,7 +233,8 @@ namespace Delivery.API.Controllers
                 UsuarioId = usuarioCreado.Id,
                 Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
                 Email    = usuarioCreado.Email,
-                Rol      = "Restaurante"
+                Rol      = "Restaurante",
+                FotoPerfilUrl = usuarioCreado.FotoPerfilUrl
             });
         }
 

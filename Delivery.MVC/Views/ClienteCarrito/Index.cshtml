@@ -41,11 +41,19 @@ else
             @foreach (var item in Model.Items)
             {
                 <tr>
-                    <td>@item.NombreProducto</td>
-                    <td>$@item.PrecioUnitario.ToString("0.00")</td>
-                    <td>@item.Cantidad</td>
-                    <td>$@item.Subtotal.ToString("0.00")</td>
                     <td>
+                        <div class="d-flex align-items-center">
+                            @if (!string.IsNullOrEmpty(item.ImagenUrl))
+                            {
+                                <img src="@item.ImagenUrl" alt="@item.NombreProducto" class="rounded me-2" style="width: 50px; height: 50px; object-fit: cover;" />
+                            }
+                            <span>@item.NombreProducto</span>
+                        </div>
+                    </td>
+                    <td class="align-middle">$@item.PrecioUnitario.ToString("0.00")</td>
+                    <td class="align-middle">@item.Cantidad</td>
+                    <td class="align-middle">$@item.Subtotal.ToString("0.00")</td>
+                    <td class="align-middle">
                         <form asp-action="Quitar" method="post" style="display:inline;">
                             <input type="hidden" name="productoId" value="@item.ProductoId" />
                             <button type="submit">Quitar</button>
