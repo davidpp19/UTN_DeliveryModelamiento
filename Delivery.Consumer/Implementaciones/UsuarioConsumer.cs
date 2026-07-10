@@ -27,11 +27,11 @@ namespace Delivery.Consumer.Implementaciones
             return await _httpClient.GetFromJsonAsync<Usuario>($"api/Usuarios/{id}");
         }
 
-        public async Task<Usuario> CreateAsync(Usuario entity)
+        public async Task<Usuario?> CreateAsync(Usuario entity)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Usuarios", entity);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<Usuario>() ?? entity;
+            if (!response.IsSuccessStatusCode) return null;
+            return await response.Content.ReadFromJsonAsync<Usuario>();
         }
 
         public async Task<bool> UpdateAsync(long id, Usuario entity)

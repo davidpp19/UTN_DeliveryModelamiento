@@ -216,27 +216,27 @@ namespace Delivery.API.Data
             await context.SaveChangesAsync();
 
             // Productos específicos por tipo de restaurante
-            var productosMap = new Dictionary<string, List<(string Nombre, decimal Precio)>>
+            var productosMap = new Dictionary<string, List<(string Nombre, decimal Precio, string Imagen)>>
             {
-                ["Parrilladas"]  = new() { ("Churrasco completo", 12.50m), ("Costillas BBQ", 14.00m), ("Lomo fino a la plancha", 11.00m), ("Anticuchos de res", 8.50m), ("Parrilla mixta para 2", 22.00m), ("Chorizo ahumado", 6.00m), ("Morcilla asada", 5.50m), ("Chuleta de cerdo", 9.75m), ("Pinchos de pollo", 7.00m), ("Longaniza a la brasa", 6.50m) },
-                ["Comida Típica"]= new() { ("Hornado completo", 9.00m), ("Fritada con mote", 8.50m), ("Seco de pollo", 7.50m), ("Caldo de patas", 5.00m), ("Llapingachos con chorizo", 6.50m), ("Yapingacho gratinado", 7.00m), ("Cazuela de mariscos", 10.00m), ("Caldo de gallina", 6.00m), ("Menudo de res", 5.50m), ("Fanesca (temporada)", 8.00m) },
-                ["Pizza"]        = new() { ("Pizza Margarita personal", 6.50m), ("Pizza Hawaiana familiar", 15.00m), ("Pizza Cuatro Quesos", 13.50m), ("Pizza Pepperoni", 14.00m), ("Pizza Vegetariana", 12.00m), ("Calzone de jamón", 8.00m), ("Palitos de ajo", 3.50m), ("Cannelloni de carne", 9.00m), ("Lasagna bolognesa", 10.00m), ("Bruschetta", 4.50m) },
-                ["Mexicana"]     = new() { ("Tacos al pastor x3", 7.50m), ("Burrito de pollo", 8.00m), ("Quesadilla de queso", 5.50m), ("Nachos con guacamole", 6.50m), ("Enchiladas verdes", 9.00m), ("Tostada con frijoles", 4.50m), ("Pozole rojo", 8.50m), ("Torta de chorizo", 7.00m), ("Sopa azteca", 6.00m), ("Tamales", 5.00m) },
-                ["Cafetería"]    = new() { ("Cappuccino", 2.75m), ("Americano doble", 2.00m), ("Café latte", 3.00m), ("Moka helado", 3.50m), ("Croissant de mantequilla", 2.50m), ("Cheesecake de fresa", 4.00m), ("Brownie con helado", 3.75m), ("Tostada francesa", 3.25m), ("Granola bowl", 4.50m), ("Jugo natural de naranja", 2.25m) },
-                ["Sushi"]        = new() { ("California Roll x8", 10.99m), ("Spicy Tuna Roll x8", 12.50m), ("Philadelphia Roll x8", 11.00m), ("Dragon Roll x8", 13.00m), ("Sashimi salmón x6", 14.00m), ("Nigiri atún x4", 9.50m), ("Maki vegetariano x8", 9.00m), ("Tempura ebi x6", 11.50m), ("Gyoza al vapor x6", 7.50m), ("Edamame salado", 4.00m) },
-                ["Pollo"]        = new() { ("Pollo broaster 1/4", 6.99m), ("Pollo broaster 1/2", 11.50m), ("Alitas BBQ x8", 8.75m), ("Pechuga a la plancha", 7.50m), ("Nuggets x10", 5.50m), ("Combo familiar broaster", 24.00m), ("Ensalada de pollo", 6.00m), ("Sopa de pollo con fideos", 4.50m), ("Pincho de pollo x3", 7.00m), ("Pollo teriyaki", 9.00m) },
-                ["Hamburguesas"] = new() { ("Hamburguesa clásica", 5.99m), ("Hamburguesa doble carne", 7.99m), ("Hamburguesa volcán BBQ", 9.50m), ("Hamburguesa vegetariana", 6.50m), ("Combo familiar x4", 28.00m), ("Papas fritas medianas", 2.50m), ("Papas fritas grandes", 3.50m), ("Onion rings", 3.00m), ("Milkshake vainilla", 4.00m), ("Hot dog gourmet", 5.00m) },
-                ["Italiana"]     = new() { ("Spaghetti bolognesa", 8.50m), ("Fettuccine alfredo", 9.00m), ("Lasagna de carne", 10.50m), ("Ravioli de espinaca", 9.50m), ("Risotto parmesano", 11.00m), ("Gnocchi casero", 8.00m), ("Minestrone", 5.50m), ("Tiramisu", 4.50m), ("Panna cotta", 4.00m), ("Pan ciabatta con aceite", 2.50m) },
-                ["Ensaladas"]    = new() { ("Ensalada César", 5.50m), ("Bowl de quinoa y vegetales", 7.00m), ("Ensalada griega", 6.50m), ("Bowl proteico de atún", 8.00m), ("Ensalada caprese", 6.00m), ("Wrap vegetariano", 5.00m), ("Bowl de frutas tropicales", 4.50m), ("Smoothie verde detox", 3.75m), ("Hummus con pita", 4.00m), ("Tabbouleh de bulgur", 5.50m) },
+                ["Parrilladas"]  = new() { ("Churrasco completo", 12.50m, "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&q=80"), ("Costillas BBQ", 14.00m, "https://images.unsplash.com/photo-1544025162-811114215449?w=500&q=80"), ("Lomo fino a la plancha", 11.00m, "https://images.unsplash.com/photo-1572449043416-55f4685c9bb7?w=500&q=80"), ("Anticuchos de res", 8.50m, "https://images.unsplash.com/photo-1599598425947-33002629b30b?w=500&q=80") },
+                ["Comida Típica"]= new() { ("Hornado completo", 9.00m, "https://images.unsplash.com/photo-1582169505937-b9992bd01ed9?w=500&q=80"), ("Fritada con mote", 8.50m, "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&q=80"), ("Seco de pollo", 7.50m, "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=500&q=80"), ("Caldo de patas", 5.00m, "https://images.unsplash.com/photo-1547592180-85f173990554?w=500&q=80") },
+                ["Pizza"]        = new() { ("Pizza Margarita", 6.50m, "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500&q=80"), ("Pizza Hawaiana", 15.00m, "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80"), ("Pizza Cuatro Quesos", 13.50m, "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=80"), ("Pizza Pepperoni", 14.00m, "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500&q=80") },
+                ["Mexicana"]     = new() { ("Tacos al pastor x3", 7.50m, "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=500&q=80"), ("Burrito de pollo", 8.00m, "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=500&q=80"), ("Quesadilla", 5.50m, "https://images.unsplash.com/photo-1618040996328-b9894e24eb29?w=500&q=80"), ("Nachos", 6.50m, "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=500&q=80") },
+                ["Cafetería"]    = new() { ("Cappuccino", 2.75m, "https://images.unsplash.com/photo-1512568400610-62da28bc8a13?w=500&q=80"), ("Americano", 2.00m, "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=500&q=80"), ("Croissant", 2.50m, "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&q=80"), ("Cheesecake", 4.00m, "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=500&q=80") },
+                ["Sushi"]        = new() { ("California Roll", 10.99m, "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=80"), ("Spicy Tuna", 12.50m, "https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80"), ("Sashimi", 14.00m, "https://images.unsplash.com/photo-1534482421-64566f976cfa?w=500&q=80"), ("Nigiri", 9.50m, "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=500&q=80") },
+                ["Pollo"]        = new() { ("Pollo broaster", 6.99m, "https://images.unsplash.com/photo-1562967914-608f82629710?w=500&q=80"), ("Alitas BBQ", 8.75m, "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=500&q=80"), ("Nuggets", 5.50m, "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&q=80"), ("Pechuga", 7.50m, "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=500&q=80") },
+                ["Hamburguesas"] = new() { ("Hamburguesa clásica", 5.99m, "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80"), ("Doble carne", 7.99m, "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500&q=80"), ("Volcán BBQ", 9.50m, "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500&q=80"), ("Vegetariana", 6.50m, "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=500&q=80") },
+                ["Italiana"]     = new() { ("Spaghetti bolognesa", 8.50m, "https://images.unsplash.com/photo-1621996311210-91136b856e87?w=500&q=80"), ("Fettuccine alfredo", 9.00m, "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=500&q=80"), ("Lasagna", 10.50m, "https://images.unsplash.com/photo-1619895092538-128341789043?w=500&q=80"), ("Ravioli", 9.50m, "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=500&q=80") },
+                ["Ensaladas"]    = new() { ("Ensalada César", 5.50m, "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=500&q=80"), ("Bowl de quinoa", 7.00m, "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&q=80"), ("Ensalada griega", 6.50m, "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&q=80"), ("Bowl proteico", 8.00m, "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500&q=80") },
             };
 
             // Fallback si la categoría no está en el mapa
             if (!productosMap.TryGetValue(categoriaRestaurante, out var productos))
             {
-                productos = new() { ("Plato del día", 7.00m), ("Sopa del día", 4.00m), ("Bebida natural", 2.00m) };
+                productos = new() { ("Plato del día", 7.00m, "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80"), ("Sopa del día", 4.00m, "https://images.unsplash.com/photo-1547592180-85f173990554?w=500&q=80"), ("Bebida natural", 2.00m, "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&q=80") };
             }
 
-            foreach (var (nombreProd, precio) in productos)
+            foreach (var (nombreProd, precio, imagen) in productos)
             {
                 context.Productos.Add(new Producto
                 {
@@ -245,6 +245,7 @@ namespace Delivery.API.Data
                     Nombre            = nombreProd,
                     Descripcion       = $"{nombreProd} preparado con ingredientes frescos de la región.",
                     Precio            = precio,
+                    ImagenUrl         = imagen,
                     Disponible        = true,
                     TiempoPreparacion = new Random().Next(10, 30),
                     CreadoEn          = ahora

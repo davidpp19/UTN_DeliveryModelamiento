@@ -43,6 +43,9 @@ namespace Delivery.Modelos.Entidades
         [Column("metodo_pago_id")]
         public long? MetodoPagoId { get; set; }
 
+        [Column("comprobante_transferencia_url", TypeName = "text")]
+        public string? ComprobanteTransferenciaUrl { get; set; }
+
         [Column("cupon_id")]
         public long? CuponId { get; set; }
 

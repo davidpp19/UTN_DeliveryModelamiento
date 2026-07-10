@@ -68,10 +68,13 @@ namespace Delivery.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Verificar email único
             var existente = await _usuarioService.GetByEmailAsync(dto.Email);
             if (existente != null)
                 return BadRequest(new { message = "El correo ya está registrado." });
+
+            var todos = await _usuarioService.GetAllAsync();
+            if (System.Linq.Enumerable.Any(todos, u => u.Cedula == dto.Cedula))
+                return BadRequest(new { message = "Ya existe un usuario registrado con esa cédula." });
 
             // Validar Placa y Licencia únicas si no es bicicleta
             if (dto.TipoVehiculo != TipoVehiculoEnum.Bicicleta)
@@ -100,6 +103,7 @@ namespace Delivery.API.Controllers
                 Apellidos    = dto.Apellidos,
                 Email        = dto.Email,
                 Telefono     = dto.Telefono,
+                Cedula       = dto.Cedula,
                 PasswordHash = _seguridadService.HashearPassword(dto.Password),
                 RolId        = rolRepartidor.Id,
                 TipoUsuario  = TipoUsuarioEnum.Repartidor,
@@ -158,10 +162,13 @@ namespace Delivery.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Verificar email único
             var existente = await _usuarioService.GetByEmailAsync(dto.Email);
             if (existente != null)
                 return BadRequest(new { message = "El correo ya está registrado." });
+
+            var todos = await _usuarioService.GetAllAsync();
+            if (System.Linq.Enumerable.Any(todos, u => u.Cedula == dto.Cedula))
+                return BadRequest(new { message = "Ya existe un usuario registrado con esa cédula." });
 
             // Verificar RUC único
             var restaurantes = await _restauranteService.GetAllAsync();
@@ -183,6 +190,7 @@ namespace Delivery.API.Controllers
                 Apellidos    = dto.ApellidosPropietario,
                 Email        = dto.Email,
                 Telefono     = dto.Telefono,
+                Cedula       = dto.Cedula,
                 PasswordHash = _seguridadService.HashearPassword(dto.Password),
                 RolId        = rolRestaurante.Id,
                 TipoUsuario  = TipoUsuarioEnum.Restaurante,

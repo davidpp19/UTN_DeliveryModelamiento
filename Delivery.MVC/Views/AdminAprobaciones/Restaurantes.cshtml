@@ -1,4 +1,4 @@
-@model IEnumerable<Delivery.Modelos.Entidades.Restaurante>
+@model IEnumerable<Delivery.Modelos.DTOs.RestaurantePendienteDto>
 @{
     ViewData["Title"] = "Aprobaciones de Restaurantes";
 }
@@ -21,6 +21,8 @@
             <thead class="table-dark">
                 <tr>
                     <th>Restaurante</th>
+                    <th>Categoría</th>
+                    <th>Propietario</th>
                     <th>RUC</th>
                     <th>Dirección</th>
                     <th>Teléfono</th>
@@ -33,6 +35,8 @@
                 {
                     <tr>
                         <td>@item.Nombre</td>
+                        <td>@item.Categoria</td>
+                        <td>@item.NombresPropietario @item.ApellidosPropietario</td>
                         <td>@item.Ruc</td>
                         <td>@item.Calle, @item.Ciudad</td>
                         <td>@item.Telefono</td>

@@ -37,7 +37,7 @@
         </div>
         
         <div class="col-md-7 order-md-1">
-            <form asp-action="Confirmar" method="post" id="checkoutForm">
+            <form asp-action="Confirmar" method="post" id="checkoutForm" enctype="multipart/form-data" onsubmit="return validarFormulario(event)">
                 <h4 class="mb-3">Dirección de Entrega</h4>
                 <div class="mb-3">
                     <label for="direccionId">Selecciona tu Dirección</label>
@@ -68,25 +68,25 @@
                 <!-- SECCIÓN TARJETA -->
                 <div id="seccionTarjeta" style="display:none;" class="card p-3 mb-4 bg-light">
                     <h5>Detalles de la Tarjeta</h5>
+                    <div id="tarjetaError" class="alert alert-danger" style="display: none;"></div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="titular">Nombre en la tarjeta</label>
                             <input type="text" class="form-control" id="titular" name="titular" placeholder="EJ. JUAN PEREZ">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="numeroTarjeta">Número de tarjeta</label>
-                            <input type="text" class="form-control" id="numeroTarjeta" name="numeroTarjeta" placeholder="XXXX-XXXX-XXXX-XXXX">
-                            <small class="text-muted">Se validará el algoritmo de Luhn y el prefijo de la franquicia.</small>
+                            <label for="numeroTarjeta">Número de tarjeta <span id="tarjetaTipo" class="badge bg-secondary ms-2"></span></label>
+                            <input type="text" class="form-control" id="numeroTarjeta" name="numeroTarjeta" placeholder="XXXX XXXX XXXX XXXX" oninput="formatearTarjeta(this)">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="expiracion">Expiración</label>
-                            <input type="text" class="form-control" id="expiracion" name="expiracion" placeholder="MM/AA">
+                            <input type="text" class="form-control" id="expiracion" name="expiracion" placeholder="MM/AA" maxlength="5" oninput="formatearExpiracion(this)">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="cvv">CVV</label>
-                            <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123">
+                            <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                         </div>
                     </div>
                 </div>
@@ -94,16 +94,17 @@
                 <!-- SECCIÓN TRANSFERENCIA -->
                 <div id="seccionTransferencia" style="display:none;" class="card p-3 mb-4 bg-light">
                     <h5>Datos para Transferencia</h5>
-                    <p>Por favor, realiza la transferencia a la siguiente cuenta y luego haz clic en "Confirmar Pago".</p>
+                    <p>Por favor, realiza la transferencia a la siguiente cuenta y adjunta el comprobante (JPG, PNG, PDF).</p>
                     <ul>
-                        <li><strong>Banco:</strong> Banco Pichincha</li>
-                        <li><strong>Tipo de Cuenta:</strong> Ahorros</li>
-                        <li><strong>Número:</strong> 2201389882</li>
-                        <li><strong>Titular:</strong> RayoExpres S.A.</li>
+                        <li><strong>Banco:</strong> Banco RayoExpres</li>
+                        <li><strong>Beneficiario:</strong> RayoExpres S.A.</li>
+                        <li><strong>RUC:</strong> 0999999999001</li>
+                        <li><strong>Tipo de Cuenta:</strong> Corriente</li>
+                        <li><strong>Número de cuenta:</strong> 220045678901</li>
                     </ul>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="checkTransferencia" name="checkTransferencia">
-                        <label class="form-check-label" for="checkTransferencia">Confirmo que he realizado la transferencia</label>
+                    <div class="mb-3">
+                        <label for="comprobante" class="form-label">Subir Comprobante</label>
+                        <input class="form-control" type="file" id="comprobante" name="comprobante" accept=".jpg,.png,.pdf">
                     </div>
                 </div>
 
@@ -119,15 +120,14 @@
         var metodo = document.querySelector('input[name="metodoPago"]:checked').value;
         var seccionTarjeta = document.getElementById('seccionTarjeta');
         var seccionTransferencia = document.getElementById('seccionTransferencia');
-        var btnSubmit = document.getElementById('btnSubmit');
-
+        
         seccionTarjeta.style.display = 'none';
         seccionTransferencia.style.display = 'none';
         
-        // Quitar obligatoriedad por defecto
         document.getElementById('numeroTarjeta').removeAttribute('required');
         document.getElementById('expiracion').removeAttribute('required');
         document.getElementById('cvv').removeAttribute('required');
+        document.getElementById('comprobante').removeAttribute('required');
 
         if (metodo === 'Tarjeta') {
             seccionTarjeta.style.display = 'block';
@@ -136,9 +136,108 @@
             document.getElementById('cvv').setAttribute('required', 'required');
         } else if (metodo === 'Transferencia') {
             seccionTransferencia.style.display = 'block';
+            document.getElementById('comprobante').setAttribute('required', 'required');
         }
     }
+
+    function formatearTarjeta(input) {
+        let value = input.value.replace(/\D/g, '');
+        let tipo = '';
+        let maxLength = 16;
+
+        if (value.startsWith('34') || value.startsWith('37')) {
+            tipo = 'Amex';
+            maxLength = 15;
+        } else if (value.startsWith('4')) {
+            tipo = 'Visa';
+        } else if (value.startsWith('5')) {
+            tipo = 'Mastercard';
+        } else if (value.startsWith('6')) {
+            tipo = 'Discover';
+        }
+
+        document.getElementById('tarjetaTipo').innerText = tipo;
+        value = value.substring(0, maxLength);
+
+        let formatted = '';
+        if (tipo === 'Amex') {
+            if (value.length > 4) {
+                formatted += value.substring(0, 4) + ' ';
+                if (value.length > 10) {
+                    formatted += value.substring(4, 10) + ' ' + value.substring(10, 15);
+                } else {
+                    formatted += value.substring(4, 10);
+                }
+            } else {
+                formatted = value;
+            }
+        } else {
+            formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+        }
+        
+        input.value = formatted;
+    }
+
+    function formatearExpiracion(input) {
+        let value = input.value.replace(/\D/g, '');
+        if (value.length > 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        input.value = value;
+    }
+
+    function luhnCheck(num) {
+        let arr = (num + '').split('').reverse().map(x => parseInt(x));
+        let sum = arr.reduce((acc, val, i) => i % 2 !== 0 ? acc + (val * 2 > 9 ? val * 2 - 9 : val * 2) : acc + val, 0);
+        return sum % 10 === 0;
+    }
+
+    function validarFormulario(e) {
+        var metodo = document.querySelector('input[name="metodoPago"]:checked').value;
+        if (metodo === 'Tarjeta') {
+            var num = document.getElementById('numeroTarjeta').value.replace(/\D/g, '');
+            var exp = document.getElementById('expiracion').value;
+            var cvv = document.getElementById('cvv').value;
+            var err = document.getElementById('tarjetaError');
+            err.style.display = 'none';
+
+            if (num.length < 15 || !luhnCheck(num)) {
+                err.innerText = "Número de tarjeta inválido (Luhn).";
+                err.style.display = 'block';
+                return false;
+            }
+
+            var parts = exp.split('/');
+            if (parts.length !== 2) {
+                err.innerText = "Expiración inválida. Usa MM/AA.";
+                err.style.display = 'block';
+                return false;
+            }
+            
+            var m = parseInt(parts[0], 10);
+            var y = parseInt("20" + parts[1], 10);
+            if (m < 1 || m > 12) {
+                err.innerText = "Mes de expiración inválido.";
+                err.style.display = 'block';
+                return false;
+            }
+
+            var now = new Date();
+            var expDate = new Date(y, m - 1);
+            if (expDate < new Date(now.getFullYear(), now.getMonth())) {
+                err.innerText = "La tarjeta ha expirado.";
+                err.style.display = 'block';
+                return false;
+            }
+
+            if (cvv.length < 3) {
+                err.innerText = "CVV inválido.";
+                err.style.display = 'block';
+                return false;
+            }
+        }
+        return true;
+    }
     
-    // Ejecutar al cargar la página por si hay algún check guardado
     window.onload = togglePaymentSections;
 </script>

@@ -17,6 +17,11 @@ namespace Delivery.Modelos.Entidades
         public long? RolId { get; set; }
 
         [Required]
+        [Column("cedula")]
+        [StringLength(20)]
+        public string Cedula { get; set; } = null!;
+
+        [Required]
         [Column("nombre")]
         [StringLength(100)]
         public string Nombre { get; set; } = null!;

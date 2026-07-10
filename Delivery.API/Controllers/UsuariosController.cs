@@ -35,6 +35,16 @@ namespace Delivery.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
         {
+            var todos = await _usuarioService.GetAllAsync();
+            if (System.Linq.Enumerable.Any(todos, u => u.Email.ToLower() == usuario.Email.ToLower()))
+            {
+                return BadRequest(new { message = "Ya existe una cuenta registrada con ese correo electrónico." });
+            }
+            if (System.Linq.Enumerable.Any(todos, u => u.Cedula == usuario.Cedula))
+            {
+                return BadRequest(new { message = "Ya existe un usuario registrado con esa cédula." });
+            }
+
             var createdUsuario = await _usuarioService.CreateAsync(usuario);
             return CreatedAtAction(nameof(GetUsuario), new { id = createdUsuario.Id }, createdUsuario);
         }

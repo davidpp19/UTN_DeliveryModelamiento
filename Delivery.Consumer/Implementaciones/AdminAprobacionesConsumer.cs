@@ -16,24 +16,24 @@ namespace Delivery.Consumer.Implementaciones
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<Repartidor>> GetRepartidoresPendientesAsync()
+        public async Task<IEnumerable<Delivery.Modelos.DTOs.RepartidorPendienteDto>> GetRepartidoresPendientesAsync()
         {
             var response = await _httpClient.GetAsync("api/AdminAprobaciones/repartidores/pendientes");
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<IEnumerable<Repartidor>>() ?? new List<Repartidor>();
+                return await response.Content.ReadFromJsonAsync<IEnumerable<Delivery.Modelos.DTOs.RepartidorPendienteDto>>() ?? new List<Delivery.Modelos.DTOs.RepartidorPendienteDto>();
             }
-            return new List<Repartidor>();
+            return new List<Delivery.Modelos.DTOs.RepartidorPendienteDto>();
         }
 
-        public async Task<IEnumerable<Restaurante>> GetRestaurantesPendientesAsync()
+        public async Task<IEnumerable<Delivery.Modelos.DTOs.RestaurantePendienteDto>> GetRestaurantesPendientesAsync()
         {
             var response = await _httpClient.GetAsync("api/AdminAprobaciones/restaurantes/pendientes");
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<IEnumerable<Restaurante>>() ?? new List<Restaurante>();
+                return await response.Content.ReadFromJsonAsync<IEnumerable<Delivery.Modelos.DTOs.RestaurantePendienteDto>>() ?? new List<Delivery.Modelos.DTOs.RestaurantePendienteDto>();
             }
-            return new List<Restaurante>();
+            return new List<Delivery.Modelos.DTOs.RestaurantePendienteDto>();
         }
 
         public async Task<bool> AprobarRepartidorAsync(long id)

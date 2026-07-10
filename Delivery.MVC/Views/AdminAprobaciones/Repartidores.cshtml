@@ -1,4 +1,4 @@
-@model IEnumerable<Delivery.Modelos.Entidades.Repartidor>
+@model IEnumerable<Delivery.Modelos.DTOs.RepartidorPendienteDto>
 @{
     ViewData["Title"] = "Aprobaciones de Repartidores";
 }
@@ -22,6 +22,8 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Email</th>
+                    <th>Cédula</th>
+                    <th>Vehículo / Placa</th>
                     <th>Licencia</th>
                     <th>Foto Licencia</th>
                     <th>Fecha Registro</th>
@@ -32,8 +34,10 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@(item.Usuario?.Nombre) @(item.Usuario?.Apellidos)</td>
-                        <td>@(item.Usuario?.Email)</td>
+                        <td>@(item.Nombres) @(item.Apellidos)</td>
+                        <td>@item.Email</td>
+                        <td>@item.Cedula</td>
+                        <td>@item.TipoVehiculo - @item.Placa</td>
                         <td>@item.LicenciaConducir</td>
                         <td>
                             @if (!string.IsNullOrEmpty(item.FotoLicenciaUrl))
@@ -50,7 +54,7 @@
                         <td>@item.CreadoEn.ToString("dd/MM/yyyy")</td>
                         <td>
                             <form method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@item.UsuarioId" />
+                                <input type="hidden" name="id" value="@item.Id" />
                                 <button type="submit" asp-action="AprobarRepartidor" class="btn btn-sm btn-success mb-1">Aprobar</button>
                                 
                                 <div class="input-group input-group-sm mt-1">

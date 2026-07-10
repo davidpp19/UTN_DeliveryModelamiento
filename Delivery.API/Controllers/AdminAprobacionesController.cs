@@ -47,7 +47,24 @@ namespace Delivery.API.Controllers
         public async Task<IActionResult> GetRepartidoresPendientes()
         {
             var todos = await _repartidorService.GetAllAsync();
-            var pendientes = todos.Where(r => r.EstadoAprobacion == EstadoAprobacionEnum.Pendiente).ToList();
+            var pendientes = todos
+                .Where(r => r.EstadoAprobacion == EstadoAprobacionEnum.Pendiente)
+                .Select(r => new RepartidorPendienteDto
+                {
+                    Id = r.UsuarioId,
+                    UsuarioId = r.UsuarioId,
+                    Nombres = r.Usuario?.Nombre ?? "",
+                    Apellidos = r.Usuario?.Apellidos ?? "",
+                    Email = r.Usuario?.Email ?? "",
+                    Telefono = r.Usuario?.Telefono ?? "",
+                    Cedula = r.Usuario?.Cedula ?? "",
+                    LicenciaConducir = r.LicenciaConducir,
+                    FotoLicenciaUrl = r.FotoLicenciaUrl,
+                    CreadoEn = r.CreadoEn,
+                    TipoVehiculo = r.Vehiculos?.FirstOrDefault()?.TipoVehiculo.ToString() ?? "",
+                    Placa = r.Vehiculos?.FirstOrDefault()?.Placa ?? ""
+                })
+                .ToList();
             return Ok(pendientes);
         }
 
@@ -55,7 +72,29 @@ namespace Delivery.API.Controllers
         public async Task<IActionResult> GetRestaurantesPendientes()
         {
             var todos = await _restauranteService.GetAllAsync();
-            var pendientes = todos.Where(r => r.Estado == EstadoRestauranteEnum.Pendiente).ToList();
+            var filtrados = todos.Where(r => r.Estado == EstadoRestauranteEnum.Pendiente).ToList();
+            
+            var pendientes = new System.Collections.Generic.List<RestaurantePendienteDto>();
+            foreach(var r in filtrados)
+            {
+                var usuario = await _usuarioService.GetByIdAsync(r.CreadoPor ?? 0);
+                pendientes.Add(new RestaurantePendienteDto
+                {
+                    Id = r.Id,
+                    Nombre = r.Nombre,
+                    Descripcion = r.Descripcion,
+                    Categoria = r.Categoria ?? "",
+                    Ruc = r.Ruc ?? "",
+                    Calle = r.Calle,
+                    Ciudad = r.Ciudad,
+                    Telefono = r.Telefono,
+                    Email = r.Email,
+                    CreadoEn = r.CreadoEn,
+                    NombresPropietario = usuario?.Nombre ?? "",
+                    ApellidosPropietario = usuario?.Apellidos ?? "",
+                    EmailPropietario = usuario?.Email ?? ""
+                });
+            }
             return Ok(pendientes);
         }
 

@@ -29,6 +29,10 @@
                 {
                     <div class="col">
                         <div class="card h-100 shadow-sm">
+                            @if (!string.IsNullOrEmpty(p.ImagenUrl))
+                            {
+                                <img src="@p.ImagenUrl" class="card-img-top" alt="@p.Nombre" style="height: 150px; object-fit: cover;">
+                            }
                             <div class="card-body">
                                 <h5 class="card-title">@p.Nombre</h5>
                                 <p class="card-text small text-muted">@p.Descripcion</p>

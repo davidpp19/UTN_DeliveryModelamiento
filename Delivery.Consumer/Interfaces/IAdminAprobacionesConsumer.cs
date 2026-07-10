@@ -6,8 +6,8 @@ namespace Delivery.Consumer.Interfaces
 {
     public interface IAdminAprobacionesConsumer
     {
-        Task<IEnumerable<Repartidor>> GetRepartidoresPendientesAsync();
-        Task<IEnumerable<Restaurante>> GetRestaurantesPendientesAsync();
+        Task<IEnumerable<Delivery.Modelos.DTOs.RepartidorPendienteDto>> GetRepartidoresPendientesAsync();
+        Task<IEnumerable<Delivery.Modelos.DTOs.RestaurantePendienteDto>> GetRestaurantesPendientesAsync();
         Task<bool> AprobarRepartidorAsync(long id);
         Task<bool> RechazarRepartidorAsync(long id, string? motivo = null);
         Task<bool> AprobarRestauranteAsync(long id);

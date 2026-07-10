@@ -110,6 +110,7 @@ namespace Delivery.MVC.Controllers
                 Apellidos = dto.Apellidos,
                 Email = dto.Email,
                 Telefono = dto.Telefono,
+                Cedula = dto.Cedula,
                 PasswordHash = dto.Password, // Se hashea en la API/Servicio
                 TipoUsuario = Delivery.Modelos.Enums.TipoUsuarioEnum.Cliente,
                 RolId = 4, // Cliente
@@ -124,7 +125,7 @@ namespace Delivery.MVC.Controllers
                 return await Login(loginDto);
             }
 
-            ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario. Es posible que el correo ya esté en uso.");
+            ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario. Es posible que el correo o la cédula ya estén registrados.");
             return View(dto);
         }
 

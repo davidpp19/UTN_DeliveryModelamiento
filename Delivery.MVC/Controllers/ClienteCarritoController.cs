@@ -24,17 +24,20 @@ namespace Delivery.MVC.Controllers
         private readonly IProductoConsumer _productoConsumer;
         private readonly IRestauranteConsumer _restauranteConsumer;
         private readonly IPedidoConsumer _pedidoConsumer;
+        private readonly Delivery.MVC.Servicios.IArchivoService _archivoService;
 
         public ClienteCarritoController(
             IDireccionConsumer direccionConsumer,
             IProductoConsumer productoConsumer,
             IRestauranteConsumer restauranteConsumer,
-            IPedidoConsumer pedidoConsumer)
+            IPedidoConsumer pedidoConsumer,
+            Delivery.MVC.Servicios.IArchivoService archivoService)
         {
             _direccionConsumer = direccionConsumer;
             _productoConsumer = productoConsumer;
             _restauranteConsumer = restauranteConsumer;
             _pedidoConsumer = pedidoConsumer;
+            _archivoService = archivoService;
         }
 
         private long GetMyUsuarioId()
@@ -171,7 +174,7 @@ namespace Delivery.MVC.Controllers
         // CONFIRMAR COMPRA → Aquí se crea el Pedido real en base de datos
         // ─────────────────────────────────────────────────────────────────────
         [HttpPost]
-        public async Task<IActionResult> Confirmar(long direccionId, string metodoPago, string? titular, string? numeroTarjeta, string? expiracion, string? cvv)
+        public async Task<IActionResult> Confirmar(long direccionId, string metodoPago, string? titular, string? numeroTarjeta, string? expiracion, string? cvv, Microsoft.AspNetCore.Http.IFormFile? comprobante)
         {
             var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
             if (carrito == null || !carrito.Items.Any())
@@ -188,6 +191,7 @@ namespace Delivery.MVC.Controllers
 
             // --- SIMULACIÓN DE PAGO ---
             var tipoMetodoPago = Delivery.Modelos.Enums.TipoMetodoPagoEnum.Efectivo;
+            string? comprobanteUrl = null;
 
             if (metodoPago == "Tarjeta")
             {
@@ -218,6 +222,10 @@ namespace Delivery.MVC.Controllers
             else if (metodoPago == "Transferencia")
             {
                 tipoMetodoPago = Delivery.Modelos.Enums.TipoMetodoPagoEnum.Transferencia;
+                if (comprobante != null && comprobante.Length > 0)
+                {
+                    comprobanteUrl = await _archivoService.GuardarArchivoAsync(comprobante, "comprobantes");
+                }
                 TempData["MensajePago"] = "Pago por transferencia verificado (simulación).";
             }
             else
@@ -226,6 +234,12 @@ namespace Delivery.MVC.Controllers
             }
 
             var userId = GetMyUsuarioId();
+
+            // Guardamos temporalmente el comprobante
+            if (!string.IsNullOrEmpty(comprobanteUrl))
+            {
+                carrito.ComprobanteTransferenciaUrl = comprobanteUrl;
+            }
 
             // *** ÚNICO PUNTO donde se crea el Pedido en base de datos ***
             var pedidoCreado = await _pedidoConsumer.CrearDesdeCarritoAsync(userId, direccionId, tipoMetodoPago, carrito);

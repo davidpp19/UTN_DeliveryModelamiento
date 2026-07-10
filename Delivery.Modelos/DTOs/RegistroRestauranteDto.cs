@@ -23,6 +23,10 @@ namespace Delivery.Modelos.DTOs
         [Compare("Password", ErrorMessage = "Las contraseñas no coinciden")]
         public string ConfirmarPassword { get; set; } = null!;
 
+        [Required(ErrorMessage = "La cédula es obligatoria")]
+        [StringLength(20)]
+        public string Cedula { get; set; } = null!;
+
         [Required(ErrorMessage = "El nombre del restaurante es obligatorio")]
         public string NombreRestaurante { get; set; } = null!;
 

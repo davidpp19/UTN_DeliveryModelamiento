@@ -20,6 +20,10 @@ namespace Delivery.Modelos.DTOs
         [Phone]
         public string Telefono { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "La cédula es requerida")]
+        [StringLength(20)]
+        public string Cedula { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "La contraseña es requerida")]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "La contraseña debe tener al menos 6 caracteres")]
         public string Password { get; set; } = string.Empty;

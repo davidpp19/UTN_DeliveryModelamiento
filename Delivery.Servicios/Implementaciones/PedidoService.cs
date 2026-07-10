@@ -123,6 +123,8 @@ namespace Delivery.Servicios.Implementaciones
                     CostoEnvio         = costoEnvio,
                     Total              = total,
                     TipoMetodoPago     = metodoPago,
+                    ComprobanteTransferenciaUrl = carritoSesion.ComprobanteTransferenciaUrl,
+                    Notas              = carritoSesion.Notas,
                     FechaPedido        = ahora
                 };
                 _context.Pedidos.Add(pedido);

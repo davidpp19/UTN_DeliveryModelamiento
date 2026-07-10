@@ -11,6 +11,8 @@ namespace Delivery.Modelos.DTOs
         public long RestauranteId { get; set; }
         public string NombreRestaurante { get; set; } = string.Empty;
         public List<CarritoItemSesionDto> Items { get; set; } = new();
+        public string? Notas { get; set; }
+        public string? ComprobanteTransferenciaUrl { get; set; }
 
         public decimal Subtotal
         {
