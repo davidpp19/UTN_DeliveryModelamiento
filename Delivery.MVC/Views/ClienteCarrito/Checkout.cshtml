@@ -1,0 +1,144 @@
+@model Delivery.Modelos.DTOs.CarritoSesionDto
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="container mt-4">
+    <h2>Proceso de Pago (Simulación)</h2>
+    <hr />
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="row">
+        <div class="col-md-5 order-md-2 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Tu Carrito</span>
+                <span class="badge badge-secondary badge-pill">@Model.Items.Count</span>
+            </h4>
+            <ul class="list-group mb-3">
+                @foreach (var item in Model.Items)
+                {
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <h6 class="my-0">@item.NombreProducto</h6>
+                            <small class="text-muted">Cantidad: @item.Cantidad</small>
+                        </div>
+                        <span class="text-muted">$@item.Subtotal.ToString("0.00")</span>
+                    </li>
+                }
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (USD)</span>
+                    <strong>$@Model.Subtotal.ToString("0.00")</strong>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="col-md-7 order-md-1">
+            <form asp-action="Confirmar" method="post" id="checkoutForm">
+                <h4 class="mb-3">Dirección de Entrega</h4>
+                <div class="mb-3">
+                    <label for="direccionId">Selecciona tu Dirección</label>
+                    <select class="form-control" id="direccionId" name="direccionId" asp-items="ViewBag.Direcciones" required>
+                        <option value="">-- Selecciona una dirección --</option>
+                    </select>
+                </div>
+
+                <hr class="mb-4">
+
+                <h4 class="mb-3">Método de Pago</h4>
+
+                <div class="d-block my-3">
+                    <div class="custom-control custom-radio">
+                        <input id="efectivo" name="metodoPago" type="radio" class="custom-control-input" value="Efectivo" checked required onchange="togglePaymentSections()">
+                        <label class="custom-control-label" for="efectivo">Efectivo (Al recibir el pedido)</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input id="tarjeta" name="metodoPago" type="radio" class="custom-control-input" value="Tarjeta" required onchange="togglePaymentSections()">
+                        <label class="custom-control-label" for="tarjeta">Tarjeta de Crédito / Débito</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input id="transferencia" name="metodoPago" type="radio" class="custom-control-input" value="Transferencia" required onchange="togglePaymentSections()">
+                        <label class="custom-control-label" for="transferencia">Transferencia Bancaria</label>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN TARJETA -->
+                <div id="seccionTarjeta" style="display:none;" class="card p-3 mb-4 bg-light">
+                    <h5>Detalles de la Tarjeta</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="titular">Nombre en la tarjeta</label>
+                            <input type="text" class="form-control" id="titular" name="titular" placeholder="EJ. JUAN PEREZ">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="numeroTarjeta">Número de tarjeta</label>
+                            <input type="text" class="form-control" id="numeroTarjeta" name="numeroTarjeta" placeholder="XXXX-XXXX-XXXX-XXXX">
+                            <small class="text-muted">Se validará el algoritmo de Luhn y el prefijo de la franquicia.</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="expiracion">Expiración</label>
+                            <input type="text" class="form-control" id="expiracion" name="expiracion" placeholder="MM/AA">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="cvv">CVV</label>
+                            <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN TRANSFERENCIA -->
+                <div id="seccionTransferencia" style="display:none;" class="card p-3 mb-4 bg-light">
+                    <h5>Datos para Transferencia</h5>
+                    <p>Por favor, realiza la transferencia a la siguiente cuenta y luego haz clic en "Confirmar Pago".</p>
+                    <ul>
+                        <li><strong>Banco:</strong> Banco Pichincha</li>
+                        <li><strong>Tipo de Cuenta:</strong> Ahorros</li>
+                        <li><strong>Número:</strong> 2201389882</li>
+                        <li><strong>Titular:</strong> RayoExpres S.A.</li>
+                    </ul>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="checkTransferencia" name="checkTransferencia">
+                        <label class="form-check-label" for="checkTransferencia">Confirmo que he realizado la transferencia</label>
+                    </div>
+                </div>
+
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" type="submit" id="btnSubmit">Confirmar Pedido</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePaymentSections() {
+        var metodo = document.querySelector('input[name="metodoPago"]:checked').value;
+        var seccionTarjeta = document.getElementById('seccionTarjeta');
+        var seccionTransferencia = document.getElementById('seccionTransferencia');
+        var btnSubmit = document.getElementById('btnSubmit');
+
+        seccionTarjeta.style.display = 'none';
+        seccionTransferencia.style.display = 'none';
+        
+        // Quitar obligatoriedad por defecto
+        document.getElementById('numeroTarjeta').removeAttribute('required');
+        document.getElementById('expiracion').removeAttribute('required');
+        document.getElementById('cvv').removeAttribute('required');
+
+        if (metodo === 'Tarjeta') {
+            seccionTarjeta.style.display = 'block';
+            document.getElementById('numeroTarjeta').setAttribute('required', 'required');
+            document.getElementById('expiracion').setAttribute('required', 'required');
+            document.getElementById('cvv').setAttribute('required', 'required');
+        } else if (metodo === 'Transferencia') {
+            seccionTransferencia.style.display = 'block';
+        }
+    }
+    
+    // Ejecutar al cargar la página por si hay algún check guardado
+    window.onload = togglePaymentSections;
+</script>

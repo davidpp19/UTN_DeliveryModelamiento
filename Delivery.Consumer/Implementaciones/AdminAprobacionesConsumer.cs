@@ -44,7 +44,7 @@ namespace Delivery.Consumer.Implementaciones
 
         public async Task<bool> RechazarRepartidorAsync(long id, string? motivo = null)
         {
-            var url = $"/api/AdminAprobaciones/repartidores/{id}/rechazar";
+            var url = $"api/AdminAprobaciones/repartidores/{id}/rechazar";
             if (!string.IsNullOrEmpty(motivo))
                 url += $"?motivo={System.Uri.EscapeDataString(motivo)}";
             var response = await _httpClient.PostAsync(url, null);
@@ -59,7 +59,7 @@ namespace Delivery.Consumer.Implementaciones
 
         public async Task<bool> RechazarRestauranteAsync(long id, string? motivo = null)
         {
-            var url = $"/api/AdminAprobaciones/restaurantes/{id}/rechazar";
+            var url = $"api/AdminAprobaciones/restaurantes/{id}/rechazar";
             if (!string.IsNullOrEmpty(motivo))
                 url += $"?motivo={System.Uri.EscapeDataString(motivo)}";
             var response = await _httpClient.PostAsync(url, null);

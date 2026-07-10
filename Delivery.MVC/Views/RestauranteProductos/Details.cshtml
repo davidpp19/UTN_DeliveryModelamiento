@@ -14,10 +14,19 @@
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Precio)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Precio)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ImagenUrl)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.ImagenUrl)</dd>
+<dt class="col-sm-3">Imagen</dt>
+<dd class="col-sm-9">
+    @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+    {
+        <img src="@Model.ImagenUrl" alt="Imagen del producto" class="img-fluid img-thumbnail" style="max-height: 200px;" />
+    }
+    else
+    {
+        <span class="text-muted">Sin imagen</span>
+    }
+</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Disponible)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Disponible)</dd>
+<dd class="col-sm-9">@(Model.Disponible ? "Sí" : "No")</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TiempoPreparacion)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.TiempoPreparacion)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>

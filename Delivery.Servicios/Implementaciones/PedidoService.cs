@@ -86,7 +86,7 @@ namespace Delivery.Servicios.Implementaciones
         /// Se ejecuta DENTRO de una transacción atómica.
         /// NO hay ninguna inserción en pedidos antes de este método.
         /// </summary>
-        public async Task<Pedido> CrearDesdeSesionAsync(long usuarioId, long direccionId, CarritoSesionDto carritoSesion)
+        public async Task<Pedido> CrearDesdeSesionAsync(long usuarioId, long direccionId, TipoMetodoPagoEnum metodoPago, CarritoSesionDto carritoSesion)
         {
             if (carritoSesion == null || !carritoSesion.Items.Any())
                 throw new BusinessException("El carrito está vacío.");
@@ -122,7 +122,7 @@ namespace Delivery.Servicios.Implementaciones
                     Subtotal           = subtotal,
                     CostoEnvio         = costoEnvio,
                     Total              = total,
-                    TipoMetodoPago     = TipoMetodoPagoEnum.Efectivo,
+                    TipoMetodoPago     = metodoPago,
                     FechaPedido        = ahora
                 };
                 _context.Pedidos.Add(pedido);

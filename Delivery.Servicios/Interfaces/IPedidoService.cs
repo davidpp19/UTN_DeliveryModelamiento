@@ -17,7 +17,7 @@ namespace Delivery.Servicios.Interfaces
         /// Crea el Pedido real desde los items del carrito de sesión.
         /// Este es el ÚNICO punto donde se inserta en la tabla pedidos.
         /// </summary>
-        Task<Pedido> CrearDesdeSesionAsync(long usuarioId, long direccionId, CarritoSesionDto carrito);
+        Task<Pedido> CrearDesdeSesionAsync(long usuarioId, long direccionId, Delivery.Modelos.Enums.TipoMetodoPagoEnum metodoPago, CarritoSesionDto carrito);
 
         Task<Pedido> ActualizarEstadoRestauranteAsync(long pedidoId, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long restauranteId);
         Task<Pedido> ActualizarEstadoRepartidorAsync(long pedidoId, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long repartidorId);

@@ -78,16 +78,6 @@ else
     }
     else
     {
-        <h4>Confirmar Pedido</h4>
-        <form asp-action="Confirmar" method="post">
-            <div>
-                <label for="direccionId">Selecciona tu Dirección de Entrega</label><br />
-                <select name="direccionId" id="direccionId" asp-items="ViewBag.Direcciones" required>
-                    <option value="">-- Selecciona una dirección --</option>
-                </select>
-            </div>
-            <br />
-            <button type="submit">Confirmar Pedido</button>
-        </form>
+        <a asp-action="Checkout" class="btn btn-primary btn-lg">Proceder al Pago</a>
     }
 }

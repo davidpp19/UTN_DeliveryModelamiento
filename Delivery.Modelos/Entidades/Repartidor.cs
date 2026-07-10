@@ -25,6 +25,12 @@ namespace Delivery.Modelos.Entidades
         [Column("estado_aprobacion")]
         public EstadoAprobacionEnum EstadoAprobacion { get; set; }
 
+        [Column("direccion", TypeName = "text")]
+        public string? Direccion { get; set; }
+
+        [Column("datos_adicionales", TypeName = "text")]
+        public string? DatosAdicionales { get; set; }
+
         [Column("aprobado_por")]
         public long? AprobadoPor { get; set; }
 

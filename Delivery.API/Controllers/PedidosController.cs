@@ -47,12 +47,13 @@ namespace Delivery.API.Controllers
         public async Task<ActionResult<Pedido>> CrearDesdeCarrito(
             [FromQuery] long usuarioId,
             [FromQuery] long direccionId,
+            [FromQuery] Delivery.Modelos.Enums.TipoMetodoPagoEnum metodoPago,
             [FromBody] Delivery.Modelos.DTOs.CarritoSesionDto carritoSesion)
         {
             if (carritoSesion == null || !carritoSesion.Items.Any())
                 return BadRequest(new { message = "El carrito está vacío." });
 
-            var pedido = await _pedidoService.CrearDesdeSesionAsync(usuarioId, direccionId, carritoSesion);
+            var pedido = await _pedidoService.CrearDesdeSesionAsync(usuarioId, direccionId, metodoPago, carritoSesion);
             return CreatedAtAction(nameof(GetPedido), new { id = pedido.Id }, pedido);
         }
 

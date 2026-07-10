@@ -51,6 +51,12 @@ namespace Delivery.Modelos.Entidades
         [Column("foto_perfil_url")]
         public string? FotoPerfilUrl { get; set; }
 
+        [Column("fecha_nacimiento", TypeName = "date")]
+        public DateTime? FechaNacimiento { get; set; }
+
+        [Column("informacion_adicional", TypeName = "text")]
+        public string? InformacionAdicional { get; set; }
+
         [Required]
         [Column("creado_en")]
         public DateTime CreadoEn { get; set; }

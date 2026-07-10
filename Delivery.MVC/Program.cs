@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<Delivery.MVC.Servicios.IArchivoService, Delivery.MVC.Servicios.ArchivoService>();
 
 // Session para el carrito (en memoria del servidor)
 builder.Services.AddDistributedMemoryCache();

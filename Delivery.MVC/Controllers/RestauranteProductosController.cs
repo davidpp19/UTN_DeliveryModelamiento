@@ -13,11 +13,13 @@ namespace Delivery.MVC.Controllers
     {
         private readonly IProductoConsumer _productoConsumer;
         private readonly IRestauranteConsumer _restauranteConsumer;
+        private readonly Delivery.MVC.Servicios.IArchivoService _archivoService;
 
-        public RestauranteProductosController(IProductoConsumer productoConsumer, IRestauranteConsumer restauranteConsumer)
+        public RestauranteProductosController(IProductoConsumer productoConsumer, IRestauranteConsumer restauranteConsumer, Delivery.MVC.Servicios.IArchivoService archivoService)
         {
             _productoConsumer = productoConsumer;
             _restauranteConsumer = restauranteConsumer;
+            _archivoService = archivoService;
         }
 
         private async Task<long?> GetMyRestauranteId()
@@ -64,10 +66,16 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Producto entity)
+        public async Task<IActionResult> Create(Producto entity, Microsoft.AspNetCore.Http.IFormFile? imagen)
         {
             var restauranteId = await GetMyRestauranteId();
             if (restauranteId == null) return Unauthorized();
+
+            if (imagen != null)
+            {
+                var url = await _archivoService.GuardarArchivoAsync(imagen, "productos");
+                if (url != null) entity.ImagenUrl = url;
+            }
 
             entity.RestauranteId = restauranteId.Value;
             await _productoConsumer.CreateAsync(entity);
@@ -83,10 +91,16 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(long id, Producto entity)
+        public async Task<IActionResult> Edit(long id, Producto entity, Microsoft.AspNetCore.Http.IFormFile? imagen)
         {
             var restauranteId = await GetMyRestauranteId();
             if (restauranteId == null || entity.RestauranteId != restauranteId) return Unauthorized();
+
+            if (imagen != null)
+            {
+                var url = await _archivoService.GuardarArchivoAsync(imagen, "productos");
+                if (url != null) entity.ImagenUrl = url;
+            }
 
             await _productoConsumer.UpdateAsync(id, entity);
             return RedirectToAction(nameof(Index));

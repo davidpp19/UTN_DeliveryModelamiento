@@ -92,11 +92,26 @@
                     <ul class="navbar-nav">
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <span class="nav-link fw-bold">Hola, @User.Identity.Name</span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-danger" asp-controller="Auth" asp-action="Logout">Cerrar Sesión</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle fw-bold" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Hola, @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUser">
+                                    @if (User.IsInRole("Cliente"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="ClientePerfil" asp-action="CompletarPerfil">Mi Perfil</a></li>
+                                    }
+                                    else if (User.IsInRole("Restaurante"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="RestaurantePerfil" asp-action="CompletarPerfil">Perfil del Restaurante</a></li>
+                                    }
+                                    else if (User.IsInRole("Repartidor"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="RepartidorPerfil" asp-action="CompletarPerfil">Mi Perfil de Repartidor</a></li>
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" asp-controller="Auth" asp-action="Logout">Cerrar Sesión</a></li>
+                                </ul>
                             </li>
                         }
                         else

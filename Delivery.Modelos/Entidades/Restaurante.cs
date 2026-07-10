@@ -59,6 +59,12 @@ namespace Delivery.Modelos.Entidades
         [Column("logo_url", TypeName = "text")]
         public string? LogoUrl { get; set; }
 
+        [Column("portada_url", TypeName = "text")]
+        public string? PortadaUrl { get; set; }
+
+        [Column("redes_sociales", TypeName = "text")]
+        public string? RedesSociales { get; set; }
+
         [Column("hora_apertura")]
         public TimeSpan? HoraApertura { get; set; }
 

@@ -1,0 +1,69 @@
+@model Delivery.Modelos.Entidades.Usuario
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="container mt-4">
+    <h2>Mi Perfil</h2>
+    <hr />
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">@TempData["Exito"]</div>
+    }
+
+    <form asp-action="CompletarPerfil" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+        <input type="hidden" name="id" value="@Model.Id" />
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Nombres</label>
+                <input type="text" name="nombre" class="form-control" value="@Model.Nombre" required />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Apellidos</label>
+                <input type="text" name="apellidos" class="form-control" value="@Model.Apellidos" required />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Teléfono</label>
+                <input type="text" name="telefono" class="form-control" value="@Model.Telefono" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Fecha de Nacimiento</label>
+                <input type="date" name="fechaNacimiento" class="form-control" value="@Model.FechaNacimiento?.ToString("yyyy-MM-dd")" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Información Adicional (Alergias, Preferencias, etc.)</label>
+            <textarea name="informacionAdicional" class="form-control" rows="3">@Model.InformacionAdicional</textarea>
+        </div>
+
+        <hr />
+        <h4>Foto de Perfil</h4>
+        <div class="row mt-3">
+            <div class="col-md-6 mb-3">
+                @if (!string.IsNullOrEmpty(Model.FotoPerfilUrl))
+                {
+                    <div class="mb-2">
+                        <img src="@Model.FotoPerfilUrl" alt="Foto de perfil" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" />
+                    </div>
+                }
+                <input type="file" name="fotoPerfil" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+                <small class="text-muted">Formatos: JPG, PNG, WEBP. Máx: 5MB.</small>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Volver al Inicio</a>
+        </div>
+    </form>
+</div>

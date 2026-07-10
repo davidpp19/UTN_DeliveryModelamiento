@@ -66,9 +66,9 @@ namespace Delivery.Consumer.Implementaciones
         /// Llama al endpoint que crea el Pedido real desde el carrito de sesión.
         /// Solo se llama cuando el usuario presiona "Confirmar Compra".
         /// </summary>
-        public async Task<Pedido?> CrearDesdeCarritoAsync(long usuarioId, long direccionId, CarritoSesionDto carrito)
+        public async Task<Pedido?> CrearDesdeCarritoAsync(long usuarioId, long direccionId, Delivery.Modelos.Enums.TipoMetodoPagoEnum metodoPago, CarritoSesionDto carrito)
         {
-            var url = $"api/Pedidos/crear-desde-carrito?usuarioId={usuarioId}&direccionId={direccionId}";
+            var url = $"api/Pedidos/crear-desde-carrito?usuarioId={usuarioId}&direccionId={direccionId}&metodoPago={(int)metodoPago}";
             var response = await _httpClient.PostAsJsonAsync(url, carrito);
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadFromJsonAsync<Pedido>();

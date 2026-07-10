@@ -18,7 +18,9 @@ namespace Delivery.Servicios.Implementaciones
 
         public async Task<IEnumerable<Repartidor>> GetAllAsync()
         {
-            return await _context.Repartidores.ToListAsync();
+            return await _context.Repartidores
+                .Include(r => r.Usuario)
+                .ToListAsync();
         }
 
         public async Task<Repartidor?> GetByIdAsync(long id)
