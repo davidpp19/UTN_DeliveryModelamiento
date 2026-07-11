@@ -77,6 +77,48 @@ namespace Delivery.Servicios.Implementaciones
             return Math.PI * angle / 180.0;
         }
 
+        public async Task<(double DistanciaKm, double TiempoMinutos)> CalcularRutaOSRMAsync(double lat1, double lon1, double lat2, double lon2)
+        {
+            try
+            {
+                using var client = new System.Net.Http.HttpClient();
+                // OSRM espera las coordenadas en formato: longitud,latitud
+                var url = $"http://router.project-osrm.org/route/v1/driving/{lon1.ToString(System.Globalization.CultureInfo.InvariantCulture)},{lat1.ToString(System.Globalization.CultureInfo.InvariantCulture)};{lon2.ToString(System.Globalization.CultureInfo.InvariantCulture)},{lat2.ToString(System.Globalization.CultureInfo.InvariantCulture)}?overview=false";
+                
+                client.DefaultRequestHeaders.Add("User-Agent", "RayoExpresDeliveryApp/1.0");
+
+                var response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    using var doc = System.Text.Json.JsonDocument.Parse(json);
+                    
+                    var code = doc.RootElement.GetProperty("code").GetString();
+                    if (code == "Ok")
+                    {
+                        var routes = doc.RootElement.GetProperty("routes");
+                        if (routes.GetArrayLength() > 0)
+                        {
+                            var route = routes[0];
+                            var distanceMeters = route.GetProperty("distance").GetDouble();
+                            var durationSeconds = route.GetProperty("duration").GetDouble();
+                            
+                            return (distanceMeters / 1000.0, durationSeconds / 60.0);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Fallback en caso de error de red o de OSRM
+                Console.WriteLine($"Error al consultar OSRM: {ex.Message}");
+            }
+
+            // Fallback: Haversine distance, y un tiempo estimado asumiendo 30 km/h (0.5 km/min)
+            var haversine = CalcularDistanciaKm(lat1, lon1, lat2, lon2);
+            return (haversine, haversine * 2); 
+        }
+
         public decimal CalcularCostoEnvio(double distanciaKm)
         {
             // Redondear la distancia al km superior (ej: 2.1km -> 3km, 3.8km -> 4km)

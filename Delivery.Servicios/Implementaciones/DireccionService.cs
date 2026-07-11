@@ -59,6 +59,13 @@ namespace Delivery.Servicios.Implementaciones
             var direccion = await _context.Direcciones.FindAsync(id);
             if (direccion == null) return false;
 
+            // Validar si la dirección está siendo referenciada en pedidos
+            var tienePedidos = await _context.Pedidos.AnyAsync(p => p.DireccionEntregaId == id);
+            if (tienePedidos)
+            {
+                throw new Delivery.Modelos.Excepciones.BusinessException("No se puede eliminar la dirección porque está asociada a uno o más pedidos en el historial.");
+            }
+
             _context.Direcciones.Remove(direccion);
             await _context.SaveChangesAsync();
             return true;

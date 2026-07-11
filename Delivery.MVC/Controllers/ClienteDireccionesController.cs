@@ -100,7 +100,15 @@ namespace Delivery.MVC.Controllers
             var data = await _direccionConsumer.GetByIdAsync(id);
             if (data != null && data.UsuarioId == userId)
             {
-                await _direccionConsumer.DeleteAsync(id);
+                var result = await _direccionConsumer.DeleteAsync(id);
+                if (result)
+                {
+                    TempData["Exito"] = "Dirección eliminada correctamente.";
+                }
+                else
+                {
+                    TempData["Error"] = "No se puede eliminar la dirección porque está asociada a uno o más pedidos en el historial.";
+                }
             }
             return RedirectToAction(nameof(Index));
         }

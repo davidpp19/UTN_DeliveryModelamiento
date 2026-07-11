@@ -3,8 +3,47 @@
     ViewData["Title"] = "Checkout";
 }
 
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+    #mapaCheckout {
+        height: 350px;
+        width: 100%;
+        border-radius: 8px;
+        margin-top: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 1; /* Para no sobreponer navbars */
+    }
+    .search-container {
+        position: relative;
+        margin-bottom: 15px;
+    }
+    #listaResultados {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        display: none;
+    }
+    .resultado-item {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+    }
+    .resultado-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+
 <div class="container mt-4">
-    <h2>Proceso de Pago (Simulación)</h2>
+    <h2>Proceso de Pago</h2>
     <hr />
 
     @if (TempData["Error"] != null)
@@ -13,6 +52,7 @@
     }
 
     <div class="row">
+        <!-- Resumen de Costos -->
         <div class="col-md-5 order-md-2 mb-4">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted">Tu Carrito</span>
@@ -29,30 +69,84 @@
                         <span class="text-muted">$@item.Subtotal.ToString("0.00")</span>
                     </li>
                 }
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="my-0">Distancia y Tiempo</h6>
+                        <strong id="distanciaInfo">Calculando...</strong>
+                    </div>
+                    <small class="text-muted" id="tiempoInfo">Seleccione dirección en el mapa</small>
+                </li>
                 <li class="list-group-item d-flex justify-content-between lh-condensed bg-light">
                     <div>
                         <h6 class="my-0">Costo de Envío</h6>
-                        <small class="text-muted" id="distanciaInfo">Seleccione dirección</small>
                     </div>
                     <span class="text-success" id="costoEnvioUI">$0.00</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Total (USD)</span>
-                    <strong id="totalUI">$@Model.Subtotal.ToString("0.00")</strong>
+                    <strong id="totalUI" class="text-primary fs-5">$@Model.Subtotal.ToString("0.00")</strong>
                 </li>
             </ul>
             <input type="hidden" id="subtotalValue" value="@Model.Subtotal" />
+            
+            <div class="alert alert-info">
+                <strong>Tarifa de envío:</strong> $1.50 (hasta 3 km). $0.25 por km adicional.
+            </div>
         </div>
         
+        <!-- Formulario -->
         <div class="col-md-7 order-md-1">
             <form asp-action="Confirmar" method="post" id="checkoutForm" enctype="multipart/form-data" onsubmit="return validarFormulario(event)">
+                
                 <h4 class="mb-3">Dirección de Entrega</h4>
+                
                 <div class="mb-3">
-                    <label for="direccionId">Selecciona tu Dirección</label>
-                    <select class="form-control" id="direccionId" name="direccionId" asp-items="ViewBag.Direcciones" required>
-                        <option value="">-- Selecciona una dirección --</option>
+                    <label for="selectDireccion">Tus direcciones guardadas</label>
+                    <select class="form-control" id="selectDireccion" name="direccionId" asp-items="ViewBag.Direcciones">
+                        <option value="0">-- Usar otra dirección (Buscar en el mapa) --</option>
                     </select>
                 </div>
+
+                <div class="search-container" id="buscadorContainer">
+                    <input type="text" id="buscadorDireccion" class="form-control form-control-lg" placeholder="🔍 Escribe para buscar una calle o lugar..." autocomplete="off">
+                    <div id="listaResultados"></div>
+                </div>
+
+                <div id="mapaCheckout"></div>
+                <small class="text-muted d-block mt-1 mb-3">📍 Puedes arrastrar el marcador rojo para afinar tu ubicación exacta.</small>
+
+                <!-- Campos ocultos y opcionales para la nueva dirección -->
+                <div id="nuevaDireccionCampos" style="display:none;" class="card p-3 mb-4 border-info">
+                    <h5 class="text-info">Detalles de la Ubicación</h5>
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label>Calle / Avenida principal detectada</label>
+                            <input type="text" class="form-control" id="nuevaCalle" name="nuevaCalle" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="custom-control custom-checkbox mb-3 mt-2">
+                        <input type="checkbox" class="custom-control-input" id="guardarDireccion" name="guardarDireccion" value="true">
+                        <label class="custom-control-label fw-bold" for="guardarDireccion">Guardar esta dirección para mis próximas compras</label>
+                    </div>
+
+                    <div id="camposGuardado" style="display:none;">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label>Alias (Ej. Casa, Trabajo)</label>
+                                <input type="text" class="form-control" name="nuevoAlias" placeholder="Casa">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label>Referencia</label>
+                                <input type="text" class="form-control" name="nuevaReferencia" placeholder="Frente al parque">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="nuevaCiudad" name="nuevaCiudad" value="Guayaquil">
+                <input type="hidden" id="nuevaLatitud" name="nuevaLatitud">
+                <input type="hidden" id="nuevaLongitud" name="nuevaLongitud">
 
                 <hr class="mb-4">
 
@@ -117,167 +211,355 @@
                 </div>
 
                 <hr class="mb-4">
-                <button class="btn btn-primary btn-lg btn-block" type="submit" id="btnSubmit">Confirmar Pedido</button>
+                <button class="btn btn-primary btn-lg btn-block" type="submit" id="btnSubmit">Confirmar y Pagar</button>
             </form>
         </div>
     </div>
 </div>
 
-<script>
-    function togglePaymentSections() {
-        var metodo = document.querySelector('input[name="metodoPago"]:checked').value;
-        var seccionTarjeta = document.getElementById('seccionTarjeta');
-        var seccionTransferencia = document.getElementById('seccionTransferencia');
-        
-        seccionTarjeta.style.display = 'none';
-        seccionTransferencia.style.display = 'none';
-        
-        document.getElementById('numeroTarjeta').removeAttribute('required');
-        document.getElementById('expiracion').removeAttribute('required');
-        document.getElementById('cvv').removeAttribute('required');
-        document.getElementById('comprobante').removeAttribute('required');
+@section Scripts {
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-        if (metodo === 'Tarjeta') {
-            seccionTarjeta.style.display = 'block';
-            document.getElementById('numeroTarjeta').setAttribute('required', 'required');
-            document.getElementById('expiracion').setAttribute('required', 'required');
-            document.getElementById('cvv').setAttribute('required', 'required');
-        } else if (metodo === 'Transferencia') {
-            seccionTransferencia.style.display = 'block';
-            document.getElementById('comprobante').setAttribute('required', 'required');
-        }
-    }
+    <script>
+        var map, marker;
+        var latitudActual = -2.1894; // Guayaquil por defecto
+        var longitudActual = -79.8891;
 
-    document.getElementById('direccionId').addEventListener('change', function() {
-        var dirId = this.value;
-        if (!dirId) {
-            document.getElementById('costoEnvioUI').innerText = '$0.00';
-            document.getElementById('distanciaInfo').innerText = 'Seleccione dirección';
-            actualizarTotal(0);
-            return;
-        }
+        // Inicialización
+        document.addEventListener("DOMContentLoaded", function () {
+            togglePaymentSections();
 
-        fetch('/ClienteCarrito/CalcularCostoEnvio?direccionId=' + dirId)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.exito) {
-                    var costo = data.costo;
-                    document.getElementById('costoEnvioUI').innerText = '$' + costo.toFixed(2);
-                    if (data.distancia) {
-                        document.getElementById('distanciaInfo').innerText = data.distancia + ' km apróx.';
-                    } else {
-                        document.getElementById('distanciaInfo').innerText = 'Tarifa base';
-                    }
-                    actualizarTotal(costo);
-                }
-            })
-            .catch(err => console.error(err));
-    });
+            map = L.map('mapaCheckout').setView([latitudActual, longitudActual], 13);
 
-    function actualizarTotal(costoEnvio) {
-        var sub = parseFloat(document.getElementById('subtotalValue').value.replace(',', '.'));
-        var tot = sub + parseFloat(costoEnvio);
-        document.getElementById('totalUI').innerText = '$' + tot.toFixed(2);
-    }
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
 
-    function formatearTarjeta(input) {
-        let value = input.value.replace(/\D/g, '');
-        let tipo = '';
-        let maxLength = 16;
+            var customIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149059.png',
+                iconSize: [38, 38],
+                iconAnchor: [19, 38]
+            });
 
-        if (value.startsWith('34') || value.startsWith('37')) {
-            tipo = 'Amex';
-            maxLength = 15;
-        } else if (value.startsWith('4')) {
-            tipo = 'Visa';
-        } else if (value.startsWith('5')) {
-            tipo = 'Mastercard';
-        } else if (value.startsWith('6')) {
-            tipo = 'Discover';
-        }
+            marker = L.marker([latitudActual, longitudActual], {
+                icon: customIcon,
+                draggable: true
+            }).addTo(map);
 
-        document.getElementById('tarjetaTipo').innerText = tipo;
-        value = value.substring(0, maxLength);
+            marker.on('dragend', function (e) {
+                var position = marker.getLatLng();
+                actualizarCamposUbicacion(position.lat, position.lng);
+                obtenerNombreCalle(position.lat, position.lng);
+                calcularCostoEnvio(0, position.lat, position.lng); // 0 indica nueva dirección
+                document.getElementById('selectDireccion').value = "0";
+            });
 
-        let formatted = '';
-        if (tipo === 'Amex') {
-            if (value.length > 4) {
-                formatted += value.substring(0, 4) + ' ';
-                if (value.length > 10) {
-                    formatted += value.substring(4, 10) + ' ' + value.substring(10, 15);
-                } else {
-                    formatted += value.substring(4, 10);
-                }
+            // Si el cliente tiene direcciones, seleccionar la primera
+            var selectDir = document.getElementById('selectDireccion');
+            if (selectDir.options.length > 1) {
+                selectDir.selectedIndex = 1;
+                // Forzar el evento change para cargar la ubicacion
+                var event = new Event('change');
+                selectDir.dispatchEvent(event);
             } else {
-                formatted = value;
-            }
-        } else {
-            formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ');
-        }
-        
-        input.value = formatted;
-    }
-
-    function formatearExpiracion(input) {
-        let value = input.value.replace(/\D/g, '');
-        if (value.length > 2) {
-            value = value.substring(0, 2) + '/' + value.substring(2, 4);
-        }
-        input.value = value;
-    }
-
-    function luhnCheck(num) {
-        let arr = (num + '').split('').reverse().map(x => parseInt(x));
-        let sum = arr.reduce((acc, val, i) => i % 2 !== 0 ? acc + (val * 2 > 9 ? val * 2 - 9 : val * 2) : acc + val, 0);
-        return sum % 10 === 0;
-    }
-
-    function validarFormulario(e) {
-        var metodo = document.querySelector('input[name="metodoPago"]:checked').value;
-        if (metodo === 'Tarjeta') {
-            var num = document.getElementById('numeroTarjeta').value.replace(/\D/g, '');
-            var exp = document.getElementById('expiracion').value;
-            var cvv = document.getElementById('cvv').value;
-            var err = document.getElementById('tarjetaError');
-            err.style.display = 'none';
-
-            if (num.length < 15 || !luhnCheck(num)) {
-                err.innerText = "Número de tarjeta inválido (Luhn).";
-                err.style.display = 'block';
-                return false;
+                // Solicitar ubicación si no hay direcciones
+                solicitarUbicacion();
             }
 
-            var parts = exp.split('/');
-            if (parts.length !== 2) {
-                err.innerText = "Expiración inválida. Usa MM/AA.";
-                err.style.display = 'block';
-                return false;
+            // Checkbox guardar direccion
+            document.getElementById('guardarDireccion').addEventListener('change', function() {
+                document.getElementById('camposGuardado').style.display = this.checked ? 'block' : 'none';
+            });
+        });
+
+        function solicitarUbicacion() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    map.setView([lat, lng], 15);
+                    marker.setLatLng([lat, lng]);
+                    actualizarCamposUbicacion(lat, lng);
+                    obtenerNombreCalle(lat, lng);
+                    calcularCostoEnvio(0, lat, lng);
+                }, function (error) {
+                    console.log("Geolocalización denegada o error", error);
+                    // Queda en Guayaquil por defecto
+                    calcularCostoEnvio(0, latitudActual, longitudActual);
+                    obtenerNombreCalle(latitudActual, longitudActual);
+                });
+            }
+        }
+
+        // Cambio de dirección en el Select
+        document.getElementById('selectDireccion').addEventListener('change', function () {
+            var dirId = this.value;
+            if (dirId !== "0") {
+                document.getElementById('nuevaDireccionCampos').style.display = 'none';
+                document.getElementById('buscadorContainer').style.display = 'none';
+                
+                // Pedir coordenadas al backend para la direccion existente
+                fetch('/ClienteCarrito/CalcularCostoEnvio?direccionId=' + dirId)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.exito) {
+                            actualizarResumenEnvio(data.costo, data.distancia, data.tiempo);
+                        }
+                    });
+                
+                // Nota: Para mover el mapa, necesitamos las coordenadas de la dirección guardada. 
+                // Lo ideal sería que CalcularCostoEnvio también las devuelva, pero como el usuario 
+                // ya la seleccionó, el mapa es secundario o podríamos añadir data-lat y data-lng a las options.
+            } else {
+                document.getElementById('nuevaDireccionCampos').style.display = 'block';
+                document.getElementById('buscadorContainer').style.display = 'block';
+                var pos = marker.getLatLng();
+                calcularCostoEnvio(0, pos.lat, pos.lng);
+            }
+        });
+
+        function actualizarCamposUbicacion(lat, lng) {
+            document.getElementById('nuevaLatitud').value = lat;
+            document.getElementById('nuevaLongitud').value = lng;
+        }
+
+        // Búsqueda de Direcciones (Nominatim)
+        var timerBusqueda;
+        document.getElementById('buscadorDireccion').addEventListener('input', function (e) {
+            clearTimeout(timerBusqueda);
+            var query = e.target.value;
+            if (query.length < 3) {
+                document.getElementById('listaResultados').style.display = 'none';
+                return;
+            }
+
+            timerBusqueda = setTimeout(function () {
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=EC`)
+                    .then(res => res.json())
+                    .then(data => {
+                        var lista = document.getElementById('listaResultados');
+                        lista.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                var div = document.createElement('div');
+                                div.className = 'resultado-item';
+                                div.innerText = item.display_name;
+                                div.onclick = function () {
+                                    seleccionarUbicacion(item.lat, item.lon, item.display_name);
+                                };
+                                lista.appendChild(div);
+                            });
+                            lista.style.display = 'block';
+                        } else {
+                            lista.style.display = 'none';
+                        }
+                    });
+            }, 500);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.id !== 'buscadorDireccion') {
+                document.getElementById('listaResultados').style.display = 'none';
+            }
+        });
+
+        function seleccionarUbicacion(lat, lng, nombreCompleto) {
+            var latFloat = parseFloat(lat);
+            var lngFloat = parseFloat(lng);
+            
+            map.setView([latFloat, lngFloat], 16);
+            marker.setLatLng([latFloat, lngFloat]);
+            
+            document.getElementById('buscadorDireccion').value = nombreCompleto;
+            document.getElementById('listaResultados').style.display = 'none';
+            document.getElementById('nuevaCalle').value = nombreCompleto.split(',')[0];
+            
+            actualizarCamposUbicacion(latFloat, lngFloat);
+            calcularCostoEnvio(0, latFloat, lngFloat);
+            
+            document.getElementById('selectDireccion').value = "0";
+            document.getElementById('nuevaDireccionCampos').style.display = 'block';
+        }
+
+        function obtenerNombreCalle(lat, lng) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        document.getElementById('nuevaCalle').value = data.address.road || data.display_name.split(',')[0];
+                        if (data.address.city || data.address.town) {
+                            document.getElementById('nuevaCiudad').value = data.address.city || data.address.town;
+                        }
+                    }
+                })
+                .catch(err => console.log(err));
+        }
+
+        function calcularCostoEnvio(dirId, lat, lon) {
+            var url = '/ClienteCarrito/CalcularCostoEnvio?direccionId=' + dirId;
+            if (lat !== undefined && lon !== undefined) {
+                url += '&lat=' + lat + '&lon=' + lon;
             }
             
-            var m = parseInt(parts[0], 10);
-            var y = parseInt("20" + parts[1], 10);
-            if (m < 1 || m > 12) {
-                err.innerText = "Mes de expiración inválido.";
-                err.style.display = 'block';
-                return false;
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.exito) {
+                        actualizarResumenEnvio(data.costo, data.distancia, data.tiempo);
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        function actualizarResumenEnvio(costo, distancia, tiempo) {
+            document.getElementById('costoEnvioUI').innerText = '$' + costo.toFixed(2);
+            
+            if (distancia) {
+                document.getElementById('distanciaInfo').innerText = distancia.toFixed(1) + ' km';
+            } else {
+                document.getElementById('distanciaInfo').innerText = 'Tarifa base';
             }
 
-            var now = new Date();
-            var expDate = new Date(y, m - 1);
-            if (expDate < new Date(now.getFullYear(), now.getMonth())) {
-                err.innerText = "La tarjeta ha expirado.";
-                err.style.display = 'block';
-                return false;
+            if (tiempo) {
+                document.getElementById('tiempoInfo').innerText = 'Tiempo aprox: ' + Math.ceil(tiempo) + ' min';
+            } else {
+                document.getElementById('tiempoInfo').innerText = '';
             }
 
-            if (cvv.length < 3) {
-                err.innerText = "CVV inválido.";
-                err.style.display = 'block';
-                return false;
+            var sub = parseFloat(document.getElementById('subtotalValue').value.replace(',', '.'));
+            var tot = sub + parseFloat(costo);
+            document.getElementById('totalUI').innerText = '$' + tot.toFixed(2);
+        }
+
+        function togglePaymentSections() {
+            var inputActivo = document.querySelector('input[name="metodoPago"]:checked');
+            var metodo = inputActivo ? inputActivo.value : 'Efectivo';
+            
+            var seccionTarjeta = document.getElementById('seccionTarjeta');
+            var seccionTransferencia = document.getElementById('seccionTransferencia');
+            
+            seccionTarjeta.style.display = 'none';
+            seccionTransferencia.style.display = 'none';
+            
+            document.getElementById('numeroTarjeta').removeAttribute('required');
+            document.getElementById('expiracion').removeAttribute('required');
+            document.getElementById('cvv').removeAttribute('required');
+            document.getElementById('comprobante').removeAttribute('required');
+
+            if (metodo === 'Tarjeta') {
+                seccionTarjeta.style.display = 'block';
+                document.getElementById('numeroTarjeta').setAttribute('required', 'required');
+                document.getElementById('expiracion').setAttribute('required', 'required');
+                document.getElementById('cvv').setAttribute('required', 'required');
+            } else if (metodo === 'Transferencia') {
+                seccionTransferencia.style.display = 'block';
+                document.getElementById('comprobante').setAttribute('required', 'required');
             }
         }
-        return true;
-    }
-    
-    window.onload = togglePaymentSections;
-</script>
+
+        // Lógicas de tarjeta (Mantenidas del original)
+        function formatearTarjeta(input) {
+            let value = input.value.replace(/\D/g, '');
+            let tipo = '';
+            let maxLength = 16;
+
+            if (value.startsWith('34') || value.startsWith('37')) { tipo = 'Amex'; maxLength = 15; }
+            else if (value.startsWith('4')) { tipo = 'Visa'; }
+            else if (value.startsWith('5')) { tipo = 'Mastercard'; }
+            else if (value.startsWith('6')) { tipo = 'Discover'; }
+
+            document.getElementById('tarjetaTipo').innerText = tipo;
+            value = value.substring(0, maxLength);
+
+            let formatted = '';
+            if (tipo === 'Amex') {
+                if (value.length > 4) {
+                    formatted += value.substring(0, 4) + ' ';
+                    if (value.length > 10) {
+                        formatted += value.substring(4, 10) + ' ' + value.substring(10, 15);
+                    } else {
+                        formatted += value.substring(4, 10);
+                    }
+                } else { formatted = value; }
+            } else {
+                formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            }
+            input.value = formatted;
+        }
+
+        function formatearExpiracion(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            input.value = value;
+        }
+
+        function luhnCheck(num) {
+            let arr = (num + '').split('').reverse().map(x => parseInt(x));
+            let sum = arr.reduce((acc, val, i) => i % 2 !== 0 ? acc + (val * 2 > 9 ? val * 2 - 9 : val * 2) : acc + val, 0);
+            return sum % 10 === 0;
+        }
+
+        function validarFormulario(e) {
+            // Validar que haya dirección si se elige el mapa
+            var dirId = document.getElementById('selectDireccion').value;
+            if (dirId === "0") {
+                var lat = document.getElementById('nuevaLatitud').value;
+                if (!lat) {
+                    alert("Por favor, selecciona una ubicación en el mapa.");
+                    return false;
+                }
+            }
+
+            var inputActivo = document.querySelector('input[name="metodoPago"]:checked');
+            var metodo = inputActivo ? inputActivo.value : 'Efectivo';
+            
+            if (metodo === 'Tarjeta') {
+                var num = document.getElementById('numeroTarjeta').value.replace(/\D/g, '');
+                var exp = document.getElementById('expiracion').value;
+                var cvv = document.getElementById('cvv').value;
+                var err = document.getElementById('tarjetaError');
+                err.style.display = 'none';
+
+                if (num.length < 15 || !luhnCheck(num)) {
+                    err.innerText = "Número de tarjeta inválido (Luhn).";
+                    err.style.display = 'block';
+                    return false;
+                }
+
+                var parts = exp.split('/');
+                if (parts.length !== 2) {
+                    err.innerText = "Expiración inválida. Usa MM/AA.";
+                    err.style.display = 'block';
+                    return false;
+                }
+                
+                var m = parseInt(parts[0], 10);
+                var y = parseInt("20" + parts[1], 10);
+                if (m < 1 || m > 12) {
+                    err.innerText = "Mes de expiración inválido.";
+                    err.style.display = 'block';
+                    return false;
+                }
+
+                var now = new Date();
+                var expDate = new Date(y, m - 1);
+                if (expDate < new Date(now.getFullYear(), now.getMonth())) {
+                    err.innerText = "La tarjeta ha expirado.";
+                    err.style.display = 'block';
+                    return false;
+                }
+
+                if (cvv.length < 3) {
+                    err.innerText = "CVV inválido.";
+                    err.style.display = 'block';
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+}

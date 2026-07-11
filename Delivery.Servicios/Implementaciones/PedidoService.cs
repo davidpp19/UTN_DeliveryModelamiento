@@ -114,11 +114,11 @@ namespace Delivery.Servicios.Implementaciones
             if (direccion.Latitud.HasValue && direccion.Longitud.HasValue && 
                 restaurante.Latitud.HasValue && restaurante.Longitud.HasValue)
             {
-                var distKm = _geoService.CalcularDistanciaKm(
+                var rutaOSRM = await _geoService.CalcularRutaOSRMAsync(
                     (double)restaurante.Latitud.Value, (double)restaurante.Longitud.Value,
                     (double)direccion.Latitud.Value, (double)direccion.Longitud.Value);
                 
-                costoEnvio = _geoService.CalcularCostoEnvio(distKm);
+                costoEnvio = _geoService.CalcularCostoEnvio(rutaOSRM.DistanciaKm);
             }
 
             var total = subtotal + costoEnvio;

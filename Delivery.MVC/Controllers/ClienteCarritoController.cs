@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Delivery.Modelos.DTOs;
+using Delivery.Modelos.Entidades;
 using Delivery.Consumer.Interfaces;
 using Delivery.MVC.Helpers;
 
@@ -172,57 +173,118 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CalcularCostoEnvio(long direccionId)
+        public async Task<IActionResult> CalcularCostoEnvio(long direccionId, double? lat, double? lon)
         {
             var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
             if (carrito == null || carrito.RestauranteId == 0) return Json(new { exito = false });
 
             var restaurante = await _restauranteConsumer.GetByIdAsync(carrito.RestauranteId);
-            var direccion = await _direccionConsumer.GetByIdAsync(direccionId);
-
-            if (restaurante == null || direccion == null || 
-                !restaurante.Latitud.HasValue || !restaurante.Longitud.HasValue ||
-                !direccion.Latitud.HasValue || !direccion.Longitud.HasValue)
-            {
-                return Json(new { exito = true, costo = restaurante?.CostoEnvioBase ?? 1.50m });
-            }
-
-            // Usamos un servicio o HttpClient para calcular, pero dado que estamos en el MVC y no tenemos 
-            // _geoService inyectado aquí, lo implementamos directamente o lo inyectamos en el controller.
-            // Para mantenerlo simple, haré la fórmula aquí o inyectaré el servicio en el Controller.
-            // Inyectar el servicio de geolocalización de la API no es posible directamente desde el MVC sin una llamada HTTP.
-            // Así que haré una llamada a un endpoint de la API, o replicaré la fórmula.
-            // La fórmula es ligera, la replicaré para evitar acoplamiento de red en UI, o usar el default.
             
-            var r = 6371;
-            var dLat = (direccion.Latitud.Value - restaurante.Latitud.Value) * (decimal)Math.PI / 180.0m;
-            var dLon = (direccion.Longitud.Value - restaurante.Longitud.Value) * (decimal)Math.PI / 180.0m;
-            var a = (double)(Math.Sin((double)(dLat / 2)) * Math.Sin((double)(dLat / 2)) +
-                    Math.Cos((double)(restaurante.Latitud.Value * (decimal)Math.PI / 180.0m)) * Math.Cos((double)(direccion.Latitud.Value * (decimal)Math.PI / 180.0m)) *
-                    Math.Sin((double)(dLon / 2)) * Math.Sin((double)(dLon / 2)));
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            var distKm = r * c;
+            double? dLat = lat;
+            double? dLon = lon;
 
-            var distanciaRedondeada = Math.Ceiling(distKm);
-            decimal costoBase = 1.50m;
-            int distanciaBase = 3;
-            decimal costoPorKmAdicional = 0.25m;
-            decimal costoFinal = costoBase;
-
-            if (distanciaRedondeada > distanciaBase)
+            if (direccionId > 0)
             {
-                var kmAdicionales = (decimal)(distanciaRedondeada - distanciaBase);
-                costoFinal = costoBase + (kmAdicionales * costoPorKmAdicional);
+                var direccion = await _direccionConsumer.GetByIdAsync(direccionId);
+                if (direccion != null)
+                {
+                    dLat = (double?)direccion.Latitud;
+                    dLon = (double?)direccion.Longitud;
+                }
             }
 
-            return Json(new { exito = true, costo = costoFinal, distancia = distanciaRedondeada });
+            if (restaurante == null || !restaurante.Latitud.HasValue || !restaurante.Longitud.HasValue || !dLat.HasValue || !dLon.HasValue)
+            {
+                return Json(new { exito = true, costo = restaurante?.CostoEnvioBase ?? 1.50m, distancia = 0, tiempo = 0 });
+            }
+
+            try
+            {
+                using var client = new System.Net.Http.HttpClient();
+                client.DefaultRequestHeaders.Add("User-Agent", "RayoExpresDeliveryApp/1.0");
+                
+                var rLat = restaurante.Latitud.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                var rLon = restaurante.Longitud.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                var cLat = dLat.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                var cLon = dLon.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                
+                var url = $"http://router.project-osrm.org/route/v1/driving/{rLon},{rLat};{cLon},{cLat}?overview=false";
+                var response = await client.GetAsync(url);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    using var doc = System.Text.Json.JsonDocument.Parse(json);
+                    
+                    var code = doc.RootElement.GetProperty("code").GetString();
+                    if (code == "Ok")
+                    {
+                        var routes = doc.RootElement.GetProperty("routes");
+                        if (routes.GetArrayLength() > 0)
+                        {
+                            var route = routes[0];
+                            var distanceMeters = route.GetProperty("distance").GetDouble();
+                            var durationSeconds = route.GetProperty("duration").GetDouble();
+                            
+                            var distKm = distanceMeters / 1000.0;
+                            var tiempoMin = durationSeconds / 60.0;
+                            
+                            var distanciaRedondeada = System.Math.Ceiling(distKm);
+                            decimal costoFinal = 1.50m;
+                            if (distanciaRedondeada > 3)
+                            {
+                                costoFinal += (decimal)(distanciaRedondeada - 3) * 0.25m;
+                            }
+                            
+                            return Json(new { exito = true, costo = costoFinal, distancia = distKm, tiempo = tiempoMin });
+                        }
+                    }
+                }
+            }
+            catch (System.Exception)
+            {
+                // Fallback to Haversine
+            }
+
+            // Fallback (Haversine)
+            var r = 6371;
+            var radLat = (dLat.Value - (double)restaurante.Latitud.Value) * System.Math.PI / 180.0;
+            var radLon = (dLon.Value - (double)restaurante.Longitud.Value) * System.Math.PI / 180.0;
+            var a = System.Math.Sin(radLat / 2) * System.Math.Sin(radLat / 2) +
+                    System.Math.Cos((double)restaurante.Latitud.Value * System.Math.PI / 180.0) * System.Math.Cos(dLat.Value * System.Math.PI / 180.0) *
+                    System.Math.Sin(radLon / 2) * System.Math.Sin(radLon / 2);
+            var c = 2 * System.Math.Atan2(System.Math.Sqrt(a), System.Math.Sqrt(1 - a));
+            var haversineDist = r * c;
+
+            var distRedondeada = System.Math.Ceiling(haversineDist);
+            decimal fallbackCosto = 1.50m;
+            if (distRedondeada > 3)
+            {
+                fallbackCosto += (decimal)(distRedondeada - 3) * 0.25m;
+            }
+
+            return Json(new { exito = true, costo = fallbackCosto, distancia = haversineDist, tiempo = haversineDist * 2 });
         }
 
         // ─────────────────────────────────────────────────────────────────────
         // CONFIRMAR COMPRA → Aquí se crea el Pedido real en base de datos
         // ─────────────────────────────────────────────────────────────────────
         [HttpPost]
-        public async Task<IActionResult> Confirmar(long direccionId, string metodoPago, string? titular, string? numeroTarjeta, string? expiracion, string? cvv, Microsoft.AspNetCore.Http.IFormFile? comprobante)
+        public async Task<IActionResult> Confirmar(
+            long direccionId, 
+            string metodoPago, 
+            string? titular, 
+            string? numeroTarjeta, 
+            string? expiracion, 
+            string? cvv, 
+            Microsoft.AspNetCore.Http.IFormFile? comprobante,
+            string? nuevaCalle,
+            string? nuevaCiudad,
+            double? nuevaLatitud,
+            double? nuevaLongitud,
+            string? nuevoAlias,
+            string? nuevaReferencia,
+            bool guardarDireccion)
         {
             var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
             if (carrito == null || !carrito.Items.Any())
@@ -231,7 +293,41 @@ namespace Delivery.MVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            if (direccionId <= 0)
+            var userId = GetMyUsuarioId();
+            long finalDireccionId = direccionId;
+
+            // Lógica para crear nueva dirección si se eligió o arrastró en el mapa (direccionId = 0)
+            if (direccionId == 0)
+            {
+                if (string.IsNullOrWhiteSpace(nuevaCalle) || !nuevaLatitud.HasValue || !nuevaLongitud.HasValue)
+                {
+                    TempData["Error"] = "Debes proporcionar una ubicación válida en el mapa.";
+                    return RedirectToAction("Checkout");
+                }
+
+                var direccion = new Direccion
+                {
+                    UsuarioId = userId,
+                    Calle = nuevaCalle,
+                    Ciudad = nuevaCiudad ?? "No especificada",
+                    Latitud = (decimal?)nuevaLatitud,
+                    Longitud = (decimal?)nuevaLongitud,
+                    Alias = guardarDireccion ? (string.IsNullOrWhiteSpace(nuevoAlias) ? "Mi nueva dirección" : nuevoAlias) : "Dirección de Pedido",
+                    Referencia = nuevaReferencia,
+                    EsPrincipal = false,
+                    CreadoEn = System.DateTime.UtcNow
+                };
+
+                var createdDir = await _direccionConsumer.CreateAsync(direccion);
+                if (createdDir == null || createdDir.Id == 0)
+                {
+                    TempData["Error"] = "No se pudo guardar la ubicación en el sistema.";
+                    return RedirectToAction("Checkout");
+                }
+                
+                finalDireccionId = createdDir.Id;
+            }
+            else if (finalDireccionId <= 0)
             {
                 TempData["Error"] = "Debes seleccionar una dirección de entrega válida.";
                 return RedirectToAction("Checkout");
@@ -281,8 +377,6 @@ namespace Delivery.MVC.Controllers
                 tipoMetodoPago = Delivery.Modelos.Enums.TipoMetodoPagoEnum.Efectivo;
             }
 
-            var userId = GetMyUsuarioId();
-
             // Guardamos temporalmente el comprobante
             if (!string.IsNullOrEmpty(comprobanteUrl))
             {
@@ -290,7 +384,7 @@ namespace Delivery.MVC.Controllers
             }
 
             // *** ÚNICO PUNTO donde se crea el Pedido en base de datos ***
-            var pedidoCreado = await _pedidoConsumer.CrearDesdeCarritoAsync(userId, direccionId, tipoMetodoPago, carrito);
+            var pedidoCreado = await _pedidoConsumer.CrearDesdeCarritoAsync(userId, finalDireccionId, tipoMetodoPago, carrito);
 
             if (pedidoCreado != null)
             {
