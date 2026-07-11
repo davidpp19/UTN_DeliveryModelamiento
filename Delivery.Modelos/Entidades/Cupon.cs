@@ -18,11 +18,19 @@ namespace Delivery.Modelos.Entidades
         [StringLength(50)]
         public string Codigo { get; set; } = null!;
 
+        [Required]
+        [Column("descripcion")]
+        [StringLength(200)]
+        public string Descripcion { get; set; } = string.Empty;
+
         [Column("tipo_descuento")]
         public TipoDescuentoEnum TipoDescuento { get; set; }
 
         [Column("valor_descuento", TypeName = "numeric(10,2)")]
         public decimal ValorDescuento { get; set; }
+
+        [Column("descuento_maximo", TypeName = "numeric(10,2)")]
+        public decimal? DescuentoMaximo { get; set; }
 
         [Column("pedido_minimo", TypeName = "numeric(10,2)")]
         public decimal? PedidoMinimo { get; set; }

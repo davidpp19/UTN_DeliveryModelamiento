@@ -175,6 +175,25 @@ namespace Delivery.MVC.Controllers
             }
 
             ViewBag.Direcciones = new SelectList(misDirecciones, "Id", "Calle");
+
+            // Cargar cupones disponibles para el usuario
+            var todosCuponesUsuarios = await _cuponUsuarioConsumer.GetAllAsync();
+            var misCuponesUsuarios = todosCuponesUsuarios.Where(cu => cu.UsuarioId == userId && cu.PedidoId == null).ToList();
+            
+            var cuponesDisponibles = new List<object>();
+            foreach (var cu in misCuponesUsuarios)
+            {
+                if (cu.Cupon != null && cu.Cupon.Activo && System.DateTime.UtcNow <= cu.Cupon.FechaFin)
+                {
+                    cuponesDisponibles.Add(new {
+                        Codigo = cu.Cupon.Codigo,
+                        Texto = $"{cu.Cupon.Codigo} - {cu.Cupon.Descripcion} (Vence: {cu.Cupon.FechaFin.ToLocalTime().ToString("dd/MM/yyyy")})"
+                    });
+                }
+            }
+            
+            ViewBag.Cupones = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(cuponesDisponibles, "Codigo", "Texto");
+
             return View(carrito);
         }
 
@@ -303,6 +322,10 @@ namespace Delivery.MVC.Controllers
             if (cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje)
             {
                 montoDescuento = carrito.Subtotal * (cupon.ValorDescuento / 100m);
+                if (cupon.DescuentoMaximo.HasValue && montoDescuento > cupon.DescuentoMaximo.Value)
+                {
+                    montoDescuento = cupon.DescuentoMaximo.Value;
+                }
             }
             else
             {
@@ -406,7 +429,13 @@ namespace Delivery.MVC.Controllers
                     {
                         decimal montoDescuento = 0;
                         if (cuponAplicado.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje)
+                        {
                             montoDescuento = carrito.Subtotal * (cuponAplicado.ValorDescuento / 100m);
+                            if (cuponAplicado.DescuentoMaximo.HasValue && montoDescuento > cuponAplicado.DescuentoMaximo.Value)
+                            {
+                                montoDescuento = cuponAplicado.DescuentoMaximo.Value;
+                            }
+                        }
                         else
                             montoDescuento = cuponAplicado.ValorDescuento;
 

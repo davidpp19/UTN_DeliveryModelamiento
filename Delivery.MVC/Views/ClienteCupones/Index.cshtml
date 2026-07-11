@@ -10,13 +10,34 @@
             <p class="text-muted">Gestiona tus cupones de descuento y códigos promocionales.</p>
         </div>
         <div class="col-md-6 text-end">
-            <!-- Formulario de Registro Rápido -->
-            <form asp-action="Registrar" method="post" class="d-flex justify-content-end">
-                <div class="input-group" style="max-width: 400px;">
-                    <input type="text" name="codigo" class="form-control" placeholder="Ingresar código de cupón" style="text-transform:uppercase" required>
-                    <button class="btn btn-primary" type="submit">Registrar Cupón</button>
-                </div>
-            </form>
+            <!-- Botón que abre el Modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarCuponModal">
+                ➕ Agregar Cupón
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Agregar Cupón -->
+    <div class="modal fade" id="agregarCuponModal" tabindex="-1" aria-labelledby="agregarCuponModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Registrar" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="agregarCuponModalLabel">Registrar Nuevo Cupón</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="codigo" class="form-label">Código del cupón</label>
+                            <input type="text" id="codigo" name="codigo" class="form-control" placeholder="Ingresar código" style="text-transform:uppercase" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     
@@ -96,7 +117,20 @@
                                 }
                             </h3>
                             <ul class="list-unstyled small text-muted text-start mb-0">
+                                @if(!string.IsNullOrEmpty(cupon.Descripcion))
+                                {
+                                    <li class="mb-2"><strong>Descripción:</strong> @cupon.Descripcion</li>
+                                }
+                                @if(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje && cupon.DescuentoMaximo.HasValue)
+                                {
+                                    <li><i class="bi bi-shield-check"></i> <strong>Tope máximo:</strong> $@cupon.DescuentoMaximo.Value.ToString("0.00")</li>
+                                }
                                 <li><i class="bi bi-clock"></i> <strong>Vence:</strong> @cupon.FechaFin.ToLocalTime().ToString("dd/MM/yyyy")</li>
+                                @if(statusText == "DISPONIBLE")
+                                {
+                                    var diasRestantes = (cupon.FechaFin - System.DateTime.UtcNow).Days;
+                                    <li><i class="bi bi-hourglass-split"></i> <strong>Días restantes:</strong> @(diasRestantes > 0 ? diasRestantes.ToString() : "Expira hoy")</li>
+                                }
                                 <li><i class="bi bi-calendar-check"></i> <strong>Registrado:</strong> @cuponUsuario.FechaRegistro.ToLocalTime().ToString("dd/MM/yyyy")</li>
                                 @if(cupon.PedidoMinimo.HasValue)
                                 {

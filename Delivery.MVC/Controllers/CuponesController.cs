@@ -61,8 +61,10 @@ namespace Delivery.MVC.Controllers
             if (data == null) return NotFound();
 
             data.Codigo = entity.Codigo.ToUpper();
+            data.Descripcion = entity.Descripcion;
             data.TipoDescuento = entity.TipoDescuento;
             data.ValorDescuento = entity.ValorDescuento;
+            data.DescuentoMaximo = entity.DescuentoMaximo;
             data.PedidoMinimo = entity.PedidoMinimo;
             data.LimiteUsos = entity.LimiteUsos;
             data.Activo = entity.Activo;

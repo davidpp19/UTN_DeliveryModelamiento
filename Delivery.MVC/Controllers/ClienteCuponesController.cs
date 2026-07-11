@@ -49,38 +49,38 @@ namespace Delivery.MVC.Controllers
 
             if (cupon == null)
             {
-                TempData["Error"] = "El cupón no existe.";
+                TempData["Error"] = "Cupón inexistente.";
                 return RedirectToAction(nameof(Index));
             }
 
-            // 2. Validar que esté activo
-            if (!cupon.Activo)
+            // 2. Validar que no haya expirado
+            if (System.DateTime.UtcNow > cupon.FechaFin || !cupon.Activo)
             {
-                TempData["Error"] = "El cupón todavía no está activo.";
+                TempData["Error"] = "Cupón expirado.";
                 return RedirectToAction(nameof(Index));
             }
 
-            // 3. Validar que no haya expirado
-            if (System.DateTime.UtcNow > cupon.FechaFin)
-            {
-                TempData["Error"] = "El cupón expiró.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            // 4. Validar exclusividad
+            // 3. Validar exclusividad
             if (!cupon.EsPublico && cupon.UsuarioExclusivoId != userId)
             {
-                TempData["Error"] = "Este cupón no pertenece al usuario.";
+                TempData["Error"] = "Cupón inexistente."; // Hiding existence to other users
                 return RedirectToAction(nameof(Index));
             }
 
-            // 5. Validar si ya lo registró
+            // 4. Validar si ya lo registró o lo usó
             var misCupones = await _cuponUsuarioConsumer.GetAllAsync();
-            var yaRegistrado = misCupones.Any(cu => cu.UsuarioId == userId && cu.CuponId == cupon.Id);
+            var registroPrevio = misCupones.FirstOrDefault(cu => cu.UsuarioId == userId && cu.CuponId == cupon.Id);
             
-            if (yaRegistrado)
+            if (registroPrevio != null)
             {
-                TempData["Error"] = "El cupón ya fue registrado anteriormente.";
+                if (registroPrevio.PedidoId != null)
+                {
+                    TempData["Error"] = "Cupón ya utilizado.";
+                }
+                else
+                {
+                    TempData["Error"] = "Cupón ya agregado.";
+                }
                 return RedirectToAction(nameof(Index));
             }
 
@@ -95,7 +95,7 @@ namespace Delivery.MVC.Controllers
             };
 
             await _cuponUsuarioConsumer.CreateAsync(nuevoRegistro);
-            TempData["Success"] = "¡Cupón registrado correctamente!";
+            TempData["Success"] = "Cupón agregado correctamente.";
 
             return RedirectToAction(nameof(Index));
         }
