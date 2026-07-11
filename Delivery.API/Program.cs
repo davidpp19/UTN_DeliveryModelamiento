@@ -78,6 +78,8 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 app.UseMiddleware<Delivery.API.Middlewares.ExceptionMiddleware>();
@@ -92,10 +94,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Importante para SignalR: CORS si el MVC está en otro puerto
+app.UseCors(builder =>
+{
+    builder.WithOrigins("https://localhost:7025", "http://localhost:5242") // Ajustar a los puertos de tu MVC
+           .AllowAnyHeader()
+           .WithMethods("GET", "POST")
+           .AllowCredentials();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<Delivery.API.Hubs.NotificacionesHub>("/notificacionesHub");
 
 // Inicializar la Base de Datos (Seed)
 using (var scope = app.Services.CreateScope())

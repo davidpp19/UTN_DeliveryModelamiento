@@ -62,6 +62,15 @@ namespace Delivery.Consumer.Implementaciones
             return null;
         }
 
+        public async Task<Pedido?> AsignarPedidoAsync(long id, long repartidorId)
+        {
+            // Pasamos null como body ya que no requiere un payload en el body
+            var response = await _httpClient.PutAsJsonAsync($"api/Pedidos/{id}/asignar-repartidor?repartidorId={repartidorId}", new object());
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<Pedido>();
+            return null;
+        }
+
         /// <summary>
         /// Llama al endpoint que crea el Pedido real desde el carrito de sesión.
         /// Solo se llama cuando el usuario presiona "Confirmar Compra".

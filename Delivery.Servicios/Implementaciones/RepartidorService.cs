@@ -47,7 +47,7 @@ namespace Delivery.Servicios.Implementaciones
             existing.EstadoAprobacion = repartidor.EstadoAprobacion;
             existing.AprobadoPor = repartidor.AprobadoPor;
             existing.FechaAprobacion = repartidor.FechaAprobacion;
-            existing.Disponible = repartidor.Disponible;
+            existing.Estado = repartidor.Estado;
             existing.CalificacionPromedio = repartidor.CalificacionPromedio;
             existing.ActualizadoEn = System.DateTime.UtcNow;
 

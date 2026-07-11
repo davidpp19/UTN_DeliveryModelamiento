@@ -1,65 +1,173 @@
 @model Delivery.Modelos.Entidades.Direccion
 @{ ViewData["Title"] = "Nueva Dirección"; }
 
-<h1>Nueva Dirección</h1>
-<p>Ingresa los datos de tu nueva dirección de entrega.</p>
+<h1 class="my-4">Nueva Dirección</h1>
+<p class="text-muted">Busca en el mapa o haz clic para ubicar tu dirección exacta.</p>
 <hr />
 
-<form asp-action="Create">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="row">
+    <div class="col-md-5">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div>
-        <label asp-for="Alias">Alias (Casa, Trabajo, Universidad…)</label>
-        <input asp-for="Alias" placeholder="Ej: Casa" />
-        <span asp-validation-for="Alias" class="text-danger"></span>
+            <div class="mb-3">
+                <label class="form-label">Buscar Lugar</label>
+                <div class="input-group">
+                    <input type="text" id="buscador-mapa" class="form-control" placeholder="Ej: Ibarra, Parque Ciudad Blanca..." />
+                    <button class="btn btn-primary" type="button" id="btn-buscar">Buscar</button>
+                </div>
+                <small class="text-muted">Busca tu barrio o calle y haz clic en el mapa.</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Alias" class="form-label">Alias (Casa, Trabajo...)</label>
+                <input asp-for="Alias" class="form-control" placeholder="Ej: Casa" />
+                <span asp-validation-for="Alias" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Calle" class="form-label">Calle Principal</label>
+                <input asp-for="Calle" id="calle-input" class="form-control" placeholder="Ej: Av. 17 de Julio" required />
+                <span asp-validation-for="Calle" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Numero" class="form-label">Número</label>
+                <input asp-for="Numero" class="form-control" placeholder="Ej: 5-32" />
+                <span asp-validation-for="Numero" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Ciudad" class="form-label">Ciudad</label>
+                <input asp-for="Ciudad" id="ciudad-input" class="form-control" placeholder="Ej: Ibarra" required />
+                <span asp-validation-for="Ciudad" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Referencia" class="form-label">Referencia</label>
+                <input asp-for="Referencia" class="form-control" placeholder="Ej: Frente al parque central" />
+                <span asp-validation-for="Referencia" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Latitud" class="form-label">Latitud</label>
+                    <input asp-for="Latitud" id="lat-input" class="form-control bg-light" readonly required />
+                    <span asp-validation-for="Latitud" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Longitud" class="form-label">Longitud</label>
+                    <input asp-for="Longitud" id="lng-input" class="form-control bg-light" readonly required />
+                    <span asp-validation-for="Longitud" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-4 form-check">
+                <input asp-for="EsPrincipal" class="form-check-input" type="checkbox" />
+                <label asp-for="EsPrincipal" class="form-check-label">¿Es mi dirección principal?</label>
+            </div>
+
+            <button type="submit" class="btn btn-success mb-3">Guardar Dirección</button>
+            <a asp-action="Index" class="btn btn-outline-secondary mb-3">Cancelar</a>
+        </form>
     </div>
-
-    <div>
-        <label asp-for="Calle">Calle Principal</label>
-        <input asp-for="Calle" placeholder="Ej: Av. 17 de Julio" />
-        <span asp-validation-for="Calle" class="text-danger"></span>
+    
+    <div class="col-md-7">
+        <div id="map" style="height: 600px; width: 100%; border-radius: 8px; border: 1px solid #ccc;"></div>
     </div>
-
-    <div>
-        <label asp-for="Numero">Número</label>
-        <input asp-for="Numero" placeholder="Ej: 5-32" />
-        <span asp-validation-for="Numero" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="Ciudad">Ciudad</label>
-        <input asp-for="Ciudad" placeholder="Ej: Ibarra" />
-        <span asp-validation-for="Ciudad" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="Referencia">Referencia</label>
-        <input asp-for="Referencia" placeholder="Ej: Frente al parque central" />
-        <span asp-validation-for="Referencia" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="Latitud">Latitud (opcional)</label>
-        <input asp-for="Latitud" placeholder="Ej: 0.3517" />
-        <span asp-validation-for="Latitud" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="Longitud">Longitud (opcional)</label>
-        <input asp-for="Longitud" placeholder="Ej: -78.1222" />
-        <span asp-validation-for="Longitud" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="EsPrincipal">¿Es mi dirección principal?</label>
-        <input asp-for="EsPrincipal" type="checkbox" />
-    </div>
-
-    <br />
-    <button type="submit">Guardar Dirección</button>
-    <a asp-action="Index">Cancelar</a>
-</form>
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Inicializar mapa en un punto por defecto (ej. Ibarra, Ecuador)
+        var map = L.map('map').setView([0.3517, -78.1222], 14);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var marker;
+
+        // Función para colocar marcador y extraer datos
+        function onMapClick(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+            
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+
+            document.getElementById('lat-input').value = lat.toFixed(8);
+            document.getElementById('lng-input').value = lng.toFixed(8);
+
+            // Reverse Geocoding (Nominatim API)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.address) {
+                        var address = data.address;
+                        var calle = address.road || address.pedestrian || address.suburb || "";
+                        var ciudad = address.city || address.town || address.village || address.county || "";
+                        
+                        if(calle) document.getElementById('calle-input').value = calle;
+                        if(ciudad) document.getElementById('ciudad-input').value = ciudad;
+                    }
+                })
+                .catch(err => console.log(err));
+        }
+
+        map.on('click', onMapClick);
+
+        // Buscar lugares
+        document.getElementById('btn-buscar').addEventListener('click', function() {
+            var query = document.getElementById('buscador-mapa').value;
+            if(!query) return;
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.length > 0) {
+                        var result = data[0];
+                        var lat = parseFloat(result.lat);
+                        var lon = parseFloat(result.lon);
+                        
+                        map.setView([lat, lon], 16);
+                        
+                        if (marker) {
+                            marker.setLatLng([lat, lon]);
+                        } else {
+                            marker = L.marker([lat, lon]).addTo(map);
+                        }
+
+                        document.getElementById('lat-input').value = lat.toFixed(8);
+                        document.getElementById('lng-input').value = lon.toFixed(8);
+                        
+                        // Parse name
+                        var partes = result.display_name.split(',');
+                        if(partes.length >= 1) document.getElementById('calle-input').value = partes[0].trim();
+                        if(partes.length >= 2) document.getElementById('ciudad-input').value = partes[1].trim();
+                    } else {
+                        alert('Lugar no encontrado. Intenta con otros términos.');
+                    }
+                });
+        });
+
+        // Intentar obtener la ubicación actual del usuario
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                map.setView([lat, lng], 15);
+            });
+        }
+    </script>
 }

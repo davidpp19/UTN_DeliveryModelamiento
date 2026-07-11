@@ -67,6 +67,7 @@
                             else if (User.IsInRole("Repartidor"))
                             {
                                 <li class="nav-item"><a class="nav-link" asp-controller="DashboardRepartidor" asp-action="Index">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link text-warning fw-bold" asp-controller="RepartidorPedidos" asp-action="Disponibles">Pedidos Disponibles</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="RepartidorPedidos" asp-action="Index">Mis Entregas</a></li>
                             }
                         }

@@ -39,8 +39,46 @@ namespace Delivery.MVC.Controllers
             }
 
             var todos = await _pedidoConsumer.GetAllAsync();
-            var misPedidos = todos.Where(p => p.RepartidorId == userId);
+            var misPedidos = todos.Where(p => p.RepartidorId == userId && 
+                p.EstadoPedido != EstadoPedidoEnum.Entregado && 
+                p.EstadoPedido != EstadoPedidoEnum.Cancelado);
             return View(misPedidos);
+        }
+
+        public async Task<IActionResult> Disponibles()
+        {
+            var userId = GetMyUsuarioId();
+            var repartidor = await _repartidorConsumer.GetByIdAsync(userId);
+            if (repartidor != null && (repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Pendiente || 
+                                       repartidor.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Rechazado))
+            {
+                return RedirectToAction("Index", "DashboardRepartidor");
+            }
+            
+            var todos = await _pedidoConsumer.GetAllAsync();
+            var pedidosListos = todos.Where(p => p.EstadoPedido == EstadoPedidoEnum.ListoParaRecoger && p.RepartidorId == null);
+            return View(pedidosListos);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AceptarPedido(long id)
+        {
+            var userId = GetMyUsuarioId();
+            try
+            {
+                var result = await _pedidoConsumer.AsignarPedidoAsync(id, userId);
+                if (result != null)
+                {
+                    TempData["Exito"] = "Pedido asignado exitosamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (System.Exception ex)
+            {
+                TempData["Error"] = "El pedido ya fue asignado o hubo un error.";
+            }
+
+            return RedirectToAction(nameof(Disponibles));
         }
 
         public async Task<IActionResult> Details(long id)

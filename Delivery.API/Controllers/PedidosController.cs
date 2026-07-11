@@ -11,10 +11,12 @@ namespace Delivery.API.Controllers
     public class PedidosController : ControllerBase
     {
         private readonly IPedidoService _pedidoService;
+        private readonly Microsoft.AspNetCore.SignalR.IHubContext<Delivery.API.Hubs.NotificacionesHub> _hubContext;
 
-        public PedidosController(IPedidoService pedidoService)
+        public PedidosController(IPedidoService pedidoService, Microsoft.AspNetCore.SignalR.IHubContext<Delivery.API.Hubs.NotificacionesHub> hubContext)
         {
             _pedidoService = pedidoService;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -54,6 +56,10 @@ namespace Delivery.API.Controllers
                 return BadRequest(new { message = "El carrito está vacío." });
 
             var pedido = await _pedidoService.CrearDesdeSesionAsync(usuarioId, direccionId, metodoPago, carritoSesion);
+            
+            // Notificar al restaurante en tiempo real
+            await _hubContext.Clients.Group($"Restaurante_{pedido.RestauranteId}").SendAsync("NuevoPedido", pedido.Id);
+
             return CreatedAtAction(nameof(GetPedido), new { id = pedido.Id }, pedido);
         }
 
@@ -82,6 +88,16 @@ namespace Delivery.API.Controllers
         public async Task<ActionResult<Pedido>> ActualizarEstadoRestaurante(long id, [FromBody] Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, [FromQuery] long restauranteId)
         {
             var pedido = await _pedidoService.ActualizarEstadoRestauranteAsync(id, nuevoEstado, restauranteId);
+            
+            // Notificar al cliente
+            await _hubContext.Clients.Group($"Cliente_{pedido.UsuarioId}").SendAsync("EstadoPedidoCambiado", pedido.Id, nuevoEstado.ToString());
+            
+            // Si el pedido está listo para recoger, notificar a los repartidores libres
+            if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger)
+            {
+                await _hubContext.Clients.Group("RepartidoresLibres").SendAsync("NuevoPedidoDisponible", pedido.Id);
+            }
+
             return Ok(pedido);
         }
 
@@ -90,6 +106,25 @@ namespace Delivery.API.Controllers
         public async Task<ActionResult<Pedido>> ActualizarEstadoRepartidor(long id, [FromBody] Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, [FromQuery] long repartidorId)
         {
             var pedido = await _pedidoService.ActualizarEstadoRepartidorAsync(id, nuevoEstado, repartidorId);
+            
+            // Notificar al cliente
+            await _hubContext.Clients.Group($"Cliente_{pedido.UsuarioId}").SendAsync("EstadoPedidoCambiado", pedido.Id, nuevoEstado.ToString());
+            
+            return Ok(pedido);
+        }
+
+        [HttpPut("{id}/asignar-repartidor")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Repartidor,Admin")]
+        public async Task<ActionResult<Pedido>> AsignarRepartidor(long id, [FromQuery] long repartidorId)
+        {
+            var pedido = await _pedidoService.AsignarPedidoAsync(id, repartidorId);
+            
+            // Notificar a todos que el pedido ya fue tomado
+            await _hubContext.Clients.Group("RepartidoresLibres").SendAsync("PedidoAsignado", pedido.Id);
+            
+            // Notificar al cliente
+            await _hubContext.Clients.Group($"Cliente_{pedido.UsuarioId}").SendAsync("RepartidorAsignado", pedido.Id, repartidorId);
+            
             return Ok(pedido);
         }
 

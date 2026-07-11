@@ -124,7 +124,7 @@ namespace Delivery.API.Controllers
                                    ? $"data:image/jpeg;base64,{dto.FotoLicenciaBase64}" 
                                    : null,
                 EstadoAprobacion = EstadoAprobacionEnum.Pendiente,
-                Disponible       = false,
+                Estado           = EstadoRepartidorEnum.Desconectado,
                 CreadoEn         = ahora
             };
             var repartidorCreado = await _repartidorService.CreateAsync(repartidor);

@@ -171,6 +171,53 @@ namespace Delivery.MVC.Controllers
             return View(carrito);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CalcularCostoEnvio(long direccionId)
+        {
+            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
+            if (carrito == null || carrito.RestauranteId == 0) return Json(new { exito = false });
+
+            var restaurante = await _restauranteConsumer.GetByIdAsync(carrito.RestauranteId);
+            var direccion = await _direccionConsumer.GetByIdAsync(direccionId);
+
+            if (restaurante == null || direccion == null || 
+                !restaurante.Latitud.HasValue || !restaurante.Longitud.HasValue ||
+                !direccion.Latitud.HasValue || !direccion.Longitud.HasValue)
+            {
+                return Json(new { exito = true, costo = restaurante?.CostoEnvioBase ?? 1.50m });
+            }
+
+            // Usamos un servicio o HttpClient para calcular, pero dado que estamos en el MVC y no tenemos 
+            // _geoService inyectado aquí, lo implementamos directamente o lo inyectamos en el controller.
+            // Para mantenerlo simple, haré la fórmula aquí o inyectaré el servicio en el Controller.
+            // Inyectar el servicio de geolocalización de la API no es posible directamente desde el MVC sin una llamada HTTP.
+            // Así que haré una llamada a un endpoint de la API, o replicaré la fórmula.
+            // La fórmula es ligera, la replicaré para evitar acoplamiento de red en UI, o usar el default.
+            
+            var r = 6371;
+            var dLat = (direccion.Latitud.Value - restaurante.Latitud.Value) * (decimal)Math.PI / 180.0m;
+            var dLon = (direccion.Longitud.Value - restaurante.Longitud.Value) * (decimal)Math.PI / 180.0m;
+            var a = (double)(Math.Sin((double)(dLat / 2)) * Math.Sin((double)(dLat / 2)) +
+                    Math.Cos((double)(restaurante.Latitud.Value * (decimal)Math.PI / 180.0m)) * Math.Cos((double)(direccion.Latitud.Value * (decimal)Math.PI / 180.0m)) *
+                    Math.Sin((double)(dLon / 2)) * Math.Sin((double)(dLon / 2)));
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            var distKm = r * c;
+
+            var distanciaRedondeada = Math.Ceiling(distKm);
+            decimal costoBase = 1.50m;
+            int distanciaBase = 3;
+            decimal costoPorKmAdicional = 0.25m;
+            decimal costoFinal = costoBase;
+
+            if (distanciaRedondeada > distanciaBase)
+            {
+                var kmAdicionales = (decimal)(distanciaRedondeada - distanciaBase);
+                costoFinal = costoBase + (kmAdicionales * costoPorKmAdicional);
+            }
+
+            return Json(new { exito = true, costo = costoFinal, distancia = distanciaRedondeada });
+        }
+
         // ─────────────────────────────────────────────────────────────────────
         // CONFIRMAR COMPRA → Aquí se crea el Pedido real en base de datos
         // ─────────────────────────────────────────────────────────────────────

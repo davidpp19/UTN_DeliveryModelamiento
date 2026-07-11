@@ -1,0 +1,88 @@
+@model IEnumerable<Delivery.Modelos.Entidades.Pedido>
+
+@{
+    ViewData["Title"] = "Pedidos Disponibles";
+}
+
+<h1 class="my-4">Pedidos Listos para Recoger</h1>
+<hr />
+
+@if (TempData["Exito"] != null)
+{
+    <div class="alert alert-success">@TempData["Exito"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="row" id="pedidos-container">
+    @if (!Model.Any())
+    {
+        <div class="col-12" id="no-pedidos-msg">
+            <div class="alert alert-info">
+                No hay pedidos disponibles para asignar en este momento. Espera nuevas notificaciones.
+            </div>
+        </div>
+    }
+    else
+    {
+        foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4 pedido-card" id="pedido-@item.Id">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Pedido #@item.Id</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><strong>Restaurante:</strong> @item.Restaurante?.Nombre</p>
+                        <p class="mb-1"><strong>Costo Envío:</strong> $@item.CostoEnvio.ToString("0.00")</p>
+                        <p class="mb-1"><strong>Total:</strong> $@item.Total.ToString("0.00")</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <form asp-action="AceptarPedido" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-warning w-100 fw-bold">¡Aceptar Pedido!</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:7193/notificacionesHub") // Cambiar al puerto correcto de tu API si difiere
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("NuevoPedidoDisponible", function (pedidoId) {
+            // Recargar la página para mostrar el nuevo pedido
+            // O mostrar un toast
+            location.reload();
+        });
+
+        connection.on("PedidoAsignado", function (pedidoId) {
+            // Remover el pedido del DOM porque alguien más lo tomó
+            const card = document.getElementById("pedido-" + pedidoId);
+            if (card) {
+                card.remove();
+            }
+            if (document.querySelectorAll('.pedido-card').length === 0) {
+                location.reload(); // Para que muestre "No hay pedidos"
+            }
+        });
+
+        connection.start().then(function () {
+            console.log("SignalR Connected!");
+            connection.invoke("UnirseGrupoRepartidoresLibres").catch(function (err) {
+                return console.error(err.toString());
+            });
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+    </script>
+}

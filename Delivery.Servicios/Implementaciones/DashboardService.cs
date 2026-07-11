@@ -32,7 +32,7 @@ namespace Delivery.Servicios.Implementaciones
                 PedidosDelDia = await _context.Set<Delivery.Modelos.Entidades.Pedido>().CountAsync(p => p.FechaPedido >= hoy),
                 PedidosPendientes = await _context.Set<Delivery.Modelos.Entidades.Pedido>().CountAsync(p => p.EstadoPedido == EstadoPedidoEnum.Pendiente || p.EstadoPedido == EstadoPedidoEnum.EnPreparacion),
                 PedidosEntregados = await _context.Set<Delivery.Modelos.Entidades.Pedido>().CountAsync(p => p.EstadoPedido == EstadoPedidoEnum.Entregado),
-                RepartidoresActivos = await _context.Set<Delivery.Modelos.Entidades.Repartidor>().CountAsync(r => r.Disponible),
+                RepartidoresActivos = await _context.Set<Delivery.Modelos.Entidades.Repartidor>().CountAsync(r => r.Estado == Delivery.Modelos.Enums.EstadoRepartidorEnum.Disponible),
                 
                 VentasDelDia = await _context.Set<Delivery.Modelos.Entidades.Pedido>()
                                     .Where(p => p.EstadoPedido == EstadoPedidoEnum.Entregado && p.FechaPedido >= hoy)

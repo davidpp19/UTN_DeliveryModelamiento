@@ -37,8 +37,8 @@ namespace Delivery.Modelos.Entidades
         [Column("fecha_aprobacion")]
         public DateTime? FechaAprobacion { get; set; }
 
-        [Column("disponible")]
-        public bool Disponible { get; set; } = true;
+        [Column("estado")]
+        public EstadoRepartidorEnum Estado { get; set; } = EstadoRepartidorEnum.Desconectado;
 
         [Column("calificacion_promedio", TypeName = "numeric(3,2)")]
         public decimal? CalificacionPromedio { get; set; }

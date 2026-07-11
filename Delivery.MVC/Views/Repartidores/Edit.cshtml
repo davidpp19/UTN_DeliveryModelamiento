@@ -30,9 +30,9 @@
 <input asp-for="FechaAprobacion" class="form-control" type="datetime-local" />
 <span asp-validation-for="FechaAprobacion" class="text-danger"></span></div>
 <div class="mb-3">
-<label asp-for="Disponible" class="form-label"></label>
-<input asp-for="Disponible" class="form-check-input" type="checkbox" />
-<span asp-validation-for="Disponible" class="text-danger"></span></div>
+<label asp-for="Estado" class="form-label"></label>
+<select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.EstadoRepartidorEnum>()"></select>
+<span asp-validation-for="Estado" class="text-danger"></span></div>
 <div class="mb-3">
 <label asp-for="CalificacionPromedio" class="form-label"></label>
 <input asp-for="CalificacionPromedio" class="form-control" />

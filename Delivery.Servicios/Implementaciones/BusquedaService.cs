@@ -154,7 +154,7 @@ namespace Delivery.Servicios.Implementaciones
 
             if (filtros.Disponibilidad.HasValue)
             {
-                query = query.Where(r => r.Disponible == filtros.Disponibilidad.Value);
+                query = query.Where(r => r.Estado == (filtros.Disponibilidad.Value ? Delivery.Modelos.Enums.EstadoRepartidorEnum.Disponible : Delivery.Modelos.Enums.EstadoRepartidorEnum.Desconectado));
             }
 
             return await query.Skip((filtros.Pagina - 1) * filtros.TamanoPagina)

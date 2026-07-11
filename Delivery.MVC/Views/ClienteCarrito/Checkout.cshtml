@@ -29,11 +29,19 @@
                         <span class="text-muted">$@item.Subtotal.ToString("0.00")</span>
                     </li>
                 }
+                <li class="list-group-item d-flex justify-content-between lh-condensed bg-light">
+                    <div>
+                        <h6 class="my-0">Costo de Envío</h6>
+                        <small class="text-muted" id="distanciaInfo">Seleccione dirección</small>
+                    </div>
+                    <span class="text-success" id="costoEnvioUI">$0.00</span>
+                </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Total (USD)</span>
-                    <strong>$@Model.Subtotal.ToString("0.00")</strong>
+                    <strong id="totalUI">$@Model.Subtotal.ToString("0.00")</strong>
                 </li>
             </ul>
+            <input type="hidden" id="subtotalValue" value="@Model.Subtotal" />
         </div>
         
         <div class="col-md-7 order-md-1">
@@ -138,6 +146,38 @@
             seccionTransferencia.style.display = 'block';
             document.getElementById('comprobante').setAttribute('required', 'required');
         }
+    }
+
+    document.getElementById('direccionId').addEventListener('change', function() {
+        var dirId = this.value;
+        if (!dirId) {
+            document.getElementById('costoEnvioUI').innerText = '$0.00';
+            document.getElementById('distanciaInfo').innerText = 'Seleccione dirección';
+            actualizarTotal(0);
+            return;
+        }
+
+        fetch('/ClienteCarrito/CalcularCostoEnvio?direccionId=' + dirId)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.exito) {
+                    var costo = data.costo;
+                    document.getElementById('costoEnvioUI').innerText = '$' + costo.toFixed(2);
+                    if (data.distancia) {
+                        document.getElementById('distanciaInfo').innerText = data.distancia + ' km apróx.';
+                    } else {
+                        document.getElementById('distanciaInfo').innerText = 'Tarifa base';
+                    }
+                    actualizarTotal(costo);
+                }
+            })
+            .catch(err => console.error(err));
+    });
+
+    function actualizarTotal(costoEnvio) {
+        var sub = parseFloat(document.getElementById('subtotalValue').value.replace(',', '.'));
+        var tot = sub + parseFloat(costoEnvio);
+        document.getElementById('totalUI').innerText = '$' + tot.toFixed(2);
     }
 
     function formatearTarjeta(input) {

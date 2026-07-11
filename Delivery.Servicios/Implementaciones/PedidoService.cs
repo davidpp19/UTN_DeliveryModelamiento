@@ -15,10 +15,12 @@ namespace Delivery.Servicios.Implementaciones
     public class PedidoService : IPedidoService
     {
         private readonly DeliveryDbContext _context;
+        private readonly IGeolocalizacionService _geoService;
 
-        public PedidoService(DeliveryDbContext context)
+        public PedidoService(DeliveryDbContext context, IGeolocalizacionService geoService)
         {
             _context = context;
+            _geoService = geoService;
         }
 
         public async Task<IEnumerable<Pedido>> GetAllAsync()
@@ -105,7 +107,20 @@ namespace Delivery.Servicios.Implementaciones
 
             var ahora = DateTime.UtcNow;
             var subtotal = carritoSesion.Items.Sum(i => i.PrecioUnitario * i.Cantidad);
-            var costoEnvio = restaurante.CostoEnvioBase;
+            
+            decimal costoEnvio = restaurante.CostoEnvioBase; // Fallback
+            
+            // Si hay lat/lon en direccion y restaurante, calcular dinámico
+            if (direccion.Latitud.HasValue && direccion.Longitud.HasValue && 
+                restaurante.Latitud.HasValue && restaurante.Longitud.HasValue)
+            {
+                var distKm = _geoService.CalcularDistanciaKm(
+                    (double)restaurante.Latitud.Value, (double)restaurante.Longitud.Value,
+                    (double)direccion.Latitud.Value, (double)direccion.Longitud.Value);
+                
+                costoEnvio = _geoService.CalcularCostoEnvio(distKm);
+            }
+
             var total = subtotal + costoEnvio;
 
             // Usar transacción para garantizar atomicidad
@@ -253,12 +268,57 @@ namespace Delivery.Servicios.Implementaciones
             if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
             {
                 pedido.FechaEntregaReal = System.DateTime.UtcNow;
+                
+                // Liberar al repartidor
+                var repartidor = await _context.Repartidores.FindAsync(repartidorId);
+                if (repartidor != null)
+                {
+                    repartidor.Estado = Delivery.Modelos.Enums.EstadoRepartidorEnum.Disponible;
+                }
             }
 
             pedido.ActualizadoEn = System.DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             return pedido;
+        }
+
+        public async Task<Pedido> AsignarPedidoAsync(long pedidoId, long repartidorId)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var pedido = await _context.Pedidos.FindAsync(pedidoId);
+                if (pedido == null) throw new BusinessException("Pedido no encontrado.");
+                
+                if (pedido.EstadoPedido != EstadoPedidoEnum.ListoParaRecoger)
+                    throw new BusinessException("El pedido no está listo para recoger.");
+
+                if (pedido.RepartidorId != null)
+                    throw new BusinessException("Este pedido ya fue asignado a otro repartidor.");
+
+                var repartidor = await _context.Repartidores.FindAsync(repartidorId);
+                if (repartidor == null) throw new BusinessException("Repartidor no encontrado.");
+
+                if (repartidor.Estado != EstadoRepartidorEnum.Disponible)
+                    throw new BusinessException("El repartidor no está disponible para aceptar pedidos.");
+
+                // Asignar el pedido
+                pedido.RepartidorId = repartidorId;
+                
+                // Cambiar estado del repartidor a Ocupado
+                repartidor.Estado = EstadoRepartidorEnum.Ocupado;
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return pedido;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<IEnumerable<Pedido>> GetHistorialUsuarioAsync(long usuarioId)

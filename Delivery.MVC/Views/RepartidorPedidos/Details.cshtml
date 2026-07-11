@@ -1,55 +1,184 @@
 @model Delivery.Modelos.Entidades.Pedido
 @{ ViewData["Title"] = "Detalles Pedido"; }
-<h1 class="my-4">Detalles Pedido</h1><hr />
-<dl class="row">
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RepartidorId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.RepartidorId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.DireccionEntregaId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.DireccionEntregaId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoPedido)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.EstadoPedido)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Subtotal)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Subtotal)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CostoEnvio)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.CostoEnvio)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Total)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Total)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoMetodoPago)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoMetodoPago)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.MetodoPagoId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.MetodoPagoId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CuponId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.CuponId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.MontoDescuento)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.MontoDescuento)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Notas)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Notas)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaPedido)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaPedido)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaEntregaEstimada)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaEntregaEstimada)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaEntregaReal)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaEntregaReal)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Repartidor)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Repartidor)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.DireccionEntrega)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.DireccionEntrega)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Detalles)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Detalles)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Pagos)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Pagos)</dd>
-</dl>
-<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
-<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+
+<div class="container mt-4">
+    <h2>Detalles del Pedido #@Model.Id</h2>
+    <hr />
+
+    <div class="row">
+        <!-- Columna Izquierda: Info General -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Información General</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Restaurante</dt>
+                        <dd class="col-sm-8">@(Model.Restaurante?.Nombre ?? "N/A")</dd>
+
+                        <dt class="col-sm-4">Fecha Pedido</dt>
+                        <dd class="col-sm-8">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-info text-dark">@Model.EstadoPedido.ToString()</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Dirección</dt>
+                        <dd class="col-sm-8">
+                            @(Model.DireccionEntrega?.Calle) @(Model.DireccionEntrega?.Numero)
+                            <br /><small class="text-muted">@(Model.DireccionEntrega?.Referencia)</small>
+                        </dd>
+
+                        <dt class="col-sm-4">Cliente</dt>
+                        <dd class="col-sm-8">@(Model.Usuario?.Nombre) @(Model.Usuario?.Apellidos)</dd>
+                        
+                        @if (!string.IsNullOrWhiteSpace(Model.Notas))
+                        {
+                            <dt class="col-sm-4">Notas</dt>
+                            <dd class="col-sm-8">@Model.Notas</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Acciones del Pedido</h5>
+                </div>
+                <div class="card-body">
+                    <a asp-action="CambiarEstado" asp-route-id="@Model.Id" class="btn btn-warning mb-3 w-100">Actualizar Estado</a>
+                    
+                    <button class="btn btn-primary w-100" id="btnCompartirUbicacion">Empezar a Compartir Ubicación (GPS)</button>
+                    <small class="text-muted mt-2 d-block">Presiona para que el cliente pueda ver tu ubicación en tiempo real mientras vas en camino.</small>
+                    <div id="gpsStatus" class="mt-2 text-info"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Ruta de Entrega</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    <script>
+        var map = L.map('map').setView([0.3517, -78.1222], 14);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var restLat = @(Model.Restaurante?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+        var restLng = @(Model.Restaurante?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+        var cliLat = @(Model.DireccionEntrega?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+        var cliLng = @(Model.DireccionEntrega?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+
+        var restMarker, cliMarker, repMarker;
+
+        if (restLat !== 0 && cliLat !== 0) {
+            restMarker = L.marker([restLat, restLng]).addTo(map).bindPopup('Restaurante');
+            cliMarker = L.marker([cliLat, cliLng]).addTo(map).bindPopup('Cliente');
+
+            // Draw route with OSRM
+            fetch(`https://router.project-osrm.org/route/v1/driving/${restLng},${restLat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.routes && data.routes.length > 0) {
+                        var route = data.routes[0].geometry.coordinates;
+                        var latLngs = route.map(coord => [coord[1], coord[0]]);
+                        L.polyline(latLngs, { color: 'blue', weight: 4 }).addTo(map);
+                        map.fitBounds(L.polyline(latLngs).getBounds());
+                    }
+                });
+        }
+
+        // Repartidor icon
+        var repIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png', // Moto icon
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        });
+
+        // SignalR setup
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificacionesHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.start().then(function () {
+            console.log("Conectado a SignalR");
+        }).catch(err => console.error(err));
+
+        let watchId = null;
+
+        document.getElementById('btnCompartirUbicacion').addEventListener('click', function() {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+                this.innerText = "Empezar a Compartir Ubicación (GPS)";
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-primary');
+                document.getElementById('gpsStatus').innerText = "Transmisión detenida.";
+                return;
+            }
+
+            if (navigator.geolocation) {
+                this.innerText = "Detener Transmisión de Ubicación";
+                this.classList.remove('btn-primary');
+                this.classList.add('btn-danger');
+                document.getElementById('gpsStatus').innerText = "Buscando ubicación...";
+
+                watchId = navigator.geolocation.watchPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    
+                    document.getElementById('gpsStatus').innerText = `Enviando... Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`;
+
+                    if (repMarker) {
+                        repMarker.setLatLng([lat, lng]);
+                    } else {
+                        repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Tú');
+                    }
+                    map.setView([lat, lng]);
+
+                    if (connection.state === signalR.HubConnectionState.Connected) {
+                        connection.invoke("EnviarUbicacionRepartidor", "@Model.Id", lat, lng)
+                            .catch(err => console.error("Error al enviar ubicación: " + err));
+                    }
+                }, function(error) {
+                    document.getElementById('gpsStatus').innerText = "Error obteniendo GPS: " + error.message;
+                }, {
+                    enableHighAccuracy: true,
+                    maximumAge: 10000,
+                    timeout: 5000
+                });
+            } else {
+                alert("Geolocalización no soportada por este navegador.");
+            }
+        });
+    </script>
+}

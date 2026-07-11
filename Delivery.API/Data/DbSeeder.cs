@@ -330,7 +330,7 @@ namespace Delivery.API.Data
                     UsuarioId           = usuarioId,
                     LicenciaConducir    = licencia,
                     EstadoAprobacion    = EstadoAprobacionEnum.Aprobado,
-                    Disponible          = true,
+                    Estado              = Delivery.Modelos.Enums.EstadoRepartidorEnum.Disponible,
                     CalificacionPromedio = 4.8m,
                     CreadoEn            = ahora
                 };

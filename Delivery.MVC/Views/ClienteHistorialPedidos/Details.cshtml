@@ -126,6 +126,19 @@
         </div>
     </div>
 
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Rastreo en Tiempo Real</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="mt-3">
         @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
         {
@@ -134,3 +147,77 @@
         <a asp-action="Index" class="btn btn-outline-secondary">Volver al Historial</a>
     </div>
 </div>
+
+@section Scripts {
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    <script>
+        var map = L.map('map').setView([0.3517, -78.1222], 14);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var restLat = @(Model.Restaurante?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+        var restLng = @(Model.Restaurante?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+        var cliLat = @(Model.DireccionEntrega?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+        var cliLng = @(Model.DireccionEntrega?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+
+        var restMarker, cliMarker, repMarker;
+
+        if (restLat !== 0 && cliLat !== 0) {
+            restMarker = L.marker([restLat, restLng]).addTo(map).bindPopup('Restaurante');
+            cliMarker = L.marker([cliLat, cliLng]).addTo(map).bindPopup('Tu Dirección');
+
+            // Draw route with OSRM
+            fetch(`https://router.project-osrm.org/route/v1/driving/${restLng},${restLat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.routes && data.routes.length > 0) {
+                        var route = data.routes[0].geometry.coordinates;
+                        var latLngs = route.map(coord => [coord[1], coord[0]]);
+                        L.polyline(latLngs, { color: 'blue', weight: 4 }).addTo(map);
+                        map.fitBounds(L.polyline(latLngs).getBounds());
+                    }
+                });
+        }
+
+        // Repartidor icon
+        var repIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png', // Moto icon
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        });
+
+        // SignalR for live tracking
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificacionesHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("RecibirUbicacionRepartidor", function (lat, lng) {
+            if (repMarker) {
+                repMarker.setLatLng([lat, lng]);
+            } else {
+                repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Repartidor');
+            }
+        });
+        
+        connection.on("EstadoPedidoCambiado", function (pedidoId, nuevoEstado) {
+            if (pedidoId == @Model.Id) {
+                // Refresh the page to see the new state
+                location.reload();
+            }
+        });
+
+        connection.start().then(function () {
+            console.log("Conectado a SignalR para tracking del pedido @Model.Id");
+            connection.invoke("UnirseGrupoPedido", "@Model.Id").catch(err => console.error(err));
+            connection.invoke("UnirseGrupoCliente", "@Model.UsuarioId").catch(err => console.error(err));
+        }).catch(err => console.error(err));
+    </script>
+}
