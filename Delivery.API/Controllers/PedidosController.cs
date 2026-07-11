@@ -61,6 +61,9 @@ namespace Delivery.API.Controllers
             
             // Notificar al restaurante en tiempo real
             await _hubContext.Clients.Group($"Restaurante_{pedido.RestauranteId}").SendAsync("NuevoPedido", pedido.Id);
+            
+            // Notificar a los repartidores libres simultáneamente
+            await _hubContext.Clients.Group("RepartidoresLibres").SendAsync("NuevoPedidoDisponible", pedido.Id);
 
             return CreatedAtAction(nameof(GetPedido), new { id = pedido.Id }, pedido);
         }

@@ -133,7 +133,7 @@ namespace Delivery.Servicios.Implementaciones
                     UsuarioId          = usuarioId,
                     RestauranteId      = carritoSesion.RestauranteId,
                     DireccionEntregaId = direccionId,        // FK válida y verificada
-                    EstadoPedido       = EstadoPedidoEnum.Pendiente,
+                    EstadoPedido       = EstadoPedidoEnum.Aceptado, // Se da por sobreentendido
                     Subtotal           = subtotal,
                     CostoEnvio         = costoEnvio,
                     Total              = total,
@@ -291,8 +291,8 @@ namespace Delivery.Servicios.Implementaciones
                 var pedido = await _context.Pedidos.FindAsync(pedidoId);
                 if (pedido == null) throw new BusinessException("Pedido no encontrado.");
                 
-                if (pedido.EstadoPedido != EstadoPedidoEnum.ListoParaRecoger)
-                    throw new BusinessException("El pedido no está listo para recoger.");
+                if (pedido.EstadoPedido == EstadoPedidoEnum.Entregado || pedido.EstadoPedido == EstadoPedidoEnum.Cancelado)
+                    throw new BusinessException("El pedido no puede ser asignado en su estado actual.");
 
                 if (pedido.RepartidorId != null)
                     throw new BusinessException("Este pedido ya fue asignado a otro repartidor.");

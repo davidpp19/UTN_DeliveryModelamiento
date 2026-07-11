@@ -195,7 +195,7 @@
 
         // SignalR for live tracking
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/notificacionesHub")
+            .withUrl("https://localhost:7193/notificacionesHub")
             .withAutomaticReconnect()
             .build();
 

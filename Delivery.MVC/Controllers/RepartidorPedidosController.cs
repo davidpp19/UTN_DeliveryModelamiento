@@ -56,8 +56,25 @@ namespace Delivery.MVC.Controllers
             }
             
             var todos = await _pedidoConsumer.GetAllAsync();
-            var pedidosListos = todos.Where(p => p.EstadoPedido == EstadoPedidoEnum.ListoParaRecoger && p.RepartidorId == null);
+            // Mostrar pedidos que no tengan repartidor y que no estén cancelados ni entregados
+            var pedidosListos = todos.Where(p => p.RepartidorId == null && 
+                                                 p.EstadoPedido != EstadoPedidoEnum.Cancelado && 
+                                                 p.EstadoPedido != EstadoPedidoEnum.Entregado)
+                                     .OrderByDescending(p => p.FechaPedido);
             return View(pedidosListos);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPedidoInfo(long id)
+        {
+            var data = await _pedidoConsumer.GetByIdAsync(id);
+            if (data == null) return NotFound();
+            return Json(new {
+                id = data.Id,
+                restaurante = data.Restaurante?.Nombre ?? "Desconocido",
+                costoEnvio = data.CostoEnvio.ToString("0.00"),
+                total = data.Total.ToString("0.00")
+            });
         }
 
         [HttpPost]

@@ -60,9 +60,41 @@
             .build();
 
         connection.on("NuevoPedidoDisponible", function (pedidoId) {
-            // Recargar la página para mostrar el nuevo pedido
-            // O mostrar un toast
-            location.reload();
+            // Verificar si la tarjeta ya existe para no duplicarla
+            if (document.getElementById("pedido-" + pedidoId)) return;
+
+            fetch('/RepartidorPedidos/GetPedidoInfo/' + pedidoId)
+                .then(response => response.json())
+                .then(data => {
+                    const noPedidosMsg = document.getElementById("no-pedidos-msg");
+                    if (noPedidosMsg) noPedidosMsg.remove();
+
+                    const container = document.getElementById("pedidos-container");
+                    
+                    const cardHtml = `
+                        <div class="col-md-4 mb-4 pedido-card" id="pedido-${data.id}">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Pedido #${data.id}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>Restaurante:</strong> ${data.restaurante}</p>
+                                    <p class="mb-1"><strong>Costo Envío:</strong> $${data.costoEnvio}</p>
+                                    <p class="mb-1"><strong>Total:</strong> $${data.total}</p>
+                                </div>
+                                <div class="card-footer bg-white border-top-0">
+                                    <form action="/RepartidorPedidos/AceptarPedido" method="post">
+                                        <input type="hidden" name="id" value="${data.id}" />
+                                        <button type="submit" class="btn btn-warning w-100 fw-bold">¡Aceptar Pedido!</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    // Agregar al principio
+                    container.insertAdjacentHTML('afterbegin', cardHtml);
+                })
+                .catch(err => console.error("Error al obtener pedido:", err));
         });
 
         connection.on("PedidoAsignado", function (pedidoId) {
@@ -72,7 +104,15 @@
                 card.remove();
             }
             if (document.querySelectorAll('.pedido-card').length === 0) {
-                location.reload(); // Para que muestre "No hay pedidos"
+                const container = document.getElementById("pedidos-container");
+                if (!document.getElementById("no-pedidos-msg")) {
+                    container.innerHTML = `
+                        <div class="col-12" id="no-pedidos-msg">
+                            <div class="alert alert-info">
+                                No hay pedidos disponibles para asignar en este momento. Espera nuevas notificaciones.
+                            </div>
+                        </div>`;
+                }
             }
         });
 
