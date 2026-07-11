@@ -73,7 +73,7 @@ namespace Delivery.MVC.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 TempData["Error"] = "El pedido ya fue asignado o hubo un error.";
             }
