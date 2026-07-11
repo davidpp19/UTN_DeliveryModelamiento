@@ -1,47 +1,124 @@
-@model IEnumerable<Delivery.Modelos.Entidades.Cupon>
+@model IEnumerable<Delivery.Modelos.Entidades.CuponUsuario>
 @{
-    ViewData["Title"] = "Cupones Disponibles";
+    ViewData["Title"] = "Mis Cupones";
 }
 
-<h1 class="my-4"><i class="bi bi-ticket-perforated"></i> Cupones de Descuento</h1>
-<hr />
+<div class="container mt-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h2 class="mb-0"><i class="bi bi-ticket-perforated text-success"></i> Mis Cupones</h2>
+            <p class="text-muted">Gestiona tus cupones de descuento y códigos promocionales.</p>
+        </div>
+        <div class="col-md-6 text-end">
+            <!-- Formulario de Registro Rápido -->
+            <form asp-action="Registrar" method="post" class="d-flex justify-content-end">
+                <div class="input-group" style="max-width: 400px;">
+                    <input type="text" name="codigo" class="form-control" placeholder="Ingresar código de cupón" style="text-transform:uppercase" required>
+                    <button class="btn btn-primary" type="submit">Registrar Cupón</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">Actualmente no hay cupones disponibles.</div>
-}
-else
-{
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach (var cupon in Model)
-        {
-            <div class="col">
-                <div class="card h-100 shadow-sm border-success">
-                    <div class="card-header bg-success text-white text-center fw-bold fs-5">
-                        @cupon.Codigo
-                    </div>
-                    <div class="card-body text-center">
-                        <h4 class="text-success mb-3">
-                            @if(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje)
+    <hr />
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+            <h5>Aún no tienes cupones registrados.</h5>
+            <p>Ingresa un código en la parte superior para agregarlo a tu cuenta.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var cuponUsuario in Model.OrderByDescending(c => c.FechaRegistro))
+            {
+                var cupon = cuponUsuario.Cupon;
+                if (cupon == null) continue;
+
+                var isUsed = cuponUsuario.PedidoId != null;
+                var isExpired = System.DateTime.UtcNow > cupon.FechaFin;
+                var isActive = cupon.Activo;
+                
+                string cardBorder = "border-success";
+                string headerBg = "bg-success";
+                string statusText = "DISPONIBLE";
+                string statusBadge = "bg-success";
+
+                if (isUsed)
+                {
+                    cardBorder = "border-secondary";
+                    headerBg = "bg-secondary";
+                    statusText = "UTILIZADO";
+                    statusBadge = "bg-secondary";
+                }
+                else if (!isActive || isExpired)
+                {
+                    cardBorder = "border-danger";
+                    headerBg = "bg-danger";
+                    statusText = "VENCIDO";
+                    statusBadge = "bg-danger";
+                }
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm @cardBorder">
+                        <div class="card-header @headerBg text-white d-flex justify-content-between align-items-center">
+                            <span class="fw-bold fs-5">@cupon.Codigo</span>
+                            <span class="badge @statusBadge border border-white">@statusText</span>
+                        </div>
+                        <div class="card-body text-center">
+                            <h3 class="mb-3" style="color: var(--bs-@cardBorder.Replace("border-",""))">
+                                @if(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje)
+                                {
+                                    <span>-@cupon.ValorDescuento.ToString("0.##")% OFF</span>
+                                }
+                                else
+                                {
+                                    <span>-$@cupon.ValorDescuento.ToString("0.00")</span>
+                                }
+                            </h3>
+                            <ul class="list-unstyled small text-muted text-start mb-0">
+                                <li><i class="bi bi-clock"></i> <strong>Vence:</strong> @cupon.FechaFin.ToLocalTime().ToString("dd/MM/yyyy")</li>
+                                <li><i class="bi bi-calendar-check"></i> <strong>Registrado:</strong> @cuponUsuario.FechaRegistro.ToLocalTime().ToString("dd/MM/yyyy")</li>
+                                @if(cupon.PedidoMinimo.HasValue)
+                                {
+                                    <li><i class="bi bi-bag-check"></i> <strong>Compra mínima:</strong> $@cupon.PedidoMinimo.Value.ToString("0.00")</li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-light border-top-0 d-grid">
+                            @if(statusText == "DISPONIBLE")
                             {
-                                <span>-@cupon.ValorDescuento.ToString("0.##")% OFF</span>
+                                <button class="btn btn-outline-success btn-sm" onclick="navigator.clipboard.writeText('@cupon.Codigo'); alert('¡Código copiado!');">
+                                    <i class="bi bi-clipboard"></i> Copiar Código
+                                </button>
                             }
-                            else
+                            else if(statusText == "UTILIZADO")
                             {
-                                <span>-$@cupon.ValorDescuento.ToString("0.00")</span>
+                                <small class="text-center text-muted">Utilizado el @(cuponUsuario.FechaUso?.ToLocalTime().ToString("dd/MM/yyyy") ?? "N/A")</small>
                             }
-                        </h4>
-                        <p class="small mb-0">Válido hasta: @cupon.FechaFin.ToLocalTime().ToString("d")</p>
-                        @if(cupon.PedidoMinimo.HasValue)
-                        {
-                            <p class="small">Compra mínima: $@cupon.PedidoMinimo.Value.ToString("0.00")</p>
-                        }
-                    </div>
-                    <div class="card-footer bg-white border-top-0 d-grid">
-                        <button class="btn btn-outline-success" onclick="navigator.clipboard.writeText('@cupon.Codigo'); alert('¡Código copiado!');">Copiar Código</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-}
+            }
+        </div>
+    }
+</div>

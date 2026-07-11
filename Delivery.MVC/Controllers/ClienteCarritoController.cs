@@ -26,19 +26,25 @@ namespace Delivery.MVC.Controllers
         private readonly IRestauranteConsumer _restauranteConsumer;
         private readonly IPedidoConsumer _pedidoConsumer;
         private readonly Delivery.MVC.Servicios.IArchivoService _archivoService;
+        private readonly ICuponConsumer _cuponConsumer;
+        private readonly ICuponUsuarioConsumer _cuponUsuarioConsumer;
 
         public ClienteCarritoController(
             IDireccionConsumer direccionConsumer,
             IProductoConsumer productoConsumer,
             IRestauranteConsumer restauranteConsumer,
             IPedidoConsumer pedidoConsumer,
-            Delivery.MVC.Servicios.IArchivoService archivoService)
+            Delivery.MVC.Servicios.IArchivoService archivoService,
+            ICuponConsumer cuponConsumer,
+            ICuponUsuarioConsumer cuponUsuarioConsumer)
         {
             _direccionConsumer = direccionConsumer;
             _productoConsumer = productoConsumer;
             _restauranteConsumer = restauranteConsumer;
             _pedidoConsumer = pedidoConsumer;
             _archivoService = archivoService;
+            _cuponConsumer = cuponConsumer;
+            _cuponUsuarioConsumer = cuponUsuarioConsumer;
         }
 
         private long GetMyUsuarioId()
@@ -267,6 +273,48 @@ namespace Delivery.MVC.Controllers
         }
 
         // ─────────────────────────────────────────────────────────────────────
+        // APLICAR CUPÓN (AJAX)
+        // ─────────────────────────────────────────────────────────────────────
+        [HttpPost]
+        public async Task<IActionResult> AplicarCupon(string codigo)
+        {
+            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
+            if (carrito == null || string.IsNullOrWhiteSpace(codigo))
+                return Json(new { exito = false, mensaje = "No se proporcionó cupón o carrito vacío." });
+
+            var userId = GetMyUsuarioId();
+            
+            var todosCupones = await _cuponConsumer.GetAllAsync();
+            var cupon = todosCupones.FirstOrDefault(c => c.Codigo.Equals(codigo.Trim(), System.StringComparison.OrdinalIgnoreCase));
+
+            if (cupon == null) return Json(new { exito = false, mensaje = "El cupón no existe." });
+            if (!cupon.Activo) return Json(new { exito = false, mensaje = "El cupón todavía no está activo." });
+            if (System.DateTime.UtcNow > cupon.FechaFin) return Json(new { exito = false, mensaje = "El cupón expiró." });
+            if (!cupon.EsPublico && cupon.UsuarioExclusivoId != userId) return Json(new { exito = false, mensaje = "Este cupón no pertenece al usuario." });
+            if (cupon.PedidoMinimo.HasValue && carrito.Subtotal < cupon.PedidoMinimo.Value)
+                return Json(new { exito = false, mensaje = $"No cumple el monto mínimo requerido de ${cupon.PedidoMinimo.Value.ToString("0.00")}." });
+
+            var cuponesUsuarios = await _cuponUsuarioConsumer.GetAllAsync();
+            var yaUtilizado = cuponesUsuarios.Any(cu => cu.UsuarioId == userId && cu.CuponId == cupon.Id && cu.PedidoId != null);
+            if (yaUtilizado) return Json(new { exito = false, mensaje = "El cupón ya fue utilizado." });
+            if (cupon.LimiteUsos.HasValue && cupon.UsosActuales >= cupon.LimiteUsos.Value) return Json(new { exito = false, mensaje = "El cupón alcanzó su límite de usos." });
+
+            decimal montoDescuento = 0;
+            if (cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje)
+            {
+                montoDescuento = carrito.Subtotal * (cupon.ValorDescuento / 100m);
+            }
+            else
+            {
+                montoDescuento = cupon.ValorDescuento;
+            }
+
+            if (montoDescuento > carrito.Subtotal) montoDescuento = carrito.Subtotal;
+
+            return Json(new { exito = true, mensaje = "✓ Cupón aplicado correctamente.", descuento = montoDescuento });
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
         // CONFIRMAR COMPRA → Aquí se crea el Pedido real en base de datos
         // ─────────────────────────────────────────────────────────────────────
         [HttpPost]
@@ -284,7 +332,8 @@ namespace Delivery.MVC.Controllers
             double? nuevaLongitud,
             string? nuevoAlias,
             string? nuevaReferencia,
-            bool guardarDireccion)
+            bool guardarDireccion,
+            string? cuponCodigo)
         {
             var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
             if (carrito == null || !carrito.Items.Any())
@@ -296,7 +345,7 @@ namespace Delivery.MVC.Controllers
             var userId = GetMyUsuarioId();
             long finalDireccionId = direccionId;
 
-            // Lógica para crear nueva dirección si se eligió o arrastró en el mapa (direccionId = 0)
+            // ... Lógica de nueva dirección ...
             if (direccionId == 0)
             {
                 if (string.IsNullOrWhiteSpace(nuevaCalle) || !nuevaLatitud.HasValue || !nuevaLongitud.HasValue)
@@ -331,6 +380,42 @@ namespace Delivery.MVC.Controllers
             {
                 TempData["Error"] = "Debes seleccionar una dirección de entrega válida.";
                 return RedirectToAction("Checkout");
+            }
+
+            // ... Lógica Cupones ...
+            Delivery.Modelos.Entidades.Cupon? cuponAplicado = null;
+            Delivery.Modelos.Entidades.CuponUsuario? registroCuponUsuario = null;
+
+            if (!string.IsNullOrWhiteSpace(cuponCodigo))
+            {
+                var todosCupones = await _cuponConsumer.GetAllAsync();
+                cuponAplicado = todosCupones.FirstOrDefault(c => c.Codigo.Equals(cuponCodigo.Trim(), System.StringComparison.OrdinalIgnoreCase));
+
+                if (cuponAplicado != null && cuponAplicado.Activo && System.DateTime.UtcNow <= cuponAplicado.FechaFin)
+                {
+                    var cuponesUsuarios = await _cuponUsuarioConsumer.GetAllAsync();
+                    registroCuponUsuario = cuponesUsuarios.FirstOrDefault(cu => cu.UsuarioId == userId && cu.CuponId == cuponAplicado.Id);
+                    
+                    bool esValidoParaUso = true;
+                    if (!cuponAplicado.EsPublico && cuponAplicado.UsuarioExclusivoId != userId) esValidoParaUso = false;
+                    if (cuponAplicado.PedidoMinimo.HasValue && carrito.Subtotal < cuponAplicado.PedidoMinimo.Value) esValidoParaUso = false;
+                    if (registroCuponUsuario != null && registroCuponUsuario.PedidoId != null) esValidoParaUso = false;
+                    if (cuponAplicado.LimiteUsos.HasValue && cuponAplicado.UsosActuales >= cuponAplicado.LimiteUsos.Value) esValidoParaUso = false;
+
+                    if (esValidoParaUso)
+                    {
+                        decimal montoDescuento = 0;
+                        if (cuponAplicado.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje)
+                            montoDescuento = carrito.Subtotal * (cuponAplicado.ValorDescuento / 100m);
+                        else
+                            montoDescuento = cuponAplicado.ValorDescuento;
+
+                        if (montoDescuento > carrito.Subtotal) montoDescuento = carrito.Subtotal;
+
+                        carrito.Descuento = montoDescuento;
+                        carrito.CuponId = cuponAplicado.Id;
+                    }
+                }
             }
 
             // --- SIMULACIÓN DE PAGO ---
@@ -388,6 +473,37 @@ namespace Delivery.MVC.Controllers
 
             if (pedidoCreado != null)
             {
+                // MARCAR CUPÓN COMO USADO
+                if (carrito.CuponId.HasValue && cuponAplicado != null)
+                {
+                    // Incrementar usos globales
+                    cuponAplicado.UsosActuales++;
+                    await _cuponConsumer.UpdateAsync(cuponAplicado.Id, cuponAplicado);
+
+                    // Registrar que ESTE usuario lo usó
+                    if (registroCuponUsuario != null)
+                    {
+                        // Como la clave es compuesta y PedidoId forma parte de ella, lo eliminamos y creamos uno nuevo.
+                        await _cuponUsuarioConsumer.DeleteAsync(registroCuponUsuario.CuponId, registroCuponUsuario.UsuarioId, registroCuponUsuario.PedidoId);
+                        
+                        registroCuponUsuario.PedidoId = pedidoCreado.Id;
+                        registroCuponUsuario.FechaUso = System.DateTime.UtcNow;
+                        await _cuponUsuarioConsumer.CreateAsync(registroCuponUsuario);
+                    }
+                    else
+                    {
+                        // Si era público pero el usuario no lo "guardó" antes en Mis Cupones
+                        await _cuponUsuarioConsumer.CreateAsync(new Delivery.Modelos.Entidades.CuponUsuario
+                        {
+                            CuponId = cuponAplicado.Id,
+                            UsuarioId = userId,
+                            PedidoId = pedidoCreado.Id,
+                            FechaRegistro = System.DateTime.UtcNow,
+                            FechaUso = System.DateTime.UtcNow
+                        });
+                    }
+                }
+
                 CarritoSessionHelper.LimpiarCarrito(HttpContext.Session);
                 TempData["Exito"] = $"¡Pedido #{pedidoCreado.Id} confirmado exitosamente! {TempData["MensajePago"]}";
                 return RedirectToAction("Index", "ClienteHistorialPedidos");

@@ -1,57 +1,47 @@
 @model Delivery.Modelos.Entidades.Cupon
-@{ ViewData["Title"] = "Crear Cupon"; }
-<h1 class="my-4">Crear Cupon</h1><hr />
+@{ ViewData["Title"] = "Crear Cupón"; }
+<h1 class="my-4">Crear Cupón Global</h1><hr />
 <div class="row"><div class="col-md-6">
 <form asp-action="Create">
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <div class="mb-3">
 <label asp-for="Codigo" class="form-label"></label>
-<input asp-for="Codigo" class="form-control" />
+<input asp-for="Codigo" class="form-control" style="text-transform:uppercase" required />
 <span asp-validation-for="Codigo" class="text-danger"></span></div>
 <div class="mb-3">
-<label asp-for="TipoDescuento" class="form-label"></label>
-<input asp-for="TipoDescuento" class="form-control" />
+<label asp-for="TipoDescuento" class="form-label">Tipo de Descuento</label>
+<select asp-for="TipoDescuento" class="form-select">
+    <option value="Porcentaje">Porcentaje</option>
+    <option value="ValorFijo">Valor Fijo ($)</option>
+</select>
 <span asp-validation-for="TipoDescuento" class="text-danger"></span></div>
 <div class="mb-3">
-<label asp-for="ValorDescuento" class="form-label"></label>
-<input asp-for="ValorDescuento" class="form-control" />
+<label asp-for="ValorDescuento" class="form-label">Valor (Ej. 10 para 10% o $10)</label>
+<input asp-for="ValorDescuento" class="form-control" type="number" step="0.01" required />
 <span asp-validation-for="ValorDescuento" class="text-danger"></span></div>
 <div class="mb-3">
-<label asp-for="PedidoMinimo" class="form-label"></label>
-<input asp-for="PedidoMinimo" class="form-control" />
+<label asp-for="PedidoMinimo" class="form-label">Pedido Mínimo ($)</label>
+<input asp-for="PedidoMinimo" class="form-control" type="number" step="0.01" />
 <span asp-validation-for="PedidoMinimo" class="text-danger"></span></div>
 <div class="mb-3">
-<label asp-for="FechaInicio" class="form-label"></label>
-<input asp-for="FechaInicio" class="form-control" type="datetime-local" />
-<span asp-validation-for="FechaInicio" class="text-danger"></span></div>
+<label class="form-label">Duración del Cupón</label>
+<select name="duracionDias" class="form-select" required>
+    <option value="7">7 Días</option>
+    <option value="14">14 Días</option>
+</select>
+</div>
 <div class="mb-3">
-<label asp-for="FechaFin" class="form-label"></label>
-<input asp-for="FechaFin" class="form-control" type="datetime-local" />
-<span asp-validation-for="FechaFin" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="LimiteUsos" class="form-label"></label>
-<input asp-for="LimiteUsos" class="form-control" />
+<label asp-for="LimiteUsos" class="form-label">Límite de Usos (0 o vacío = Sin límite)</label>
+<input asp-for="LimiteUsos" class="form-control" type="number" />
 <span asp-validation-for="LimiteUsos" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="UsosActuales" class="form-label"></label>
-<input asp-for="UsosActuales" class="form-control" />
-<span asp-validation-for="UsosActuales" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Activo" class="form-label"></label>
-<input asp-for="Activo" class="form-check-input" type="checkbox" />
-<span asp-validation-for="Activo" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="RestauranteId" class="form-label"></label>
-<input asp-for="RestauranteId" class="form-control" />
-<span asp-validation-for="RestauranteId" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Restaurante" class="form-label"></label>
-<input asp-for="Restaurante" class="form-control" />
-<span asp-validation-for="Restaurante" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="CuponesUsuarios" class="form-label"></label>
-<input asp-for="CuponesUsuarios" class="form-control" />
-<span asp-validation-for="CuponesUsuarios" class="text-danger"></span></div>
-<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+<div class="form-check mb-3">
+<input asp-for="Activo" class="form-check-input" type="checkbox" checked />
+<label asp-for="Activo" class="form-check-label">Cupón Activo</label>
+</div>
+<div class="form-check mb-3">
+<input asp-for="EsPublico" class="form-check-input" type="checkbox" checked />
+<label asp-for="EsPublico" class="form-check-label">Es Público (cualquiera puede registrarlo)</label>
+</div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">Crear Cupón</button></div>
 </form></div></div>
 <div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

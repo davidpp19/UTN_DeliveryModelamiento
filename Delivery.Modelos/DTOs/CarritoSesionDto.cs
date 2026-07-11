@@ -13,6 +13,8 @@ namespace Delivery.Modelos.DTOs
         public List<CarritoItemSesionDto> Items { get; set; } = new();
         public string? Notas { get; set; }
         public string? ComprobanteTransferenciaUrl { get; set; }
+        public decimal Descuento { get; set; } = 0;
+        public long? CuponId { get; set; }
 
         public decimal Subtotal
         {

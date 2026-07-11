@@ -136,7 +136,9 @@ namespace Delivery.Servicios.Implementaciones
                     EstadoPedido       = EstadoPedidoEnum.Aceptado, // Se da por sobreentendido
                     Subtotal           = subtotal,
                     CostoEnvio         = costoEnvio,
-                    Total              = total,
+                    MontoDescuento     = carritoSesion.Descuento,
+                    CuponId            = carritoSesion.CuponId,
+                    Total              = total - carritoSesion.Descuento,
                     TipoMetodoPago     = metodoPago,
                     ComprobanteTransferenciaUrl = carritoSesion.ComprobanteTransferenciaUrl,
                     Notas              = carritoSesion.Notas,

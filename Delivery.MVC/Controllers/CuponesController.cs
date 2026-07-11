@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -35,8 +36,13 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Cupon entity)
+        public async Task<IActionResult> Create(Cupon entity, int duracionDias)
         {
+            if (duracionDias != 7 && duracionDias != 14) duracionDias = 7;
+            entity.FechaInicio = DateTime.UtcNow;
+            entity.FechaFin = DateTime.UtcNow.AddDays(duracionDias);
+            entity.Codigo = entity.Codigo.ToUpper();
+            
             await _consumer.CreateAsync(entity);
             return RedirectToAction(nameof(Index));
         }
@@ -49,9 +55,25 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(long id, Cupon entity)
+        public async Task<IActionResult> Edit(long id, Cupon entity, int duracionDias)
         {
-            await _consumer.UpdateAsync(id, entity);
+            var data = await _consumer.GetByIdAsync(id);
+            if (data == null) return NotFound();
+
+            data.Codigo = entity.Codigo.ToUpper();
+            data.TipoDescuento = entity.TipoDescuento;
+            data.ValorDescuento = entity.ValorDescuento;
+            data.PedidoMinimo = entity.PedidoMinimo;
+            data.LimiteUsos = entity.LimiteUsos;
+            data.Activo = entity.Activo;
+            data.EsPublico = entity.EsPublico;
+            
+            if (duracionDias == 7 || duracionDias == 14) 
+            {
+                data.FechaFin = data.FechaInicio.AddDays(duracionDias);
+            }
+
+            await _consumer.UpdateAsync(id, data);
             return RedirectToAction(nameof(Index));
         }
 

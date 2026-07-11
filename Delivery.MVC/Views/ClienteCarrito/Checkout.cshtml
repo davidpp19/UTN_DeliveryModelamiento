@@ -69,6 +69,14 @@
                         <span class="text-muted">$@item.Subtotal.ToString("0.00")</span>
                     </li>
                 }
+                
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="my-0">Subtotal</h6>
+                        <strong id="subtotalUI">$@Model.Subtotal.ToString("0.00")</strong>
+                    </div>
+                </li>
+
                 <li class="list-group-item bg-light">
                     <div class="d-flex justify-content-between">
                         <h6 class="my-0">Distancia y Tiempo</h6>
@@ -82,12 +90,31 @@
                     </div>
                     <span class="text-success" id="costoEnvioUI">Pendiente</span>
                 </li>
+
+                <li class="list-group-item d-flex justify-content-between lh-condensed bg-success text-white" id="descuentoRow" style="display:none !important;">
+                    <div>
+                        <h6 class="my-0">Descuento (Cupón)</h6>
+                    </div>
+                    <span id="descuentoUI">-$0.00</span>
+                </li>
+
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Total (USD)</span>
                     <strong id="totalUI" class="text-primary fs-5">$@Model.Subtotal.ToString("0.00")</strong>
                 </li>
             </ul>
             <input type="hidden" id="subtotalValue" value="@Model.Subtotal" />
+            <input type="hidden" id="descuentoValue" value="0" />
+            
+            <div class="card p-2 mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="cuponInput" placeholder="Código promocional" style="text-transform:uppercase">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-secondary" onclick="aplicarCupon()">Verificar</button>
+                    </div>
+                </div>
+                <small id="cuponMensaje" class="form-text mt-2" style="display:none;"></small>
+            </div>
             
             <div class="alert alert-info">
                 <strong>Tarifa de envío:</strong> $1.50 (hasta 3 km). $0.25 por km adicional.
@@ -97,6 +124,7 @@
         <!-- Formulario -->
         <div class="col-md-7 order-md-1">
             <form asp-action="Confirmar" method="post" id="checkoutForm" enctype="multipart/form-data" onsubmit="return validarFormulario(event)">
+                <input type="hidden" id="cuponCodigoForm" name="cuponCodigo" value="" />
                 
                 <h4 class="mb-3">Dirección de Entrega</h4>
                 
@@ -467,9 +495,75 @@
                 document.getElementById('tiempoInfo').innerText = '';
             }
 
+            recalcularTotal();
+        }
+
+        function recalcularTotal() {
             var sub = parseFloat(document.getElementById('subtotalValue').value.replace(',', '.'));
-            var tot = sub + parseFloat(costo);
-            document.getElementById('totalUI').innerText = '$' + tot.toFixed(2);
+            
+            var costoEnvioTexto = document.getElementById('costoEnvioUI').innerText.replace('$', '').replace(',', '.');
+            var costoEnvio = isNaN(parseFloat(costoEnvioTexto)) ? 1.50 : parseFloat(costoEnvioTexto);
+            
+            var descuento = parseFloat(document.getElementById('descuentoValue').value);
+            
+            var total = sub + costoEnvio - descuento;
+            if (total < 0) total = 0;
+            
+            document.getElementById('totalUI').innerText = '$' + total.toFixed(2);
+        }
+
+        function aplicarCupon() {
+            var codigo = document.getElementById('cuponInput').value;
+            var mensaje = document.getElementById('cuponMensaje');
+            var formInput = document.getElementById('cuponCodigoForm');
+            var descValue = document.getElementById('descuentoValue');
+            var descRow = document.getElementById('descuentoRow');
+            var descUI = document.getElementById('descuentoUI');
+
+            if (!codigo) {
+                mensaje.className = "form-text mt-2 text-danger";
+                mensaje.innerText = "Ingresa un código.";
+                mensaje.style.display = "block";
+                return;
+            }
+
+            // AJAX call
+            fetch('/ClienteCarrito/AplicarCupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ codigo: codigo })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.exito) {
+                    mensaje.className = "form-text mt-2 text-success fw-bold";
+                    mensaje.innerText = data.mensaje;
+                    
+                    formInput.value = codigo;
+                    descValue.value = data.descuento;
+                    descUI.innerText = "-$" + parseFloat(data.descuento).toFixed(2);
+                    descRow.style.setProperty("display", "flex", "important");
+                    
+                    recalcularTotal();
+                } else {
+                    mensaje.className = "form-text mt-2 text-danger fw-bold";
+                    mensaje.innerText = data.mensaje;
+                    
+                    formInput.value = "";
+                    descValue.value = 0;
+                    descRow.style.setProperty("display", "none", "important");
+                    
+                    recalcularTotal();
+                }
+                mensaje.style.display = "block";
+            })
+            .catch(err => {
+                mensaje.className = "form-text mt-2 text-danger";
+                mensaje.innerText = "Error al validar el cupón.";
+                mensaje.style.display = "block";
+            });
         }
 
         function togglePaymentSections() {

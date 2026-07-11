@@ -44,8 +44,17 @@ namespace Delivery.Modelos.Entidades
         [Column("activo")]
         public bool Activo { get; set; } = true;
 
+        [Column("es_publico")]
+        public bool EsPublico { get; set; } = true;
+
+        [Column("usuario_exclusivo_id")]
+        public long? UsuarioExclusivoId { get; set; }
+
         [Column("restaurante_id")]
         public long? RestauranteId { get; set; }
+
+        [ForeignKey(nameof(UsuarioExclusivoId))]
+        public virtual Usuario? UsuarioExclusivo { get; set; }
 
         [ForeignKey(nameof(RestauranteId))]
         public virtual Restaurante? Restaurante { get; set; }

@@ -16,9 +16,11 @@ namespace Delivery.Modelos.Entidades
         [Column("pedido_id")]
         public long? PedidoId { get; set; }
 
-        [Required]
         [Column("fecha_uso")]
-        public DateTime FechaUso { get; set; }
+        public DateTime? FechaUso { get; set; }
+
+        [Column("fecha_registro")]
+        public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
 
         [ForeignKey(nameof(CuponId))]
         public virtual Cupon? Cupon { get; set; }
