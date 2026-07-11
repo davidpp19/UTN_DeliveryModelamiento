@@ -90,11 +90,12 @@
         var initialLat = document.getElementById('lat-input').value;
         var initialLng = document.getElementById('lng-input').value;
 
-        // Si ya hay lat/lng guardadas, usarlas. Si no, por defecto a Ibarra
-        var centerLat = initialLat && !isNaN(parseFloat(initialLat)) ? parseFloat(initialLat) : 0.3517;
-        var centerLng = initialLng && !isNaN(parseFloat(initialLng)) ? parseFloat(initialLng) : -78.1222;
+        // Si ya hay lat/lng guardadas, usarlas. Si no, centrar en Ecuador
+        var centerLat = initialLat && !isNaN(parseFloat(initialLat)) ? parseFloat(initialLat) : -1.8312;
+        var centerLng = initialLng && !isNaN(parseFloat(initialLng)) ? parseFloat(initialLng) : -78.1834;
+        var zoomLevel = initialLat && !isNaN(parseFloat(initialLat)) ? 15 : 6;
 
-        var map = L.map('map').setView([centerLat, centerLng], 15);
+        var map = L.map('map').setView([centerLat, centerLng], zoomLevel);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,

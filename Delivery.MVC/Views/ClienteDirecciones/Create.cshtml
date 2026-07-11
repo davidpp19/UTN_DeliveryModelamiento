@@ -85,8 +85,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // Inicializar mapa en un punto por defecto (ej. Ibarra, Ecuador)
-        var map = L.map('map').setView([0.3517, -78.1222], 14);
+        // Inicializar mapa centrado en Ecuador
+        var map = L.map('map').setView([-1.8312, -78.1834], 6);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,

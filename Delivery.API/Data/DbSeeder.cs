@@ -25,6 +25,9 @@ namespace Delivery.API.Data
 
             // Parche: Asignar imágenes a productos existentes que no tengan
             await PatchProductosSinImagenAsync(context);
+
+            // Parche: Asignar coordenadas a restaurantes que no tengan
+            await PatchRestaurantesSinCoordenadasAsync(context);
         }
 
         // =====================================================================
@@ -482,6 +485,35 @@ namespace Delivery.API.Data
                 {
                     prod.ImagenUrl = genericImages[rng.Next(genericImages.Count)];
                 }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        // =====================================================================
+        // PARCHE: COORDENADAS DE RESTAURANTES EXISTENTES
+        // =====================================================================
+        private static async Task PatchRestaurantesSinCoordenadasAsync(DeliveryDbContext context)
+        {
+            var restaurantesSinCoords = await context.Restaurantes
+                .Where(r => r.Latitud == null || r.Longitud == null)
+                .ToListAsync();
+
+            if (!restaurantesSinCoords.Any()) return;
+
+            var rng = new Random();
+            // Centro de Ibarra aproximado
+            double baseLat = 0.3517;
+            double baseLng = -78.1222;
+
+            foreach (var rest in restaurantesSinCoords)
+            {
+                // Variación pequeña de +- 0.02 para distribuirlos en la ciudad
+                double latOffset = (rng.NextDouble() - 0.5) * 0.04;
+                double lngOffset = (rng.NextDouble() - 0.5) * 0.04;
+                
+                rest.Latitud = (decimal)(baseLat + latOffset);
+                rest.Longitud = (decimal)(baseLng + lngOffset);
             }
 
             await context.SaveChangesAsync();

@@ -144,7 +144,7 @@
                     </div>
                 </div>
 
-                <input type="hidden" id="nuevaCiudad" name="nuevaCiudad" value="Guayaquil">
+                <input type="hidden" id="nuevaCiudad" name="nuevaCiudad" value="">
                 <input type="hidden" id="nuevaLatitud" name="nuevaLatitud">
                 <input type="hidden" id="nuevaLongitud" name="nuevaLongitud">
 
@@ -222,39 +222,26 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        var map, marker;
-        var latitudActual = -2.1894; // Guayaquil por defecto
-        var longitudActual = -79.8891;
+        var map;
+        var marker = null;
+
+        var customIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149059.png',
+            iconSize: [38, 38],
+            iconAnchor: [19, 38]
+        });
 
         // Inicialización
         document.addEventListener("DOMContentLoaded", function () {
             togglePaymentSections();
 
-            map = L.map('mapaCheckout').setView([latitudActual, longitudActual], 13);
+            // Inicializar el mapa centrado en Ecuador (zoom 6) sin colocar ningún marcador.
+            map = L.map('mapaCheckout').setView([-1.8312, -78.1834], 6);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors',
                 maxZoom: 19
             }).addTo(map);
-
-            var customIcon = L.icon({
-                iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149059.png',
-                iconSize: [38, 38],
-                iconAnchor: [19, 38]
-            });
-
-            marker = L.marker([latitudActual, longitudActual], {
-                icon: customIcon,
-                draggable: true
-            }).addTo(map);
-
-            marker.on('dragend', function (e) {
-                var position = marker.getLatLng();
-                actualizarCamposUbicacion(position.lat, position.lng);
-                obtenerNombreCalle(position.lat, position.lng);
-                calcularCostoEnvio(0, position.lat, position.lng); // 0 indica nueva dirección
-                document.getElementById('selectDireccion').value = "0";
-            });
 
             // Si el cliente tiene direcciones, seleccionar la primera
             var selectDir = document.getElementById('selectDireccion');
@@ -274,19 +261,42 @@
             });
         });
 
+        function agregarOMoverMarcador(lat, lng) {
+            if (!marker) {
+                marker = L.marker([lat, lng], {
+                    icon: customIcon,
+                    draggable: true
+                }).addTo(map);
+
+                marker.on('dragend', function (e) {
+                    var position = marker.getLatLng();
+                    actualizarCamposUbicacion(position.lat, position.lng);
+                    obtenerNombreCalle(position.lat, position.lng);
+                    calcularCostoEnvio(0, position.lat, position.lng); // 0 indica nueva dirección
+                    document.getElementById('selectDireccion').value = "0";
+                });
+            } else {
+                marker.setLatLng([lat, lng]);
+            }
+        }
+
         function solicitarUbicacion() {
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var lat = position.coords.latitude;
                     var lng = position.coords.longitude;
                     map.setView([lat, lng], 15);
-                    marker.setLatLng([lat, lng]);
+                    agregarOMoverMarcador(lat, lng);
                     actualizarCamposUbicacion(lat, lng);
                     obtenerNombreCalle(lat, lng);
                     calcularCostoEnvio(0, lat, lng);
                 }, function (error) {
                     console.log("Geolocalización denegada o error", error);
                     mostrarMensajeSeleccioneUbicacion();
+                }, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
                 });
             } else {
                 mostrarMensajeSeleccioneUbicacion();
@@ -333,10 +343,12 @@
                 document.getElementById('buscadorContainer').style.display = 'block';
                 var lat = document.getElementById('nuevaLatitud').value;
                 if (!lat) {
-                    mostrarMensajeSeleccioneUbicacion();
+                    solicitarUbicacion();
                 } else {
-                    var pos = marker.getLatLng();
-                    calcularCostoEnvio(0, pos.lat, pos.lng);
+                    if (marker) {
+                        var pos = marker.getLatLng();
+                        calcularCostoEnvio(0, pos.lat, pos.lng);
+                    }
                 }
             }
         });
@@ -391,7 +403,7 @@
             var lngFloat = parseFloat(lng);
             
             map.setView([latFloat, lngFloat], 16);
-            marker.setLatLng([latFloat, lngFloat]);
+            agregarOMoverMarcador(latFloat, lngFloat);
             
             document.getElementById('buscadorDireccion').value = nombreCompleto;
             document.getElementById('listaResultados').style.display = 'none';
