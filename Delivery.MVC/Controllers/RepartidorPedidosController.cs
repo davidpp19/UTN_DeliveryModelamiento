@@ -56,6 +56,22 @@ namespace Delivery.MVC.Controllers
             var userId = GetMyUsuarioId();
             var data = await _pedidoConsumer.GetByIdAsync(id);
             if (data == null || data.RepartidorId != userId) return NotFound();
+
+            var estadosPermitidos = new System.Collections.Generic.List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+            switch (data.EstadoPedido)
+            {
+                case EstadoPedidoEnum.ListoParaRecoger:
+                    estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "Recogido", Value = "Recogido" });
+                    break;
+                case EstadoPedidoEnum.Recogido:
+                    estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "En Camino", Value = "EnCamino" });
+                    break;
+                case EstadoPedidoEnum.EnCamino:
+                    estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "Entregado", Value = "Entregado" });
+                    break;
+            }
+            ViewBag.EstadosPermitidos = estadosPermitidos;
+
             return View(data);
         }
 

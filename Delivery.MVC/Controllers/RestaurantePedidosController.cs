@@ -56,6 +56,25 @@ namespace Delivery.MVC.Controllers
             var restauranteId = await GetMyRestauranteId();
             var data = await _pedidoConsumer.GetByIdAsync(id);
             if (data == null || data.RestauranteId != restauranteId) return NotFound();
+
+            var estadosPermitidos = new System.Collections.Generic.List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+            switch (data.EstadoPedido)
+            {
+                case EstadoPedidoEnum.Pendiente:
+                    estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "Aceptado", Value = "Aceptado" });
+                    estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "Cancelado", Value = "Cancelado" });
+                    break;
+                case EstadoPedidoEnum.Aceptado:
+                    estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "En Preparación", Value = "EnPreparacion" });
+                    estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "Cancelado", Value = "Cancelado" });
+                    break;
+                case EstadoPedidoEnum.EnPreparacion:
+                    estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "Listo para Recoger", Value = "ListoParaRecoger" });
+                    estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "Cancelado", Value = "Cancelado" });
+                    break;
+            }
+            ViewBag.EstadosPermitidos = estadosPermitidos;
+
             return View(data);
         }
 

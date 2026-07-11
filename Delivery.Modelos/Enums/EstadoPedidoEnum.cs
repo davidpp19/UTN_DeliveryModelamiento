@@ -2,12 +2,14 @@ namespace Delivery.Modelos.Enums
 {
     public enum EstadoPedidoEnum
     {
-        Borrador,
-        Pendiente,
-        Aceptado,
-        EnPreparacion,
-        EnCamino,
-        Entregado,
-        Cancelado
+        Borrador = 0,
+        Pendiente = 1,
+        Aceptado = 2,
+        EnPreparacion = 3,
+        EnCamino = 4,
+        Entregado = 5,
+        Cancelado = 6,
+        ListoParaRecoger = 7,
+        Recogido = 8
     }
 }

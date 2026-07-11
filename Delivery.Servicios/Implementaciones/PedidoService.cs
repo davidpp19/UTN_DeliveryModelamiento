@@ -162,7 +162,6 @@ namespace Delivery.Servicios.Implementaciones
         }
 
         public async Task<Pedido> ActualizarEstadoRestauranteAsync(long pedidoId, Delivery.Modelos.Enums.EstadoPedidoEnum nuevoEstado, long restauranteId)
-
         {
             var pedido = await _context.Pedidos.FindAsync(pedidoId);
             if (pedido == null) throw new Delivery.Modelos.Excepciones.BusinessException("Pedido no encontrado.");
@@ -170,11 +169,38 @@ namespace Delivery.Servicios.Implementaciones
             if (pedido.RestauranteId != restauranteId)
                 throw new Delivery.Modelos.Excepciones.BusinessException("El pedido no pertenece a este restaurante.");
 
-            if (nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.Aceptado &&
-                nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.EnPreparacion &&
-                nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.Cancelado)
+            // Validar transiciones de estado para el Restaurante
+            bool transicionValida = false;
+            
+            if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.Cancelado)
             {
-                throw new Delivery.Modelos.Excepciones.BusinessException("Estado no válido para el restaurante.");
+                // Se puede cancelar si no ha sido entregado o recogido
+                if (pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Pendiente || 
+                    pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Aceptado || 
+                    pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnPreparacion)
+                {
+                    transicionValida = true;
+                }
+            }
+            else
+            {
+                switch (pedido.EstadoPedido)
+                {
+                    case Delivery.Modelos.Enums.EstadoPedidoEnum.Pendiente:
+                        if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.Aceptado) transicionValida = true;
+                        break;
+                    case Delivery.Modelos.Enums.EstadoPedidoEnum.Aceptado:
+                        if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.EnPreparacion) transicionValida = true;
+                        break;
+                    case Delivery.Modelos.Enums.EstadoPedidoEnum.EnPreparacion:
+                        if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger) transicionValida = true;
+                        break;
+                }
+            }
+
+            if (!transicionValida)
+            {
+                throw new Delivery.Modelos.Excepciones.BusinessException("Estado o transición no válido para el restaurante.");
             }
 
             pedido.EstadoPedido = nuevoEstado;
@@ -192,10 +218,35 @@ namespace Delivery.Servicios.Implementaciones
             if (pedido.RepartidorId != repartidorId)
                 throw new Delivery.Modelos.Excepciones.BusinessException("El pedido no está asignado a este repartidor.");
 
-            if (nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino &&
-                nuevoEstado != Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
+            // Validar transiciones de estado para el Repartidor
+            bool transicionValida = false;
+
+            switch (pedido.EstadoPedido)
             {
-                throw new Delivery.Modelos.Excepciones.BusinessException("Estado no válido para el repartidor.");
+                case Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger:
+                    if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.Recogido) transicionValida = true;
+                    break;
+                case Delivery.Modelos.Enums.EstadoPedidoEnum.Recogido:
+                    if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino) transicionValida = true;
+                    break;
+                case Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino:
+                    if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado) transicionValida = true;
+                    break;
+            }
+
+            // Mantenemos retrocompatibilidad si el repartidor pasa directamente a EnCamino o Entregado
+            // según lo que había originalmente (por si alguna vista lo hace)
+            if (pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Pendiente || 
+                pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Aceptado || 
+                pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnPreparacion)
+            {
+                // Un repartidor no debería poder cambiar el estado si el restaurante aún lo tiene.
+                // Pero lo dejaremos bloqueado explícitamente al requerir 'transicionValida = true'.
+            }
+
+            if (!transicionValida)
+            {
+                throw new Delivery.Modelos.Excepciones.BusinessException("Estado o transición no válido para el repartidor.");
             }
 
             pedido.EstadoPedido = nuevoEstado;

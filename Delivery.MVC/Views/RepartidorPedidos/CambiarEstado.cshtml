@@ -19,22 +19,30 @@
             <dd class="col-sm-8"><span class="badge bg-primary">@Model.EstadoPedido</span></dd>
         </dl>
 
-        <form asp-action="CambiarEstado" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            
-            <div class="mb-3">
-                <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
-                <select name="nuevoEstado" id="nuevoEstado" class="form-select">
-                    <option value="EnCamino">En Camino</option>
-                    <option value="Entregado">Entregado</option>
-                </select>
+        @if (ViewBag.EstadosPermitidos == null || ((List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.EstadosPermitidos).Count == 0)
+        {
+            <div class="alert alert-info">
+                <strong>Información:</strong> El pedido está en estado <strong>@Model.EstadoPedido</strong>. Ya no puedes cambiar el estado (aún no está listo para recoger, o ya fue entregado).
             </div>
-            
-            <div class="mb-3">
-                <button type="submit" class="btn btn-warning">Actualizar Estado</button>
-                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
-            </div>
-        </form>
+            <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+        }
+        else
+        {
+            <form asp-action="CambiarEstado" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="mb-3">
+                    <label for="nuevoEstado" class="form-label">Siguiente Estado</label>
+                    <select name="nuevoEstado" id="nuevoEstado" class="form-select" asp-items="ViewBag.EstadosPermitidos">
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-warning">Actualizar Estado</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+                </div>
+            </form>
+        }
     </div>
 </div>

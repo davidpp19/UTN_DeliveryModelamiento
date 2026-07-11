@@ -9,9 +9,19 @@
             <input type="hidden" asp-for="RestauranteId" />
             <input type="hidden" asp-for="CreadoEn" />
             
+            @if (ViewBag.TieneCategorias != null && !(bool)ViewBag.TieneCategorias)
+            {
+                <div class="alert alert-warning">
+                    <strong>¡Atención!</strong> No has creado ninguna categoría. 
+                    <a asp-controller="RestauranteCategorias" asp-action="Create" class="alert-link">Crea una categoría primero</a>.
+                </div>
+            }
+
             <div class="mb-3">
-                <label asp-for="CategoriaId" class="form-label">ID de Categoría (Opcional)</label>
-                <input asp-for="CategoriaId" class="form-control" />
+                <label asp-for="CategoriaId" class="form-label">Categoría</label>
+                <select asp-for="CategoriaId" class="form-select" asp-items="ViewBag.Categorias" required>
+                    <option value="">-- Seleccione una Categoría --</option>
+                </select>
                 <span asp-validation-for="CategoriaId" class="text-danger"></span>
             </div>
             

@@ -13,13 +13,23 @@ namespace Delivery.MVC.Controllers
     {
         private readonly IProductoConsumer _productoConsumer;
         private readonly IRestauranteConsumer _restauranteConsumer;
+        private readonly ICategoriaProductoConsumer _categoriaConsumer;
         private readonly Delivery.MVC.Servicios.IArchivoService _archivoService;
 
-        public RestauranteProductosController(IProductoConsumer productoConsumer, IRestauranteConsumer restauranteConsumer, Delivery.MVC.Servicios.IArchivoService archivoService)
+        public RestauranteProductosController(IProductoConsumer productoConsumer, IRestauranteConsumer restauranteConsumer, ICategoriaProductoConsumer categoriaConsumer, Delivery.MVC.Servicios.IArchivoService archivoService)
         {
             _productoConsumer = productoConsumer;
             _restauranteConsumer = restauranteConsumer;
+            _categoriaConsumer = categoriaConsumer;
             _archivoService = archivoService;
+        }
+
+        private async Task CargarCategoriasViewBagAsync(long restauranteId, long? seleccionId = null)
+        {
+            var categorias = await _categoriaConsumer.GetAllAsync();
+            var misCategorias = categorias.Where(c => c.RestauranteId == restauranteId).ToList();
+            ViewBag.Categorias = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(misCategorias, "Id", "Nombre", seleccionId);
+            ViewBag.TieneCategorias = misCategorias.Any();
         }
 
         private async Task<long?> GetMyRestauranteId()
@@ -60,8 +70,12 @@ namespace Delivery.MVC.Controllers
             return View(data);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var restauranteId = await GetMyRestauranteId();
+            if (restauranteId == null) return Unauthorized();
+            
+            await CargarCategoriasViewBagAsync(restauranteId.Value);
             return View();
         }
 
@@ -70,6 +84,12 @@ namespace Delivery.MVC.Controllers
         {
             var restauranteId = await GetMyRestauranteId();
             if (restauranteId == null) return Unauthorized();
+
+            if (!ModelState.IsValid)
+            {
+                await CargarCategoriasViewBagAsync(restauranteId.Value, entity.CategoriaId);
+                return View(entity);
+            }
 
             if (imagen != null)
             {
@@ -87,6 +107,8 @@ namespace Delivery.MVC.Controllers
             var restauranteId = await GetMyRestauranteId();
             var data = await _productoConsumer.GetByIdAsync(id);
             if (data == null || data.RestauranteId != restauranteId) return NotFound();
+            
+            await CargarCategoriasViewBagAsync(restauranteId.Value, data.CategoriaId);
             return View(data);
         }
 
@@ -95,6 +117,12 @@ namespace Delivery.MVC.Controllers
         {
             var restauranteId = await GetMyRestauranteId();
             if (restauranteId == null || entity.RestauranteId != restauranteId) return Unauthorized();
+
+            if (!ModelState.IsValid)
+            {
+                await CargarCategoriasViewBagAsync(restauranteId.Value, entity.CategoriaId);
+                return View(entity);
+            }
 
             if (imagen != null)
             {
