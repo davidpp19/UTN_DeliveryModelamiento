@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Delivery.Consumer.Interfaces;
@@ -18,8 +19,17 @@ namespace Delivery.MVC.Controllers
         // --- Repartidores ---
         public async Task<IActionResult> Repartidores()
         {
-            var pendientes = await _aprobacionesConsumer.GetRepartidoresPendientesAsync();
-            return View(pendientes);
+            try 
+            {
+                var pendientes = await _aprobacionesConsumer.GetRepartidoresPendientesAsync();
+                return View(pendientes);
+            }
+            catch (System.Net.Http.HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                // Si la API devuelve 401, el token JWT expiró o no existe. Forzar re-login.
+                await HttpContext.SignOutAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+                return RedirectToAction("Login", "Auth");
+            }
         }
 
         [HttpPost]
@@ -41,8 +51,16 @@ namespace Delivery.MVC.Controllers
         // --- Restaurantes ---
         public async Task<IActionResult> Restaurantes()
         {
-            var pendientes = await _aprobacionesConsumer.GetRestaurantesPendientesAsync();
-            return View(pendientes);
+            try 
+            {
+                var pendientes = await _aprobacionesConsumer.GetRestaurantesPendientesAsync();
+                return View(pendientes);
+            }
+            catch (System.Net.Http.HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                await HttpContext.SignOutAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+                return RedirectToAction("Login", "Auth");
+            }
         }
 
         [HttpPost]

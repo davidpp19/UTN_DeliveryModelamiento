@@ -72,7 +72,7 @@
                 <li class="list-group-item bg-light">
                     <div class="d-flex justify-content-between">
                         <h6 class="my-0">Distancia y Tiempo</h6>
-                        <strong id="distanciaInfo">Calculando...</strong>
+                        <strong id="distanciaInfo">Pendiente</strong>
                     </div>
                     <small class="text-muted" id="tiempoInfo">Seleccione dirección en el mapa</small>
                 </li>
@@ -80,7 +80,7 @@
                     <div>
                         <h6 class="my-0">Costo de Envío</h6>
                     </div>
-                    <span class="text-success" id="costoEnvioUI">$0.00</span>
+                    <span class="text-success" id="costoEnvioUI">Pendiente</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <span>Total (USD)</span>
@@ -286,11 +286,27 @@
                     calcularCostoEnvio(0, lat, lng);
                 }, function (error) {
                     console.log("Geolocalización denegada o error", error);
-                    // Queda en Guayaquil por defecto
-                    calcularCostoEnvio(0, latitudActual, longitudActual);
-                    obtenerNombreCalle(latitudActual, longitudActual);
+                    mostrarMensajeSeleccioneUbicacion();
                 });
+            } else {
+                mostrarMensajeSeleccioneUbicacion();
             }
+        }
+
+        function mostrarMensajeSeleccioneUbicacion() {
+            var costoUI = document.getElementById('costoEnvioUI');
+            costoUI.innerText = 'Seleccione una ubicación en el mapa para calcular el costo del envío.';
+            costoUI.classList.remove('text-success');
+            costoUI.classList.add('text-danger');
+            costoUI.style.fontSize = '0.85em';
+            costoUI.style.textAlign = 'right';
+            costoUI.style.maxWidth = '180px';
+            
+            document.getElementById('distanciaInfo').innerText = 'Pendiente';
+            document.getElementById('tiempoInfo').innerText = 'Seleccione dirección en el mapa';
+            
+            var sub = parseFloat(document.getElementById('subtotalValue').value.replace(',', '.'));
+            document.getElementById('totalUI').innerText = '$' + sub.toFixed(2);
         }
 
         // Cambio de dirección en el Select
@@ -315,8 +331,13 @@
             } else {
                 document.getElementById('nuevaDireccionCampos').style.display = 'block';
                 document.getElementById('buscadorContainer').style.display = 'block';
-                var pos = marker.getLatLng();
-                calcularCostoEnvio(0, pos.lat, pos.lng);
+                var lat = document.getElementById('nuevaLatitud').value;
+                if (!lat) {
+                    mostrarMensajeSeleccioneUbicacion();
+                } else {
+                    var pos = marker.getLatLng();
+                    calcularCostoEnvio(0, pos.lat, pos.lng);
+                }
             }
         });
 
@@ -414,7 +435,13 @@
         }
 
         function actualizarResumenEnvio(costo, distancia, tiempo) {
-            document.getElementById('costoEnvioUI').innerText = '$' + costo.toFixed(2);
+            var costoUI = document.getElementById('costoEnvioUI');
+            costoUI.innerText = '$' + costo.toFixed(2);
+            costoUI.classList.remove('text-danger');
+            costoUI.classList.add('text-success');
+            costoUI.style.fontSize = '';
+            costoUI.style.textAlign = '';
+            costoUI.style.maxWidth = '';
             
             if (distancia) {
                 document.getElementById('distanciaInfo').innerText = distancia.toFixed(1) + ' km';
