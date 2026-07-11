@@ -28,6 +28,9 @@ namespace Delivery.API.Data
 
             // Parche: Asignar coordenadas a restaurantes que no tengan
             await PatchRestaurantesSinCoordenadasAsync(context);
+
+            // Parche: Establecer como Disponible a repartidores ya aprobados que estén Desconectados
+            await PatchRepartidoresAprobadosAsync(context);
         }
 
         // =====================================================================
@@ -514,6 +517,26 @@ namespace Delivery.API.Data
                 
                 rest.Latitud = (decimal)(baseLat + latOffset);
                 rest.Longitud = (decimal)(baseLng + lngOffset);
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        // =====================================================================
+        // PARCHE: REPARTIDORES APROBADOS
+        // =====================================================================
+        private static async Task PatchRepartidoresAprobadosAsync(DeliveryDbContext context)
+        {
+            var repartidoresBuggeados = await context.Repartidores
+                .Where(r => r.EstadoAprobacion == Delivery.Modelos.Enums.EstadoAprobacionEnum.Aprobado && 
+                            r.Estado == Delivery.Modelos.Enums.EstadoRepartidorEnum.Desconectado)
+                .ToListAsync();
+
+            if (!repartidoresBuggeados.Any()) return;
+
+            foreach (var rep in repartidoresBuggeados)
+            {
+                rep.Estado = Delivery.Modelos.Enums.EstadoRepartidorEnum.Disponible;
             }
 
             await context.SaveChangesAsync();

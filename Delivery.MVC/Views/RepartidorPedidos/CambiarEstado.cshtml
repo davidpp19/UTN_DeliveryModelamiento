@@ -46,21 +46,24 @@
         }
     </div>
     
-    <!-- Columna Derecha: Mapa de Navegación -->
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Navegación GPS</h5>
-                <span id="gps-status" class="badge bg-secondary">Buscando señal...</span>
-            </div>
-            <div class="card-body p-0">
-                <div id="map" style="height: 400px; width: 100%;"></div>
-            </div>
-            <div class="card-footer bg-light">
-                <small class="text-muted">La ubicación se transmite automáticamente al cliente mientras esta pantalla esté abierta.</small>
+    @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger || Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino)
+    {
+        <!-- Columna Derecha: Mapa de Navegación -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Navegación GPS</h5>
+                    <span id="gps-status" class="badge bg-secondary">Buscando señal...</span>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted">La ubicación se transmite automáticamente al cliente mientras esta pantalla esté abierta.</small>
+                </div>
             </div>
         </div>
-    </div>
+    }
 </div>
 
 @section Scripts {
@@ -118,39 +121,52 @@
         }).catch(err => console.error("Error SignalR:", err));
 
         // GPS Tracking
-        if ("geolocation" in navigator) {
-            navigator.geolocation.watchPosition(function (position) {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                
-                document.getElementById('gps-status').className = 'badge bg-success';
-                document.getElementById('gps-status').innerText = 'Transmitiendo';
+        @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger || Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino)
+        {
+            <text>
+            let lastTransmitTime = 0;
+            let watchId = null;
 
-                // Update map marker
-                if (myMarker) {
-                    myMarker.setLatLng([lat, lng]);
-                } else {
-                    myMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Mi Ubicación');
-                    map.setView([lat, lng], 15);
-                }
+            if ("geolocation" in navigator) {
+                watchId = navigator.geolocation.watchPosition(function (position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    document.getElementById('gps-status').className = 'badge bg-success';
+                    document.getElementById('gps-status').innerText = 'Transmitiendo';
 
-                // Send to SignalR only if connected
-                if (connection.state === signalR.HubConnectionState.Connected) {
-                    connection.invoke("EnviarUbicacionRepartidor", "@Model.Id", lat, lng)
-                        .catch(err => console.error("Error al emitir ubicación:", err));
-                }
-            }, function (error) {
-                console.error("GPS Error:", error);
+                    // Update map marker instantly
+                    if (myMarker) {
+                        myMarker.setLatLng([lat, lng]);
+                    } else {
+                        myMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Mi Ubicación');
+                        map.setView([lat, lng], 15);
+                    }
+
+                    // Throttle transmission to SignalR/DB to every 10 seconds max
+                    const now = Date.now();
+                    if (now - lastTransmitTime > 10000) {
+                        if (connection.state === signalR.HubConnectionState.Connected) {
+                            connection.invoke("EnviarUbicacionRepartidor", "@Model.Id", lat, lng, @(Model.RepartidorId ?? 0))
+                                .then(() => { lastTransmitTime = now; })
+                                .catch(err => console.error("Error al emitir ubicación:", err));
+                        }
+                    }
+
+                }, function (error) {
+                    console.error("GPS Error:", error);
+                    document.getElementById('gps-status').className = 'badge bg-danger';
+                    document.getElementById('gps-status').innerText = 'GPS Desactivado';
+                }, {
+                    enableHighAccuracy: true,
+                    maximumAge: 10000,
+                    timeout: 5000
+                });
+            } else {
                 document.getElementById('gps-status').className = 'badge bg-danger';
-                document.getElementById('gps-status').innerText = 'GPS Desactivado';
-            }, {
-                enableHighAccuracy: true,
-                maximumAge: 10000,
-                timeout: 5000
-            });
-        } else {
-            document.getElementById('gps-status').className = 'badge bg-danger';
-            document.getElementById('gps-status').innerText = 'GPS No Soportado';
+                document.getElementById('gps-status').innerText = 'GPS No Soportado';
+            }
+            </text>
         }
     </script>
 }

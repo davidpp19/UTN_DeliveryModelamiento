@@ -219,6 +219,16 @@ namespace Delivery.Servicios.Implementaciones
             }
 
             pedido.EstadoPedido = nuevoEstado;
+            
+            if (nuevoEstado == Delivery.Modelos.Enums.EstadoPedidoEnum.Cancelado && pedido.RepartidorId != null)
+            {
+                var repartidor = await _context.Repartidores.FindAsync(pedido.RepartidorId);
+                if (repartidor != null)
+                {
+                    repartidor.Estado = Delivery.Modelos.Enums.EstadoRepartidorEnum.Disponible;
+                }
+            }
+            
             pedido.ActualizadoEn = System.DateTime.UtcNow;
             await _context.SaveChangesAsync();
 

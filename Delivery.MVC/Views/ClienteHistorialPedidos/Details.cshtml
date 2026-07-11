@@ -126,18 +126,26 @@
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Rastreo en Tiempo Real</h5>
-                </div>
-                <div class="card-body p-0">
-                    <div id="map" style="height: 400px; width: 100%;"></div>
+    @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino || Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-info">
+                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Rastreo en Tiempo Real</h5>
+                        <span class="badge bg-light text-dark" id="eta-badge">Calculando...</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="map" style="height: 400px; width: 100%;"></div>
+                    </div>
+                    <div class="card-footer bg-light d-flex justify-content-between">
+                        <span><strong>Distancia Restante:</strong> <span id="distancia-lbl">-- km</span></span>
+                        <span><strong>Tiempo Estimado:</strong> <span id="tiempo-lbl">-- min</span></span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 
     <div class="mt-3">
         @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
@@ -154,70 +162,85 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
-    <script>
-        var map = L.map('map').setView([0.3517, -78.1222], 14);
+    @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino || Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger)
+    {
+        <script>
+            var map = L.map('map').setView([0.3517, -78.1222], 14);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
 
-        var restLat = @(Model.Restaurante?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
-        var restLng = @(Model.Restaurante?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
-        var cliLat = @(Model.DireccionEntrega?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
-        var cliLng = @(Model.DireccionEntrega?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+            var restLat = @(Model.Restaurante?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+            var restLng = @(Model.Restaurante?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+            var cliLat = @(Model.DireccionEntrega?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+            var cliLng = @(Model.DireccionEntrega?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
 
-        var restMarker, cliMarker, repMarker;
+            var restMarker, cliMarker, repMarker, currentRouteLine;
 
-        if (restLat !== 0 && cliLat !== 0) {
-            restMarker = L.marker([restLat, restLng]).addTo(map).bindPopup('Restaurante');
-            cliMarker = L.marker([cliLat, cliLng]).addTo(map).bindPopup('Tu Dirección');
-
-            // Draw route with OSRM
-            fetch(`https://router.project-osrm.org/route/v1/driving/${restLng},${restLat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.routes && data.routes.length > 0) {
-                        var route = data.routes[0].geometry.coordinates;
-                        var latLngs = route.map(coord => [coord[1], coord[0]]);
-                        L.polyline(latLngs, { color: 'blue', weight: 4 }).addTo(map);
-                        map.fitBounds(L.polyline(latLngs).getBounds());
-                    }
-                });
-        }
-
-        // Repartidor icon
-        var repIcon = L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png', // Moto icon
-            iconSize: [32, 32],
-            iconAnchor: [16, 32]
-        });
-
-        // SignalR for live tracking
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7193/notificacionesHub")
-            .withAutomaticReconnect()
-            .build();
-
-        connection.on("RecibirUbicacionRepartidor", function (lat, lng) {
-            if (repMarker) {
-                repMarker.setLatLng([lat, lng]);
-            } else {
-                repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Repartidor');
+            if (restLat !== 0 && cliLat !== 0) {
+                restMarker = L.marker([restLat, restLng]).addTo(map).bindPopup('Restaurante');
+                cliMarker = L.marker([cliLat, cliLng]).addTo(map).bindPopup('Tu Dirección');
             }
-        });
-        
-        connection.on("EstadoPedidoCambiado", function (pedidoId, nuevoEstado) {
-            if (pedidoId == @Model.Id) {
-                // Refresh the page to see the new state
-                location.reload();
-            }
-        });
 
-        connection.start().then(function () {
-            console.log("Conectado a SignalR para tracking del pedido @Model.Id");
-            connection.invoke("UnirseGrupoPedido", "@Model.Id").catch(err => console.error(err));
-            connection.invoke("UnirseGrupoCliente", "@Model.UsuarioId").catch(err => console.error(err));
-        }).catch(err => console.error(err));
-    </script>
+            // Repartidor icon
+            var repIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png', // Moto icon
+                iconSize: [32, 32],
+                iconAnchor: [16, 32]
+            });
+
+            // SignalR for live tracking
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("https://localhost:7193/notificacionesHub")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("RecibirUbicacionRepartidor", function (lat, lng) {
+                if (repMarker) {
+                    repMarker.setLatLng([lat, lng]);
+                } else {
+                    repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Repartidor');
+                }
+
+                // Calcular ETA usando OSRM desde la moto hasta el cliente
+                fetch(`https://router.project-osrm.org/route/v1/driving/${lng},${lat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.routes && data.routes.length > 0) {
+                            var routeData = data.routes[0];
+                            var routeCoords = routeData.geometry.coordinates;
+                            var latLngs = routeCoords.map(coord => [coord[1], coord[0]]);
+
+                            if (currentRouteLine) {
+                                map.removeLayer(currentRouteLine);
+                            }
+
+                            currentRouteLine = L.polyline(latLngs, { color: 'green', weight: 4 }).addTo(map);
+                            
+                            // Update labels
+                            const distanciaKm = (routeData.distance / 1000).toFixed(1);
+                            const tiempoMin = Math.ceil(routeData.duration / 60);
+
+                            document.getElementById('distancia-lbl').innerText = distanciaKm + " km";
+                            document.getElementById('tiempo-lbl').innerText = tiempoMin + " min";
+                            document.getElementById('eta-badge').innerText = "Llega en ~" + tiempoMin + " min";
+                        }
+                    });
+            });
+
+            connection.on("EstadoPedidoCambiado", function (pedidoId, nuevoEstado) {
+                if (pedidoId == @Model.Id) {
+                    location.reload();
+                }
+            });
+
+            connection.start().then(function () {
+                console.log("Conectado a SignalR para tracking del pedido @Model.Id");
+                connection.invoke("UnirseGrupoPedido", "@Model.Id").catch(err => console.error(err));
+                connection.invoke("UnirseGrupoCliente", "@Model.UsuarioId").catch(err => console.error(err));
+            }).catch(err => console.error(err));
+        </script>
+    }
 }

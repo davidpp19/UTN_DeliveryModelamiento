@@ -108,6 +108,7 @@ namespace Delivery.API.Controllers
             if (repartidor == null) return NotFound();
 
             repartidor.EstadoAprobacion = EstadoAprobacionEnum.Aprobado;
+            repartidor.Estado = EstadoRepartidorEnum.Disponible; // <-- Solución de causa raíz
             repartidor.AprobadoPor = GetAdminId();
             repartidor.FechaAprobacion = DateTime.UtcNow;
             await _repartidorService.UpdateAsync(repartidor);
