@@ -48,23 +48,21 @@ namespace Delivery.MVC.Controllers
 
             // 1. Validar que el cupón exista
             var todosCupones = await _cuponConsumer.GetAllAsync();
-            System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupones obtenidos de la API: {todosCupones.Count()}");
+            var cuponesList = todosCupones.ToList();
             
-            foreach (var c in todosCupones)
-            {
-                System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupón en DB: '{c.Codigo}', Activo: {c.Activo}, EsPublico: {c.EsPublico}");
-            }
-
-            var cupon = todosCupones.FirstOrDefault(c => c.Codigo.Trim().Equals(codigo.Trim(), System.StringComparison.OrdinalIgnoreCase));
+            // DIAGNÓSTICO: Buscar coincidencias de forma manual
+            var codigosExistentes = string.Join(", ", cuponesList.Select(c => $"'{c.Codigo}'"));
+            var codigoRecibido = codigo?.Trim();
+            
+            var cupon = cuponesList.FirstOrDefault(c => 
+                c.Codigo != null && 
+                c.Codigo.Trim().Equals(codigoRecibido, System.StringComparison.OrdinalIgnoreCase));
 
             if (cupon == null)
             {
-                System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupón NO encontrado en la lista (comparación falló).");
-                TempData["Error"] = "El cupón no existe.";
+                TempData["Error"] = $"DIAGNÓSTICO -> Recibido: '{codigoRecibido}'. Total en BD: {cuponesList.Count}. Códigos BD: [{codigosExistentes}]. El cupón NO fue encontrado por Equals.";
                 return RedirectToAction(nameof(Index));
             }
-
-            System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupón encontrado: Id={cupon.Id}, FechaFin={cupon.FechaFin}, Activo={cupon.Activo}, EsPublico={cupon.EsPublico}");
 
             // 2. Validar que no haya expirado
             if (!cupon.Activo)
@@ -82,8 +80,7 @@ namespace Delivery.MVC.Controllers
             // 3. Validar exclusividad
             if (!cupon.EsPublico && cupon.UsuarioExclusivoId != userId)
             {
-                System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupón no es público y no pertenece al usuario. UsuarioExclusivoId={cupon.UsuarioExclusivoId}, MiUserId={userId}");
-                TempData["Error"] = "El cupón no existe."; // Mantener consistencia de seguridad
+                TempData["Error"] = $"DIAGNÓSTICO -> Cupón encontrado pero falló exclusividad. EsPublico: {cupon.EsPublico}, UsuarioExclusivoId: {cupon.UsuarioExclusivoId}, TuId: {userId}. Se iba a devolver 'El cupón no existe.'"; 
                 return RedirectToAction(nameof(Index));
             }
 
@@ -115,8 +112,15 @@ namespace Delivery.MVC.Controllers
                 Activo = true
             };
 
-            await _cuponUsuarioConsumer.CreateAsync(nuevoRegistro);
-            TempData["Success"] = "Cupón agregado correctamente.";
+            try
+            {
+                var registroCreado = await _cuponUsuarioConsumer.CreateAsync(nuevoRegistro);
+                TempData["Success"] = $"Cupón agregado correctamente. (Diag: Id generado = {registroCreado?.Id})";
+            }
+            catch (System.Exception ex)
+            {
+                TempData["Error"] = $"DIAGNÓSTICO AL GUARDAR -> Error: {ex.Message}. Inner: {ex.InnerException?.Message}";
+            }
 
             return RedirectToAction(nameof(Index));
         }

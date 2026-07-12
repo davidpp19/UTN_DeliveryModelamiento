@@ -18,12 +18,16 @@ namespace Delivery.Servicios.Implementaciones
 
         public async Task<IEnumerable<CuponUsuario>> GetAllAsync()
         {
-            return await _context.CuponesUsuarios.ToListAsync();
+            return await _context.CuponesUsuarios
+                .Include(cu => cu.Cupon)
+                .ToListAsync();
         }
 
         public async Task<CuponUsuario?> GetByIdAsync(long id)
         {
-            return await _context.CuponesUsuarios.FindAsync(id);
+            return await _context.CuponesUsuarios
+                .Include(cu => cu.Cupon)
+                .FirstOrDefaultAsync(cu => cu.Id == id);
         }
 
         public async Task<CuponUsuario> CreateAsync(CuponUsuario cuponUsuario)

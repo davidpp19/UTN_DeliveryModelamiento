@@ -43,6 +43,13 @@ namespace Delivery.MVC.Controllers
             entity.FechaFin = DateTime.UtcNow.AddDays(duracionDias);
             entity.Codigo = entity.Codigo?.Trim().ToUpper() ?? string.Empty;
             
+            // Regla de negocio: Si no hay un usuario exclusivo asignado, el cupón DEBE ser público
+            // para evitar que se vuelva un "cupón fantasma" que nadie pueda usar.
+            if (!entity.UsuarioExclusivoId.HasValue)
+            {
+                entity.EsPublico = true;
+            }
+            
             await _consumer.CreateAsync(entity);
             return RedirectToAction(nameof(Index));
         }
@@ -73,6 +80,11 @@ namespace Delivery.MVC.Controllers
             if (duracionDias == 7 || duracionDias == 14) 
             {
                 data.FechaFin = data.FechaInicio.AddDays(duracionDias);
+            }
+
+            if (!data.UsuarioExclusivoId.HasValue)
+            {
+                data.EsPublico = true;
             }
 
             await _consumer.UpdateAsync(id, data);
