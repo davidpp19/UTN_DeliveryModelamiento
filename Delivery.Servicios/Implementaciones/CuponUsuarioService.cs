@@ -21,23 +21,36 @@ namespace Delivery.Servicios.Implementaciones
             return await _context.CuponesUsuarios.ToListAsync();
         }
 
-        public async Task<CuponUsuario?> GetByIdsAsync(long cuponId, long usuarioId, long? pedidoId)
+        public async Task<CuponUsuario?> GetByIdAsync(long id)
         {
-            return await _context.CuponesUsuarios
-                .FirstOrDefaultAsync(cu => cu.CuponId == cuponId && cu.UsuarioId == usuarioId && cu.PedidoId == pedidoId);
+            return await _context.CuponesUsuarios.FindAsync(id);
         }
 
         public async Task<CuponUsuario> CreateAsync(CuponUsuario cuponUsuario)
         {
-            cuponUsuario.FechaUso = System.DateTime.UtcNow;
             _context.CuponesUsuarios.Add(cuponUsuario);
             await _context.SaveChangesAsync();
             return cuponUsuario;
         }
 
-        public async Task<bool> DeleteAsync(long cuponId, long usuarioId, long? pedidoId)
+        public async Task<CuponUsuario?> UpdateAsync(CuponUsuario cuponUsuario)
         {
-            var cuponUsuario = await GetByIdsAsync(cuponId, usuarioId, pedidoId);
+            var existing = await _context.CuponesUsuarios.FindAsync(cuponUsuario.Id);
+            if (existing == null) return null;
+
+            existing.PedidoId = cuponUsuario.PedidoId;
+            existing.Usado = cuponUsuario.Usado;
+            existing.Activo = cuponUsuario.Activo;
+            existing.FechaUso = cuponUsuario.FechaUso;
+            existing.FechaExpiracion = cuponUsuario.FechaExpiracion;
+
+            await _context.SaveChangesAsync();
+            return existing;
+        }
+
+        public async Task<bool> DeleteAsync(long id)
+        {
+            var cuponUsuario = await _context.CuponesUsuarios.FindAsync(id);
             if (cuponUsuario == null) return false;
 
             _context.CuponesUsuarios.Remove(cuponUsuario);

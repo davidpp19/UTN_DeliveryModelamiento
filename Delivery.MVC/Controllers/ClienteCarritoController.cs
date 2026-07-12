@@ -512,12 +512,10 @@ namespace Delivery.MVC.Controllers
                     // Registrar que ESTE usuario lo usó
                     if (registroCuponUsuario != null)
                     {
-                        // Como la clave es compuesta y PedidoId forma parte de ella, lo eliminamos y creamos uno nuevo.
-                        await _cuponUsuarioConsumer.DeleteAsync(registroCuponUsuario.CuponId, registroCuponUsuario.UsuarioId, registroCuponUsuario.PedidoId);
-                        
                         registroCuponUsuario.PedidoId = pedidoCreado.Id;
                         registroCuponUsuario.FechaUso = System.DateTime.UtcNow;
-                        await _cuponUsuarioConsumer.CreateAsync(registroCuponUsuario);
+                        registroCuponUsuario.Usado = true;
+                        await _cuponUsuarioConsumer.UpdateAsync(registroCuponUsuario.Id, registroCuponUsuario);
                     }
                     else
                     {
@@ -527,8 +525,10 @@ namespace Delivery.MVC.Controllers
                             CuponId = cuponAplicado.Id,
                             UsuarioId = userId,
                             PedidoId = pedidoCreado.Id,
-                            FechaRegistro = System.DateTime.UtcNow,
-                            FechaUso = System.DateTime.UtcNow
+                            FechaAsignacion = System.DateTime.UtcNow,
+                            FechaUso = System.DateTime.UtcNow,
+                            Usado = true,
+                            Activo = false // Porque ya se usó, no lo necesitamos activo
                         });
                     }
                 }

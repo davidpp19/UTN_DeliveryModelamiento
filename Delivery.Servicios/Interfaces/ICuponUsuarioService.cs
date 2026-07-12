@@ -7,8 +7,9 @@ namespace Delivery.Servicios.Interfaces
     public interface ICuponUsuarioService
     {
         Task<IEnumerable<CuponUsuario>> GetAllAsync();
-        Task<CuponUsuario?> GetByIdsAsync(long cuponId, long usuarioId, long? pedidoId);
+        Task<CuponUsuario?> GetByIdAsync(long id);
         Task<CuponUsuario> CreateAsync(CuponUsuario cuponUsuario);
-        Task<bool> DeleteAsync(long cuponId, long usuarioId, long? pedidoId);
+        Task<CuponUsuario?> UpdateAsync(CuponUsuario cuponUsuario);
+        Task<bool> DeleteAsync(long id);
     }
 }

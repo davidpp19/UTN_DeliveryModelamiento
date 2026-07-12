@@ -70,12 +70,12 @@
     else
     {
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            @foreach (var cuponUsuario in Model.OrderByDescending(c => c.FechaRegistro))
+            @foreach (var cuponUsuario in Model.OrderByDescending(c => c.FechaAsignacion))
             {
                 var cupon = cuponUsuario.Cupon;
                 if (cupon == null) continue;
 
-                var isUsed = cuponUsuario.PedidoId != null;
+                var isUsed = cuponUsuario.Usado;
                 var isExpired = System.DateTime.UtcNow > cupon.FechaFin;
                 var isActive = cupon.Activo;
                 
@@ -131,7 +131,7 @@
                                     var diasRestantes = (cupon.FechaFin - System.DateTime.UtcNow).Days;
                                     <li><i class="bi bi-hourglass-split"></i> <strong>Días restantes:</strong> @(diasRestantes > 0 ? diasRestantes.ToString() : "Expira hoy")</li>
                                 }
-                                <li><i class="bi bi-calendar-check"></i> <strong>Registrado:</strong> @cuponUsuario.FechaRegistro.ToLocalTime().ToString("dd/MM/yyyy")</li>
+                                <li><i class="bi bi-calendar-check"></i> <strong>Registrado:</strong> @cuponUsuario.FechaAsignacion.ToLocalTime().ToString("dd/MM/yyyy")</li>
                                 @if(cupon.PedidoMinimo.HasValue)
                                 {
                                     <li><i class="bi bi-bag-check"></i> <strong>Compra mínima:</strong> $@cupon.PedidoMinimo.Value.ToString("0.00")</li>

@@ -187,10 +187,7 @@ namespace Delivery.Modelos
                 .HasForeignKey(r => r.RepartidorId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Cupones Usuarios (Composite Key)
-            modelBuilder.Entity<CuponUsuario>()
-                .HasKey(cu => new { cu.CuponId, cu.UsuarioId, cu.PedidoId });
-
+            // Cupones Usuarios (Composite Key Removed, using Id)
             modelBuilder.Entity<CuponUsuario>()
                 .HasOne(cu => cu.Cupon)
                 .WithMany(c => c.CuponesUsuarios)

@@ -24,10 +24,10 @@ namespace Delivery.API.Controllers
             return Ok(cuponesUsuarios);
         }
 
-        [HttpGet("{cuponId}/{usuarioId}/{pedidoId?}")]
-        public async Task<ActionResult<CuponUsuario>> GetCuponUsuario(long cuponId, long usuarioId, long? pedidoId)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CuponUsuario>> GetCuponUsuario(long id)
         {
-            var cuponUsuario = await _cuponUsuarioService.GetByIdsAsync(cuponId, usuarioId, pedidoId);
+            var cuponUsuario = await _cuponUsuarioService.GetByIdAsync(id);
             if (cuponUsuario == null) return NotFound();
             return Ok(cuponUsuario);
         }
@@ -36,13 +36,22 @@ namespace Delivery.API.Controllers
         public async Task<ActionResult<CuponUsuario>> PostCuponUsuario(CuponUsuario cuponUsuario)
         {
             var created = await _cuponUsuarioService.CreateAsync(cuponUsuario);
-            return CreatedAtAction(nameof(GetCuponUsuario), new { cuponId = created.CuponId, usuarioId = created.UsuarioId, pedidoId = created.PedidoId }, created);
+            return CreatedAtAction(nameof(GetCuponUsuario), new { id = created.Id }, created);
         }
 
-        [HttpDelete("{cuponId}/{usuarioId}/{pedidoId?}")]
-        public async Task<IActionResult> DeleteCuponUsuario(long cuponId, long usuarioId, long? pedidoId)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCuponUsuario(long id, CuponUsuario cuponUsuario)
         {
-            var deleted = await _cuponUsuarioService.DeleteAsync(cuponId, usuarioId, pedidoId);
+            if (id != cuponUsuario.Id) return BadRequest();
+            var updated = await _cuponUsuarioService.UpdateAsync(cuponUsuario);
+            if (updated == null) return NotFound();
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCuponUsuario(long id)
+        {
+            var deleted = await _cuponUsuarioService.DeleteAsync(id);
             if (!deleted) return NotFound();
 
             return NoContent();

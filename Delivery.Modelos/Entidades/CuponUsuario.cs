@@ -7,6 +7,10 @@ namespace Delivery.Modelos.Entidades
     [Table("cupones_usuarios")]
     public class CuponUsuario
     {
+        [Key]
+        [Column("id")]
+        public long Id { get; set; }
+
         [Column("cupon_id")]
         public long CuponId { get; set; }
 
@@ -16,11 +20,20 @@ namespace Delivery.Modelos.Entidades
         [Column("pedido_id")]
         public long? PedidoId { get; set; }
 
+        [Column("usado")]
+        public bool Usado { get; set; } = false;
+
+        [Column("activo")]
+        public bool Activo { get; set; } = true;
+
+        [Column("fecha_asignacion")]
+        public DateTime FechaAsignacion { get; set; } = DateTime.UtcNow;
+
+        [Column("fecha_expiracion")]
+        public DateTime? FechaExpiracion { get; set; }
+
         [Column("fecha_uso")]
         public DateTime? FechaUso { get; set; }
-
-        [Column("fecha_registro")]
-        public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
 
         [ForeignKey(nameof(CuponId))]
         public virtual Cupon? Cupon { get; set; }

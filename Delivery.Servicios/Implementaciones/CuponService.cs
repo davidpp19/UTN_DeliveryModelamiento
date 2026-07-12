@@ -39,15 +39,19 @@ namespace Delivery.Servicios.Implementaciones
             if (existing == null) return null!;
 
             existing.Codigo = cupon.Codigo;
+            existing.Descripcion = cupon.Descripcion;
             existing.TipoDescuento = cupon.TipoDescuento;
             existing.ValorDescuento = cupon.ValorDescuento;
+            existing.DescuentoMaximo = cupon.DescuentoMaximo;
             existing.PedidoMinimo = cupon.PedidoMinimo;
             existing.FechaInicio = cupon.FechaInicio;
             existing.FechaFin = cupon.FechaFin;
             existing.LimiteUsos = cupon.LimiteUsos;
             existing.UsosActuales = cupon.UsosActuales;
             existing.Activo = cupon.Activo;
+            existing.EsPublico = cupon.EsPublico;
             existing.RestauranteId = cupon.RestauranteId;
+            existing.UsuarioExclusivoId = cupon.UsuarioExclusivoId;
 
             await _context.SaveChangesAsync();
             return existing;

@@ -41,7 +41,7 @@ namespace Delivery.MVC.Controllers
             if (duracionDias != 7 && duracionDias != 14) duracionDias = 7;
             entity.FechaInicio = DateTime.UtcNow;
             entity.FechaFin = DateTime.UtcNow.AddDays(duracionDias);
-            entity.Codigo = entity.Codigo.ToUpper();
+            entity.Codigo = entity.Codigo?.Trim().ToUpper() ?? string.Empty;
             
             await _consumer.CreateAsync(entity);
             return RedirectToAction(nameof(Index));
@@ -60,7 +60,7 @@ namespace Delivery.MVC.Controllers
             var data = await _consumer.GetByIdAsync(id);
             if (data == null) return NotFound();
 
-            data.Codigo = entity.Codigo.ToUpper();
+            data.Codigo = entity.Codigo?.Trim().ToUpper() ?? string.Empty;
             data.Descripcion = entity.Descripcion;
             data.TipoDescuento = entity.TipoDescuento;
             data.ValorDescuento = entity.ValorDescuento;

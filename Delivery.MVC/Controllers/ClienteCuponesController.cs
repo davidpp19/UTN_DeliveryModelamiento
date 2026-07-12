@@ -40,30 +40,50 @@ namespace Delivery.MVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // Temp logs
+            System.Diagnostics.Debug.WriteLine($"[DEBUG] Intentando registrar código: '{codigo}'");
+
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             long.TryParse(userIdString, out long userId);
 
             // 1. Validar que el cupón exista
             var todosCupones = await _cuponConsumer.GetAllAsync();
-            var cupon = todosCupones.FirstOrDefault(c => c.Codigo.Equals(codigo.Trim(), System.StringComparison.OrdinalIgnoreCase));
+            System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupones obtenidos de la API: {todosCupones.Count()}");
+            
+            foreach (var c in todosCupones)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupón en DB: '{c.Codigo}', Activo: {c.Activo}, EsPublico: {c.EsPublico}");
+            }
+
+            var cupon = todosCupones.FirstOrDefault(c => c.Codigo.Trim().Equals(codigo.Trim(), System.StringComparison.OrdinalIgnoreCase));
 
             if (cupon == null)
             {
-                TempData["Error"] = "Cupón inexistente.";
+                System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupón NO encontrado en la lista (comparación falló).");
+                TempData["Error"] = "El cupón no existe.";
                 return RedirectToAction(nameof(Index));
             }
 
+            System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupón encontrado: Id={cupon.Id}, FechaFin={cupon.FechaFin}, Activo={cupon.Activo}, EsPublico={cupon.EsPublico}");
+
             // 2. Validar que no haya expirado
-            if (System.DateTime.UtcNow > cupon.FechaFin || !cupon.Activo)
+            if (!cupon.Activo)
             {
-                TempData["Error"] = "Cupón expirado.";
+                TempData["Error"] = "El cupón se encuentra desactivado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (System.DateTime.UtcNow > cupon.FechaFin)
+            {
+                TempData["Error"] = "El cupón ha expirado.";
                 return RedirectToAction(nameof(Index));
             }
 
             // 3. Validar exclusividad
             if (!cupon.EsPublico && cupon.UsuarioExclusivoId != userId)
             {
-                TempData["Error"] = "Cupón inexistente."; // Hiding existence to other users
+                System.Diagnostics.Debug.WriteLine($"[DEBUG] Cupón no es público y no pertenece al usuario. UsuarioExclusivoId={cupon.UsuarioExclusivoId}, MiUserId={userId}");
+                TempData["Error"] = "El cupón no existe."; // Mantener consistencia de seguridad
                 return RedirectToAction(nameof(Index));
             }
 
@@ -73,13 +93,13 @@ namespace Delivery.MVC.Controllers
             
             if (registroPrevio != null)
             {
-                if (registroPrevio.PedidoId != null)
+                if (registroPrevio.Usado)
                 {
-                    TempData["Error"] = "Cupón ya utilizado.";
+                    TempData["Error"] = "Este cupón ya fue utilizado.";
                 }
                 else
                 {
-                    TempData["Error"] = "Cupón ya agregado.";
+                    TempData["Error"] = "Este cupón ya fue agregado.";
                 }
                 return RedirectToAction(nameof(Index));
             }

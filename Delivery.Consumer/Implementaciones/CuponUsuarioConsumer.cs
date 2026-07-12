@@ -21,10 +21,9 @@ namespace Delivery.Consumer.Implementaciones
             return await _httpClient.GetFromJsonAsync<IEnumerable<CuponUsuario>>("api/CuponesUsuarios") ?? new List<CuponUsuario>();
         }
 
-        public async Task<CuponUsuario?> GetByIdsAsync(long cuponId, long usuarioId, long? pedidoId)
+        public async Task<CuponUsuario?> GetByIdAsync(long id)
         {
-            var pid = pedidoId.HasValue ? pedidoId.ToString() : "null";
-            return await _httpClient.GetFromJsonAsync<CuponUsuario>($"api/CuponesUsuarios/{cuponId}/{usuarioId}/{pid}");
+            return await _httpClient.GetFromJsonAsync<CuponUsuario>($"api/CuponesUsuarios/{id}");
         }
 
         public async Task<CuponUsuario> CreateAsync(CuponUsuario entity)
@@ -34,10 +33,15 @@ namespace Delivery.Consumer.Implementaciones
             return await response.Content.ReadFromJsonAsync<CuponUsuario>() ?? entity;
         }
 
-        public async Task<bool> DeleteAsync(long cuponId, long usuarioId, long? pedidoId)
+        public async Task<bool> UpdateAsync(long id, CuponUsuario entity)
         {
-            var pid = pedidoId.HasValue ? pedidoId.ToString() : "null";
-            var response = await _httpClient.DeleteAsync($"api/CuponesUsuarios/{cuponId}/{usuarioId}/{pid}");
+            var response = await _httpClient.PutAsJsonAsync($"api/CuponesUsuarios/{id}", entity);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> DeleteAsync(long id)
+        {
+            var response = await _httpClient.DeleteAsync($"api/CuponesUsuarios/{id}");
             return response.IsSuccessStatusCode;
         }
     }
