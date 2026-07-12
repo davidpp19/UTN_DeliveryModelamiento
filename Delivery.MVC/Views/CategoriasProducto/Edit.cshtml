@@ -1,6 +1,8 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.CategoriaProducto
-@{ ViewData["Title"] = "Editar CategoriaProducto"; }
-<h1 class="my-4">Editar CategoriaProducto</h1><hr />
+@{ ViewData["Title"] = Localizer["EditarCategoriaProductoTitle"]; }
+<h1 class="my-4">@Localizer["EditarCategoriaProductoTitle"]</h1><hr />
 <div class="row"><div class="col-md-6">
 <form asp-action="Edit">
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -21,6 +23,6 @@
 
 
 
-<div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
+<div class="mb-3"><button type="submit" class="btn btn-warning">@Localizer["ActualizarBtn"]</button></div>
 </form></div></div>
-<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">@Localizer["VolverListadoBtn"]</a></div>

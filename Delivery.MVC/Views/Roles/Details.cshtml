@@ -1,7 +1,9 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Rol
-<h1>Details Rol</h1>
+<h1>@Localizer["DetallesRolTitle"]</h1>
 <div>
     @Html.DisplayForModel()
 </div>
-<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-<a asp-action="Index">Back to List</a>
+<a asp-action="Edit" asp-route-id="@Model.Id">@Localizer["EditarBtn"]</a> |
+<a asp-action="Index">@Localizer["VolverListadoBtn"]</a>

@@ -1,28 +1,30 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @{
-    ViewData["Title"] = "Crear Cuenta en RayoExpres";
+    ViewData["Title"] = Localizer["CrearCuentaTitulo"];
 }
 
-<h1>Crear Cuenta en RayoExpres</h1>
-<p>Selecciona el tipo de cuenta que deseas crear:</p>
+<h1>@Localizer["CrearCuentaTitulo"]</h1>
+<p>@Localizer["SeleccionaTipoCuenta"]</p>
 <hr />
 
 <div class="row">
     <div class="col-md-4">
-        <h3>Soy Cliente</h3>
-        <p>Quiero pedir comida a domicilio desde mi restaurante favorito.</p>
-        <a asp-controller="Auth" asp-action="Registro">Registrarme como Cliente</a>
+        <h3>@Localizer["SoyCliente"]</h3>
+        <p>@Localizer["SoyClienteDesc"]</p>
+        <a asp-controller="Auth" asp-action="Registro">@Localizer["RegCliente"]</a>
     </div>
     <div class="col-md-4">
-        <h3>Soy Repartidor</h3>
-        <p>Quiero hacer entregas y ganar dinero con mi vehículo.</p>
-        <a asp-controller="RegistroRepartidor" asp-action="Index">Registrarme como Repartidor</a>
+        <h3>@Localizer["SoyRepartidor"]</h3>
+        <p>@Localizer["SoyRepartidorDesc"]</p>
+        <a asp-controller="RegistroRepartidor" asp-action="Index">@Localizer["RegRepartidor"]</a>
     </div>
     <div class="col-md-4">
-        <h3>Tengo un Restaurante</h3>
-        <p>Quiero publicar mi negocio y recibir pedidos en línea.</p>
-        <a asp-controller="RegistroRestaurante" asp-action="Index">Registrar mi Restaurante</a>
+        <h3>@Localizer["SoyRestaurante"]</h3>
+        <p>@Localizer["SoyRestauranteDesc"]</p>
+        <a asp-controller="RegistroRestaurante" asp-action="Index">@Localizer["RegRestaurante"]</a>
     </div>
 </div>
 
 <hr />
-<p>¿Ya tienes cuenta? <a asp-controller="Auth" asp-action="Login">Iniciar Sesión</a></p>
+<p>@Localizer["YaTienesCuenta"] <a asp-controller="Auth" asp-action="Login">@Localizer["IniciarSesion"]</a></p>

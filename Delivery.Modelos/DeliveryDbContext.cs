@@ -63,6 +63,9 @@ namespace Delivery.Modelos
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Restaurante>()
+                .HasQueryFilter(r => r.Estado != Enums.EstadoRestauranteEnum.Suspendido);
+
+            modelBuilder.Entity<Restaurante>()
                 .HasOne(r => r.UsuarioCreador)
                 .WithMany()
                 .HasForeignKey(r => r.CreadoPor)

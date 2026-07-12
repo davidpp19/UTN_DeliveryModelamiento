@@ -1,9 +1,11 @@
 @model Delivery.Modelos.DTOs.CarritoSesionDto
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @{
-    ViewData["Title"] = "Mi Carrito";
+    ViewData["Title"] = Localizer["MiCarrito"];
 }
 
-<h1>Mi Carrito</h1>
+<h1>@Localizer["MiCarrito"]</h1>
 <hr />
 
 @if (TempData["Error"] != null)
@@ -18,23 +20,23 @@
 @if (Model == null || !Model.Items.Any())
 {
     <div class="alert alert-info">
-        <h4>Tu carrito está vacío</h4>
-        <p>Explora los restaurantes y agrega productos para comenzar tu pedido.</p>
-        <a asp-controller="Home" asp-action="Index">Ver Restaurantes</a>
+        <h4>@Localizer["CarritoVacio"]</h4>
+        <p>@Localizer["CarritoVacioDesc"]</p>
+        <a asp-controller="Home" asp-action="Index">@Localizer["VerRestaurantesBtn"]</a>
     </div>
 }
 else
 {
-    <p><strong>Restaurante:</strong> @Model.NombreRestaurante</p>
+    <p><strong>@Localizer["RestauranteTag"]:</strong> @Model.NombreRestaurante</p>
 
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Producto</th>
-                <th>Precio Unitario</th>
-                <th>Cantidad</th>
-                <th>Subtotal</th>
-                <th>Acción</th>
+                <th>@Localizer["ProductoCol"]</th>
+                <th>@Localizer["PrecioUnitarioCol"]</th>
+                <th>@Localizer["CantidadCol"]</th>
+                <th>@Localizer["SubtotalCol"]</th>
+                <th>@Localizer["AccionCol"]</th>
             </tr>
         </thead>
         <tbody>
@@ -56,7 +58,7 @@ else
                     <td class="align-middle">
                         <form asp-action="Quitar" method="post" style="display:inline;">
                             <input type="hidden" name="productoId" value="@item.ProductoId" />
-                            <button type="submit">Quitar</button>
+                            <button type="submit">@Localizer["QuitarBtn"]</button>
                         </form>
                     </td>
                 </tr>
@@ -64,14 +66,14 @@ else
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="3"><strong>Total</strong></td>
+                <td colspan="3"><strong>@Localizer["TotalCol"]</strong></td>
                 <td colspan="2"><strong>$@Model.Subtotal.ToString("0.00")</strong></td>
             </tr>
         </tfoot>
     </table>
 
     <form asp-action="Vaciar" method="post" style="display:inline;">
-        <button type="submit">Vaciar Carrito</button>
+        <button type="submit">@Localizer["VaciarCarritoBtn"]</button>
     </form>
 
     <hr />
@@ -79,13 +81,13 @@ else
     @if (ViewBag.SinDireccion == true)
     {
         <div class="alert alert-warning">
-            <strong>No tienes ninguna dirección de entrega registrada.</strong><br />
-            Debes agregar una dirección antes de confirmar tu pedido.
+            <strong>@Localizer["SinDireccionAlert"]</strong><br />
+            @Localizer["SinDireccionDesc"]
         </div>
-        <a asp-controller="ClienteDirecciones" asp-action="Create">Agregar Mi Primera Dirección</a>
+        <a asp-controller="ClienteDirecciones" asp-action="Create">@Localizer["AgregarDireccionBtn"]</a>
     }
     else
     {
-        <a asp-action="Checkout" class="btn btn-primary btn-lg">Proceder al Pago</a>
+        <a asp-action="Checkout" class="btn btn-primary btn-lg">@Localizer["ProcederPagoBtn"]</a>
     }
 }

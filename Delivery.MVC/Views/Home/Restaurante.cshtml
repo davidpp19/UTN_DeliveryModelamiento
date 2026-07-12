@@ -1,3 +1,5 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Restaurante
 @{
     ViewData["Title"] = Model.Nombre;
@@ -21,7 +23,7 @@
     </div>
     
     <div class="col-md-8">
-        <h3 class="mb-4">Menú del Restaurante</h3>
+        <h3 class="mb-4">@Localizer["MenuDelRestaurante"]</h3>
         @if (productos != null && productos.Any())
         {
             <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -50,7 +52,7 @@
                                 }
                                 else
                                 {
-                                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary w-100">Inicia sesión para pedir</a>
+                                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary w-100">@Localizer["IniciaSesionPedir"]</a>
                                 }
                             </div>
                         </div>
@@ -60,7 +62,7 @@
         }
         else
         {
-            <div class="alert alert-secondary">Este restaurante aún no tiene productos disponibles.</div>
+            <div class="alert alert-secondary">@Localizer["NoProductosDisponiblesRest"]</div>
         }
     </div>
 </div>

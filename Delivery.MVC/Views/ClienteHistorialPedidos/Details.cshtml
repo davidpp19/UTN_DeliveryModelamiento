@@ -1,10 +1,12 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Pedido
 @{
-    ViewData["Title"] = "Detalle del Pedido";
+    ViewData["Title"] = Localizer["DetallePedido"];
 }
 
 <div class="container mt-4">
-    <h2>Detalles de tu Pedido #@Model.Id</h2>
+    <h2>@Localizer["DetallesTuPedido"] #@Model.Id</h2>
     <hr />
 
     <div class="row">
@@ -12,42 +14,42 @@
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Información General</h5>
+                    <h5 class="mb-0">@Localizer["InformacionGeneralTag"]</h5>
                 </div>
                 <div class="card-body">
                     <dl class="row mb-0">
-                        <dt class="col-sm-4">Restaurante</dt>
+                        <dt class="col-sm-4">@Localizer["RestauranteTag"]</dt>
                         <dd class="col-sm-8">@(Model.Restaurante?.Nombre ?? "N/A")</dd>
 
-                        <dt class="col-sm-4">Fecha Pedido</dt>
+                        <dt class="col-sm-4">@Localizer["FechaPedidoTag"]</dt>
                         <dd class="col-sm-8">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</dd>
 
-                        <dt class="col-sm-4">Estado</dt>
+                        <dt class="col-sm-4">@Localizer["EstadoTag"]</dt>
                         <dd class="col-sm-8">
                             <span class="badge bg-info text-dark">@Model.EstadoPedido.ToString()</span>
                         </dd>
 
-                        <dt class="col-sm-4">Dirección</dt>
+                        <dt class="col-sm-4">@Localizer["DireccionTag"]</dt>
                         <dd class="col-sm-8">
                             @(Model.DireccionEntrega?.Calle) @(Model.DireccionEntrega?.Numero)
                             <br /><small class="text-muted">@(Model.DireccionEntrega?.Referencia)</small>
                         </dd>
                         
-                        <dt class="col-sm-4">Método de Pago</dt>
+                        <dt class="col-sm-4">@Localizer["MetodoPagoTag"]</dt>
                         <dd class="col-sm-8">@Model.TipoMetodoPago.ToString()</dd>
 
                         @if (Model.Repartidor != null && Model.Repartidor.Usuario != null)
                         {
-                            <dt class="col-sm-4">Repartidor</dt>
+                            <dt class="col-sm-4">@Localizer["RepartidorTag"]</dt>
                             <dd class="col-sm-8">
                                 @Model.Repartidor.Usuario.Nombre @Model.Repartidor.Usuario.Apellidos
-                                <br /><small>Licencia: @Model.Repartidor.LicenciaConducir</small>
+                                <br /><small>@Localizer["LicenciaTag"]: @Model.Repartidor.LicenciaConducir</small>
                             </dd>
                         }
                         
                         @if (!string.IsNullOrWhiteSpace(Model.Notas))
                         {
-                            <dt class="col-sm-4">Notas</dt>
+                            <dt class="col-sm-4">@Localizer["NotasTag"]</dt>
                             <dd class="col-sm-8">@Model.Notas</dd>
                         }
                     </dl>
@@ -59,16 +61,16 @@
         <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Resumen del Pedido</h5>
+                    <h5 class="mb-0">@Localizer["ResumenPedidoTag"]</h5>
                 </div>
                 <div class="card-body p-0">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Producto</th>
-                                <th>Cant.</th>
-                                <th class="text-end">Precio</th>
-                                <th class="text-end">Subtotal</th>
+                                <th>@Localizer["ProductoCol"]</th>
+                                <th>@Localizer["CantCol"]</th>
+                                <th class="text-end">@Localizer["PrecioCol"]</th>
+                                <th class="text-end">@Localizer["SubtotalCol"]</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,7 +85,7 @@
                                                 {
                                                     <img src="@detalle.Producto.ImagenUrl" alt="Producto" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" />
                                                 }
-                                                <span>@(detalle.Producto?.Nombre ?? "Producto ID " + detalle.ProductoId)</span>
+                                                <span>@(detalle.Producto?.Nombre ?? Localizer["ProductoIDTag"].Value + " " + detalle.ProductoId)</span>
                                             </div>
                                         </td>
                                         <td class="align-middle">@detalle.Cantidad</td>
@@ -152,7 +154,7 @@
         {
             <a asp-action="Calificar" asp-route-id="@Model.Id" class="btn btn-warning me-2">Calificar Pedido</a>
         }
-        <a asp-action="Index" class="btn btn-outline-secondary">Volver al Historial</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["VolverHistorialBtn"]</a>
     </div>
 </div>
 

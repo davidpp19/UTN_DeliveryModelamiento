@@ -1,7 +1,8 @@
 namespace Delivery.MVC
 {
-    // Clase "dummy" o marcador que sirve para agrupar todas las traducciones compartidas
     public class SharedResource
     {
+        // Esta clase intencionalmente está vacía.
+        // Solo sirve para agrupar las traducciones en Resources/SharedResource.xx.resx
     }
 }

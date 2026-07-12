@@ -1,8 +1,10 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model IEnumerable<Delivery.Modelos.Entidades.Cupon>
-@{ ViewData["Title"] = "Gestión de Cupones"; }
-<h1>Cupones del Sistema</h1>
+@{ ViewData["Title"] = Localizer["GestionCupones"]; }
+<h1>@Localizer["CuponesSistema"]</h1>
 <table class="table">
-    <thead><tr><th>ID</th><th>Código</th><th>Descuento</th><th>Activo</th></tr></thead>
+    <thead><tr><th>ID</th><th>@Localizer["CodigoTag"]</th><th>@Localizer["DescuentoTag"]</th><th>@Localizer["ActivoTag"]</th></tr></thead>
     <tbody>
         @foreach (var item in Model) {
             <tr><td>@item.Id</td><td>@item.Codigo</td><td>@item.ValorDescuento</td><td>@(item.Activo ? "Sí" : "No")</td></tr>

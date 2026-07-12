@@ -1,6 +1,8 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Restaurante
-@{ ViewData["Title"] = "Crear Restaurante"; }
-<h1 class="my-4">Crear Restaurante</h1><hr />
+@{ ViewData["Title"] = Localizer["CrearRestauranteTitle"]; }
+<h1 class="my-4">@Localizer["CrearRestauranteTitle"]</h1><hr />
 <div class="row"><div class="col-md-6">
 <form asp-action="Create">
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -22,13 +24,26 @@
 <input asp-for="Ciudad" class="form-control" />
 <span asp-validation-for="Ciudad" class="text-danger"></span></div>
 <div class="mb-3">
-<label asp-for="Latitud" class="form-label"></label>
-<input asp-for="Latitud" class="form-control" />
-<span asp-validation-for="Latitud" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Longitud" class="form-label"></label>
-<input asp-for="Longitud" class="form-control" />
-<span asp-validation-for="Longitud" class="text-danger"></span></div>
+    <label class="form-label">Buscar Lugar en Mapa</label>
+    <div class="input-group mb-2">
+        <input type="text" id="buscador-mapa" class="form-control" placeholder="Ej: Ibarra, Parque Ciudad Blanca..." />
+        <button class="btn btn-secondary" type="button" id="btn-buscar">Buscar</button>
+    </div>
+    <div id="map" style="height: 300px; width: 100%; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 20px;"></div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Latitud" class="form-label"></label>
+        <input asp-for="Latitud" id="lat-input" class="form-control bg-light" readonly />
+        <span asp-validation-for="Latitud" class="text-danger"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="Longitud" class="form-label"></label>
+        <input asp-for="Longitud" id="lng-input" class="form-control bg-light" readonly />
+        <span asp-validation-for="Longitud" class="text-danger"></span>
+    </div>
+</div>
 <div class="mb-3">
 <label asp-for="Telefono" class="form-label"></label>
 <input asp-for="Telefono" class="form-control" />
@@ -64,6 +79,76 @@
 
 
 
-<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">@Localizer["GuardarBtn"]</button></div>
 </form></div></div>
-<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">@Localizer["VolverListadoBtn"]</a></div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        var centerLat = document.getElementById('lat-input').value ? parseFloat(document.getElementById('lat-input').value) : 0.3517;
+        var centerLng = document.getElementById('lng-input').value ? parseFloat(document.getElementById('lng-input').value) : -78.1222;
+        var zoomLevel = document.getElementById('lat-input').value ? 16 : 14;
+
+        var map = L.map('map').setView([centerLat, centerLng], zoomLevel);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var marker;
+        if (document.getElementById('lat-input').value && document.getElementById('lng-input').value) {
+            marker = L.marker([centerLat, centerLng]).addTo(map);
+        }
+
+        function onMapClick(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+            
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+
+            document.getElementById('lat-input').value = lat.toFixed(8);
+            document.getElementById('lng-input').value = lng.toFixed(8);
+        }
+
+        map.on('click', onMapClick);
+
+        document.getElementById('btn-buscar').addEventListener('click', function() {
+            var query = document.getElementById('buscador-mapa').value;
+            if(!query) return;
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.length > 0) {
+                        var result = data[0];
+                        var lat = parseFloat(result.lat);
+                        var lon = parseFloat(result.lon);
+                        
+                        map.setView([lat, lon], 16);
+                        
+                        if (marker) {
+                            marker.setLatLng([lat, lon]);
+                        } else {
+                            marker = L.marker([lat, lon]).addTo(map);
+                        }
+
+                        document.getElementById('lat-input').value = lat.toFixed(8);
+                        document.getElementById('lng-input').value = lon.toFixed(8);
+                    } else {
+                        alert('Lugar no encontrado. Intenta con otros términos.');
+                    }
+                });
+        });
+    </script>
+}

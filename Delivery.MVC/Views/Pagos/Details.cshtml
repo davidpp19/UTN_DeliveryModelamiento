@@ -1,6 +1,8 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Pago
-@{ ViewData["Title"] = "Detalles Pago"; }
-<h1 class="my-4">Detalles Pago</h1><hr />
+@{ ViewData["Title"] = Localizer["DetallesPagoTitle"]; }
+<h1 class="my-4">@Localizer["DetallesPagoTitle"]</h1><hr />
 <dl class="row">
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
@@ -21,5 +23,5 @@
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Pedido)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Pedido)</dd>
 </dl>
-<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
-<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">@Localizer["EditarBtn"]</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["VolverListadoBtn"]</a></div>

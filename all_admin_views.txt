@@ -1,0 +1,476 @@
+=== Delivery.MVC/Views\AdminAprobaciones\Repartidores.cshtml ===
+@model IEnumerable<Delivery.Modelos.DTOs.RepartidorPendienteDto>
+@{
+    ViewData["Title"] = "Aprobaciones de Repartidores";
+}
+
+<div class="container mt-4">
+    <h2>Solicitudes de Repartidores Pendientes</h2>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">@TempData["Mensaje"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No hay solicitudes pendientes en este momento.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover mt-3 align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Perfil</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Cédula</th>
+                    <th>Fecha Registro</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var avatarUrl = !string.IsNullOrEmpty(item.FotoPerfilUrl) ? item.FotoPerfilUrl : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(item.Nombres) + "&background=random";
+                    var modalId = "modalRepartidor" + item.Id;
+                    var modalRechazoId = "modalRechazo" + item.Id;
+
+                    <tr>
+                        <td>
+                            <img src="@avatarUrl" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
+                        </td>
+                        <td>@(item.Nombres) @(item.Apellidos)</td>
+                        <td>@item.Email</td>
+                        <td>@item.Cedula</td>
+                        <td>@item.CreadoEn.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">
+                            <!-- Botón Mostrar Información -->
+                            <button type="button" class="btn btn-sm btn-info text-white me-1" data-bs-toggle="modal" data-bs-target="#@modalId">
+                                <i class="bi bi-eye"></i> Mostrar información
+                            </button>
+
+                            <!-- Formulario Aprobar -->
+                            <form method="post" asp-action="AprobarRepartidor" class="d-inline">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-success me-1">
+                                    <i class="bi bi-check-circle"></i> Aprobar
+                                </button>
+                            </form>
+                            
+                            <!-- Botón Denegar (Abre Modal de Rechazo) -->
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#@modalRechazoId">
+                                <i class="bi bi-x-circle"></i> Denegar
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modal Mostrar Información -->
+                    <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@(modalId)Label" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="@(modalId)Label">Información del Repartidor</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-4 text-center mb-3">
+                                    <img src="@avatarUrl" alt="Avatar" class="img-thumbnail rounded-circle mb-2" style="width: 150px; height: 150px; object-fit: cover;" />
+                                    <h5 class="mt-2">@item.Nombres @item.Apellidos</h5>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6>Datos Personales</h6>
+                                    <p><strong>Cédula:</strong> @item.Cedula</p>
+                                    <p><strong>Email:</strong> @item.Email</p>
+                                    <p><strong>Teléfono:</strong> @item.Telefono</p>
+                                    <hr />
+                                    <h6>Datos del Vehículo</h6>
+                                    <p><strong>Tipo:</strong> @item.TipoVehiculo</p>
+                                    <p><strong>Placa:</strong> @item.Placa</p>
+                                    <p><strong>Licencia:</strong> @item.LicenciaConducir</p>
+                                    @if (!string.IsNullOrEmpty(item.FotoLicenciaUrl))
+                                    {
+                                        <div class="mt-2">
+                                            <strong>Foto de Licencia:</strong><br/>
+                                            <a href="@item.FotoLicenciaUrl" target="_blank">
+                                                <img src="@item.FotoLicenciaUrl" class="img-fluid rounded mt-1" style="max-height: 200px;" />
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal Rechazar -->
+                    <div class="modal fade" id="@modalRechazoId" tabindex="-1" aria-labelledby="@(modalRechazoId)Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form method="post" asp-action="RechazarRepartidor">
+                              <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="@(modalRechazoId)Label">Denegar Solicitud</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <p>¿Estás seguro que deseas denegar la solicitud de <strong>@item.Nombres @item.Apellidos</strong>?</p>
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <div class="mb-3">
+                                    <label class="form-label">Motivo del rechazo (obligatorio)</label>
+                                    <textarea name="motivoRechazo" class="form-control" rows="3" required></textarea>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-danger">Confirmar Denegación</button>
+                              </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+=== Delivery.MVC/Views\AdminAprobaciones\Restaurantes.cshtml ===
+@model IEnumerable<Delivery.Modelos.DTOs.RestaurantePendienteDto>
+@{
+    ViewData["Title"] = "Aprobaciones de Restaurantes";
+}
+
+<div class="container mt-4">
+    <h2>Solicitudes de Restaurantes Pendientes</h2>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">@TempData["Mensaje"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No hay solicitudes pendientes en este momento.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover mt-3 align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Logo</th>
+                    <th>Restaurante</th>
+                    <th>Categoría</th>
+                    <th>Propietario</th>
+                    <th>Fecha Registro</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var logoUrl = !string.IsNullOrEmpty(item.LogoUrl) ? item.LogoUrl : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(item.Nombre) + "&background=random";
+                    var avatarPropietario = !string.IsNullOrEmpty(item.FotoPerfilUrl) ? item.FotoPerfilUrl : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(item.NombresPropietario) + "&background=random";
+                    var modalId = "modalRestaurante" + item.Id;
+                    var modalRechazoId = "modalRechazo" + item.Id;
+
+                    <tr>
+                        <td>
+                            <img src="@logoUrl" alt="Logo" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
+                        </td>
+                        <td>@item.Nombre</td>
+                        <td>@item.Categoria</td>
+                        <td>
+                            <img src="@avatarPropietario" alt="Avatar" class="rounded-circle me-1" style="width: 25px; height: 25px; object-fit: cover;" />
+                            @item.NombresPropietario
+                        </td>
+                        <td>@item.CreadoEn.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">
+                            <!-- Botón Mostrar Información -->
+                            <button type="button" class="btn btn-sm btn-info text-white me-1" data-bs-toggle="modal" data-bs-target="#@modalId">
+                                <i class="bi bi-eye"></i> Mostrar información
+                            </button>
+
+                            <!-- Formulario Aprobar -->
+                            <form method="post" asp-action="AprobarRestaurante" class="d-inline">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-success me-1">
+                                    <i class="bi bi-check-circle"></i> Aprobar
+                                </button>
+                            </form>
+                            
+                            <!-- Botón Denegar -->
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#@modalRechazoId">
+                                <i class="bi bi-x-circle"></i> Denegar
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Modal Mostrar Información -->
+                    <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@(modalId)Label" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="@(modalId)Label">Información del Restaurante</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-4 text-center mb-3">
+                                    <img src="@logoUrl" alt="Logo" class="img-thumbnail rounded mb-2" style="width: 150px; height: 150px; object-fit: cover;" />
+                                    <h5 class="mt-2">@item.Nombre</h5>
+                                    <span class="badge bg-secondary">@item.Categoria</span>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6>Datos del Establecimiento</h6>
+                                    <p><strong>RUC:</strong> @item.Ruc</p>
+                                    <p><strong>Dirección:</strong> @item.Calle, @item.Ciudad</p>
+                                    <p><strong>Teléfono:</strong> @item.Telefono</p>
+                                    <p><strong>Email:</strong> @item.Email</p>
+                                    <p><strong>Descripción:</strong> @item.Descripcion</p>
+                                    <hr />
+                                    <h6>Datos del Propietario</h6>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img src="@avatarPropietario" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                                        <span><strong>@item.NombresPropietario @item.ApellidosPropietario</strong></span>
+                                    </div>
+                                    <p class="mb-0"><strong>Email Propietario:</strong> @item.EmailPropietario</p>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal Rechazar -->
+                    <div class="modal fade" id="@modalRechazoId" tabindex="-1" aria-labelledby="@(modalRechazoId)Label" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <form method="post" asp-action="RechazarRestaurante">
+                              <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="@(modalRechazoId)Label">Denegar Solicitud</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <p>¿Estás seguro que deseas denegar la solicitud del restaurante <strong>@item.Nombre</strong>?</p>
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <div class="mb-3">
+                                    <label class="form-label">Motivo del rechazo (obligatorio)</label>
+                                    <textarea name="motivoRechazo" class="form-control" rows="3" required></textarea>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-danger">Confirmar Denegación</button>
+                              </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+=== Delivery.MVC/Views\AdminCupones\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Cupon>
+@{ ViewData["Title"] = "Gestión de Cupones"; }
+<h1>Cupones del Sistema</h1>
+<table class="table">
+    <thead><tr><th>ID</th><th>Código</th><th>Descuento</th><th>Activo</th></tr></thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr><td>@item.Id</td><td>@item.Codigo</td><td>@item.ValorDescuento</td><td>@(item.Activo ? "Sí" : "No")</td></tr>
+        }
+    </tbody>
+</table>
+
+=== Delivery.MVC/Views\AdminPedidos\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Pedido>
+@{ ViewData["Title"] = "Gestión de Pedidos"; }
+<h1>Todos los Pedidos</h1>
+<table class="table">
+    <thead><tr><th>ID</th><th>Cliente ID</th><th>Restaurante ID</th><th>Estado</th><th>Total</th></tr></thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr><td>@item.Id</td><td>@item.UsuarioId</td><td>@item.RestauranteId</td><td>@item.EstadoPedido</td><td>$@item.Total</td></tr>
+        }
+    </tbody>
+</table>
+
+=== Delivery.MVC/Views\AdminProductos\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Producto>
+@{ ViewData["Title"] = "Gestión de Productos"; }
+<h1>Todos los Productos</h1>
+<table class="table">
+    <thead><tr><th>ID</th><th>Nombre</th><th>Restaurante ID</th><th>Precio</th></tr></thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr><td>@item.Id</td><td>@item.Nombre</td><td>@item.RestauranteId</td><td>$@item.Precio</td></tr>
+        }
+    </tbody>
+</table>
+
+=== Delivery.MVC/Views\AdminRepartidores\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Repartidor>
+@{ ViewData["Title"] = "Gestión de Repartidores"; }
+<h1>Repartidores Registrados</h1>
+<div class="alert alert-info">Vista básica para el administrador. Para aprobar o rechazar, ir a Solicitudes.</div>
+<table class="table">
+    <thead><tr><th>ID</th><th>Licencia</th><th>Estado</th></tr></thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr><td>@item.UsuarioId</td><td>@item.LicenciaConducir</td><td>@item.EstadoAprobacion</td></tr>
+        }
+    </tbody>
+</table>
+
+=== Delivery.MVC/Views\AdminRestaurantes\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Restaurante>
+@{ ViewData["Title"] = "Gestión de Restaurantes"; }
+<h1>Restaurantes Registrados</h1>
+<div class="alert alert-info">Vista básica para el administrador. Para aprobar o rechazar, ir a Solicitudes.</div>
+<table class="table">
+    <thead><tr><th>ID</th><th>Nombre Comercial</th><th>Dirección</th><th>Estado</th></tr></thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr><td>@item.Id</td><td>@item.Nombre</td><td>@item.Calle</td><td>@item.Estado</td></tr>
+        }
+    </tbody>
+</table>
+
+=== Delivery.MVC/Views\AdminUsuarios\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Usuario>
+@{ ViewData["Title"] = "Gestión de Usuarios"; }
+<h1>Usuarios del Sistema</h1>
+<div class="alert alert-info">Esta es una vista básica de solo lectura para evitar errores 404.</div>
+<table class="table">
+    <thead><tr><th>ID</th><th>Nombre</th><th>Email</th></tr></thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr><td>@item.Id</td><td>@item.Nombre @item.Apellidos</td><td>@item.Email</td></tr>
+        }
+    </tbody>
+</table>
+
+=== Delivery.MVC/Views/DashboardAdministrador\Index.cshtml ===
+@{
+    ViewData["Title"] = "Panel de Administrador";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary"><i class="bi bi-speedometer2"></i> Panel de Administración</h1>
+    <p class="lead">Bienvenido al centro de control de RayoExpres. Desde aquí puedes gestionar todos los módulos del sistema.</p>
+    <hr />
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
+        <div class="col">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Usuarios</h5>
+                    <p class="card-text">Gestiona los usuarios, clientes, y administradores.</p>
+                    <a asp-controller="Usuarios" asp-action="Index" class="btn btn-primary">Ir a Usuarios</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Restaurantes</h5>
+                    <p class="card-text">Administra los restaurantes afiliados al sistema.</p>
+                    <a asp-controller="Restaurantes" asp-action="Index" class="btn btn-success">Ir a Restaurantes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-info">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Productos</h5>
+                    <p class="card-text">Control general del catálogo de productos.</p>
+                    <a asp-controller="Productos" asp-action="Index" class="btn btn-info text-white">Ir a Productos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-warning">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Categorías</h5>
+                    <p class="card-text">Gestión de categorías de productos.</p>
+                    <a asp-controller="CategoriasProducto" asp-action="Index" class="btn btn-warning">Ir a Categorías</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Pedidos</h5>
+                    <p class="card-text">Visualiza todos los pedidos generados.</p>
+                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-danger">Ir a Pedidos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-secondary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Repartidores</h5>
+                    <p class="card-text">Gestión de repartidores y sus estados.</p>
+                    <a asp-controller="Repartidores" asp-action="Index" class="btn btn-secondary">Ir a Repartidores</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-dark">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Vehículos</h5>
+                    <p class="card-text">Gestión de vehículos de los repartidores.</p>
+                    <a asp-controller="Vehiculos" asp-action="Index" class="btn btn-dark">Ir a Vehículos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Cupones</h5>
+                    <p class="card-text">Administración de promociones y cupones.</p>
+                    <a asp-controller="Cupones" asp-action="Index" class="btn btn-outline-primary">Ir a Cupones</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-success">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Pagos</h5>
+                    <p class="card-text">Historial de transacciones y pagos.</p>
+                    <a asp-controller="Pagos" asp-action="Index" class="btn btn-outline-success">Ir a Pagos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-warning">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Calificaciones</h5>
+                    <p class="card-text">Moderación de reseñas a restaurantes y repartidores.</p>
+                    <a asp-controller="Resenas" asp-action="Index" class="btn btn-outline-warning">Ir a Reseñas</a>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm border-danger">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Auditoría</h5>
+                    <p class="card-text">Registros de acciones importantes en el sistema.</p>
+                    <a asp-controller="Auditorias" asp-action="Index" class="btn btn-outline-danger">Ir a Auditoría</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

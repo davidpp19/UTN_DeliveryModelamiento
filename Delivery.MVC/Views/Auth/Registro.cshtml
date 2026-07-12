@@ -1,59 +1,61 @@
 @model Delivery.Modelos.DTOs.RegistroDto
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @{
-    ViewData["Title"] = "Registro de Usuario";
+    ViewData["Title"] = Localizer["RegistroClienteTitulo"];
 }
 
 <div class="row justify-content-center mt-5">
     <div class="col-md-6">
         <div class="card shadow-sm">
             <div class="card-body p-4">
-                <h3 class="text-center mb-4 text-primary">Crea tu cuenta en RayoExpres</h3>
+                <h3 class="text-center mb-4 text-primary">@Localizer["CreaTuCuenta"]</h3>
                 <form asp-action="Registro" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label asp-for="Nombre" class="form-label">Nombres</label>
-                            <input asp-for="Nombre" class="form-control" placeholder="Juan" />
+                            <label asp-for="Nombre" class="form-label">@Localizer["Nombres"]</label>
+                            <input asp-for="Nombre" class="form-control" placeholder="@Localizer["NombresPlaceholder"]" />
                             <span asp-validation-for="Nombre" class="text-danger"></span>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label asp-for="Apellidos" class="form-label">Apellidos</label>
-                            <input asp-for="Apellidos" class="form-control" placeholder="Pérez" />
+                            <label asp-for="Apellidos" class="form-label">@Localizer["Apellidos"]</label>
+                            <input asp-for="Apellidos" class="form-control" placeholder="@Localizer["ApellidosPlaceholder"]" />
                             <span asp-validation-for="Apellidos" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Email" class="form-label">Correo Electrónico</label>
-                        <input asp-for="Email" class="form-control" type="email" placeholder="juan@correo.com" />
+                        <label asp-for="Email" class="form-label">@Localizer["CorreoElectronico"]</label>
+                        <input asp-for="Email" class="form-control" type="email" placeholder="@Localizer["EmailPlaceholder"]" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Telefono" class="form-label">Teléfono</label>
+                        <label asp-for="Telefono" class="form-label">@Localizer["Telefono"]</label>
                         <input asp-for="Telefono" class="form-control" type="tel" placeholder="0987654321" />
                         <span asp-validation-for="Telefono" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Cedula" class="form-label">Cédula de Identidad</label>
+                        <label asp-for="Cedula" class="form-label">@Localizer["Cedula"]</label>
                         <input asp-for="Cedula" class="form-control" placeholder="1712345678" />
                         <span asp-validation-for="Cedula" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Contraseña</label>
-                        <input asp-for="Password" class="form-control" type="password" placeholder="********" />
+                        <label asp-for="Password" class="form-label">@Localizer["Contrasena"]</label>
+                        <input asp-for="Password" class="form-control" type="password" placeholder="@Localizer["PasswordPlaceholder"]" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="ConfirmPassword" class="form-label">Confirmar Contraseña</label>
-                        <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="********" />
+                        <label asp-for="ConfirmPassword" class="form-label">@Localizer["ConfirmarContrasena"]</label>
+                        <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="@Localizer["PasswordPlaceholder"]" />
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">Registrarse</button>
+                        <button type="submit" class="btn btn-primary btn-lg">@Localizer["Registrarse"]</button>
                     </div>
                 </form>
                 <div class="mt-4 text-center">
-                    <span>¿Ya tienes cuenta? </span>
-                    <a asp-action="Login" class="text-decoration-none fw-bold">Inicia Sesión</a>
+                    <span>@Localizer["YaTienesCuenta"] </span>
+                    <a asp-action="Login" class="text-decoration-none fw-bold">@Localizer["IniciarSesion"]</a>
                 </div>
             </div>
         </div>

@@ -1,5 +1,7 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @{
-    ViewData["Title"] = "Solicitud Rechazada";
+    ViewData["Title"] = Localizer["SolicitudRechazadaTitle"];
 }
 
 <div class="container mt-5 text-center">
@@ -18,7 +20,7 @@
                         Para más información o si crees que esto es un error, por favor comunícate con soporte.
                     </p>
                     <div class="mt-4">
-                        <a asp-action="Index" class="btn btn-primary">Volver al Inicio</a>
+                        <a asp-action="Index" class="btn btn-primary">@Localizer["VolverInicioBtn"]</a>
                     </div>
                 </div>
             </div>

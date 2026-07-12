@@ -1,89 +1,91 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.DTOs.RegistroRepartidorDto
 @{
-    ViewData["Title"] = "Registro de Repartidor";
+    ViewData["Title"] = Localizer["RegRepartidorTitulo"];
 }
 
-<h1>Registro de Repartidor</h1>
-<p>Completa el formulario para unirte como repartidor de RayoExpres. Tu cuenta será revisada antes de ser activada.</p>
+<h1>@Localizer["RegRepartidorTitulo"]</h1>
+<p>@Localizer["RegRepartidorDesc"]</p>
 
-<p><a asp-controller="Auth" asp-action="SeleccionTipoRegistro">Volver a selección de tipo de cuenta</a></p>
+<p><a asp-controller="Auth" asp-action="SeleccionTipoRegistro">@Localizer["VolverSeleccion"]</a></p>
 <hr />
 
 <form asp-action="Index" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <h4>Datos Personales</h4>
+    <h4>@Localizer["DatosPersonales"]</h4>
 
     <div>
-        <label asp-for="Nombre">Nombre</label>
-        <input asp-for="Nombre" placeholder="Tu nombre" />
+        <label asp-for="Nombre">@Localizer["Nombres"]</label>
+        <input asp-for="Nombre" placeholder="@Localizer["TuNombrePlaceholder"]" />
         <span asp-validation-for="Nombre" class="text-danger"></span>
     </div>
 
     <div>
-        <label asp-for="Apellidos">Apellidos</label>
-        <input asp-for="Apellidos" placeholder="Tus apellidos" />
+        <label asp-for="Apellidos">@Localizer["Apellidos"]</label>
+        <input asp-for="Apellidos" placeholder="@Localizer["TusApellidosPlaceholder"]" />
         <span asp-validation-for="Apellidos" class="text-danger"></span>
     </div>
 
     <div>
-        <label asp-for="Email">Correo Electrónico</label>
-        <input asp-for="Email" type="email" placeholder="correo@ejemplo.com" />
+        <label asp-for="Email">@Localizer["CorreoElectronico"]</label>
+        <input asp-for="Email" type="email" placeholder="@Localizer["EmailPlaceholder"]" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
     <div>
-        <label asp-for="Telefono">Teléfono</label>
+        <label asp-for="Telefono">@Localizer["Telefono"]</label>
         <input asp-for="Telefono" type="tel" placeholder="0991234567" />
         <span asp-validation-for="Telefono" class="text-danger"></span>
     </div>
 
     <div>
-        <label asp-for="Cedula">Cédula de Identidad</label>
+        <label asp-for="Cedula">@Localizer["Cedula"]</label>
         <input asp-for="Cedula" placeholder="1234567890" />
         <span asp-validation-for="Cedula" class="text-danger"></span>
     </div>
 
     <div>
-        <label asp-for="Password">Contraseña</label>
+        <label asp-for="Password">@Localizer["Contrasena"]</label>
         <input asp-for="Password" type="password" />
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
 
     <div>
-        <label asp-for="ConfirmPassword">Confirmar Contraseña</label>
+        <label asp-for="ConfirmPassword">@Localizer["ConfirmarContrasena"]</label>
         <input asp-for="ConfirmPassword" type="password" />
         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
     </div>
 
     <hr />
-    <h4>Datos del Vehículo</h4>
+    <h4>@Localizer["DatosVehiculo"]</h4>
 
     <div>
-        <label asp-for="TipoVehiculo">Tipo de Vehículo</label>
+        <label asp-for="TipoVehiculo">@Localizer["TipoVehiculo"]</label>
         <div class="d-flex align-items-center">
             <select asp-for="TipoVehiculo"
                     asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.TipoVehiculoEnum>()" class="form-control" style="width: auto; margin-right: 10px;">
             </select>
-            <button type="submit" name="accion" value="actualizar" formnovalidate class="btn btn-secondary btn-sm">Confirmar Tipo</button>
+            <button type="submit" name="accion" value="actualizar" formnovalidate class="btn btn-secondary btn-sm">@Localizer["ConfirmarTipo"]</button>
         </div>
         <span asp-validation-for="TipoVehiculo" class="text-danger"></span>
-        <small class="text-muted d-block">Selecciona y haz clic en "Confirmar Tipo" para actualizar los campos requeridos.</small>
+        <small class="text-muted d-block">@Localizer["ConfirmarTipoDesc"]</small>
     </div>
 
     @if (Model != null && Model.TipoVehiculo != Delivery.Modelos.Enums.TipoVehiculoEnum.Bicicleta)
     {
         <hr />
-        <h4>Datos de Licencia (Requerido para @Model.TipoVehiculo.ToString())</h4>
+        <h4>@Localizer["DatosLicenciaRequerido"] (Requerido para @Model.TipoVehiculo.ToString())</h4>
         <div>
-            <label asp-for="LicenciaConducir">Número de Licencia de Conducir</label>
+            <label asp-for="LicenciaConducir">@Localizer["NumeroLicencia"]</label>
             <input asp-for="LicenciaConducir" placeholder="Ej: LIC-IMB-1234567" />
             <span asp-validation-for="LicenciaConducir" class="text-danger"></span>
         </div>
         <div class="mt-3">
-            <label>Fotografía de la Licencia</label>
+            <label>@Localizer["FotoLicencia"]</label>
             <input type="file" name="fotoLicencia" class="form-control" accept="image/*" required />
-            <small class="text-muted">Adjunta una foto clara de tu licencia de conducir.</small>
+            <small class="text-muted">@Localizer["FotoLicenciaDesc"]</small>
         </div>
     }
     else
@@ -93,19 +95,19 @@
     }
 
     <div>
-        <label asp-for="Marca">Marca</label>
+        <label asp-for="Marca">@Localizer["MarcaVehiculo"]</label>
         <input asp-for="Marca" placeholder="Ej: Honda" />
         <span asp-validation-for="Marca" class="text-danger"></span>
     </div>
 
     <div>
-        <label asp-for="Modelo">Modelo</label>
+        <label asp-for="Modelo">@Localizer["ModeloVehiculo"]</label>
         <input asp-for="Modelo" placeholder="Ej: Wave110" />
         <span asp-validation-for="Modelo" class="text-danger"></span>
     </div>
 
     <div>
-        <label asp-for="Color">Color</label>
+        <label asp-for="Color">@Localizer["ColorVehiculo"]</label>
         <input asp-for="Color" placeholder="Ej: Rojo" />
         <span asp-validation-for="Color" class="text-danger"></span>
     </div>
@@ -113,7 +115,7 @@
     @if (Model != null && Model.TipoVehiculo != Delivery.Modelos.Enums.TipoVehiculoEnum.Bicicleta)
     {
         <div>
-            <label asp-for="Placa">Placa</label>
+            <label asp-for="Placa">@Localizer["PlacaVehiculo"]</label>
             <input asp-for="Placa" placeholder="Ej: PBX-1234" />
             <span asp-validation-for="Placa" class="text-danger"></span>
         </div>
@@ -124,12 +126,12 @@
     }
 
     <div>
-        <label asp-for="Anio">Año del Vehículo</label>
+        <label asp-for="Anio">@Localizer["AnioVehiculo"]</label>
         <input asp-for="Anio" type="number" placeholder="Ej: 2022" min="1990" max="2030" />
     </div>
 
     <br />
-    <button type="submit" name="accion" value="registrar" class="btn btn-primary">Registrarme como Repartidor</button>
+    <button type="submit" name="accion" value="registrar" class="btn btn-primary">@Localizer["RegRepartidor"]</button>
 </form>
 
 @section Scripts {

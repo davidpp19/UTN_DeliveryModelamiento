@@ -1,6 +1,8 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Restaurante
-@{ ViewData["Title"] = "Eliminar Restaurante"; }
-<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+@{ ViewData["Title"] = Localizer["EliminarRestauranteTitle"]; }
+<h1 class="my-4 text-danger">@Localizer["ConfirmarEliminarMsg"]</h1><hr />
 <dl class="row">
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
@@ -28,8 +30,7 @@
 <dd class="col-sm-9">@Html.DisplayFor(model => model.HoraApertura)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.HoraCierre)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.HoraCierre)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CostoEnvioBase)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.CostoEnvioBase)</dd>
+
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Estado)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Estado)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.AprobadoPor)</dt>
@@ -53,6 +54,6 @@
 </dl>
 <form asp-action="Delete">
 <input type="hidden" asp-for="Id" />
-<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
-<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+<button type="submit" class="btn btn-danger">@Localizer["EliminarConfirmadoBtn"]</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["CancelarBtn"]</a>
 </form>

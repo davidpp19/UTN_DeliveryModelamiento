@@ -1,9 +1,11 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Rol
-<h1>Edit Rol</h1>
+<h1>@Localizer["EditarRolTitle"]</h1>
 <form asp-action="Edit">
     @Html.HiddenFor(m => m.Id)
     @Html.EditorForModel()
     <br/>
-    <input type="submit" value="Save" />
+    <input type="submit" value="@Localizer["ActualizarBtn"]" />
 </form>
-<a asp-action="Index">Back to List</a>
+<a asp-action="Index">@Localizer["VolverListadoBtn"]</a>

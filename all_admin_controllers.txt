@@ -1,0 +1,256 @@
+=== Delivery.MVC/Controllers\AdminAprobacionesController.cs ===
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Delivery.Consumer.Interfaces;
+
+namespace Delivery.MVC.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class AdminAprobacionesController : Controller
+    {
+        private readonly IAdminAprobacionesConsumer _aprobacionesConsumer;
+
+        public AdminAprobacionesController(IAdminAprobacionesConsumer aprobacionesConsumer)
+        {
+            _aprobacionesConsumer = aprobacionesConsumer;
+        }
+
+        // --- Repartidores ---
+        public async Task<IActionResult> Repartidores()
+        {
+            try 
+            {
+                var pendientes = await _aprobacionesConsumer.GetRepartidoresPendientesAsync();
+                return View(pendientes);
+            }
+            catch (System.Net.Http.HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                // Si la API devuelve 401, el token JWT expiró o no existe. Forzar re-login.
+                await HttpContext.SignOutAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+                return RedirectToAction("Login", "Auth");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AprobarRepartidor(long id)
+        {
+            await _aprobacionesConsumer.AprobarRepartidorAsync(id);
+            TempData["Mensaje"] = "Repartidor aprobado.";
+            return RedirectToAction(nameof(Repartidores));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RechazarRepartidor(long id, string motivoRechazo)
+        {
+            await _aprobacionesConsumer.RechazarRepartidorAsync(id, motivoRechazo);
+            TempData["Mensaje"] = "Repartidor rechazado.";
+            return RedirectToAction(nameof(Repartidores));
+        }
+
+        // --- Restaurantes ---
+        public async Task<IActionResult> Restaurantes()
+        {
+            try 
+            {
+                var pendientes = await _aprobacionesConsumer.GetRestaurantesPendientesAsync();
+                return View(pendientes);
+            }
+            catch (System.Net.Http.HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                await HttpContext.SignOutAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+                return RedirectToAction("Login", "Auth");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AprobarRestaurante(long id)
+        {
+            await _aprobacionesConsumer.AprobarRestauranteAsync(id);
+            TempData["Mensaje"] = "Restaurante aprobado.";
+            return RedirectToAction(nameof(Restaurantes));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RechazarRestaurante(long id, string motivoRechazo)
+        {
+            await _aprobacionesConsumer.RechazarRestauranteAsync(id, motivoRechazo);
+            TempData["Mensaje"] = "Restaurante rechazado.";
+            return RedirectToAction(nameof(Restaurantes));
+        }
+    }
+}
+
+=== Delivery.MVC/Controllers\AdminCuponesController.cs ===
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Delivery.Consumer.Interfaces;
+
+namespace Delivery.MVC.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class AdminCuponesController : Controller
+    {
+        private readonly ICuponConsumer _cuponConsumer;
+
+        public AdminCuponesController(ICuponConsumer cuponConsumer)
+        {
+            _cuponConsumer = cuponConsumer;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var data = await _cuponConsumer.GetAllAsync();
+            return View(data);
+        }
+    }
+}
+
+=== Delivery.MVC/Controllers\AdminPedidosController.cs ===
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Delivery.Consumer.Interfaces;
+
+namespace Delivery.MVC.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class AdminPedidosController : Controller
+    {
+        private readonly IPedidoConsumer _pedidoConsumer;
+
+        public AdminPedidosController(IPedidoConsumer pedidoConsumer)
+        {
+            _pedidoConsumer = pedidoConsumer;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var data = await _pedidoConsumer.GetAllAsync();
+            return View(data);
+        }
+    }
+}
+
+=== Delivery.MVC/Controllers\AdminProductosController.cs ===
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Delivery.Consumer.Interfaces;
+
+namespace Delivery.MVC.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class AdminProductosController : Controller
+    {
+        private readonly IProductoConsumer _productoConsumer;
+
+        public AdminProductosController(IProductoConsumer productoConsumer)
+        {
+            _productoConsumer = productoConsumer;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var data = await _productoConsumer.GetAllAsync();
+            return View(data);
+        }
+    }
+}
+
+=== Delivery.MVC/Controllers\AdminRepartidoresController.cs ===
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Delivery.Consumer.Interfaces;
+
+namespace Delivery.MVC.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class AdminRepartidoresController : Controller
+    {
+        private readonly IRepartidorConsumer _repartidorConsumer;
+
+        public AdminRepartidoresController(IRepartidorConsumer repartidorConsumer)
+        {
+            _repartidorConsumer = repartidorConsumer;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var data = await _repartidorConsumer.GetAllAsync();
+            return View(data);
+        }
+    }
+}
+
+=== Delivery.MVC/Controllers\AdminRestaurantesController.cs ===
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Delivery.Consumer.Interfaces;
+
+namespace Delivery.MVC.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class AdminRestaurantesController : Controller
+    {
+        private readonly IRestauranteConsumer _restauranteConsumer;
+
+        public AdminRestaurantesController(IRestauranteConsumer restauranteConsumer)
+        {
+            _restauranteConsumer = restauranteConsumer;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var data = await _restauranteConsumer.GetAllAsync();
+            return View(data);
+        }
+    }
+}
+
+=== Delivery.MVC/Controllers\AdminUsuariosController.cs ===
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Delivery.Consumer.Interfaces;
+
+namespace Delivery.MVC.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class AdminUsuariosController : Controller
+    {
+        private readonly IUsuarioConsumer _usuarioConsumer;
+
+        public AdminUsuariosController(IUsuarioConsumer usuarioConsumer)
+        {
+            _usuarioConsumer = usuarioConsumer;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var data = await _usuarioConsumer.GetAllAsync();
+            return View(data);
+        }
+    }
+}
+
+=== Delivery.MVC/Controllers\DashboardAdministradorController.cs ===
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Delivery.MVC.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class DashboardAdministradorController : Controller
+    {
+        public IActionResult Index()
+        {
+            return View();
+        }
+    }
+}
+

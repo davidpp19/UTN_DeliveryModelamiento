@@ -94,16 +94,15 @@ namespace Delivery.Servicios.Implementaciones
             if (item == null) return false;
 
             _context.CarritoItems.Remove(item);
-            await _context.SaveChangesAsync();
 
-            if (!carrito.Items.Any(i => i.Id != carritoItemId))
+            if (carrito.Items.Count(i => i.Id != carritoItemId) == 0)
             {
                 _context.Carritos.Remove(carrito);
             }
             else
             {
                 carrito.FechaActualizacion = DateTime.UtcNow;
-                _context.Carritos.Update(carrito);
+                // No need to call Update, EF Core tracks the change
             }
 
             await _context.SaveChangesAsync();

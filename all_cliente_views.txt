@@ -1,0 +1,1863 @@
+=== Delivery.MVC/Views\ClienteCarrito\Checkout.cshtml ===
+@model Delivery.Modelos.DTOs.CarritoSesionDto
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+    #mapaCheckout {
+        height: 350px;
+        width: 100%;
+        border-radius: 8px;
+        margin-top: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 1; /* Para no sobreponer navbars */
+    }
+    .search-container {
+        position: relative;
+        margin-bottom: 15px;
+    }
+    #listaResultados {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        display: none;
+    }
+    .resultado-item {
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+    }
+    .resultado-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2>Proceso de Pago</h2>
+    <hr />
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="row">
+        <!-- Resumen de Costos -->
+        <div class="col-md-5 order-md-2 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Tu Carrito</span>
+                <span class="badge badge-secondary badge-pill">@Model.Items.Count</span>
+            </h4>
+            <ul class="list-group mb-3">
+                @foreach (var item in Model.Items)
+                {
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <h6 class="my-0">@item.NombreProducto</h6>
+                            <small class="text-muted">Cantidad: @item.Cantidad</small>
+                        </div>
+                        <span class="text-muted">$@item.Subtotal.ToString("0.00")</span>
+                    </li>
+                }
+                
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="my-0">Subtotal</h6>
+                        <strong id="subtotalUI">$@Model.Subtotal.ToString("0.00")</strong>
+                    </div>
+                </li>
+
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="my-0">Distancia y Tiempo</h6>
+                        <strong id="distanciaInfo">Pendiente</strong>
+                    </div>
+                    <small class="text-muted" id="tiempoInfo">Seleccione dirección en el mapa</small>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-condensed bg-light">
+                    <div>
+                        <h6 class="my-0">Costo de Envío</h6>
+                    </div>
+                    <span class="text-success" id="costoEnvioUI">Pendiente</span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between lh-condensed bg-success text-white" id="descuentoRow" style="display:none !important;">
+                    <div>
+                        <h6 class="my-0">Cupón aplicado</h6>
+                        <small id="codigoCuponAplicadoUI"></small>
+                    </div>
+                    <span id="descuentoUI">-$0.00</span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (USD)</span>
+                    <strong id="totalUI" class="text-primary fs-5">$@Model.Subtotal.ToString("0.00")</strong>
+                </li>
+            </ul>
+            <input type="hidden" id="subtotalValue" value="@Model.Subtotal" />
+            <input type="hidden" id="descuentoValue" value="0" />
+            
+            <div class="card p-2 mb-3">
+                <div class="input-group">
+                    <select class="form-control" id="cuponInput" asp-items="ViewBag.Cupones">
+                        <option value="">-- Seleccionar cupón --</option>
+                    </select>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-secondary" onclick="aplicarCupon()">Aplicar cupón</button>
+                    </div>
+                </div>
+                <small id="cuponMensaje" class="form-text mt-2" style="display:none;"></small>
+            </div>
+            
+            <div class="alert alert-info">
+                <strong>Tarifa de envío:</strong> $1.50 (hasta 3 km). $0.25 por km adicional.
+            </div>
+        </div>
+        
+        <!-- Formulario -->
+        <div class="col-md-7 order-md-1">
+            <form asp-action="Confirmar" method="post" id="checkoutForm" enctype="multipart/form-data" onsubmit="return validarFormulario(event)">
+                <input type="hidden" id="cuponCodigoForm" name="cuponCodigo" value="" />
+                
+                <h4 class="mb-3">Dirección de Entrega</h4>
+                
+                <div class="mb-3">
+                    <label for="selectDireccion">Tus direcciones guardadas</label>
+                    <select class="form-control" id="selectDireccion" name="direccionId" asp-items="ViewBag.Direcciones">
+                        <option value="0">-- Usar otra dirección (Buscar en el mapa) --</option>
+                    </select>
+                </div>
+
+                <div class="search-container" id="buscadorContainer">
+                    <input type="text" id="buscadorDireccion" class="form-control form-control-lg" placeholder="🔍 Escribe para buscar una calle o lugar..." autocomplete="off">
+                    <div id="listaResultados"></div>
+                </div>
+
+                <div id="mapaCheckout"></div>
+                <small class="text-muted d-block mt-1 mb-3">📍 Puedes arrastrar el marcador rojo para afinar tu ubicación exacta.</small>
+
+                <!-- Campos ocultos y opcionales para la nueva dirección -->
+                <div id="nuevaDireccionCampos" style="display:none;" class="card p-3 mb-4 border-info">
+                    <h5 class="text-info">Detalles de la Ubicación</h5>
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label>Calle / Avenida principal detectada</label>
+                            <input type="text" class="form-control" id="nuevaCalle" name="nuevaCalle" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="custom-control custom-checkbox mb-3 mt-2">
+                        <input type="checkbox" class="custom-control-input" id="guardarDireccion" name="guardarDireccion" value="true">
+                        <label class="custom-control-label fw-bold" for="guardarDireccion">Guardar esta dirección para mis próximas compras</label>
+                    </div>
+
+                    <div id="camposGuardado" style="display:none;">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label>Alias (Ej. Casa, Trabajo)</label>
+                                <input type="text" class="form-control" name="nuevoAlias" placeholder="Casa">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label>Referencia</label>
+                                <input type="text" class="form-control" name="nuevaReferencia" placeholder="Frente al parque">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="nuevaCiudad" name="nuevaCiudad" value="">
+                <input type="hidden" id="nuevaLatitud" name="nuevaLatitud">
+                <input type="hidden" id="nuevaLongitud" name="nuevaLongitud">
+
+                <hr class="mb-4">
+
+                <h4 class="mb-3">Método de Pago</h4>
+
+                <div class="d-block my-3">
+                    <div class="custom-control custom-radio">
+                        <input id="efectivo" name="metodoPago" type="radio" class="custom-control-input" value="Efectivo" checked required onchange="togglePaymentSections()">
+                        <label class="custom-control-label" for="efectivo">Efectivo (Al recibir el pedido)</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input id="tarjeta" name="metodoPago" type="radio" class="custom-control-input" value="Tarjeta" required onchange="togglePaymentSections()">
+                        <label class="custom-control-label" for="tarjeta">Tarjeta de Crédito / Débito</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input id="transferencia" name="metodoPago" type="radio" class="custom-control-input" value="Transferencia" required onchange="togglePaymentSections()">
+                        <label class="custom-control-label" for="transferencia">Transferencia Bancaria</label>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN TARJETA -->
+                <div id="seccionTarjeta" style="display:none;" class="card p-3 mb-4 bg-light">
+                    <h5>Detalles de la Tarjeta</h5>
+                    <div id="tarjetaError" class="alert alert-danger" style="display: none;"></div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="titular">Nombre en la tarjeta</label>
+                            <input type="text" class="form-control" id="titular" name="titular" placeholder="EJ. JUAN PEREZ">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="numeroTarjeta">Número de tarjeta <span id="tarjetaTipo" class="badge bg-secondary ms-2"></span></label>
+                            <input type="text" class="form-control" id="numeroTarjeta" name="numeroTarjeta" placeholder="XXXX XXXX XXXX XXXX" oninput="formatearTarjeta(this)">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="expiracion">Expiración</label>
+                            <input type="text" class="form-control" id="expiracion" name="expiracion" placeholder="MM/AA" maxlength="5" oninput="formatearExpiracion(this)">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="cvv">CVV</label>
+                            <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN TRANSFERENCIA -->
+                <div id="seccionTransferencia" style="display:none;" class="card p-3 mb-4 bg-light">
+                    <h5>Datos para Transferencia</h5>
+                    <p>Por favor, realiza la transferencia a la siguiente cuenta y adjunta el comprobante (JPG, PNG, PDF).</p>
+                    <ul>
+                        <li><strong>Banco:</strong> Banco RayoExpres</li>
+                        <li><strong>Beneficiario:</strong> RayoExpres S.A.</li>
+                        <li><strong>RUC:</strong> 0999999999001</li>
+                        <li><strong>Tipo de Cuenta:</strong> Corriente</li>
+                        <li><strong>Número de cuenta:</strong> 220045678901</li>
+                    </ul>
+                    <div class="mb-3">
+                        <label for="comprobante" class="form-label">Subir Comprobante</label>
+                        <input class="form-control" type="file" id="comprobante" name="comprobante" accept=".jpg,.png,.pdf">
+                    </div>
+                </div>
+
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" type="submit" id="btnSubmit">Confirmar y Pagar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        var map;
+        var marker = null;
+
+        var customIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/149/149059.png',
+            iconSize: [38, 38],
+            iconAnchor: [19, 38]
+        });
+
+        // Inicialización
+        document.addEventListener("DOMContentLoaded", function () {
+            togglePaymentSections();
+
+            // Inicializar el mapa centrado en Ecuador (zoom 6) sin colocar ningún marcador.
+            map = L.map('mapaCheckout').setView([-1.8312, -78.1834], 6);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Si el cliente tiene direcciones, seleccionar la primera
+            var selectDir = document.getElementById('selectDireccion');
+            if (selectDir.options.length > 1) {
+                selectDir.selectedIndex = 1;
+                // Forzar el evento change para cargar la ubicacion
+                var event = new Event('change');
+                selectDir.dispatchEvent(event);
+            } else {
+                // Solicitar ubicación si no hay direcciones
+                solicitarUbicacion();
+            }
+
+            // Checkbox guardar direccion
+            document.getElementById('guardarDireccion').addEventListener('change', function() {
+                document.getElementById('camposGuardado').style.display = this.checked ? 'block' : 'none';
+            });
+        });
+
+        function agregarOMoverMarcador(lat, lng) {
+            if (!marker) {
+                marker = L.marker([lat, lng], {
+                    icon: customIcon,
+                    draggable: true
+                }).addTo(map);
+
+                marker.on('dragend', function (e) {
+                    var position = marker.getLatLng();
+                    actualizarCamposUbicacion(position.lat, position.lng);
+                    obtenerNombreCalle(position.lat, position.lng);
+                    calcularCostoEnvio(0, position.lat, position.lng); // 0 indica nueva dirección
+                    document.getElementById('selectDireccion').value = "0";
+                });
+            } else {
+                marker.setLatLng([lat, lng]);
+            }
+        }
+
+        function solicitarUbicacion() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    map.setView([lat, lng], 15);
+                    agregarOMoverMarcador(lat, lng);
+                    actualizarCamposUbicacion(lat, lng);
+                    obtenerNombreCalle(lat, lng);
+                    calcularCostoEnvio(0, lat, lng);
+                }, function (error) {
+                    console.log("Geolocalización denegada o error", error);
+                    mostrarMensajeSeleccioneUbicacion();
+                }, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                });
+            } else {
+                mostrarMensajeSeleccioneUbicacion();
+            }
+        }
+
+        function mostrarMensajeSeleccioneUbicacion() {
+            var costoUI = document.getElementById('costoEnvioUI');
+            costoUI.innerText = 'Seleccione una ubicación en el mapa para calcular el costo del envío.';
+            costoUI.classList.remove('text-success');
+            costoUI.classList.add('text-danger');
+            costoUI.style.fontSize = '0.85em';
+            costoUI.style.textAlign = 'right';
+            costoUI.style.maxWidth = '180px';
+            
+            document.getElementById('distanciaInfo').innerText = 'Pendiente';
+            document.getElementById('tiempoInfo').innerText = 'Seleccione dirección en el mapa';
+            
+            var sub = parseFloat(document.getElementById('subtotalValue').value.replace(',', '.'));
+            document.getElementById('totalUI').innerText = '$' + sub.toFixed(2);
+        }
+
+        // Cambio de dirección en el Select
+        document.getElementById('selectDireccion').addEventListener('change', function () {
+            var dirId = this.value;
+            if (dirId !== "0") {
+                document.getElementById('nuevaDireccionCampos').style.display = 'none';
+                document.getElementById('buscadorContainer').style.display = 'none';
+                
+                // Pedir coordenadas al backend para la direccion existente
+                fetch('/ClienteCarrito/CalcularCostoEnvio?direccionId=' + dirId)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.exito) {
+                            actualizarResumenEnvio(data.costo, data.distancia, data.tiempo);
+                        }
+                    });
+                
+                // Nota: Para mover el mapa, necesitamos las coordenadas de la dirección guardada. 
+                // Lo ideal sería que CalcularCostoEnvio también las devuelva, pero como el usuario 
+                // ya la seleccionó, el mapa es secundario o podríamos añadir data-lat y data-lng a las options.
+            } else {
+                document.getElementById('nuevaDireccionCampos').style.display = 'block';
+                document.getElementById('buscadorContainer').style.display = 'block';
+                var lat = document.getElementById('nuevaLatitud').value;
+                if (!lat) {
+                    solicitarUbicacion();
+                } else {
+                    if (marker) {
+                        var pos = marker.getLatLng();
+                        calcularCostoEnvio(0, pos.lat, pos.lng);
+                    }
+                }
+            }
+        });
+
+        function actualizarCamposUbicacion(lat, lng) {
+            document.getElementById('nuevaLatitud').value = lat;
+            document.getElementById('nuevaLongitud').value = lng;
+        }
+
+        // Búsqueda de Direcciones (Nominatim)
+        var timerBusqueda;
+        document.getElementById('buscadorDireccion').addEventListener('input', function (e) {
+            clearTimeout(timerBusqueda);
+            var query = e.target.value;
+            if (query.length < 3) {
+                document.getElementById('listaResultados').style.display = 'none';
+                return;
+            }
+
+            timerBusqueda = setTimeout(function () {
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=EC`)
+                    .then(res => res.json())
+                    .then(data => {
+                        var lista = document.getElementById('listaResultados');
+                        lista.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                var div = document.createElement('div');
+                                div.className = 'resultado-item';
+                                div.innerText = item.display_name;
+                                div.onclick = function () {
+                                    seleccionarUbicacion(item.lat, item.lon, item.display_name);
+                                };
+                                lista.appendChild(div);
+                            });
+                            lista.style.display = 'block';
+                        } else {
+                            lista.style.display = 'none';
+                        }
+                    });
+            }, 500);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.id !== 'buscadorDireccion') {
+                document.getElementById('listaResultados').style.display = 'none';
+            }
+        });
+
+        function seleccionarUbicacion(lat, lng, nombreCompleto) {
+            var latFloat = parseFloat(lat);
+            var lngFloat = parseFloat(lng);
+            
+            map.setView([latFloat, lngFloat], 16);
+            agregarOMoverMarcador(latFloat, lngFloat);
+            
+            document.getElementById('buscadorDireccion').value = nombreCompleto;
+            document.getElementById('listaResultados').style.display = 'none';
+            document.getElementById('nuevaCalle').value = nombreCompleto.split(',')[0];
+            
+            actualizarCamposUbicacion(latFloat, lngFloat);
+            calcularCostoEnvio(0, latFloat, lngFloat);
+            
+            document.getElementById('selectDireccion').value = "0";
+            document.getElementById('nuevaDireccionCampos').style.display = 'block';
+        }
+
+        function obtenerNombreCalle(lat, lng) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        document.getElementById('nuevaCalle').value = data.address.road || data.display_name.split(',')[0];
+                        if (data.address.city || data.address.town) {
+                            document.getElementById('nuevaCiudad').value = data.address.city || data.address.town;
+                        }
+                    }
+                })
+                .catch(err => console.log(err));
+        }
+
+        function calcularCostoEnvio(dirId, lat, lon) {
+            var url = '/ClienteCarrito/CalcularCostoEnvio?direccionId=' + dirId;
+            if (lat !== undefined && lon !== undefined) {
+                url += '&lat=' + lat + '&lon=' + lon;
+            }
+            
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.exito) {
+                        actualizarResumenEnvio(data.costo, data.distancia, data.tiempo);
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        function actualizarResumenEnvio(costo, distancia, tiempo) {
+            var costoUI = document.getElementById('costoEnvioUI');
+            costoUI.innerText = '$' + costo.toFixed(2);
+            costoUI.classList.remove('text-danger');
+            costoUI.classList.add('text-success');
+            costoUI.style.fontSize = '';
+            costoUI.style.textAlign = '';
+            costoUI.style.maxWidth = '';
+            
+            if (distancia) {
+                document.getElementById('distanciaInfo').innerText = distancia.toFixed(1) + ' km';
+            } else {
+                document.getElementById('distanciaInfo').innerText = 'Tarifa base';
+            }
+
+            if (tiempo) {
+                document.getElementById('tiempoInfo').innerText = 'Tiempo aprox: ' + Math.ceil(tiempo) + ' min';
+            } else {
+                document.getElementById('tiempoInfo').innerText = '';
+            }
+
+            recalcularTotal();
+        }
+
+        function recalcularTotal() {
+            var sub = parseFloat(document.getElementById('subtotalValue').value.replace(',', '.'));
+            
+            var costoEnvioTexto = document.getElementById('costoEnvioUI').innerText.replace('$', '').replace(',', '.');
+            var costoEnvio = isNaN(parseFloat(costoEnvioTexto)) ? 1.50 : parseFloat(costoEnvioTexto);
+            
+            var descuento = parseFloat(document.getElementById('descuentoValue').value);
+            
+            var total = sub + costoEnvio - descuento;
+            if (total < 0) total = 0;
+            
+            document.getElementById('totalUI').innerText = '$' + total.toFixed(2);
+        }
+
+        function aplicarCupon() {
+            var codigo = document.getElementById('cuponInput').value;
+            var mensaje = document.getElementById('cuponMensaje');
+            var formInput = document.getElementById('cuponCodigoForm');
+            var descValue = document.getElementById('descuentoValue');
+            var descRow = document.getElementById('descuentoRow');
+            var descUI = document.getElementById('descuentoUI');
+
+            if (!codigo) {
+                mensaje.className = "form-text mt-2 text-danger";
+                mensaje.innerText = "Ingresa un código.";
+                mensaje.style.display = "block";
+                return;
+            }
+
+            // AJAX call
+            fetch('/ClienteCarrito/AplicarCupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({ codigo: codigo })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.exito) {
+                    mensaje.className = "form-text mt-2 text-success fw-bold";
+                    mensaje.innerText = data.mensaje;
+                    
+                    formInput.value = codigo;
+                    descValue.value = data.descuento;
+                    descUI.innerText = "-$" + parseFloat(data.descuento).toFixed(2);
+                    document.getElementById('codigoCuponAplicadoUI').innerText = codigo;
+                    descRow.style.setProperty("display", "flex", "important");
+                    
+                    recalcularTotal();
+                } else {
+                    mensaje.className = "form-text mt-2 text-danger fw-bold";
+                    mensaje.innerText = data.mensaje;
+                    
+                    formInput.value = "";
+                    descValue.value = 0;
+                    descRow.style.setProperty("display", "none", "important");
+                    
+                    recalcularTotal();
+                }
+                mensaje.style.display = "block";
+            })
+            .catch(err => {
+                mensaje.className = "form-text mt-2 text-danger";
+                mensaje.innerText = "Error al validar el cupón.";
+                mensaje.style.display = "block";
+            });
+        }
+
+        function togglePaymentSections() {
+            var inputActivo = document.querySelector('input[name="metodoPago"]:checked');
+            var metodo = inputActivo ? inputActivo.value : 'Efectivo';
+            
+            var seccionTarjeta = document.getElementById('seccionTarjeta');
+            var seccionTransferencia = document.getElementById('seccionTransferencia');
+            
+            seccionTarjeta.style.display = 'none';
+            seccionTransferencia.style.display = 'none';
+            
+            document.getElementById('numeroTarjeta').removeAttribute('required');
+            document.getElementById('expiracion').removeAttribute('required');
+            document.getElementById('cvv').removeAttribute('required');
+            document.getElementById('comprobante').removeAttribute('required');
+
+            if (metodo === 'Tarjeta') {
+                seccionTarjeta.style.display = 'block';
+                document.getElementById('numeroTarjeta').setAttribute('required', 'required');
+                document.getElementById('expiracion').setAttribute('required', 'required');
+                document.getElementById('cvv').setAttribute('required', 'required');
+            } else if (metodo === 'Transferencia') {
+                seccionTransferencia.style.display = 'block';
+                document.getElementById('comprobante').setAttribute('required', 'required');
+            }
+        }
+
+        // Lógicas de tarjeta (Mantenidas del original)
+        function formatearTarjeta(input) {
+            let value = input.value.replace(/\D/g, '');
+            let tipo = '';
+            let maxLength = 16;
+
+            if (value.startsWith('34') || value.startsWith('37')) { tipo = 'Amex'; maxLength = 15; }
+            else if (value.startsWith('4')) { tipo = 'Visa'; }
+            else if (value.startsWith('5')) { tipo = 'Mastercard'; }
+            else if (value.startsWith('6')) { tipo = 'Discover'; }
+
+            document.getElementById('tarjetaTipo').innerText = tipo;
+            value = value.substring(0, maxLength);
+
+            let formatted = '';
+            if (tipo === 'Amex') {
+                if (value.length > 4) {
+                    formatted += value.substring(0, 4) + ' ';
+                    if (value.length > 10) {
+                        formatted += value.substring(4, 10) + ' ' + value.substring(10, 15);
+                    } else {
+                        formatted += value.substring(4, 10);
+                    }
+                } else { formatted = value; }
+            } else {
+                formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            }
+            input.value = formatted;
+        }
+
+        function formatearExpiracion(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            input.value = value;
+        }
+
+        function luhnCheck(num) {
+            let arr = (num + '').split('').reverse().map(x => parseInt(x));
+            let sum = arr.reduce((acc, val, i) => i % 2 !== 0 ? acc + (val * 2 > 9 ? val * 2 - 9 : val * 2) : acc + val, 0);
+            return sum % 10 === 0;
+        }
+
+        function validarFormulario(e) {
+            // Validar que haya dirección si se elige el mapa
+            var dirId = document.getElementById('selectDireccion').value;
+            if (dirId === "0") {
+                var lat = document.getElementById('nuevaLatitud').value;
+                if (!lat) {
+                    alert("Por favor, selecciona una ubicación en el mapa.");
+                    return false;
+                }
+            }
+
+            var inputActivo = document.querySelector('input[name="metodoPago"]:checked');
+            var metodo = inputActivo ? inputActivo.value : 'Efectivo';
+            
+            if (metodo === 'Tarjeta') {
+                var num = document.getElementById('numeroTarjeta').value.replace(/\D/g, '');
+                var exp = document.getElementById('expiracion').value;
+                var cvv = document.getElementById('cvv').value;
+                var err = document.getElementById('tarjetaError');
+                err.style.display = 'none';
+
+                if (num.length < 15 || !luhnCheck(num)) {
+                    err.innerText = "Número de tarjeta inválido (Luhn).";
+                    err.style.display = 'block';
+                    return false;
+                }
+
+                var parts = exp.split('/');
+                if (parts.length !== 2) {
+                    err.innerText = "Expiración inválida. Usa MM/AA.";
+                    err.style.display = 'block';
+                    return false;
+                }
+                
+                var m = parseInt(parts[0], 10);
+                var y = parseInt("20" + parts[1], 10);
+                if (m < 1 || m > 12) {
+                    err.innerText = "Mes de expiración inválido.";
+                    err.style.display = 'block';
+                    return false;
+                }
+
+                var now = new Date();
+                var expDate = new Date(y, m - 1);
+                if (expDate < new Date(now.getFullYear(), now.getMonth())) {
+                    err.innerText = "La tarjeta ha expirado.";
+                    err.style.display = 'block';
+                    return false;
+                }
+
+                if (cvv.length < 3) {
+                    err.innerText = "CVV inválido.";
+                    err.style.display = 'block';
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+}
+
+=== Delivery.MVC/Views\ClienteCarrito\Index.cshtml ===
+@model Delivery.Modelos.DTOs.CarritoSesionDto
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["MiCarrito"];
+}
+
+<h1>@Localizer["MiCarrito"]</h1>
+<hr />
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Exito"] != null)
+{
+    <div class="alert alert-success">@TempData["Exito"]</div>
+}
+
+@if (Model == null || !Model.Items.Any())
+{
+    <div class="alert alert-info">
+        <h4>@Localizer["CarritoVacio"]</h4>
+        <p>@Localizer["CarritoVacioDesc"]</p>
+        <a asp-controller="Home" asp-action="Index">@Localizer["VerRestaurantesBtn"]</a>
+    </div>
+}
+else
+{
+    <p><strong>@Localizer["RestauranteTag"]:</strong> @Model.NombreRestaurante</p>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>@Localizer["ProductoCol"]</th>
+                <th>@Localizer["PrecioUnitarioCol"]</th>
+                <th>@Localizer["CantidadCol"]</th>
+                <th>@Localizer["SubtotalCol"]</th>
+                <th>@Localizer["AccionCol"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            @if (!string.IsNullOrEmpty(item.ImagenUrl))
+                            {
+                                <img src="@item.ImagenUrl" alt="@item.NombreProducto" class="rounded me-2" style="width: 50px; height: 50px; object-fit: cover;" />
+                            }
+                            <span>@item.NombreProducto</span>
+                        </div>
+                    </td>
+                    <td class="align-middle">$@item.PrecioUnitario.ToString("0.00")</td>
+                    <td class="align-middle">@item.Cantidad</td>
+                    <td class="align-middle">$@item.Subtotal.ToString("0.00")</td>
+                    <td class="align-middle">
+                        <form asp-action="Quitar" method="post" style="display:inline;">
+                            <input type="hidden" name="productoId" value="@item.ProductoId" />
+                            <button type="submit">@Localizer["QuitarBtn"]</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3"><strong>@Localizer["TotalCol"]</strong></td>
+                <td colspan="2"><strong>$@Model.Subtotal.ToString("0.00")</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <form asp-action="Vaciar" method="post" style="display:inline;">
+        <button type="submit">@Localizer["VaciarCarritoBtn"]</button>
+    </form>
+
+    <hr />
+
+    @if (ViewBag.SinDireccion == true)
+    {
+        <div class="alert alert-warning">
+            <strong>@Localizer["SinDireccionAlert"]</strong><br />
+            @Localizer["SinDireccionDesc"]
+        </div>
+        <a asp-controller="ClienteDirecciones" asp-action="Create">@Localizer["AgregarDireccionBtn"]</a>
+    }
+    else
+    {
+        <a asp-action="Checkout" class="btn btn-primary btn-lg">@Localizer["ProcederPagoBtn"]</a>
+    }
+}
+
+=== Delivery.MVC/Views\ClienteCupones\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.CuponUsuario>
+@{
+    ViewData["Title"] = "Mis Cupones";
+}
+
+<div class="container mt-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h2 class="mb-0"><i class="bi bi-ticket-perforated text-success"></i> Mis Cupones</h2>
+            <p class="text-muted">Gestiona tus cupones de descuento y códigos promocionales.</p>
+        </div>
+        <div class="col-md-6 text-end">
+            <!-- Botón que abre el Modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarCuponModal">
+                ➕ Agregar Cupón
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Agregar Cupón -->
+    <div class="modal fade" id="agregarCuponModal" tabindex="-1" aria-labelledby="agregarCuponModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Registrar" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="agregarCuponModalLabel">Registrar Nuevo Cupón</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="codigo" class="form-label">Código del cupón</label>
+                            <input type="text" id="codigo" name="codigo" class="form-control" placeholder="Ingresar código" style="text-transform:uppercase" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <hr />
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+            <h5>Aún no tienes cupones registrados.</h5>
+            <p>Ingresa un código en la parte superior para agregarlo a tu cuenta.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var cuponUsuario in Model.OrderByDescending(c => c.FechaAsignacion))
+            {
+                var cupon = cuponUsuario.Cupon;
+                if (cupon == null) continue;
+
+                var isUsed = cuponUsuario.Usado;
+                var isExpired = System.DateTime.UtcNow > cupon.FechaFin;
+                var isActive = cupon.Activo;
+                
+                string cardBorder = "border-success";
+                string headerBg = "bg-success";
+                string statusText = "DISPONIBLE";
+                string statusBadge = "bg-success";
+
+                if (isUsed)
+                {
+                    cardBorder = "border-secondary";
+                    headerBg = "bg-secondary";
+                    statusText = "UTILIZADO";
+                    statusBadge = "bg-secondary";
+                }
+                else if (!isActive || isExpired)
+                {
+                    cardBorder = "border-danger";
+                    headerBg = "bg-danger";
+                    statusText = "VENCIDO";
+                    statusBadge = "bg-danger";
+                }
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm @cardBorder">
+                        <div class="card-header @headerBg text-white d-flex justify-content-between align-items-center">
+                            <span class="fw-bold fs-5">@cupon.Codigo</span>
+                            <span class="badge @statusBadge border border-white">@statusText</span>
+                        </div>
+                        <div class="card-body text-center">
+                            <h3 class="mb-3" style="color: var(--bs-@cardBorder.Replace("border-",""))">
+                                @if(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje)
+                                {
+                                    <span>-@cupon.ValorDescuento.ToString("0.##")% OFF</span>
+                                }
+                                else
+                                {
+                                    <span>-$@cupon.ValorDescuento.ToString("0.00")</span>
+                                }
+                            </h3>
+                            <ul class="list-unstyled small text-muted text-start mb-0">
+                                @if(!string.IsNullOrEmpty(cupon.Descripcion))
+                                {
+                                    <li class="mb-2"><strong>Descripción:</strong> @cupon.Descripcion</li>
+                                }
+                                @if(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje && cupon.DescuentoMaximo.HasValue)
+                                {
+                                    <li><i class="bi bi-shield-check"></i> <strong>Tope máximo:</strong> $@cupon.DescuentoMaximo.Value.ToString("0.00")</li>
+                                }
+                                <li><i class="bi bi-clock"></i> <strong>Vence:</strong> @cupon.FechaFin.ToLocalTime().ToString("dd/MM/yyyy")</li>
+                                @if(statusText == "DISPONIBLE")
+                                {
+                                    var diasRestantes = (cupon.FechaFin - System.DateTime.UtcNow).Days;
+                                    <li><i class="bi bi-hourglass-split"></i> <strong>Días restantes:</strong> @(diasRestantes > 0 ? diasRestantes.ToString() : "Expira hoy")</li>
+                                }
+                                <li><i class="bi bi-calendar-check"></i> <strong>Registrado:</strong> @cuponUsuario.FechaAsignacion.ToLocalTime().ToString("dd/MM/yyyy")</li>
+                                @if(cupon.PedidoMinimo.HasValue)
+                                {
+                                    <li><i class="bi bi-bag-check"></i> <strong>Compra mínima:</strong> $@cupon.PedidoMinimo.Value.ToString("0.00")</li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-light border-top-0 d-grid">
+                            @if(statusText == "DISPONIBLE")
+                            {
+                                <button class="btn btn-outline-success btn-sm" onclick="navigator.clipboard.writeText('@cupon.Codigo'); alert('¡Código copiado!');">
+                                    <i class="bi bi-clipboard"></i> Copiar Código
+                                </button>
+                            }
+                            else if(statusText == "UTILIZADO")
+                            {
+                                <small class="text-center text-muted">Utilizado el @(cuponUsuario.FechaUso?.ToLocalTime().ToString("dd/MM/yyyy") ?? "N/A")</small>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+=== Delivery.MVC/Views\ClienteDirecciones\Create.cshtml ===
+@model Delivery.Modelos.Entidades.Direccion
+@{ ViewData["Title"] = "Nueva Dirección"; }
+
+<h1 class="my-4">Nueva Dirección</h1>
+<p class="text-muted">Busca en el mapa o haz clic para ubicar tu dirección exacta.</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-5">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label class="form-label">Buscar Lugar</label>
+                <div class="input-group">
+                    <input type="text" id="buscador-mapa" class="form-control" placeholder="Ej: Ibarra, Parque Ciudad Blanca..." />
+                    <button class="btn btn-primary" type="button" id="btn-buscar">Buscar</button>
+                </div>
+                <small class="text-muted">Busca tu barrio o calle y haz clic en el mapa.</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Alias" class="form-label">Alias (Casa, Trabajo...)</label>
+                <input asp-for="Alias" class="form-control" placeholder="Ej: Casa" />
+                <span asp-validation-for="Alias" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Calle" class="form-label">Calle Principal</label>
+                <input asp-for="Calle" id="calle-input" class="form-control" placeholder="Ej: Av. 17 de Julio" required />
+                <span asp-validation-for="Calle" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Numero" class="form-label">Número</label>
+                <input asp-for="Numero" class="form-control" placeholder="Ej: 5-32" />
+                <span asp-validation-for="Numero" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Ciudad" class="form-label">Ciudad</label>
+                <input asp-for="Ciudad" id="ciudad-input" class="form-control" placeholder="Ej: Ibarra" required />
+                <span asp-validation-for="Ciudad" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Referencia" class="form-label">Referencia</label>
+                <input asp-for="Referencia" class="form-control" placeholder="Ej: Frente al parque central" />
+                <span asp-validation-for="Referencia" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Latitud" class="form-label">Latitud</label>
+                    <input asp-for="Latitud" id="lat-input" class="form-control bg-light" readonly required />
+                    <span asp-validation-for="Latitud" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Longitud" class="form-label">Longitud</label>
+                    <input asp-for="Longitud" id="lng-input" class="form-control bg-light" readonly required />
+                    <span asp-validation-for="Longitud" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-4 form-check">
+                <input asp-for="EsPrincipal" class="form-check-input" type="checkbox" />
+                <label asp-for="EsPrincipal" class="form-check-label">¿Es mi dirección principal?</label>
+            </div>
+
+            <button type="submit" class="btn btn-success mb-3">Guardar Dirección</button>
+            <a asp-action="Index" class="btn btn-outline-secondary mb-3">Cancelar</a>
+        </form>
+    </div>
+    
+    <div class="col-md-7">
+        <div id="map" style="height: 600px; width: 100%; border-radius: 8px; border: 1px solid #ccc;"></div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Inicializar mapa centrado en Ecuador
+        var map = L.map('map').setView([-1.8312, -78.1834], 6);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var marker;
+
+        // Función para colocar marcador y extraer datos
+        function onMapClick(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+            
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+
+            document.getElementById('lat-input').value = lat.toFixed(8);
+            document.getElementById('lng-input').value = lng.toFixed(8);
+
+            // Reverse Geocoding (Nominatim API)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.address) {
+                        var address = data.address;
+                        var calle = address.road || address.pedestrian || address.suburb || "";
+                        var ciudad = address.city || address.town || address.village || address.county || "";
+                        
+                        if(calle) document.getElementById('calle-input').value = calle;
+                        if(ciudad) document.getElementById('ciudad-input').value = ciudad;
+                    }
+                })
+                .catch(err => console.log(err));
+        }
+
+        map.on('click', onMapClick);
+
+        // Buscar lugares
+        document.getElementById('btn-buscar').addEventListener('click', function() {
+            var query = document.getElementById('buscador-mapa').value;
+            if(!query) return;
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.length > 0) {
+                        var result = data[0];
+                        var lat = parseFloat(result.lat);
+                        var lon = parseFloat(result.lon);
+                        
+                        map.setView([lat, lon], 16);
+                        
+                        if (marker) {
+                            marker.setLatLng([lat, lon]);
+                        } else {
+                            marker = L.marker([lat, lon]).addTo(map);
+                        }
+
+                        document.getElementById('lat-input').value = lat.toFixed(8);
+                        document.getElementById('lng-input').value = lon.toFixed(8);
+                        
+                        // Parse name
+                        var partes = result.display_name.split(',');
+                        if(partes.length >= 1) document.getElementById('calle-input').value = partes[0].trim();
+                        if(partes.length >= 2) document.getElementById('ciudad-input').value = partes[1].trim();
+                    } else {
+                        alert('Lugar no encontrado. Intenta con otros términos.');
+                    }
+                });
+        });
+
+        // Intentar obtener la ubicación actual del usuario
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                map.setView([lat, lng], 15);
+            });
+        }
+    </script>
+}
+
+=== Delivery.MVC/Views\ClienteDirecciones\Delete.cshtml ===
+@model Delivery.Modelos.Entidades.Direccion
+@{ ViewData["Title"] = "Eliminar Dirección"; }
+
+<h1>Eliminar Dirección</h1>
+<p>¿Estás seguro de que deseas eliminar esta dirección?</p>
+<hr />
+
+<dl>
+    <dt>Alias</dt>
+    <dd>@Model.Alias</dd>
+
+    <dt>Dirección</dt>
+    <dd>@Model.Calle @Model.Numero</dd>
+
+    <dt>Ciudad</dt>
+    <dd>@Model.Ciudad</dd>
+
+    <dt>Referencia</dt>
+    <dd>@Model.Referencia</dd>
+
+    <dt>Dirección Principal</dt>
+    <dd>@(Model.EsPrincipal ? "Sí" : "No")</dd>
+</dl>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit">Confirmar Eliminación</button>
+    <a asp-action="Index">Cancelar</a>
+</form>
+
+=== Delivery.MVC/Views\ClienteDirecciones\Details.cshtml ===
+@model Delivery.Modelos.Entidades.Direccion
+@{ ViewData["Title"] = "Detalle de Dirección"; }
+
+<h1>Detalle de Dirección</h1>
+<hr />
+
+<dl>
+    <dt>Alias</dt>
+    <dd>@Model.Alias</dd>
+
+    <dt>Calle</dt>
+    <dd>@Model.Calle @Model.Numero</dd>
+
+    <dt>Ciudad</dt>
+    <dd>@Model.Ciudad</dd>
+
+    <dt>Referencia</dt>
+    <dd>@(Model.Referencia ?? "—")</dd>
+
+    <dt>Dirección Principal</dt>
+    <dd>@(Model.EsPrincipal ? "Sí" : "No")</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> |
+<a asp-action="Index">Volver a mis direcciones</a>
+
+=== Delivery.MVC/Views\ClienteDirecciones\Edit.cshtml ===
+@model Delivery.Modelos.Entidades.Direccion
+@{ ViewData["Title"] = "Editar Dirección"; }
+
+<h1 class="my-4">Editar Dirección</h1>
+<p class="text-muted">Busca en el mapa o haz clic para actualizar tu dirección exacta.</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-5">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UsuarioId" />
+
+            <div class="mb-3">
+                <label class="form-label">Buscar Lugar</label>
+                <div class="input-group">
+                    <input type="text" id="buscador-mapa" class="form-control" placeholder="Ej: Ibarra, Parque Ciudad Blanca..." />
+                    <button class="btn btn-primary" type="button" id="btn-buscar">Buscar</button>
+                </div>
+                <small class="text-muted">Busca tu barrio o calle y haz clic en el mapa.</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Alias" class="form-label">Alias (Casa, Trabajo...)</label>
+                <input asp-for="Alias" class="form-control" placeholder="Ej: Casa" />
+                <span asp-validation-for="Alias" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Calle" class="form-label">Calle Principal</label>
+                <input asp-for="Calle" id="calle-input" class="form-control" placeholder="Ej: Av. 17 de Julio" required />
+                <span asp-validation-for="Calle" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Numero" class="form-label">Número</label>
+                <input asp-for="Numero" class="form-control" placeholder="Ej: 5-32" />
+                <span asp-validation-for="Numero" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Ciudad" class="form-label">Ciudad</label>
+                <input asp-for="Ciudad" id="ciudad-input" class="form-control" placeholder="Ej: Ibarra" required />
+                <span asp-validation-for="Ciudad" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Referencia" class="form-label">Referencia</label>
+                <input asp-for="Referencia" class="form-control" placeholder="Ej: Frente al parque central" />
+                <span asp-validation-for="Referencia" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Latitud" class="form-label">Latitud</label>
+                    <input asp-for="Latitud" id="lat-input" class="form-control bg-light" readonly required />
+                    <span asp-validation-for="Latitud" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Longitud" class="form-label">Longitud</label>
+                    <input asp-for="Longitud" id="lng-input" class="form-control bg-light" readonly required />
+                    <span asp-validation-for="Longitud" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-4 form-check">
+                <input asp-for="EsPrincipal" class="form-check-input" type="checkbox" />
+                <label asp-for="EsPrincipal" class="form-check-label">¿Es mi dirección principal?</label>
+            </div>
+
+            <button type="submit" class="btn btn-success mb-3">Actualizar Dirección</button>
+            <a asp-action="Index" class="btn btn-outline-secondary mb-3">Cancelar</a>
+        </form>
+    </div>
+    
+    <div class="col-md-7">
+        <div id="map" style="height: 600px; width: 100%; border-radius: 8px; border: 1px solid #ccc;"></div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        var initialLat = document.getElementById('lat-input').value;
+        var initialLng = document.getElementById('lng-input').value;
+
+        // Si ya hay lat/lng guardadas, usarlas. Si no, centrar en Ecuador
+        var centerLat = initialLat && !isNaN(parseFloat(initialLat)) ? parseFloat(initialLat) : -1.8312;
+        var centerLng = initialLng && !isNaN(parseFloat(initialLng)) ? parseFloat(initialLng) : -78.1834;
+        var zoomLevel = initialLat && !isNaN(parseFloat(initialLat)) ? 15 : 6;
+
+        var map = L.map('map').setView([centerLat, centerLng], zoomLevel);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var marker;
+        
+        if (initialLat && initialLng && !isNaN(parseFloat(initialLat))) {
+            marker = L.marker([centerLat, centerLng]).addTo(map);
+        }
+
+        // Función para colocar marcador y extraer datos
+        function onMapClick(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+            
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+
+            document.getElementById('lat-input').value = lat.toFixed(8);
+            document.getElementById('lng-input').value = lng.toFixed(8);
+
+            // Reverse Geocoding
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.address) {
+                        var address = data.address;
+                        var calle = address.road || address.pedestrian || address.suburb || "";
+                        var ciudad = address.city || address.town || address.village || address.county || "";
+                        
+                        if(calle) document.getElementById('calle-input').value = calle;
+                        if(ciudad) document.getElementById('ciudad-input').value = ciudad;
+                    }
+                })
+                .catch(err => console.log(err));
+        }
+
+        map.on('click', onMapClick);
+
+        // Buscar lugares
+        document.getElementById('btn-buscar').addEventListener('click', function() {
+            var query = document.getElementById('buscador-mapa').value;
+            if(!query) return;
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.length > 0) {
+                        var result = data[0];
+                        var lat = parseFloat(result.lat);
+                        var lon = parseFloat(result.lon);
+                        
+                        map.setView([lat, lon], 16);
+                        
+                        if (marker) {
+                            marker.setLatLng([lat, lon]);
+                        } else {
+                            marker = L.marker([lat, lon]).addTo(map);
+                        }
+
+                        document.getElementById('lat-input').value = lat.toFixed(8);
+                        document.getElementById('lng-input').value = lon.toFixed(8);
+                        
+                        var partes = result.display_name.split(',');
+                        if(partes.length >= 1) document.getElementById('calle-input').value = partes[0].trim();
+                        if(partes.length >= 2) document.getElementById('ciudad-input').value = partes[1].trim();
+                    } else {
+                        alert('Lugar no encontrado. Intenta con otros términos.');
+                    }
+                });
+        });
+    </script>
+}
+
+=== Delivery.MVC/Views\ClienteDirecciones\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Direccion>
+@{ ViewData["Title"] = "Mis Direcciones"; }
+
+<h1>Mis Direcciones</h1>
+<p><a asp-action="Create">Agregar Nueva Dirección</a></p>
+<hr />
+
+@if (!Model.Any())
+{
+    <p>No tienes direcciones registradas. <a asp-action="Create">Agrega tu primera dirección</a>.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Alias</th>
+                <th>Dirección</th>
+                <th>Ciudad</th>
+                <th>Principal</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Alias</td>
+                    <td>@item.Calle @item.Numero</td>
+                    <td>@item.Ciudad</td>
+                    <td>@(item.EsPrincipal ? "Sí" : "No")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+=== Delivery.MVC/Views\ClienteFavoritos\Delete.cshtml ===
+@model Delivery.Modelos.Entidades.Favorito
+@{ ViewData["Title"] = "Eliminar Favorito"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaAgregado)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaAgregado)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+</dl>
+<form asp-action="Delete">
+<input type="hidden" asp-for="RestauranteId" name="id" />
+<input type="submit" value="Eliminar" class="btn btn-danger" />
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>
+
+=== Delivery.MVC/Views\ClienteFavoritos\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Favorito>
+@{ ViewData["Title"] = "ClienteFavoritos"; }
+<h1 class="my-4">ClienteFavoritos</h1>
+<p><a asp-action="Create" class="btn btn-primary">Crear Nuevo</a></p>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle">
+<thead class="table-dark"><tr>
+<th>UsuarioId</th>
+<th>RestauranteId</th>
+<th>FechaAgregado</th>
+<th>Usuario</th>
+<th>Restaurante</th>
+<th>Acciones</th></tr></thead><tbody>
+@foreach (var item in Model) {<tr>
+<td>@Html.DisplayFor(modelItem => item.UsuarioId)</td>
+<td>@Html.DisplayFor(modelItem => item.RestauranteId)</td>
+<td>@Html.DisplayFor(modelItem => item.FechaAgregado)</td>
+<td>@Html.DisplayFor(modelItem => item.RestauranteId)</td>
+<td>@Html.DisplayFor(modelItem => item.FechaAgregado)</td>
+<td>
+<a asp-action="Edit" asp-route-id="@item.RestauranteId" class="btn btn-sm btn-warning">Editar</a>
+<a asp-action="Details" asp-route-id="@item.RestauranteId" class="btn btn-sm btn-info text-white">Detalles</a>
+<a asp-action="Delete" asp-route-id="@item.RestauranteId" class="btn btn-sm btn-danger">Eliminar</a>
+</td></tr>}
+</tbody></table></div>
+
+=== Delivery.MVC/Views\ClienteHistorialPedidos\Calificar.cshtml ===
+@model Delivery.Modelos.Entidades.Resena
+@{
+    ViewData["Title"] = "Calificar Pedido";
+}
+
+<h1 class="my-4"><i class="bi bi-star-fill text-warning"></i> Calificar Pedido #@Model.PedidoId</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Calificar" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="RestauranteId" />
+            <input type="hidden" asp-for="PedidoId" />
+
+            <div class="mb-3">
+                <label asp-for="CalificacionRestaurante" class="form-label">Calificación (1 a 5 estrellas)</label>
+                <select asp-for="CalificacionRestaurante" class="form-select">
+                    <option value="5">5 - Excelente</option>
+                    <option value="4">4 - Muy Bueno</option>
+                    <option value="3">3 - Bueno</option>
+                    <option value="2">2 - Regular</option>
+                    <option value="1">1 - Malo</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ComentarioRestaurante" class="form-label">Comentario (Opcional)</label>
+                <textarea asp-for="ComentarioRestaurante" class="form-control" rows="3" placeholder="¿Qué te pareció la comida y el servicio?"></textarea>
+                <span asp-validation-for="ComentarioRestaurante" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-warning fw-bold">Enviar Calificación</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+=== Delivery.MVC/Views\ClienteHistorialPedidos\Details.cshtml ===
+@model Delivery.Modelos.Entidades.Pedido
+@{
+    ViewData["Title"] = "Detalle del Pedido";
+}
+
+<div class="container mt-4">
+    <h2>Detalles de tu Pedido #@Model.Id</h2>
+    <hr />
+
+    <div class="row">
+        <!-- Columna Izquierda: Info General -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Información General</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Restaurante</dt>
+                        <dd class="col-sm-8">@(Model.Restaurante?.Nombre ?? "N/A")</dd>
+
+                        <dt class="col-sm-4">Fecha Pedido</dt>
+                        <dd class="col-sm-8">@Model.FechaPedido.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-4">Estado</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-info text-dark">@Model.EstadoPedido.ToString()</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Dirección</dt>
+                        <dd class="col-sm-8">
+                            @(Model.DireccionEntrega?.Calle) @(Model.DireccionEntrega?.Numero)
+                            <br /><small class="text-muted">@(Model.DireccionEntrega?.Referencia)</small>
+                        </dd>
+                        
+                        <dt class="col-sm-4">Método de Pago</dt>
+                        <dd class="col-sm-8">@Model.TipoMetodoPago.ToString()</dd>
+
+                        @if (Model.Repartidor != null && Model.Repartidor.Usuario != null)
+                        {
+                            <dt class="col-sm-4">Repartidor</dt>
+                            <dd class="col-sm-8">
+                                @Model.Repartidor.Usuario.Nombre @Model.Repartidor.Usuario.Apellidos
+                                <br /><small>Licencia: @Model.Repartidor.LicenciaConducir</small>
+                            </dd>
+                        }
+                        
+                        @if (!string.IsNullOrWhiteSpace(Model.Notas))
+                        {
+                            <dt class="col-sm-4">Notas</dt>
+                            <dd class="col-sm-8">@Model.Notas</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Resumen Financiero y Productos -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Resumen del Pedido</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cant.</th>
+                                <th class="text-end">Precio</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Detalles != null && Model.Detalles.Any())
+                            {
+                                foreach (var detalle in Model.Detalles)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @if (detalle.Producto != null && !string.IsNullOrEmpty(detalle.Producto.ImagenUrl))
+                                                {
+                                                    <img src="@detalle.Producto.ImagenUrl" alt="Producto" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" />
+                                                }
+                                                <span>@(detalle.Producto?.Nombre ?? "Producto ID " + detalle.ProductoId)</span>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">@detalle.Cantidad</td>
+                                        <td class="text-end">$@detalle.PrecioUnitario.ToString("0.00")</td>
+                                        <td class="text-end fw-bold">$@detalle.Subtotal.ToString("0.00")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">No hay detalles de productos disponibles.</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="3" class="text-end">Subtotal Productos:</td>
+                                <td class="text-end">$@Model.Subtotal.ToString("0.00")</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-end">Costo Envío:</td>
+                                <td class="text-end">$@Model.CostoEnvio.ToString("0.00")</td>
+                            </tr>
+                            @if (Model.MontoDescuento > 0)
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-end text-danger">Descuento:</td>
+                                    <td class="text-end text-danger">-$@Model.MontoDescuento.ToString("0.00")</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td colspan="3" class="text-end fw-bold">TOTAL:</td>
+                                <td class="text-end fw-bold fs-5 text-primary">$@Model.Total.ToString("0.00")</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino || Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-info">
+                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Rastreo en Tiempo Real</h5>
+                        <span class="badge bg-light text-dark" id="eta-badge">Calculando...</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="map" style="height: 400px; width: 100%;"></div>
+                    </div>
+                    <div class="card-footer bg-light d-flex justify-content-between">
+                        <span><strong>Distancia Restante:</strong> <span id="distancia-lbl">-- km</span></span>
+                        <span><strong>Tiempo Estimado:</strong> <span id="tiempo-lbl">-- min</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="mt-3">
+        @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
+        {
+            <a asp-action="Calificar" asp-route-id="@Model.Id" class="btn btn-warning me-2">Calificar Pedido</a>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary">Volver al Historial</a>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino || Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger)
+    {
+        <script>
+            var map = L.map('map').setView([0.3517, -78.1222], 14);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            var restLat = @(Model.Restaurante?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+            var restLng = @(Model.Restaurante?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+            var cliLat = @(Model.DireccionEntrega?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+            var cliLng = @(Model.DireccionEntrega?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
+
+            var restMarker, cliMarker, repMarker, currentRouteLine;
+
+            if (restLat !== 0 && cliLat !== 0) {
+                restMarker = L.marker([restLat, restLng]).addTo(map).bindPopup('Restaurante');
+                cliMarker = L.marker([cliLat, cliLng]).addTo(map).bindPopup('Tu Dirección');
+            }
+
+            // Repartidor icon
+            var repIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png', // Moto icon
+                iconSize: [32, 32],
+                iconAnchor: [16, 32]
+            });
+
+            // SignalR for live tracking
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("https://localhost:7193/notificacionesHub")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("RecibirUbicacionRepartidor", function (lat, lng) {
+                if (repMarker) {
+                    repMarker.setLatLng([lat, lng]);
+                } else {
+                    repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Repartidor');
+                }
+
+                // Calcular ETA usando OSRM desde la moto hasta el cliente
+                fetch(`https://router.project-osrm.org/route/v1/driving/${lng},${lat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.routes && data.routes.length > 0) {
+                            var routeData = data.routes[0];
+                            var routeCoords = routeData.geometry.coordinates;
+                            var latLngs = routeCoords.map(coord => [coord[1], coord[0]]);
+
+                            if (currentRouteLine) {
+                                map.removeLayer(currentRouteLine);
+                            }
+
+                            currentRouteLine = L.polyline(latLngs, { color: 'green', weight: 4 }).addTo(map);
+                            
+                            // Update labels
+                            const distanciaKm = (routeData.distance / 1000).toFixed(1);
+                            const tiempoMin = Math.ceil(routeData.duration / 60);
+
+                            document.getElementById('distancia-lbl').innerText = distanciaKm + " km";
+                            document.getElementById('tiempo-lbl').innerText = tiempoMin + " min";
+                            document.getElementById('eta-badge').innerText = "Llega en ~" + tiempoMin + " min";
+                        }
+                    });
+            });
+
+            connection.on("EstadoPedidoCambiado", function (pedidoId, nuevoEstado) {
+                if (pedidoId == @Model.Id) {
+                    location.reload();
+                }
+            });
+
+            connection.start().then(function () {
+                console.log("Conectado a SignalR para tracking del pedido @Model.Id");
+                connection.invoke("UnirseGrupoPedido", "@Model.Id").catch(err => console.error(err));
+                connection.invoke("UnirseGrupoCliente", "@Model.UsuarioId").catch(err => console.error(err));
+            }).catch(err => console.error(err));
+        </script>
+    }
+}
+
+=== Delivery.MVC/Views\ClienteHistorialPedidos\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Pedido>
+@{
+    ViewData["Title"] = "Historial de Pedidos";
+}
+
+<h1 class="my-4"><i class="bi bi-clock-history"></i> Mi Historial de Pedidos</h1>
+<hr />
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Aún no tienes pedidos en tu historial.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var pedido in Model)
+        {
+            <div class="col">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <strong>Pedido #@pedido.Id</strong>
+                        <span class="badge bg-secondary">@pedido.EstadoPedido</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><i class="bi bi-calendar"></i> @pedido.FechaPedido.ToLocalTime().ToString("g")</p>
+                        <p class="mb-1"><i class="bi bi-shop"></i> @(pedido.Restaurante?.Nombre ?? "Restaurante Desconocido")</p>
+                        <p class="mb-3"><i class="bi bi-cash"></i> Total: $@pedido.Total.ToString("0.00")</p>
+                        
+                        <a asp-action="Details" asp-route-id="@pedido.Id" class="btn btn-sm btn-outline-primary">Ver Detalles</a>
+                        
+                        @if (pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
+                        {
+                            <a asp-action="Calificar" asp-route-id="@pedido.Id" class="btn btn-sm btn-warning ms-2"><i class="bi bi-star"></i> Calificar</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+=== Delivery.MVC/Views\ClientePerfil\CompletarPerfil.cshtml ===
+@model Delivery.Modelos.Entidades.Usuario
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="container mt-4">
+    <h2>Mi Perfil</h2>
+    <hr />
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">@TempData["Exito"]</div>
+    }
+
+    <form asp-action="CompletarPerfil" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+        <input type="hidden" name="id" value="@Model.Id" />
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Nombres</label>
+                <input type="text" name="nombre" class="form-control" value="@Model.Nombre" required />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Apellidos</label>
+                <input type="text" name="apellidos" class="form-control" value="@Model.Apellidos" required />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Teléfono</label>
+                <input type="text" name="telefono" class="form-control" value="@Model.Telefono" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Fecha de Nacimiento</label>
+                <input type="date" name="fechaNacimiento" class="form-control" value="@Model.FechaNacimiento?.ToString("yyyy-MM-dd")" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Información Adicional (Alergias, Preferencias, etc.)</label>
+            <textarea name="informacionAdicional" class="form-control" rows="3">@Model.InformacionAdicional</textarea>
+        </div>
+
+        <hr />
+        <h4>Foto de Perfil</h4>
+        <div class="row mt-3">
+            <div class="col-md-6 mb-3">
+                @if (!string.IsNullOrEmpty(Model.FotoPerfilUrl))
+                {
+                    <div class="mb-2">
+                        <img src="@Model.FotoPerfilUrl" alt="Foto de perfil" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" />
+                    </div>
+                }
+                <input type="file" name="fotoPerfil" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+                <small class="text-muted">Formatos: JPG, PNG, WEBP. Máx: 5MB.</small>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Volver al Inicio</a>
+        </div>
+    </form>
+</div>
+

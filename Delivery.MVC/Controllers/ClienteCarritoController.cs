@@ -342,9 +342,13 @@ namespace Delivery.MVC.Controllers
                     montoDescuento = cupon.DescuentoMaximo.Value;
                 }
             }
-            else
+            else if (cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.MontoFijo)
             {
                 montoDescuento = cupon.ValorDescuento;
+            }
+            else 
+            {
+                montoDescuento = cupon.ValorDescuento; // Fallback
             }
 
             if (montoDescuento > carrito.Subtotal) montoDescuento = carrito.Subtotal;
@@ -451,8 +455,14 @@ namespace Delivery.MVC.Controllers
                                 montoDescuento = cuponAplicado.DescuentoMaximo.Value;
                             }
                         }
-                        else
+                        else if (cuponAplicado.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.MontoFijo)
+                        {
                             montoDescuento = cuponAplicado.ValorDescuento;
+                        }
+                        else 
+                        {
+                            montoDescuento = cuponAplicado.ValorDescuento; // Fallback
+                        }
 
                         if (montoDescuento > carrito.Subtotal) montoDescuento = carrito.Subtotal;
 

@@ -1,0 +1,1283 @@
+=== Delivery.MVC/Views/Cupones\Create.cshtml ===
+@model Delivery.Modelos.Entidades.Cupon
+@{ ViewData["Title"] = "Crear Cupón"; }
+<h1 class="my-4">Crear Cupón Global</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Create">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="Codigo" class="form-label"></label>
+<input asp-for="Codigo" class="form-control" style="text-transform:uppercase" required />
+<span asp-validation-for="Codigo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Descripcion" class="form-label">Descripción</label>
+<input asp-for="Descripcion" class="form-control" placeholder="Ej. Aplica para compras en fin de semana" required />
+<span asp-validation-for="Descripcion" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TipoDescuento" class="form-label">Tipo de Descuento</label>
+<select asp-for="TipoDescuento" class="form-select">
+    <option value="Porcentaje">Porcentaje</option>
+    <option value="MontoFijo">Valor Fijo ($)</option>
+</select>
+<span asp-validation-for="TipoDescuento" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ValorDescuento" class="form-label">Valor (Ej. 10 para 10% o $10)</label>
+<input asp-for="ValorDescuento" class="form-control" type="number" step="0.01" required />
+<span asp-validation-for="ValorDescuento" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="DescuentoMaximo" class="form-label">Descuento Máximo ($) (Solo para Porcentaje)</label>
+<input asp-for="DescuentoMaximo" class="form-control" type="number" step="0.01" />
+<span asp-validation-for="DescuentoMaximo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="PedidoMinimo" class="form-label">Pedido Mínimo ($)</label>
+<input asp-for="PedidoMinimo" class="form-control" type="number" step="0.01" />
+<span asp-validation-for="PedidoMinimo" class="text-danger"></span></div>
+<div class="mb-3">
+<label class="form-label">Duración del Cupón</label>
+<select name="duracionDias" class="form-select" required>
+    <option value="7">7 Días</option>
+    <option value="14">14 Días</option>
+</select>
+</div>
+<div class="mb-3">
+<label asp-for="LimiteUsos" class="form-label">Límite de Usos (0 o vacío = Sin límite)</label>
+<input asp-for="LimiteUsos" class="form-control" type="number" />
+<span asp-validation-for="LimiteUsos" class="text-danger"></span></div>
+<div class="form-check mb-3">
+<input asp-for="Activo" class="form-check-input" type="checkbox" checked />
+<label asp-for="Activo" class="form-check-label">Cupón Activo</label>
+</div>
+<div class="form-check mb-3">
+<input asp-for="EsPublico" class="form-check-input" type="checkbox" checked />
+<label asp-for="EsPublico" class="form-check-label">Es Público (cualquiera puede registrarlo)</label>
+</div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">Crear Cupón</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Cupones\Delete.cshtml ===
+@model Delivery.Modelos.Entidades.Cupon
+@{ ViewData["Title"] = "Eliminar Cupon"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Codigo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Codigo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ValorDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ValorDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.PedidoMinimo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.PedidoMinimo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaInicio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaInicio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaFin)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaFin)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.LimiteUsos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.LimiteUsos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsosActuales)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsosActuales)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CuponesUsuarios)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CuponesUsuarios)</dd>
+</dl>
+<form asp-action="Delete">
+<input type="hidden" asp-for="Id" />
+<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>
+
+=== Delivery.MVC/Views/Cupones\Details.cshtml ===
+@model Delivery.Modelos.Entidades.Cupon
+@{ ViewData["Title"] = "Detalles Cupon"; }
+<h1 class="my-4">Detalles Cupon</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Codigo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Codigo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ValorDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ValorDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.PedidoMinimo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.PedidoMinimo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaInicio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaInicio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaFin)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaFin)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.LimiteUsos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.LimiteUsos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsosActuales)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsosActuales)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CuponesUsuarios)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CuponesUsuarios)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Cupones\Edit.cshtml ===
+@model Delivery.Modelos.Entidades.Cupon
+@{ ViewData["Title"] = "Editar Cupón"; }
+<h1 class="my-4">Editar Cupón Global</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Edit">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="Id" />
+<div class="mb-3">
+<label asp-for="Codigo" class="form-label"></label>
+<input asp-for="Codigo" class="form-control" style="text-transform:uppercase" required />
+<span asp-validation-for="Codigo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Descripcion" class="form-label">Descripción</label>
+<input asp-for="Descripcion" class="form-control" placeholder="Ej. Aplica para compras en fin de semana" required />
+<span asp-validation-for="Descripcion" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TipoDescuento" class="form-label">Tipo de Descuento</label>
+<select asp-for="TipoDescuento" class="form-select">
+    <option value="Porcentaje">Porcentaje</option>
+    <option value="MontoFijo">Valor Fijo ($)</option>
+</select>
+<span asp-validation-for="TipoDescuento" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ValorDescuento" class="form-label">Valor (Ej. 10 para 10% o $10)</label>
+<input asp-for="ValorDescuento" class="form-control" type="number" step="0.01" required />
+<span asp-validation-for="ValorDescuento" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="DescuentoMaximo" class="form-label">Descuento Máximo ($) (Solo para Porcentaje)</label>
+<input asp-for="DescuentoMaximo" class="form-control" type="number" step="0.01" />
+<span asp-validation-for="DescuentoMaximo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="PedidoMinimo" class="form-label">Pedido Mínimo ($)</label>
+<input asp-for="PedidoMinimo" class="form-control" type="number" step="0.01" />
+<span asp-validation-for="PedidoMinimo" class="text-danger"></span></div>
+
+<div class="alert alert-info">
+    El cupón fue creado el <strong>@Model.FechaInicio.ToString("dd/MM/yyyy")</strong> y vence el <strong>@Model.FechaFin.ToString("dd/MM/yyyy")</strong>.
+    Si deseas extender o reducir su duración desde HOY, selecciona una opción:
+</div>
+<div class="mb-3">
+<label class="form-label">Nueva Duración (Opcional)</label>
+<select name="duracionDias" class="form-select">
+    <option value="0">No cambiar fecha de vencimiento</option>
+    <option value="7">Extender a 7 Días desde hoy</option>
+    <option value="14">Extender a 14 Días desde hoy</option>
+</select>
+</div>
+
+<div class="mb-3">
+<label asp-for="LimiteUsos" class="form-label">Límite de Usos (0 o vacío = Sin límite)</label>
+<input asp-for="LimiteUsos" class="form-control" type="number" />
+<span asp-validation-for="LimiteUsos" class="text-danger"></span></div>
+<div class="form-check mb-3">
+<input asp-for="Activo" class="form-check-input" type="checkbox" />
+<label asp-for="Activo" class="form-check-label">Cupón Activo</label>
+</div>
+<div class="form-check mb-3">
+<input asp-for="EsPublico" class="form-check-input" type="checkbox" />
+<label asp-for="EsPublico" class="form-check-label">Es Público (cualquiera puede registrarlo)</label>
+</div>
+<div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar Cupón</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Cupones\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Cupon>
+@{ ViewData["Title"] = "Cupones"; }
+<h1 class="my-4">Cupones</h1>
+<p><a asp-action="Create" class="btn btn-primary">Crear Nuevo</a></p>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle">
+<thead class="table-dark"><tr>
+<th>Código</th>
+<th>Descripción</th>
+<th>Tipo/Valor</th>
+<th>Estado</th>
+<th>Vence</th>
+<th>Usos</th>
+<th>Público</th>
+<th>Acciones</th></tr></thead><tbody>
+@foreach (var item in Model) {<tr>
+<td><span class="badge bg-secondary">@item.Codigo</span></td>
+<td>@item.Descripcion</td>
+<td>@item.TipoDescuento: @(item.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje ? item.ValorDescuento + "%" + (item.DescuentoMaximo.HasValue ? $" (Max ${item.DescuentoMaximo})" : "") : "$" + item.ValorDescuento)</td>
+<td>
+    @if(item.Activo && System.DateTime.UtcNow <= item.FechaFin) {
+        <span class="badge bg-success">Activo</span>
+    } else if (!item.Activo) {
+        <span class="badge bg-danger">Inactivo</span>
+    } else {
+        <span class="badge bg-warning text-dark">Vencido</span>
+    }
+</td>
+<td>@item.FechaFin.ToString("dd/MM/yyyy")</td>
+<td>@item.UsosActuales / @(item.LimiteUsos?.ToString() ?? "∞")</td>
+<td>@(item.EsPublico ? "Sí" : "No")</td>
+<td>
+<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i> Editar</a>
+<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Eliminar</a>
+</td></tr>}
+</tbody></table></div>
+
+=== Delivery.MVC/Views/Pedidos\Delete.cshtml ===
+@model Delivery.Modelos.Entidades.Pedido
+@{ ViewData["Title"] = "Eliminar Pedido"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RepartidorId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RepartidorId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.DireccionEntregaId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.DireccionEntregaId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoPedido)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.EstadoPedido)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Subtotal)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Subtotal)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CostoEnvio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CostoEnvio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Total)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Total)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoMetodoPago)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoMetodoPago)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.MetodoPagoId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.MetodoPagoId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CuponId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CuponId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.MontoDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.MontoDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Notas)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Notas)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaPedido)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaPedido)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaEntregaEstimada)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaEntregaEstimada)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaEntregaReal)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaEntregaReal)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Repartidor)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Repartidor)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.DireccionEntrega)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.DireccionEntrega)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Detalles)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Detalles)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Pagos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Pagos)</dd>
+</dl>
+<form asp-action="Delete">
+<input type="hidden" asp-for="Id" />
+<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>
+
+=== Delivery.MVC/Views/Pedidos\Details.cshtml ===
+@model Delivery.Modelos.Entidades.Pedido
+@{ ViewData["Title"] = "Detalles Pedido"; }
+<h1 class="my-4">Detalles Pedido</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RepartidorId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RepartidorId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.DireccionEntregaId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.DireccionEntregaId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoPedido)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.EstadoPedido)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Subtotal)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Subtotal)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CostoEnvio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CostoEnvio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Total)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Total)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoMetodoPago)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoMetodoPago)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.MetodoPagoId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.MetodoPagoId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CuponId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CuponId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.MontoDescuento)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.MontoDescuento)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Notas)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Notas)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaPedido)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaPedido)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaEntregaEstimada)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaEntregaEstimada)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaEntregaReal)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaEntregaReal)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Repartidor)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Repartidor)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.DireccionEntrega)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.DireccionEntrega)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Detalles)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Detalles)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Pagos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Pagos)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Pedidos\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Pedido>
+@{ ViewData["Title"] = "Pedidos"; }
+<h1 class="my-4">Pedidos</h1>
+<p><a asp-action="Create" class="btn btn-primary">Crear Nuevo</a></p>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle">
+<thead class="table-dark"><tr>
+<th>Id</th>
+<th>UsuarioId</th>
+<th>RestauranteId</th>
+<th>RepartidorId</th>
+<th>DireccionEntregaId</th>
+<th>Acciones</th></tr></thead><tbody>
+@foreach (var item in Model) {<tr>
+<td>@Html.DisplayFor(modelItem => item.Id)</td>
+<td>@Html.DisplayFor(modelItem => item.UsuarioId)</td>
+<td>@Html.DisplayFor(modelItem => item.RestauranteId)</td>
+<td>@Html.DisplayFor(modelItem => item.RepartidorId)</td>
+<td>@Html.DisplayFor(modelItem => item.DireccionEntregaId)</td>
+<td>
+<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
+<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Detalles</a>
+<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
+</td></tr>}
+</tbody></table></div>
+
+=== Delivery.MVC/Views/Productos\Create.cshtml ===
+@model Delivery.Modelos.Entidades.Producto
+@{ ViewData["Title"] = "Crear Producto"; }
+<h1 class="my-4">Crear Producto</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Create">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="RestauranteId" class="form-label"></label>
+<select asp-for="RestauranteId" class="form-control" asp-items="ViewBag.RestauranteId"></select>
+<span asp-validation-for="RestauranteId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CategoriaId" class="form-label"></label>
+<select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.CategoriaId"></select>
+<span asp-validation-for="CategoriaId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Nombre" class="form-label"></label>
+<input asp-for="Nombre" class="form-control" />
+<span asp-validation-for="Nombre" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Descripcion" class="form-label"></label>
+<input asp-for="Descripcion" class="form-control" />
+<span asp-validation-for="Descripcion" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Precio" class="form-label"></label>
+<input asp-for="Precio" class="form-control" />
+<span asp-validation-for="Precio" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ImagenUrl" class="form-label"></label>
+<input asp-for="ImagenUrl" class="form-control" />
+<span asp-validation-for="ImagenUrl" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Disponible" class="form-label"></label>
+<input asp-for="Disponible" class="form-check-input" type="checkbox" />
+<span asp-validation-for="Disponible" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TiempoPreparacion" class="form-label"></label>
+<input asp-for="TiempoPreparacion" class="form-control" />
+<span asp-validation-for="TiempoPreparacion" class="text-danger"></span></div>
+
+
+
+
+<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Productos\Delete.cshtml ===
+@model Delivery.Modelos.Entidades.Producto
+@{ ViewData["Title"] = "Eliminar Producto"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CategoriaId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CategoriaId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Precio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Precio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ImagenUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ImagenUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Disponible)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Disponible)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TiempoPreparacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TiempoPreparacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Categoria)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Categoria)</dd>
+</dl>
+<form asp-action="Delete">
+<input type="hidden" asp-for="Id" />
+<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>
+
+=== Delivery.MVC/Views/Productos\Details.cshtml ===
+@model Delivery.Modelos.Entidades.Producto
+@{ ViewData["Title"] = "Detalles Producto"; }
+<h1 class="my-4">Detalles Producto</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CategoriaId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CategoriaId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Precio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Precio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ImagenUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ImagenUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Disponible)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Disponible)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TiempoPreparacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TiempoPreparacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Categoria)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Categoria)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Productos\Edit.cshtml ===
+@model Delivery.Modelos.Entidades.Producto
+@{ ViewData["Title"] = "Editar Producto"; }
+<h1 class="my-4">Editar Producto</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Edit">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="Id" />
+<div class="mb-3">
+<label asp-for="RestauranteId" class="form-label"></label>
+<select asp-for="RestauranteId" class="form-control" asp-items="ViewBag.RestauranteId"></select>
+<span asp-validation-for="RestauranteId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CategoriaId" class="form-label"></label>
+<select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.CategoriaId"></select>
+<span asp-validation-for="CategoriaId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Nombre" class="form-label"></label>
+<input asp-for="Nombre" class="form-control" />
+<span asp-validation-for="Nombre" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Descripcion" class="form-label"></label>
+<input asp-for="Descripcion" class="form-control" />
+<span asp-validation-for="Descripcion" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Precio" class="form-label"></label>
+<input asp-for="Precio" class="form-control" />
+<span asp-validation-for="Precio" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="ImagenUrl" class="form-label"></label>
+<input asp-for="ImagenUrl" class="form-control" />
+<span asp-validation-for="ImagenUrl" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Disponible" class="form-label"></label>
+<input asp-for="Disponible" class="form-check-input" type="checkbox" />
+<span asp-validation-for="Disponible" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TiempoPreparacion" class="form-label"></label>
+<input asp-for="TiempoPreparacion" class="form-control" />
+<span asp-validation-for="TiempoPreparacion" class="text-danger"></span></div>
+
+
+
+
+<div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Productos\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Producto>
+@{ ViewData["Title"] = "Productos"; }
+<h1 class="my-4">Productos</h1>
+<p><a asp-action="Create" class="btn btn-primary">Crear Nuevo</a></p>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle">
+<thead class="table-dark"><tr>
+<th>Id</th>
+<th>RestauranteId</th>
+<th>CategoriaId</th>
+<th>Nombre</th>
+<th>Descripcion</th>
+<th>Acciones</th></tr></thead><tbody>
+@foreach (var item in Model) {<tr>
+<td>@Html.DisplayFor(modelItem => item.Id)</td>
+<td>@Html.DisplayFor(modelItem => item.RestauranteId)</td>
+<td>@Html.DisplayFor(modelItem => item.CategoriaId)</td>
+<td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+<td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
+<td>
+<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
+<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Detalles</a>
+<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
+</td></tr>}
+</tbody></table></div>
+
+=== Delivery.MVC/Views/Repartidores\Create.cshtml ===
+@model Delivery.Modelos.Entidades.Repartidor
+@{ ViewData["Title"] = "Crear Repartidor"; }
+<h1 class="my-4">Crear Repartidor</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Create">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="UsuarioId" class="form-label"></label>
+<select asp-for="UsuarioId" class="form-control" asp-items="ViewBag.UsuarioId"></select>
+<span asp-validation-for="UsuarioId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="LicenciaConducir" class="form-label"></label>
+<input asp-for="LicenciaConducir" class="form-control" />
+<span asp-validation-for="LicenciaConducir" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FotoLicenciaUrl" class="form-label"></label>
+<input asp-for="FotoLicenciaUrl" class="form-control" />
+<span asp-validation-for="FotoLicenciaUrl" class="text-danger"></span></div>
+
+
+
+<div class="mb-3">
+<label asp-for="Estado" class="form-label"></label>
+<select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.EstadoRepartidorEnum>()"></select>
+<span asp-validation-for="Estado" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CalificacionPromedio" class="form-label"></label>
+<input asp-for="CalificacionPromedio" class="form-control" />
+<span asp-validation-for="CalificacionPromedio" class="text-danger"></span></div>
+
+
+
+
+
+<div class="mb-3">
+<label asp-for="UbicacionActual" class="form-label"></label>
+<input asp-for="UbicacionActual" class="form-control" />
+<span asp-validation-for="UbicacionActual" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="HistorialAsignaciones" class="form-label"></label>
+<input asp-for="HistorialAsignaciones" class="form-control" />
+<span asp-validation-for="HistorialAsignaciones" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Repartidores\Delete.cshtml ===
+@model Delivery.Modelos.Entidades.Repartidor
+@{ ViewData["Title"] = "Eliminar Repartidor"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.LicenciaConducir)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.LicenciaConducir)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FotoLicenciaUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FotoLicenciaUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoAprobacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.EstadoAprobacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.AprobadoPor)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.AprobadoPor)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaAprobacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaAprobacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Estado)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Estado)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CalificacionPromedio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CalificacionPromedio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioAprobador)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioAprobador)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Vehiculos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Vehiculos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UbicacionActual)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UbicacionActual)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.HistorialAsignaciones)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.HistorialAsignaciones)</dd>
+</dl>
+<form asp-action="Delete">
+<input type="hidden" asp-for="UsuarioId" />
+<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>
+
+=== Delivery.MVC/Views/Repartidores\Details.cshtml ===
+@model Delivery.Modelos.Entidades.Repartidor
+@{ ViewData["Title"] = "Detalles Repartidor"; }
+<h1 class="my-4">Detalles Repartidor</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.LicenciaConducir)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.LicenciaConducir)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FotoLicenciaUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FotoLicenciaUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoAprobacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.EstadoAprobacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.AprobadoPor)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.AprobadoPor)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaAprobacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaAprobacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Estado)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Estado)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CalificacionPromedio)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CalificacionPromedio)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioAprobador)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioAprobador)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Vehiculos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Vehiculos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UbicacionActual)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.UbicacionActual)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.HistorialAsignaciones)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.HistorialAsignaciones)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.UsuarioId" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Repartidores\Edit.cshtml ===
+@model Delivery.Modelos.Entidades.Repartidor
+@{ ViewData["Title"] = "Editar Repartidor"; }
+<h1 class="my-4">Editar Repartidor</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Edit">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="UsuarioId" />
+<div class="mb-3">
+<label asp-for="UsuarioId" class="form-label"></label>
+<select asp-for="UsuarioId" class="form-control" asp-items="ViewBag.UsuarioId"></select>
+<span asp-validation-for="UsuarioId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="LicenciaConducir" class="form-label"></label>
+<input asp-for="LicenciaConducir" class="form-control" />
+<span asp-validation-for="LicenciaConducir" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FotoLicenciaUrl" class="form-label"></label>
+<input asp-for="FotoLicenciaUrl" class="form-control" />
+<span asp-validation-for="FotoLicenciaUrl" class="text-danger"></span></div>
+
+
+
+<div class="mb-3">
+<label asp-for="Estado" class="form-label"></label>
+<select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.EstadoRepartidorEnum>()"></select>
+<span asp-validation-for="Estado" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="CalificacionPromedio" class="form-label"></label>
+<input asp-for="CalificacionPromedio" class="form-control" />
+<span asp-validation-for="CalificacionPromedio" class="text-danger"></span></div>
+
+
+
+
+
+<div class="mb-3">
+<label asp-for="UbicacionActual" class="form-label"></label>
+<input asp-for="UbicacionActual" class="form-control" />
+<span asp-validation-for="UbicacionActual" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="HistorialAsignaciones" class="form-label"></label>
+<input asp-for="HistorialAsignaciones" class="form-control" />
+<span asp-validation-for="HistorialAsignaciones" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Repartidores\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Repartidor>
+@{ ViewData["Title"] = "Repartidores"; }
+<h1 class="my-4">Repartidores</h1>
+<p><a asp-action="Create" class="btn btn-primary">Crear Nuevo</a></p>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle">
+<thead class="table-dark"><tr>
+<th>UsuarioId</th>
+<th>LicenciaConducir</th>
+<th>FotoLicenciaUrl</th>
+<th>EstadoAprobacion</th>
+<th>AprobadoPor</th>
+<th>Acciones</th></tr></thead><tbody>
+@foreach (var item in Model) {<tr>
+<td>@Html.DisplayFor(modelItem => item.UsuarioId)</td>
+<td>@Html.DisplayFor(modelItem => item.LicenciaConducir)</td>
+<td>@Html.DisplayFor(modelItem => item.FotoLicenciaUrl)</td>
+<td>@Html.DisplayFor(modelItem => item.EstadoAprobacion)</td>
+<td>@Html.DisplayFor(modelItem => item.AprobadoPor)</td>
+<td>
+<a asp-action="Edit" asp-route-id="@item.UsuarioId" class="btn btn-sm btn-warning">Editar</a>
+<a asp-action="Details" asp-route-id="@item.UsuarioId" class="btn btn-sm btn-info text-white">Detalles</a>
+<a asp-action="Delete" asp-route-id="@item.UsuarioId" class="btn btn-sm btn-danger">Eliminar</a>
+</td></tr>}
+</tbody></table></div>
+
+=== Delivery.MVC/Views/Restaurantes\Create.cshtml ===
+@model Delivery.Modelos.Entidades.Restaurante
+@{ ViewData["Title"] = "Crear Restaurante"; }
+<h1 class="my-4">Crear Restaurante</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Create">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="Nombre" class="form-label"></label>
+<input asp-for="Nombre" class="form-control" />
+<span asp-validation-for="Nombre" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Descripcion" class="form-label"></label>
+<input asp-for="Descripcion" class="form-control" />
+<span asp-validation-for="Descripcion" class="text-danger"></span></div>
+
+<div class="mb-3">
+<label asp-for="Calle" class="form-label"></label>
+<input asp-for="Calle" class="form-control" />
+<span asp-validation-for="Calle" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Ciudad" class="form-label"></label>
+<input asp-for="Ciudad" class="form-control" />
+<span asp-validation-for="Ciudad" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Latitud" class="form-label"></label>
+<input asp-for="Latitud" class="form-control" />
+<span asp-validation-for="Latitud" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Longitud" class="form-label"></label>
+<input asp-for="Longitud" class="form-control" />
+<span asp-validation-for="Longitud" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Telefono" class="form-label"></label>
+<input asp-for="Telefono" class="form-control" />
+<span asp-validation-for="Telefono" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Email" class="form-label"></label>
+<input asp-for="Email" class="form-control" />
+<span asp-validation-for="Email" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="LogoUrl" class="form-label"></label>
+<input asp-for="LogoUrl" class="form-control" />
+<span asp-validation-for="LogoUrl" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="HoraApertura" class="form-label"></label>
+<input asp-for="HoraApertura" class="form-control" />
+<span asp-validation-for="HoraApertura" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="HoraCierre" class="form-label"></label>
+<input asp-for="HoraCierre" class="form-control" />
+<span asp-validation-for="HoraCierre" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Estado" class="form-label"></label>
+<select asp-for="Estado" class="form-control" asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.EstadoRestauranteEnum>()"></select>
+<span asp-validation-for="Estado" class="text-danger"></span></div>
+
+<div class="mb-3">
+<label asp-for="Abierto" class="form-label"></label>
+<input asp-for="Abierto" class="form-check-input" type="checkbox" />
+<span asp-validation-for="Abierto" class="text-danger"></span></div>
+
+
+
+
+
+
+<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Restaurantes\Delete.cshtml ===
+@model Delivery.Modelos.Entidades.Restaurante
+@{ ViewData["Title"] = "Eliminar Restaurante"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Categoria)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Categoria)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Calle)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Calle)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Ciudad)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Ciudad)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Latitud)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Latitud)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Longitud)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Longitud)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Telefono)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.LogoUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.LogoUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.HoraApertura)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.HoraApertura)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.HoraCierre)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.HoraCierre)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CostoEnvioBase)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CostoEnvioBase)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Estado)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Estado)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.AprobadoPor)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.AprobadoPor)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaAprobacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaAprobacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Abierto)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Abierto)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoPor)</dt>
+<dd class="col-sm-9">@(Model.UsuarioCreador?.Nombre + " " + Model.UsuarioCreador?.Apellidos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioAprobador)</dt>
+<dd class="col-sm-9">@(Model.UsuarioAprobador?.Nombre + " " + Model.UsuarioAprobador?.Apellidos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Categorias)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Categorias)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Productos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Productos)</dd>
+</dl>
+<form asp-action="Delete">
+<input type="hidden" asp-for="Id" />
+<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>
+
+=== Delivery.MVC/Views/Restaurantes\Details.cshtml ===
+@model Delivery.Modelos.Entidades.Restaurante
+@{ ViewData["Title"] = "Detalles Restaurante"; }
+<h1 class="my-4">Detalles Restaurante</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Categoria)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Categoria)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Calle)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Calle)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Ciudad)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Ciudad)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Latitud)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Latitud)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Longitud)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Longitud)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Telefono)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.LogoUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.LogoUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.HoraApertura)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.HoraApertura)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.HoraCierre)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.HoraCierre)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CostoEnvioBase)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CostoEnvioBase)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Estado)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Estado)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.AprobadoPor)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.AprobadoPor)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaAprobacion)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FechaAprobacion)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Abierto)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Abierto)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoPor)</dt>
+<dd class="col-sm-9">@(Model.UsuarioCreador?.Nombre + " " + Model.UsuarioCreador?.Apellidos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioAprobador)</dt>
+<dd class="col-sm-9">@(Model.UsuarioAprobador?.Nombre + " " + Model.UsuarioAprobador?.Apellidos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Categorias)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Categorias)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Productos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Productos)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Restaurantes\Edit.cshtml ===
+@model Delivery.Modelos.Entidades.Restaurante
+@{ ViewData["Title"] = "Editar Restaurante"; }
+<h1 class="my-4">Editar Restaurante</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Edit">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="Id" />
+<div class="mb-3">
+<label asp-for="Nombre" class="form-label"></label>
+<input asp-for="Nombre" class="form-control" />
+<span asp-validation-for="Nombre" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Descripcion" class="form-label"></label>
+<input asp-for="Descripcion" class="form-control" />
+<span asp-validation-for="Descripcion" class="text-danger"></span></div>
+
+<div class="mb-3">
+<label asp-for="Calle" class="form-label"></label>
+<input asp-for="Calle" class="form-control" />
+<span asp-validation-for="Calle" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Ciudad" class="form-label"></label>
+<input asp-for="Ciudad" class="form-control" />
+<span asp-validation-for="Ciudad" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Latitud" class="form-label"></label>
+<input asp-for="Latitud" class="form-control" />
+<span asp-validation-for="Latitud" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Longitud" class="form-label"></label>
+<input asp-for="Longitud" class="form-control" />
+<span asp-validation-for="Longitud" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Telefono" class="form-label"></label>
+<input asp-for="Telefono" class="form-control" />
+<span asp-validation-for="Telefono" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Email" class="form-label"></label>
+<input asp-for="Email" class="form-control" />
+<span asp-validation-for="Email" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="LogoUrl" class="form-label"></label>
+<input asp-for="LogoUrl" class="form-control" />
+<span asp-validation-for="LogoUrl" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="HoraApertura" class="form-label"></label>
+<input asp-for="HoraApertura" class="form-control" />
+<span asp-validation-for="HoraApertura" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="HoraCierre" class="form-label"></label>
+<input asp-for="HoraCierre" class="form-control" />
+<span asp-validation-for="HoraCierre" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Estado" class="form-label"></label>
+<select asp-for="Estado" class="form-control" asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.EstadoRestauranteEnum>()"></select>
+<span asp-validation-for="Estado" class="text-danger"></span></div>
+
+<div class="mb-3">
+<label asp-for="Abierto" class="form-label"></label>
+<input asp-for="Abierto" class="form-check-input" type="checkbox" />
+<span asp-validation-for="Abierto" class="text-danger"></span></div>
+
+
+
+
+
+
+<div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Restaurantes\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Restaurante>
+@{ ViewData["Title"] = "Restaurantes"; }
+<h1 class="my-4">Restaurantes</h1>
+<p><a asp-action="Create" class="btn btn-primary">Crear Nuevo</a></p>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle">
+<thead class="table-dark"><tr>
+<th>Id</th>
+<th>Nombre</th>
+<th>Descripcion</th>
+<th>Categoria</th>
+<th>Calle</th>
+<th>Creado por</th>
+<th>Acciones</th></tr></thead><tbody>
+@foreach (var item in Model) {<tr>
+<td>@Html.DisplayFor(modelItem => item.Id)</td>
+<td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+<td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
+<td>@Html.DisplayFor(modelItem => item.Categoria)</td>
+<td>@Html.DisplayFor(modelItem => item.Calle)</td>
+<td>@(item.UsuarioCreador?.Nombre + " " + item.UsuarioCreador?.Apellidos)</td>
+<td>
+<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
+<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Detalles</a>
+<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
+</td></tr>}
+</tbody></table></div>
+
+=== Delivery.MVC/Views/Usuarios\Create.cshtml ===
+@model Delivery.Modelos.Entidades.Usuario
+@{ ViewData["Title"] = "Crear Usuario"; }
+<h1 class="my-4">Crear Usuario</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Create">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3">
+<label asp-for="RolId" class="form-label"></label>
+<select asp-for="RolId" class="form-control" asp-items="ViewBag.RolId"></select>
+<span asp-validation-for="RolId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Nombre" class="form-label"></label>
+<input asp-for="Nombre" class="form-control" />
+<span asp-validation-for="Nombre" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Apellidos" class="form-label"></label>
+<input asp-for="Apellidos" class="form-control" />
+<span asp-validation-for="Apellidos" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Email" class="form-label"></label>
+<input asp-for="Email" class="form-control" />
+<span asp-validation-for="Email" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="PasswordHash" class="form-label"></label>
+<input asp-for="PasswordHash" class="form-control" />
+<span asp-validation-for="PasswordHash" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Telefono" class="form-label"></label>
+<input asp-for="Telefono" class="form-control" />
+<span asp-validation-for="Telefono" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TipoUsuario" class="form-label"></label>
+<input asp-for="TipoUsuario" class="form-control" />
+<span asp-validation-for="TipoUsuario" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Activo" class="form-label"></label>
+<input asp-for="Activo" class="form-check-input" type="checkbox" />
+<span asp-validation-for="Activo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FotoPerfilUrl" class="form-label"></label>
+<input asp-for="FotoPerfilUrl" class="form-control" />
+<span asp-validation-for="FotoPerfilUrl" class="text-danger"></span></div>
+
+
+<div class="mb-3">
+<label asp-for="Rol" class="form-label"></label>
+<input asp-for="Rol" class="form-control" />
+<span asp-validation-for="Rol" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Direcciones" class="form-label"></label>
+<input asp-for="Direcciones" class="form-control" />
+<span asp-validation-for="Direcciones" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Usuarios\Delete.cshtml ===
+@model Delivery.Modelos.Entidades.Usuario
+@{ ViewData["Title"] = "Eliminar Usuario"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres eliminar esto?</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RolId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RolId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Apellidos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Apellidos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.PasswordHash)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.PasswordHash)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Telefono)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoUsuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoUsuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FotoPerfilUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FotoPerfilUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Rol)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Rol)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Direcciones)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Direcciones)</dd>
+</dl>
+<form asp-action="Delete">
+<input type="hidden" asp-for="Id" />
+<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form>
+
+=== Delivery.MVC/Views/Usuarios\Details.cshtml ===
+@model Delivery.Modelos.Entidades.Usuario
+@{ ViewData["Title"] = "Detalles Usuario"; }
+<h1 class="my-4">Detalles Usuario</h1><hr />
+<dl class="row">
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RolId)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.RolId)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Apellidos)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Apellidos)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.PasswordHash)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.PasswordHash)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Telefono)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TipoUsuario)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.TipoUsuario)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.FotoPerfilUrl)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.FotoPerfilUrl)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Rol)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Rol)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Direcciones)</dt>
+<dd class="col-sm-9">@Html.DisplayFor(model => model.Direcciones)</dd>
+</dl>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
+<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Usuarios\Edit.cshtml ===
+@model Delivery.Modelos.Entidades.Usuario
+@{ ViewData["Title"] = "Editar Usuario"; }
+<h1 class="my-4">Editar Usuario</h1><hr />
+<div class="row"><div class="col-md-6">
+<form asp-action="Edit">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="Id" />
+<div class="mb-3">
+<label asp-for="RolId" class="form-label"></label>
+<select asp-for="RolId" class="form-control" asp-items="ViewBag.RolId"></select>
+<span asp-validation-for="RolId" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Nombre" class="form-label"></label>
+<input asp-for="Nombre" class="form-control" />
+<span asp-validation-for="Nombre" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Apellidos" class="form-label"></label>
+<input asp-for="Apellidos" class="form-control" />
+<span asp-validation-for="Apellidos" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Email" class="form-label"></label>
+<input asp-for="Email" class="form-control" />
+<span asp-validation-for="Email" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="PasswordHash" class="form-label"></label>
+<input asp-for="PasswordHash" class="form-control" />
+<span asp-validation-for="PasswordHash" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Telefono" class="form-label"></label>
+<input asp-for="Telefono" class="form-control" />
+<span asp-validation-for="Telefono" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="TipoUsuario" class="form-label"></label>
+<input asp-for="TipoUsuario" class="form-control" />
+<span asp-validation-for="TipoUsuario" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Activo" class="form-label"></label>
+<input asp-for="Activo" class="form-check-input" type="checkbox" />
+<span asp-validation-for="Activo" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="FotoPerfilUrl" class="form-label"></label>
+<input asp-for="FotoPerfilUrl" class="form-control" />
+<span asp-validation-for="FotoPerfilUrl" class="text-danger"></span></div>
+
+
+<div class="mb-3">
+<label asp-for="Rol" class="form-label"></label>
+<input asp-for="Rol" class="form-control" />
+<span asp-validation-for="Rol" class="text-danger"></span></div>
+<div class="mb-3">
+<label asp-for="Direcciones" class="form-label"></label>
+<input asp-for="Direcciones" class="form-control" />
+<span asp-validation-for="Direcciones" class="text-danger"></span></div>
+<div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
+</form></div></div>
+<div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>
+
+=== Delivery.MVC/Views/Usuarios\Index.cshtml ===
+@model IEnumerable<Delivery.Modelos.Entidades.Usuario>
+@{ ViewData["Title"] = "Usuarios"; }
+<h1 class="my-4">Usuarios</h1>
+<p><a asp-action="Create" class="btn btn-primary">Crear Nuevo</a></p>
+<div class="table-responsive">
+<table class="table table-striped table-hover align-middle">
+<thead class="table-dark"><tr>
+<th>Id</th>
+<th>RolId</th>
+<th>Nombre</th>
+<th>Apellidos</th>
+<th>Email</th>
+<th>Acciones</th></tr></thead><tbody>
+@foreach (var item in Model) {<tr>
+<td>@Html.DisplayFor(modelItem => item.Id)</td>
+<td>@Html.DisplayFor(modelItem => item.RolId)</td>
+<td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+<td>@Html.DisplayFor(modelItem => item.Apellidos)</td>
+<td>@Html.DisplayFor(modelItem => item.Email)</td>
+<td>
+<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
+<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Detalles</a>
+<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Eliminar</a>
+</td></tr>}
+</tbody></table></div>
+

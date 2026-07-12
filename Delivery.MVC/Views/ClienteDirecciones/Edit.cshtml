@@ -1,7 +1,9 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Direccion
-@{ ViewData["Title"] = "Editar Dirección"; }
+@{ ViewData["Title"] = Localizer["EditarDireccion"]; }
 
-<h1 class="my-4">Editar Dirección</h1>
+<h1 class="my-4">@Localizer["EditarDireccion"]</h1>
 <p class="text-muted">Busca en el mapa o haz clic para actualizar tu dirección exacta.</p>
 <hr />
 
@@ -13,52 +15,52 @@
             <input type="hidden" asp-for="UsuarioId" />
 
             <div class="mb-3">
-                <label class="form-label">Buscar Lugar</label>
+                <label class="form-label">@Localizer["BuscarLugarTag"]</label>
                 <div class="input-group">
-                    <input type="text" id="buscador-mapa" class="form-control" placeholder="Ej: Ibarra, Parque Ciudad Blanca..." />
-                    <button class="btn btn-primary" type="button" id="btn-buscar">Buscar</button>
+                    <input type="text" id="buscador-mapa" class="form-control" placeholder="@Localizer["EjemploBuscarLugar"]" />
+                    <button class="btn btn-primary" type="button" id="btn-buscar">@Localizer["BuscarBtn"]</button>
                 </div>
                 <small class="text-muted">Busca tu barrio o calle y haz clic en el mapa.</small>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Alias" class="form-label">Alias (Casa, Trabajo...)</label>
+                <label asp-for="Alias" class="form-label">@Localizer["AliasTag"]</label>
                 <input asp-for="Alias" class="form-control" placeholder="Ej: Casa" />
                 <span asp-validation-for="Alias" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Calle" class="form-label">Calle Principal</label>
+                <label asp-for="Calle" class="form-label">@Localizer["CallePrincipalTag"]</label>
                 <input asp-for="Calle" id="calle-input" class="form-control" placeholder="Ej: Av. 17 de Julio" required />
                 <span asp-validation-for="Calle" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Numero" class="form-label">Número</label>
+                <label asp-for="Numero" class="form-label">@Localizer["NumeroTag"]</label>
                 <input asp-for="Numero" class="form-control" placeholder="Ej: 5-32" />
                 <span asp-validation-for="Numero" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Ciudad" class="form-label">Ciudad</label>
+                <label asp-for="Ciudad" class="form-label">@Localizer["CiudadTag"]</label>
                 <input asp-for="Ciudad" id="ciudad-input" class="form-control" placeholder="Ej: Ibarra" required />
                 <span asp-validation-for="Ciudad" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Referencia" class="form-label">Referencia</label>
+                <label asp-for="Referencia" class="form-label">@Localizer["ReferenciaTag"]</label>
                 <input asp-for="Referencia" class="form-control" placeholder="Ej: Frente al parque central" />
                 <span asp-validation-for="Referencia" class="text-danger"></span>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label asp-for="Latitud" class="form-label">Latitud</label>
+                    <label asp-for="Latitud" class="form-label">@Localizer["LatitudTag"]</label>
                     <input asp-for="Latitud" id="lat-input" class="form-control bg-light" readonly required />
                     <span asp-validation-for="Latitud" class="text-danger"></span>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label asp-for="Longitud" class="form-label">Longitud</label>
+                    <label asp-for="Longitud" class="form-label">@Localizer["LongitudTag"]</label>
                     <input asp-for="Longitud" id="lng-input" class="form-control bg-light" readonly required />
                     <span asp-validation-for="Longitud" class="text-danger"></span>
                 </div>

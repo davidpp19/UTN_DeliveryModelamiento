@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Delivery.Modelos.DTOs;
 using Delivery.Consumer.Interfaces;
 
@@ -12,10 +13,12 @@ namespace Delivery.MVC.Controllers
     public class RegistroRepartidorController : Controller
     {
         private readonly IAuthConsumer _authConsumer;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public RegistroRepartidorController(IAuthConsumer authConsumer)
+        public RegistroRepartidorController(IAuthConsumer authConsumer, IStringLocalizer<SharedResource> localizer)
         {
             _authConsumer = authConsumer;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -60,7 +63,7 @@ namespace Delivery.MVC.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "La fotografía de la licencia es obligatoria para motos y carros.");
+                    ModelState.AddModelError(string.Empty, _localizer["La fotografía de la licencia es obligatoria para motos y carros."]);
                     return View(dto);
                 }
             }
@@ -93,11 +96,11 @@ namespace Delivery.MVC.Controllers
                         ExpiresUtc = DateTimeOffset.UtcNow.AddHours(2)
                     });
 
-                TempData["Exito"] = "Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador.";
+                TempData["Exito"] = _localizer["Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador."];
                 return RedirectToAction("Index", "DashboardRepartidor");
             }
 
-            ModelState.AddModelError(string.Empty, "No se pudo completar el registro. El correo puede ya estar registrado.");
+            ModelState.AddModelError(string.Empty, _localizer["No se pudo completar el registro. El correo puede ya estar registrado."]);
             return View(dto);
         }
     }

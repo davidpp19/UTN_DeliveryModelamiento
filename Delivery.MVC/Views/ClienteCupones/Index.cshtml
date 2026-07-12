@@ -1,18 +1,20 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model IEnumerable<Delivery.Modelos.Entidades.CuponUsuario>
 @{
-    ViewData["Title"] = "Mis Cupones";
+    ViewData["Title"] = Localizer["MisCupones"];
 }
 
 <div class="container mt-4">
     <div class="row align-items-center mb-4">
         <div class="col-md-6">
-            <h2 class="mb-0"><i class="bi bi-ticket-perforated text-success"></i> Mis Cupones</h2>
-            <p class="text-muted">Gestiona tus cupones de descuento y códigos promocionales.</p>
+            <h2 class="mb-0"><i class="bi bi-ticket-perforated text-success"></i> @Localizer["MisCupones"]</h2>
+            <p class="text-muted">@Localizer["GestionaCupones"]</p>
         </div>
         <div class="col-md-6 text-end">
             <!-- Botón que abre el Modal -->
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarCuponModal">
-                ➕ Agregar Cupón
+                ➕ @Localizer["AgregarCuponBtn"]
             </button>
         </div>
     </div>
@@ -23,18 +25,18 @@
             <div class="modal-content">
                 <form asp-action="Registrar" method="post">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="agregarCuponModalLabel">Registrar Nuevo Cupón</h5>
+                        <h5 class="modal-title" id="agregarCuponModalLabel">@Localizer["RegistrarNuevoCupon"]</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="codigo" class="form-label">Código del cupón</label>
-                            <input type="text" id="codigo" name="codigo" class="form-control" placeholder="Ingresar código" style="text-transform:uppercase" required>
+                            <label for="codigo" class="form-label">@Localizer["CodigoCuponTag"]</label>
+                            <input type="text" id="codigo" name="codigo" class="form-control" placeholder="@Localizer["IngresarCodigoPlaceholder"]" style="text-transform:uppercase" required>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Agregar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CancelarBtn"]</button>
+                        <button type="submit" class="btn btn-primary">@Localizer["AgregarBtn"]</button>
                     </div>
                 </form>
             </div>
@@ -63,8 +65,8 @@
     {
         <div class="alert alert-info text-center py-5">
             <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-            <h5>Aún no tienes cupones registrados.</h5>
-            <p>Ingresa un código en la parte superior para agregarlo a tu cuenta.</p>
+            <h5>@Localizer["SinCupones"]</h5>
+            <p>@Localizer["SinCuponesDesc"]</p>
         </div>
     }
     else
@@ -81,21 +83,21 @@
                 
                 string cardBorder = "border-success";
                 string headerBg = "bg-success";
-                string statusText = "DISPONIBLE";
+                string statusText = Localizer["Disponible"].Value;
                 string statusBadge = "bg-success";
 
                 if (isUsed)
                 {
                     cardBorder = "border-secondary";
                     headerBg = "bg-secondary";
-                    statusText = "UTILIZADO";
+                    statusText = Localizer["Utilizado"].Value;
                     statusBadge = "bg-secondary";
                 }
                 else if (!isActive || isExpired)
                 {
                     cardBorder = "border-danger";
                     headerBg = "bg-danger";
-                    statusText = "VENCIDO";
+                    statusText = Localizer["Vencido"].Value;
                     statusBadge = "bg-danger";
                 }
 
@@ -119,35 +121,35 @@
                             <ul class="list-unstyled small text-muted text-start mb-0">
                                 @if(!string.IsNullOrEmpty(cupon.Descripcion))
                                 {
-                                    <li class="mb-2"><strong>Descripción:</strong> @cupon.Descripcion</li>
+                                    <li class="mb-2"><strong>@Localizer["DescripcionTag"]</strong> @cupon.Descripcion</li>
                                 }
                                 @if(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje && cupon.DescuentoMaximo.HasValue)
                                 {
-                                    <li><i class="bi bi-shield-check"></i> <strong>Tope máximo:</strong> $@cupon.DescuentoMaximo.Value.ToString("0.00")</li>
+                                    <li><i class="bi bi-shield-check"></i> <strong>@Localizer["TopeMaximoTag"]</strong> $@cupon.DescuentoMaximo.Value.ToString("0.00")</li>
                                 }
-                                <li><i class="bi bi-clock"></i> <strong>Vence:</strong> @cupon.FechaFin.ToLocalTime().ToString("dd/MM/yyyy")</li>
-                                @if(statusText == "DISPONIBLE")
+                                <li><i class="bi bi-clock"></i> <strong>@Localizer["VenceTag"]</strong> @cupon.FechaFin.ToLocalTime().ToString("dd/MM/yyyy")</li>
+                                @if(statusText == Localizer["Disponible"].Value)
                                 {
                                     var diasRestantes = (cupon.FechaFin - System.DateTime.UtcNow).Days;
-                                    <li><i class="bi bi-hourglass-split"></i> <strong>Días restantes:</strong> @(diasRestantes > 0 ? diasRestantes.ToString() : "Expira hoy")</li>
+                                    <li><i class="bi bi-hourglass-split"></i> <strong>@Localizer["DiasRestantesTag"]</strong> @(diasRestantes > 0 ? diasRestantes.ToString() : Localizer["ExpiraHoy"].Value)</li>
                                 }
-                                <li><i class="bi bi-calendar-check"></i> <strong>Registrado:</strong> @cuponUsuario.FechaAsignacion.ToLocalTime().ToString("dd/MM/yyyy")</li>
+                                <li><i class="bi bi-calendar-check"></i> <strong>@Localizer["RegistradoTag"]</strong> @cuponUsuario.FechaAsignacion.ToLocalTime().ToString("dd/MM/yyyy")</li>
                                 @if(cupon.PedidoMinimo.HasValue)
                                 {
-                                    <li><i class="bi bi-bag-check"></i> <strong>Compra mínima:</strong> $@cupon.PedidoMinimo.Value.ToString("0.00")</li>
+                                    <li><i class="bi bi-bag-check"></i> <strong>@Localizer["CompraMinimaTag"]</strong> $@cupon.PedidoMinimo.Value.ToString("0.00")</li>
                                 }
                             </ul>
                         </div>
                         <div class="card-footer bg-light border-top-0 d-grid">
-                            @if(statusText == "DISPONIBLE")
+                            @if(statusText == Localizer["Disponible"].Value)
                             {
                                 <button class="btn btn-outline-success btn-sm" onclick="navigator.clipboard.writeText('@cupon.Codigo'); alert('¡Código copiado!');">
-                                    <i class="bi bi-clipboard"></i> Copiar Código
+                                    <i class="bi bi-clipboard"></i> @Localizer["CopiarCodigoBtn"]
                                 </button>
                             }
-                            else if(statusText == "UTILIZADO")
+                            else if(statusText == Localizer["Utilizado"].Value)
                             {
-                                <small class="text-center text-muted">Utilizado el @(cuponUsuario.FechaUso?.ToLocalTime().ToString("dd/MM/yyyy") ?? "N/A")</small>
+                                <small class="text-center text-muted">@Localizer["UtilizadoElTag"] @(cuponUsuario.FechaUso?.ToLocalTime().ToString("dd/MM/yyyy") ?? "N/A")</small>
                             }
                         </div>
                     </div>

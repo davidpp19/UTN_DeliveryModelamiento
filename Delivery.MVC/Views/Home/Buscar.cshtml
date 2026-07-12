@@ -1,15 +1,17 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model dynamic
 @{
-    ViewData["Title"] = "Resultados de Búsqueda";
+    ViewData["Title"] = Localizer["ResultadosBusquedaTitle"];
     var restaurantes = Model.Restaurantes as List<Delivery.Modelos.Entidades.Restaurante>;
     var productos = Model.Productos as List<Delivery.Modelos.Entidades.Producto>;
 }
 
 <div class="container mt-4">
-    <h2>Resultados para "@ViewBag.Query"</h2>
+    <h2>@Localizer["ResultadosPara", ViewBag.Query]</h2>
     <hr />
 
-    <h4 class="mt-4 mb-3">Restaurantes Encontrados (@restaurantes?.Count)</h4>
+    <h4 class="mt-4 mb-3">@Localizer["RestaurantesEncontrados", restaurantes?.Count ?? 0]</h4>
     @if (restaurantes != null && restaurantes.Any())
     {
         <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
@@ -20,7 +22,7 @@
                         <div class="card-body">
                             <h5 class="card-title">@res.Nombre</h5>
                             <p class="card-text text-muted">@res.Categoria</p>
-                            <a asp-action="Restaurante" asp-route-id="@res.Id" class="btn btn-primary btn-sm">Ver Menú</a>
+                            <a asp-action="Restaurante" asp-route-id="@res.Id" class="btn btn-primary btn-sm">@Localizer["VerMenu"]</a>
                         </div>
                     </div>
                 </div>
@@ -29,10 +31,10 @@
     }
     else
     {
-        <div class="alert alert-secondary">No se encontraron restaurantes con ese término.</div>
+        <div class="alert alert-secondary">@Localizer["NoRestaurantesBusqueda"]</div>
     }
 
-    <h4 class="mt-5 mb-3">Productos Encontrados (@productos?.Count)</h4>
+    <h4 class="mt-5 mb-3">@Localizer["ProductosEncontrados", productos?.Count ?? 0]</h4>
     @if (productos != null && productos.Any())
     {
         <div class="row row-cols-2 row-cols-md-4 g-4 mb-4">
@@ -58,6 +60,6 @@
     }
     else
     {
-        <div class="alert alert-secondary">No se encontraron productos con ese término.</div>
+        <div class="alert alert-secondary">@Localizer["NoProductosBusqueda"]</div>
     }
 </div>

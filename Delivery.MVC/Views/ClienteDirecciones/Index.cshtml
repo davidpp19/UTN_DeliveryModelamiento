@@ -1,7 +1,9 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model IEnumerable<Delivery.Modelos.Entidades.Direccion>
-@{ ViewData["Title"] = "Mis Direcciones"; }
+@{ ViewData["Title"] = Localizer["MisDirecciones"]; }
 
-<h1>Mis Direcciones</h1>
+<h1>@Localizer["MisDirecciones"]</h1>
 <p><a asp-action="Create">Agregar Nueva Dirección</a></p>
 <hr />
 
@@ -30,8 +32,8 @@ else
                     <td>@item.Ciudad</td>
                     <td>@(item.EsPrincipal ? "Sí" : "No")</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id">@Localizer["EditarBtn"]</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">@Localizer["EliminarBtn"]</a>
                     </td>
                 </tr>
             }

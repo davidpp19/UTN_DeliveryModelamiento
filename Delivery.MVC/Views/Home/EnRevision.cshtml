@@ -1,5 +1,7 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @{
-    ViewData["Title"] = "Cuenta en Revisión";
+    ViewData["Title"] = Localizer["CuentaEnRevisionTitle"];
 }
 
 <div class="container mt-5 text-center">
@@ -18,7 +20,7 @@
                         Un administrador revisará tu información en breve. Recibirás una notificación cuando tu cuenta sea aprobada y puedas acceder al panel de control.
                     </p>
                     <div class="mt-4">
-                        <a asp-action="Index" class="btn btn-primary">Volver al Inicio</a>
+                        <a asp-action="Index" class="btn btn-primary">@Localizer["VolverInicioBtn"]</a>
                     </div>
                 </div>
             </div>

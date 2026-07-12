@@ -1,3 +1,5 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Usuario
 @{
     ViewData["Title"] = "Mi Perfil";
@@ -21,18 +23,18 @@
         
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label">Nombres</label>
+                <label class="form-label">@Localizer["NombresTag"]</label>
                 <input type="text" name="nombre" class="form-control" value="@Model.Nombre" required />
             </div>
             <div class="col-md-6 mb-3">
-                <label class="form-label">Apellidos</label>
+                <label class="form-label">@Localizer["ApellidosTag"]</label>
                 <input type="text" name="apellidos" class="form-control" value="@Model.Apellidos" required />
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label">Teléfono</label>
+                <label class="form-label">@Localizer["TelefonoTag"]</label>
                 <input type="text" name="telefono" class="form-control" value="@Model.Telefono" />
             </div>
             <div class="col-md-6 mb-3">

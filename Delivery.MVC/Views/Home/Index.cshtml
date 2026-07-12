@@ -118,43 +118,43 @@ else
     <div class="container mt-5">
         <div class="row text-center mb-5" id="beneficios">
             <div class="col-md-4">
-                <h4>Entregas Rápidas</h4>
-                <p class="text-muted">Nuestros repartidores están siempre cerca para que tu comida llegue caliente.</p>
+                <h4>@Localizer["EntregasRapidasTitle"]</h4>
+                <p class="text-muted">@Localizer["EntregasRapidasDesc"]</p>
             </div>
             <div class="col-md-4">
-                <h4>Pagos Seguros</h4>
-                <p class="text-muted">Múltiples métodos de pago avalados por estrictos estándares de seguridad.</p>
+                <h4>@Localizer["PagosSegurosTitle"]</h4>
+                <p class="text-muted">@Localizer["PagosSegurosDesc"]</p>
             </div>
             <div class="col-md-4">
-                <h4>Los Mejores Locales</h4>
-                <p class="text-muted">Los mejores restaurantes de Ibarra en un solo lugar.</p>
+                <h4>@Localizer["MejoresLocalesTitle"]</h4>
+                <p class="text-muted">@Localizer["MejoresLocalesDesc"]</p>
             </div>
         </div>
 
         <hr />
 
         <div id="como-funciona" class="my-5">
-            <h3 class="text-center mb-4">¿Cómo funciona RayoExpres?</h3>
+            <h3 class="text-center mb-4">@Localizer["ComoFuncionaTitle"]</h3>
             <div class="row text-center">
                 <div class="col-md-3">
                     <h2 class="text-muted">1</h2>
-                    <h5>Busca</h5>
-                    <p class="small">Encuentra el restaurante o platillo que deseas.</p>
+                    <h5>@Localizer["BuscaTitle"]</h5>
+                    <p class="small">@Localizer["BuscaDesc"]</p>
                 </div>
                 <div class="col-md-3">
                     <h2 class="text-muted">2</h2>
-                    <h5>Pide</h5>
-                    <p class="small">Agrega a tu carrito y aplica tus cupones.</p>
+                    <h5>@Localizer["PideTitle"]</h5>
+                    <p class="small">@Localizer["PideDesc"]</p>
                 </div>
                 <div class="col-md-3">
                     <h2 class="text-muted">3</h2>
-                    <h5>Paga</h5>
-                    <p class="small">Usa efectivo, tarjeta o transferencia de forma segura.</p>
+                    <h5>@Localizer["PagaTitle"]</h5>
+                    <p class="small">@Localizer["PagaDesc"]</p>
                 </div>
                 <div class="col-md-3">
                     <h2 class="text-muted">4</h2>
-                    <h5>Disfruta</h5>
-                    <p class="small">Recibe tu pedido en minutos.</p>
+                    <h5>@Localizer["DisfrutaTitle"]</h5>
+                    <p class="small">@Localizer["DisfrutaDesc"]</p>
                 </div>
             </div>
         </div>
@@ -163,7 +163,7 @@ else
 
         @* ──── TODOS LOS RESTAURANTES (vista pública) ──── *@
         <div id="restaurantes" class="my-5">
-            <h3 class="mb-4 text-center">Restaurantes Aliados en Ibarra</h3>
+            <h3 class="mb-4 text-center">@Localizer["RestaurantesAliadosTitle"]</h3>
 
             @if (Model.TodosRestaurantes.Any())
             {
@@ -188,7 +188,7 @@ else
                                     <p class="small">Costo envío: $@res.CostoEnvioBase.ToString("0.00")</p>
                                 </div>
                                 <div class="card-footer text-center">
-                                    <a asp-controller="Auth" asp-action="Login">Inicia sesión para ver el menú</a>
+                                    <a asp-controller="Auth" asp-action="Login">@Localizer["IniciaSesionVerMenu"]</a>
                                 </div>
                             </div>
                         </div>
@@ -197,7 +197,7 @@ else
             }
             else
             {
-                <div class="alert alert-secondary text-center">No hay restaurantes disponibles en este momento.</div>
+                <div class="alert alert-secondary text-center">@Localizer["NoRestaurantesDisponibles"]</div>
             }
         </div>
     </div>

@@ -1,11 +1,13 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model IEnumerable<Delivery.Modelos.Entidades.Rol>
-<h1>Rol - Index</h1>
-<p><a asp-action="Create">Create New</a></p>
+<h1>@Localizer["RolesTitle"]</h1>
+<p><a asp-action="Create">@Localizer["CrearNuevoBtn"]</a></p>
 <table border="1">
     <thead>
         <tr>
-            <th>Id / Info</th>
-            <th>Acciones</th>
+            <th>@Localizer["IdInfoTag"]</th>
+            <th>@Localizer["AccionesTag"]</th>
         </tr>
     </thead>
     <tbody>
@@ -13,9 +15,9 @@
         <tr>
             <td>@Html.DisplayFor(modelItem => item.Id)</td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">@Localizer["EditarBtn"]</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">@Localizer["DetallesBtn"]</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">@Localizer["EliminarBtn"]</a>
             </td>
         </tr>
 }

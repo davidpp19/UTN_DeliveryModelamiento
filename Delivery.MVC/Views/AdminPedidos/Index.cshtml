@@ -1,8 +1,10 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model IEnumerable<Delivery.Modelos.Entidades.Pedido>
-@{ ViewData["Title"] = "Gestión de Pedidos"; }
-<h1>Todos los Pedidos</h1>
+@{ ViewData["Title"] = Localizer["GestionPedidos"]; }
+<h1>@Localizer["TodosLosPedidos"]</h1>
 <table class="table">
-    <thead><tr><th>ID</th><th>Cliente ID</th><th>Restaurante ID</th><th>Estado</th><th>Total</th></tr></thead>
+    <thead><tr><th>ID</th><th>@Localizer["ClienteIDTag"]</th><th>@Localizer["RestauranteIDTag"]</th><th>@Localizer["EstadoTag"]</th><th>@Localizer["TotalTag"]</th></tr></thead>
     <tbody>
         @foreach (var item in Model) {
             <tr><td>@item.Id</td><td>@item.UsuarioId</td><td>@item.RestauranteId</td><td>@item.EstadoPedido</td><td>$@item.Total</td></tr>

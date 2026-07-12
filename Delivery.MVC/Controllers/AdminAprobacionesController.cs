@@ -10,10 +10,12 @@ namespace Delivery.MVC.Controllers
     public class AdminAprobacionesController : Controller
     {
         private readonly IAdminAprobacionesConsumer _aprobacionesConsumer;
+        private readonly Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> _localizer;
 
-        public AdminAprobacionesController(IAdminAprobacionesConsumer aprobacionesConsumer)
+        public AdminAprobacionesController(IAdminAprobacionesConsumer aprobacionesConsumer, Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> localizer)
         {
             _aprobacionesConsumer = aprobacionesConsumer;
+            _localizer = localizer;
         }
 
         // --- Repartidores ---
@@ -36,7 +38,7 @@ namespace Delivery.MVC.Controllers
         public async Task<IActionResult> AprobarRepartidor(long id)
         {
             await _aprobacionesConsumer.AprobarRepartidorAsync(id);
-            TempData["Mensaje"] = "Repartidor aprobado.";
+            TempData["Mensaje"] = _localizer["RepartidorAprobadoMsj"].Value;
             return RedirectToAction(nameof(Repartidores));
         }
 
@@ -44,7 +46,7 @@ namespace Delivery.MVC.Controllers
         public async Task<IActionResult> RechazarRepartidor(long id, string motivoRechazo)
         {
             await _aprobacionesConsumer.RechazarRepartidorAsync(id, motivoRechazo);
-            TempData["Mensaje"] = "Repartidor rechazado.";
+            TempData["Mensaje"] = _localizer["RepartidorRechazadoMsj"].Value;
             return RedirectToAction(nameof(Repartidores));
         }
 
@@ -67,7 +69,7 @@ namespace Delivery.MVC.Controllers
         public async Task<IActionResult> AprobarRestaurante(long id)
         {
             await _aprobacionesConsumer.AprobarRestauranteAsync(id);
-            TempData["Mensaje"] = "Restaurante aprobado.";
+            TempData["Mensaje"] = _localizer["RestauranteAprobadoMsj"].Value;
             return RedirectToAction(nameof(Restaurantes));
         }
 
@@ -75,7 +77,7 @@ namespace Delivery.MVC.Controllers
         public async Task<IActionResult> RechazarRestaurante(long id, string motivoRechazo)
         {
             await _aprobacionesConsumer.RechazarRestauranteAsync(id, motivoRechazo);
-            TempData["Mensaje"] = "Restaurante rechazado.";
+            TempData["Mensaje"] = _localizer["RestauranteRechazadoMsj"].Value;
             return RedirectToAction(nameof(Restaurantes));
         }
     }

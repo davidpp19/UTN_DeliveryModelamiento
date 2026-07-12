@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Delivery.Modelos.DTOs;
 using Delivery.Modelos.Entidades;
 using Delivery.Consumer.Interfaces;
@@ -14,11 +15,13 @@ namespace Delivery.MVC.Controllers
     {
         private readonly IAuthConsumer _authConsumer;
         private readonly IUsuarioConsumer _usuarioConsumer;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public AuthController(IAuthConsumer authConsumer, IUsuarioConsumer usuarioConsumer)
+        public AuthController(IAuthConsumer authConsumer, IUsuarioConsumer usuarioConsumer, IStringLocalizer<SharedResource> localizer)
         {
             _authConsumer = authConsumer;
             _usuarioConsumer = usuarioConsumer;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -72,7 +75,7 @@ namespace Delivery.MVC.Controllers
                 return RedirectToRoleDashboard(authResponse.Rol);
             }
 
-            ModelState.AddModelError(string.Empty, "Credenciales incorrectas.");
+            ModelState.AddModelError(string.Empty, _localizer["Credenciales incorrectas."]);
             return View(dto);
         }
 
@@ -131,7 +134,7 @@ namespace Delivery.MVC.Controllers
                 return await Login(loginDto);
             }
 
-            ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario. Es posible que el correo o la cédula ya estén registrados.");
+            ModelState.AddModelError(string.Empty, _localizer["Ocurrió un error al registrar el usuario. Es posible que el correo o la cédula ya estén registrados."]);
             return View(dto);
         }
 
@@ -147,7 +150,7 @@ namespace Delivery.MVC.Controllers
         {
             if (string.IsNullOrEmpty(email))
             {
-                ModelState.AddModelError(string.Empty, "El correo es requerido.");
+                ModelState.AddModelError(string.Empty, _localizer["El correo es requerido."]);
                 return View();
             }
 

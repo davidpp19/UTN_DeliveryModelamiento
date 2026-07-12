@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Delivery.Modelos.DTOs;
 using Delivery.Consumer.Interfaces;
 
@@ -12,10 +13,12 @@ namespace Delivery.MVC.Controllers
     public class RegistroRestauranteController : Controller
     {
         private readonly IAuthConsumer _authConsumer;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public RegistroRestauranteController(IAuthConsumer authConsumer)
+        public RegistroRestauranteController(IAuthConsumer authConsumer, IStringLocalizer<SharedResource> localizer)
         {
             _authConsumer = authConsumer;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -41,7 +44,7 @@ namespace Delivery.MVC.Controllers
 
             if (response == null)
             {
-                ModelState.AddModelError(string.Empty, "Hubo un error en el registro. Verifique que el correo o RUC no estén en uso.");
+                ModelState.AddModelError(string.Empty, _localizer["Hubo un error en el registro. Verifique que el correo o RUC no estén en uso."]);
                 return View(dto);
             }
 

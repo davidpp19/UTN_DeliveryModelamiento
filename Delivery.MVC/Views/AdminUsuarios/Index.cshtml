@@ -1,9 +1,11 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model IEnumerable<Delivery.Modelos.Entidades.Usuario>
-@{ ViewData["Title"] = "Gestión de Usuarios"; }
-<h1>Usuarios del Sistema</h1>
-<div class="alert alert-info">Esta es una vista básica de solo lectura para evitar errores 404.</div>
+@{ ViewData["Title"] = Localizer["GestionUsuarios"]; }
+<h1>@Localizer["UsuariosSistema"]</h1>
+<div class="alert alert-info">@Localizer["VistaBasicaLecturaUsuarios"]</div>
 <table class="table">
-    <thead><tr><th>ID</th><th>Nombre</th><th>Email</th></tr></thead>
+    <thead><tr><th>ID</th><th>@Localizer["NombreTag"]</th><th>@Localizer["EmailTag"]</th></tr></thead>
     <tbody>
         @foreach (var item in Model) {
             <tr><td>@item.Id</td><td>@item.Nombre @item.Apellidos</td><td>@item.Email</td></tr>

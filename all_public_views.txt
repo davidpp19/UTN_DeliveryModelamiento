@@ -1,0 +1,1014 @@
+=== Delivery.MVC/Views/Home\Buscar.cshtml ===
+@model dynamic
+@{
+    ViewData["Title"] = "Resultados de Búsqueda";
+    var restaurantes = Model.Restaurantes as List<Delivery.Modelos.Entidades.Restaurante>;
+    var productos = Model.Productos as List<Delivery.Modelos.Entidades.Producto>;
+}
+
+<div class="container mt-4">
+    <h2>Resultados para "@ViewBag.Query"</h2>
+    <hr />
+
+    <h4 class="mt-4 mb-3">Restaurantes Encontrados (@restaurantes?.Count)</h4>
+    @if (restaurantes != null && restaurantes.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+            @foreach (var res in restaurantes)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@res.Nombre</h5>
+                            <p class="card-text text-muted">@res.Categoria</p>
+                            <a asp-action="Restaurante" asp-route-id="@res.Id" class="btn btn-primary btn-sm">Ver Menú</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-secondary">No se encontraron restaurantes con ese término.</div>
+    }
+
+    <h4 class="mt-5 mb-3">Productos Encontrados (@productos?.Count)</h4>
+    @if (productos != null && productos.Any())
+    {
+        <div class="row row-cols-2 row-cols-md-4 g-4 mb-4">
+            @foreach (var prod in productos)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-3">
+                            <h6 class="card-title mb-1">@prod.Nombre</h6>
+                            <p class="text-success fw-bold mb-2">$@prod.Precio.ToString("0.00")</p>
+                            <p class="text-muted small">Restaurante ID: @prod.RestauranteId</p>
+                            <form asp-controller="ClienteCarrito" asp-action="Agregar" method="post" class="d-grid">
+                                <input type="hidden" name="ProductoId" value="@prod.Id" />
+                                <input type="hidden" name="Cantidad" value="1" />
+                                <input type="hidden" name="RestauranteId" value="@prod.RestauranteId" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-cart-plus"></i> Agregar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-secondary">No se encontraron productos con ese término.</div>
+    }
+</div>
+
+=== Delivery.MVC/Views/Home\EnRevision.cshtml ===
+@{
+    ViewData["Title"] = "Cuenta en Revisión";
+}
+
+<div class="container mt-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-warning">
+                <div class="card-body py-5">
+                    <h1 class="text-warning mb-3">
+                        <i class="bi bi-hourglass-split" style="font-size: 3rem;"></i>
+                    </h1>
+                    <h2 class="card-title">Cuenta en Revisión</h2>
+                    <p class="card-text fs-5 mt-4">
+                        Tu solicitud de registro ha sido recibida y se encuentra actualmente en estado <strong>Pendiente de Aprobación</strong>.
+                    </p>
+                    <p class="text-muted">
+                        Un administrador revisará tu información en breve. Recibirás una notificación cuando tu cuenta sea aprobada y puedas acceder al panel de control.
+                    </p>
+                    <div class="mt-4">
+                        <a asp-action="Index" class="btn btn-primary">Volver al Inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+=== Delivery.MVC/Views/Home\Index.cshtml ===
+@model Delivery.MVC.Models.HomeViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Inicio"];
+    var isAuthenticated = User.Identity != null && User.Identity.IsAuthenticated;
+    var isCliente = isAuthenticated && User.IsInRole("Cliente");
+}
+
+@if (isCliente)
+{
+    <!-- HOME CLIENTE -->
+    <div class="container mt-4">
+        <div class="alert alert-primary" role="alert">
+            <h4>@Localizer["HolaUsuario", User.Identity?.Name ?? ""]</h4>
+            <p>@Localizer["MensajeBienvenida"]</p>
+        </div>
+
+        @if (Model.Cupones.Any())
+        {
+            <h5>@Localizer["TusCuponesActivos"]</h5>
+            <div class="d-flex flex-row overflow-auto gap-3 pb-2 mb-4">
+                @foreach (var cupon in Model.Cupones)
+                {
+                    <div class="card border-success" style="min-width: 220px;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@cupon.Codigo</h5>
+                            <p>@(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje ? $"{cupon.ValorDescuento}%" : $"${cupon.ValorDescuento}") @Localizer["DeDescuento"]</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <h3 id="restaurantes">@Localizer["RestaurantesDisponibles"]</h3>
+        @if (Model.RestaurantesDestacados.Any())
+        {
+            <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+                @foreach (var res in Model.RestaurantesDestacados)
+                {
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="@res.LogoUrl" class="card-img-top" alt="@res.Nombre" style="height: 160px; object-fit: cover;"
+                                 onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80'" />
+                            <div class="card-body">
+                                <h5 class="card-title">@res.Nombre</h5>
+                                <p class="text-muted">@res.Categoria</p>
+                                <p class="small">@res.Calle, @res.Ciudad</p>
+                                @if (res.HoraApertura.HasValue && res.HoraCierre.HasValue)
+                                {
+                                    <p class="small">@Localizer["Horario"]: @res.HoraApertura?.ToString(@"hh\:mm") — @res.HoraCierre?.ToString(@"hh\:mm")</p>
+                                }
+                                <p class="small">@Localizer["Envio"]: $@res.CostoEnvioBase.ToString("0.00")</p>
+                            </div>
+                            <div class="card-footer">
+                                <a asp-action="Restaurante" asp-route-id="@res.Id">@Localizer["VerMenu"]</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>@Localizer["NoHayRestaurantes"]</p>
+        }
+
+        <h3 class="mb-3">@Localizer["ProductosPopulares"]</h3>
+        @if (Model.ProductosDestacados.Any())
+        {
+            <div class="row row-cols-2 row-cols-md-4 g-4 mb-5">
+                @foreach (var prod in Model.ProductosDestacados)
+                {
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h6>@prod.Nombre</h6>
+                                <p class="text-success">$@prod.Precio.ToString("0.00")</p>
+                                <form asp-controller="ClienteCarrito" asp-action="Agregar" method="post">
+                                    <input type="hidden" name="productoId" value="@prod.Id" />
+                                    <input type="hidden" name="cantidad" value="1" />
+                                    <input type="hidden" name="restauranteId" value="@prod.RestauranteId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">@Localizer["AgregarAlCarrito"]</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
+else
+{
+    <!-- HOME PÚBLICO (visitante, admin, repartidor, restaurante) -->
+    <div class="p-5 mb-4 bg-light rounded-3 text-center mt-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-4 fw-bold text-primary">RayoExpres</h1>
+            <p class="col-md-8 mx-auto fs-4 text-muted">@Localizer["TituloHero"]</p>
+            <p class="lead">@Localizer["SubtituloHero"]</p>
+            <div class="mt-4">
+                @if (!isAuthenticated)
+                {
+                    <a asp-controller="Auth" asp-action="SeleccionTipoRegistro" class="btn btn-primary btn-lg me-2">@Localizer["RegistrateAhora"]</a>
+                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary btn-lg">@Localizer["IniciarSesion"]</a>
+                }
+                else
+                {
+                    var dashboardController = User.IsInRole("Admin") ? "DashboardAdministrador" :
+                                              User.IsInRole("Repartidor") ? "DashboardRepartidor" :
+                                              User.IsInRole("Restaurante") ? "DashboardRestaurante" : "Home";
+                    <a asp-controller="@dashboardController" asp-action="Index" class="btn btn-primary btn-lg">@Localizer["IrAMiPanel"]</a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row text-center mb-5" id="beneficios">
+            <div class="col-md-4">
+                <h4>Entregas Rápidas</h4>
+                <p class="text-muted">Nuestros repartidores están siempre cerca para que tu comida llegue caliente.</p>
+            </div>
+            <div class="col-md-4">
+                <h4>Pagos Seguros</h4>
+                <p class="text-muted">Múltiples métodos de pago avalados por estrictos estándares de seguridad.</p>
+            </div>
+            <div class="col-md-4">
+                <h4>Los Mejores Locales</h4>
+                <p class="text-muted">Los mejores restaurantes de Ibarra en un solo lugar.</p>
+            </div>
+        </div>
+
+        <hr />
+
+        <div id="como-funciona" class="my-5">
+            <h3 class="text-center mb-4">¿Cómo funciona RayoExpres?</h3>
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h2 class="text-muted">1</h2>
+                    <h5>Busca</h5>
+                    <p class="small">Encuentra el restaurante o platillo que deseas.</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="text-muted">2</h2>
+                    <h5>Pide</h5>
+                    <p class="small">Agrega a tu carrito y aplica tus cupones.</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="text-muted">3</h2>
+                    <h5>Paga</h5>
+                    <p class="small">Usa efectivo, tarjeta o transferencia de forma segura.</p>
+                </div>
+                <div class="col-md-3">
+                    <h2 class="text-muted">4</h2>
+                    <h5>Disfruta</h5>
+                    <p class="small">Recibe tu pedido en minutos.</p>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        @* ──── TODOS LOS RESTAURANTES (vista pública) ──── *@
+        <div id="restaurantes" class="my-5">
+            <h3 class="mb-4 text-center">Restaurantes Aliados en Ibarra</h3>
+
+            @if (Model.TodosRestaurantes.Any())
+            {
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    @foreach (var res in Model.TodosRestaurantes)
+                    {
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="@res.LogoUrl"
+                                     class="card-img-top"
+                                     alt="@res.Nombre"
+                                     style="height: 200px; object-fit: cover;"
+                                     onerror="this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80'" />
+                                <div class="card-body">
+                                    <h5 class="card-title">@res.Nombre</h5>
+                                    <p class="text-muted small">@res.Categoria</p>
+                                    <p class="small">@res.Calle, @res.Ciudad</p>
+                                    @if (res.HoraApertura.HasValue && res.HoraCierre.HasValue)
+                                    {
+                                        <p class="small">Horario: @res.HoraApertura?.ToString(@"hh\:mm") — @res.HoraCierre?.ToString(@"hh\:mm")</p>
+                                    }
+                                    <p class="small">Costo envío: $@res.CostoEnvioBase.ToString("0.00")</p>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <a asp-controller="Auth" asp-action="Login">Inicia sesión para ver el menú</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-secondary text-center">No hay restaurantes disponibles en este momento.</div>
+            }
+        </div>
+    </div>
+}
+
+=== Delivery.MVC/Views/Home\Privacy.cshtml ===
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Use this page to detail your site's privacy policy.</p>
+
+=== Delivery.MVC/Views/Home\Rechazado.cshtml ===
+@{
+    ViewData["Title"] = "Solicitud Rechazada";
+}
+
+<div class="container mt-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger">
+                <div class="card-body py-5">
+                    <h1 class="text-danger mb-3">
+                        <i class="bi bi-x-circle" style="font-size: 3rem;"></i>
+                    </h1>
+                    <h2 class="card-title">Solicitud Rechazada</h2>
+                    <p class="card-text fs-5 mt-4">
+                        Lamentamos informarte que tu solicitud de registro ha sido <strong>rechazada</strong> por un administrador.
+                    </p>
+                    <p class="text-muted">
+                        Para más información o si crees que esto es un error, por favor comunícate con soporte.
+                    </p>
+                    <div class="mt-4">
+                        <a asp-action="Index" class="btn btn-primary">Volver al Inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+=== Delivery.MVC/Views/Home\Restaurante.cshtml ===
+@model Delivery.Modelos.Entidades.Restaurante
+@{
+    ViewData["Title"] = Model.Nombre;
+    var productos = ViewBag.Productos as IEnumerable<Delivery.Modelos.Entidades.Producto>;
+}
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-danger">
+            <div class="card-body text-center">
+                <h3 class="text-danger">@Model.Nombre</h3>
+                <p class="text-muted">@Model.Categoria</p>
+                <p><i class="bi bi-geo-alt text-secondary"></i> @Model.Calle, @Model.Ciudad</p>
+                @if(Model.HoraApertura.HasValue && Model.HoraCierre.HasValue)
+                {
+                    <p><i class="bi bi-clock text-secondary"></i> @Model.HoraApertura - @Model.HoraCierre</p>
+                }
+                <p><i class="bi bi-truck text-secondary"></i> Envío desde: $@Model.CostoEnvioBase.ToString("0.00")</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <h3 class="mb-4">Menú del Restaurante</h3>
+        @if (productos != null && productos.Any())
+        {
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                @foreach (var p in productos)
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            @if (!string.IsNullOrEmpty(p.ImagenUrl))
+                            {
+                                <img src="@p.ImagenUrl" class="card-img-top" alt="@p.Nombre" style="height: 150px; object-fit: cover;">
+                            }
+                            <div class="card-body">
+                                <h5 class="card-title">@p.Nombre</h5>
+                                <p class="card-text small text-muted">@p.Descripcion</p>
+                                <h6 class="text-success fw-bold">$@p.Precio.ToString("0.00")</h6>
+                            </div>
+                            <div class="card-footer bg-white border-top-0 d-grid">
+                                @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+                                {
+                                    <form asp-controller="ClienteCarrito" asp-action="Agregar" method="post">
+                                        <input type="hidden" name="ProductoId" value="@p.Id" />
+                                        <input type="hidden" name="Cantidad" value="1" />
+                                        <input type="hidden" name="RestauranteId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-danger w-100"><i class="bi bi-cart-plus"></i> Añadir al Carrito</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary w-100">Inicia sesión para pedir</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-secondary">Este restaurante aún no tiene productos disponibles.</div>
+        }
+    </div>
+</div>
+
+=== Delivery.MVC/Views/Auth\AccesoDenegado.cshtml ===
+@{
+    ViewData["Title"] = "Acceso Denegado";
+}
+
+<div class="container mt-5 pt-5 text-center">
+    <h1 class="display-1 text-danger fw-bold"><i class="bi bi-shield-lock"></i> 403</h1>
+    <h2 class="mb-4">Acceso Denegado</h2>
+    <p class="lead mb-5">No tienes los permisos necesarios para acceder a esta página.</p>
+    
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">Volver al Inicio</a>
+</div>
+
+=== Delivery.MVC/Views/Auth\Login.cshtml ===
+@model Delivery.Modelos.DTOs.LoginDto
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["IniciarSesion"];
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 text-primary">@Localizer["IniciarSesion"]</h3>
+                <form asp-action="Login" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">@Localizer["CorreoElectronico"]</label>
+                        <input asp-for="Email" class="form-control" type="email" placeholder="@Localizer["EmailPlaceholder"]" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">@Localizer["Contrasena"]</label>
+                        <input asp-for="Password" class="form-control" type="password" placeholder="@Localizer["PasswordPlaceholder"]" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label">@Localizer["Recordarme"]</label>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">@Localizer["Ingresar"]</button>
+                    </div>
+                </form>
+                <div class="mt-3 text-center">
+                    <a asp-action="RecuperarPassword" class="text-decoration-none">@Localizer["OlvidasteContrasena"]</a>
+                </div>
+                <div class="mt-3 text-center">
+                    <span>@Localizer["NoTienesCuenta"] </span>
+                    <a asp-action="SeleccionTipoRegistro" class="text-decoration-none fw-bold">@Localizer["CrearCuenta"]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+=== Delivery.MVC/Views/Auth\RecuperarPassword.cshtml ===
+@{
+    ViewData["Title"] = "Recuperar Contraseña";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 text-primary">Recuperar Contraseña</h3>
+                
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-success text-center">
+                        @ViewBag.Message
+                    </div>
+                    <div class="text-center mt-3">
+                        <a asp-action="Login" class="btn btn-outline-primary">Volver al Inicio de Sesión</a>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center mb-4">
+                        Ingresa tu correo electrónico y te enviaremos las instrucciones para restablecer tu contraseña.
+                    </p>
+                    <form asp-action="RecuperarPassword" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo Electrónico</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="ejemplo@correo.com" required />
+                        </div>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Enviar Instrucciones</button>
+                        </div>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <a asp-action="Login" class="text-decoration-none">Cancelar y volver</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+=== Delivery.MVC/Views/Auth\Registro.cshtml ===
+@model Delivery.Modelos.DTOs.RegistroDto
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["RegistroClienteTitulo"];
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 text-primary">@Localizer["CreaTuCuenta"]</h3>
+                <form asp-action="Registro" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Nombre" class="form-label">@Localizer["Nombres"]</label>
+                            <input asp-for="Nombre" class="form-control" placeholder="@Localizer["NombresPlaceholder"]" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Apellidos" class="form-label">@Localizer["Apellidos"]</label>
+                            <input asp-for="Apellidos" class="form-control" placeholder="@Localizer["ApellidosPlaceholder"]" />
+                            <span asp-validation-for="Apellidos" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">@Localizer["CorreoElectronico"]</label>
+                        <input asp-for="Email" class="form-control" type="email" placeholder="@Localizer["EmailPlaceholder"]" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Telefono" class="form-label">@Localizer["Telefono"]</label>
+                        <input asp-for="Telefono" class="form-control" type="tel" placeholder="0987654321" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Cedula" class="form-label">@Localizer["Cedula"]</label>
+                        <input asp-for="Cedula" class="form-control" placeholder="1712345678" />
+                        <span asp-validation-for="Cedula" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">@Localizer["Contrasena"]</label>
+                        <input asp-for="Password" class="form-control" type="password" placeholder="@Localizer["PasswordPlaceholder"]" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">@Localizer["ConfirmarContrasena"]</label>
+                        <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="@Localizer["PasswordPlaceholder"]" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">@Localizer["Registrarse"]</button>
+                    </div>
+                </form>
+                <div class="mt-4 text-center">
+                    <span>@Localizer["YaTienesCuenta"] </span>
+                    <a asp-action="Login" class="text-decoration-none fw-bold">@Localizer["IniciarSesion"]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+=== Delivery.MVC/Views/Auth\SeleccionTipoRegistro.cshtml ===
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["CrearCuentaTitulo"];
+}
+
+<h1>@Localizer["CrearCuentaTitulo"]</h1>
+<p>@Localizer["SeleccionaTipoCuenta"]</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>@Localizer["SoyCliente"]</h3>
+        <p>@Localizer["SoyClienteDesc"]</p>
+        <a asp-controller="Auth" asp-action="Registro">@Localizer["RegCliente"]</a>
+    </div>
+    <div class="col-md-4">
+        <h3>@Localizer["SoyRepartidor"]</h3>
+        <p>@Localizer["SoyRepartidorDesc"]</p>
+        <a asp-controller="RegistroRepartidor" asp-action="Index">@Localizer["RegRepartidor"]</a>
+    </div>
+    <div class="col-md-4">
+        <h3>@Localizer["SoyRestaurante"]</h3>
+        <p>@Localizer["SoyRestauranteDesc"]</p>
+        <a asp-controller="RegistroRestaurante" asp-action="Index">@Localizer["RegRestaurante"]</a>
+    </div>
+</div>
+
+<hr />
+<p>@Localizer["YaTienesCuenta"] <a asp-controller="Auth" asp-action="Login">@Localizer["IniciarSesion"]</a></p>
+
+=== Delivery.MVC/Views/RegistroRepartidor\Index.cshtml ===
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
+@model Delivery.Modelos.DTOs.RegistroRepartidorDto
+@{
+    ViewData["Title"] = Localizer["RegRepartidorTitulo"];
+}
+
+<h1>@Localizer["RegRepartidorTitulo"]</h1>
+<p>@Localizer["RegRepartidorDesc"]</p>
+
+<p><a asp-controller="Auth" asp-action="SeleccionTipoRegistro">@Localizer["VolverSeleccion"]</a></p>
+<hr />
+
+<form asp-action="Index" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <h4>@Localizer["DatosPersonales"]</h4>
+
+    <div>
+        <label asp-for="Nombre">@Localizer["Nombres"]</label>
+        <input asp-for="Nombre" placeholder="@Localizer["TuNombrePlaceholder"]" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Apellidos">@Localizer["Apellidos"]</label>
+        <input asp-for="Apellidos" placeholder="@Localizer["TusApellidosPlaceholder"]" />
+        <span asp-validation-for="Apellidos" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Email">@Localizer["CorreoElectronico"]</label>
+        <input asp-for="Email" type="email" placeholder="@Localizer["EmailPlaceholder"]" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Telefono">@Localizer["Telefono"]</label>
+        <input asp-for="Telefono" type="tel" placeholder="0991234567" />
+        <span asp-validation-for="Telefono" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Cedula">@Localizer["Cedula"]</label>
+        <input asp-for="Cedula" placeholder="1234567890" />
+        <span asp-validation-for="Cedula" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Password">@Localizer["Contrasena"]</label>
+        <input asp-for="Password" type="password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="ConfirmPassword">@Localizer["ConfirmarContrasena"]</label>
+        <input asp-for="ConfirmPassword" type="password" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <hr />
+    <h4>@Localizer["DatosVehiculo"]</h4>
+
+    <div>
+        <label asp-for="TipoVehiculo">@Localizer["TipoVehiculo"]</label>
+        <div class="d-flex align-items-center">
+            <select asp-for="TipoVehiculo"
+                    asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.TipoVehiculoEnum>()" class="form-control" style="width: auto; margin-right: 10px;">
+            </select>
+            <button type="submit" name="accion" value="actualizar" formnovalidate class="btn btn-secondary btn-sm">@Localizer["ConfirmarTipo"]</button>
+        </div>
+        <span asp-validation-for="TipoVehiculo" class="text-danger"></span>
+        <small class="text-muted d-block">@Localizer["ConfirmarTipoDesc"]</small>
+    </div>
+
+    @if (Model != null && Model.TipoVehiculo != Delivery.Modelos.Enums.TipoVehiculoEnum.Bicicleta)
+    {
+        <hr />
+        <h4>@Localizer["DatosLicenciaRequerido"] (Requerido para @Model.TipoVehiculo.ToString())</h4>
+        <div>
+            <label asp-for="LicenciaConducir">@Localizer["NumeroLicencia"]</label>
+            <input asp-for="LicenciaConducir" placeholder="Ej: LIC-IMB-1234567" />
+            <span asp-validation-for="LicenciaConducir" class="text-danger"></span>
+        </div>
+        <div class="mt-3">
+            <label>@Localizer["FotoLicencia"]</label>
+            <input type="file" name="fotoLicencia" class="form-control" accept="image/*" required />
+            <small class="text-muted">@Localizer["FotoLicenciaDesc"]</small>
+        </div>
+    }
+    else
+    {
+        <!-- Hidden para que pase la validación del modelo que espera string -->
+        <input type="hidden" asp-for="LicenciaConducir" value="N/A" />
+    }
+
+    <div>
+        <label asp-for="Marca">@Localizer["MarcaVehiculo"]</label>
+        <input asp-for="Marca" placeholder="Ej: Honda" />
+        <span asp-validation-for="Marca" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Modelo">@Localizer["ModeloVehiculo"]</label>
+        <input asp-for="Modelo" placeholder="Ej: Wave110" />
+        <span asp-validation-for="Modelo" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Color">@Localizer["ColorVehiculo"]</label>
+        <input asp-for="Color" placeholder="Ej: Rojo" />
+        <span asp-validation-for="Color" class="text-danger"></span>
+    </div>
+
+    @if (Model != null && Model.TipoVehiculo != Delivery.Modelos.Enums.TipoVehiculoEnum.Bicicleta)
+    {
+        <div>
+            <label asp-for="Placa">@Localizer["PlacaVehiculo"]</label>
+            <input asp-for="Placa" placeholder="Ej: PBX-1234" />
+            <span asp-validation-for="Placa" class="text-danger"></span>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" asp-for="Placa" value="N/A" />
+    }
+
+    <div>
+        <label asp-for="Anio">@Localizer["AnioVehiculo"]</label>
+        <input asp-for="Anio" type="number" placeholder="Ej: 2022" min="1990" max="2030" />
+    </div>
+
+    <br />
+    <button type="submit" name="accion" value="registrar" class="btn btn-primary">@Localizer["RegRepartidor"]</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+=== Delivery.MVC/Views/RegistroRestaurante\Index.cshtml ===
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
+@model Delivery.Modelos.DTOs.RegistroRestauranteDto
+@{
+    ViewData["Title"] = Localizer["RegRestauranteTitulo"];
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <h2 class="text-center mb-4">@Localizer["RegRestauranteTitulo"]</h2>
+        
+        <form asp-action="Index" method="post" class="card shadow-sm p-4 w-100">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row">
+                <!-- Columna Izquierda: Formulario -->
+                <div class="col-md-6">
+                    <h4 class="mb-3">@Localizer["DatosPropietario"]</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NombrePropietario" class="form-label">@Localizer["Nombres"]</label>
+                            <input asp-for="NombrePropietario" class="form-control" />
+                            <span asp-validation-for="NombrePropietario" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ApellidosPropietario" class="form-label">@Localizer["Apellidos"]</label>
+                            <input asp-for="ApellidosPropietario" class="form-control" />
+                            <span asp-validation-for="ApellidosPropietario" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label">@Localizer["CorreoElectronico"]</label>
+                            <input asp-for="Email" type="email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Telefono" class="form-label">@Localizer["Telefono"]</label>
+                            <input asp-for="Telefono" class="form-control" />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label asp-for="Cedula" class="form-label">@Localizer["Cedula"]</label>
+                            <input asp-for="Cedula" class="form-control" />
+                            <span asp-validation-for="Cedula" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Password" class="form-label">@Localizer["Contrasena"]</label>
+                            <input asp-for="Password" type="password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ConfirmarPassword" class="form-label">@Localizer["ConfirmarContrasena"]</label>
+                            <input asp-for="ConfirmarPassword" type="password" class="form-control" />
+                            <span asp-validation-for="ConfirmarPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+                    <h4 class="mb-3">@Localizer["DatosRestaurante"]</h4>
+
+                    <div class="mb-3">
+                        <label asp-for="NombreRestaurante" class="form-label">@Localizer["NombreRestaurante"]</label>
+                        <input asp-for="NombreRestaurante" class="form-control" />
+                        <span asp-validation-for="NombreRestaurante" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Descripcion" class="form-label">@Localizer["Descripcion"]</label>
+                        <textarea asp-for="Descripcion" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="RUC" class="form-label">@Localizer["RUC"]</label>
+                            <input asp-for="RUC" class="form-control" />
+                            <span asp-validation-for="RUC" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Categoria" class="form-label">@Localizer["CategoriaEjemplo"]</label>
+                            <input asp-for="Categoria" class="form-control" />
+                            <span asp-validation-for="Categoria" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="HoraApertura" class="form-label">@Localizer["HoraApertura"]</label>
+                            <input asp-for="HoraApertura" type="time" class="form-control" />
+                            <span asp-validation-for="HoraApertura" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="HoraCierre" class="form-label">@Localizer["HoraCierre"]</label>
+                            <input asp-for="HoraCierre" type="time" class="form-control" />
+                            <span asp-validation-for="HoraCierre" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Columna Derecha: Mapa de Ubicación -->
+                <div class="col-md-6">
+                    <h4 class="mb-3">Ubicación del Restaurante</h4>
+                    <p class="text-muted small">Busca en el mapa o haz clic para ubicar la dirección exacta de tu local.</p>
+
+                    <div class="mb-3">
+                        <label class="form-label">Buscar Lugar</label>
+                        <div class="input-group">
+                            <input type="text" id="buscador-mapa" class="form-control" placeholder="Ej: Ibarra, Parque Ciudad Blanca..." />
+                            <button class="btn btn-primary" type="button" id="btn-buscar">Buscar</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Calle" class="form-label">Dirección (Calle Principal)</label>
+                        <input asp-for="Calle" id="calle-input" class="form-control" placeholder="Ej: Av. 17 de Julio" />
+                        <span asp-validation-for="Calle" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Ciudad" class="form-label">@Localizer["Ciudad"]</label>
+                        <input asp-for="Ciudad" id="ciudad-input" class="form-control" placeholder="Ej: Ibarra" />
+                        <span asp-validation-for="Ciudad" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Latitud" class="form-label">Latitud</label>
+                            <input asp-for="Latitud" id="lat-input" class="form-control bg-light" readonly />
+                            <span asp-validation-for="Latitud" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Longitud" class="form-label">Longitud</label>
+                            <input asp-for="Longitud" id="lng-input" class="form-control bg-light" readonly />
+                            <span asp-validation-for="Longitud" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div id="map" style="height: 400px; width: 100%; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 20px;"></div>
+                </div>
+            </div>
+
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">@Localizer["RegRestauranteBtn"]</button>
+                <a asp-controller="Auth" asp-action="SeleccionTipoRegistro" class="btn btn-outline-secondary mt-2">Volver al área de registro</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Inicializar mapa centrado en Ibarra, Ecuador por defecto
+        var centerLat = document.getElementById('lat-input').value ? parseFloat(document.getElementById('lat-input').value) : 0.3517;
+        var centerLng = document.getElementById('lng-input').value ? parseFloat(document.getElementById('lng-input').value) : -78.1222;
+        var zoomLevel = document.getElementById('lat-input').value ? 16 : 14;
+
+        var map = L.map('map').setView([centerLat, centerLng], zoomLevel);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var marker;
+        if (document.getElementById('lat-input').value && document.getElementById('lng-input').value) {
+            marker = L.marker([centerLat, centerLng]).addTo(map);
+        }
+
+        // Función para colocar marcador y extraer datos
+        function onMapClick(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+            
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+
+            document.getElementById('lat-input').value = lat.toFixed(8);
+            document.getElementById('lng-input').value = lng.toFixed(8);
+
+            // Reverse Geocoding (Nominatim API)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.address) {
+                        var address = data.address;
+                        var calle = address.road || address.pedestrian || address.suburb || "";
+                        var ciudad = address.city || address.town || address.village || address.county || "";
+                        
+                        if(calle) document.getElementById('calle-input').value = calle;
+                        if(ciudad) document.getElementById('ciudad-input').value = ciudad;
+                    }
+                })
+                .catch(err => console.log(err));
+        }
+
+        map.on('click', onMapClick);
+
+        // Buscar lugares
+        document.getElementById('btn-buscar').addEventListener('click', function() {
+            var query = document.getElementById('buscador-mapa').value;
+            if(!query) return;
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.length > 0) {
+                        var result = data[0];
+                        var lat = parseFloat(result.lat);
+                        var lon = parseFloat(result.lon);
+                        
+                        map.setView([lat, lon], 16);
+                        
+                        if (marker) {
+                            marker.setLatLng([lat, lon]);
+                        } else {
+                            marker = L.marker([lat, lon]).addTo(map);
+                        }
+
+                        document.getElementById('lat-input').value = lat.toFixed(8);
+                        document.getElementById('lng-input').value = lon.toFixed(8);
+                        
+                        // Parse name
+                        var partes = result.display_name.split(',');
+                        if(partes.length >= 1) document.getElementById('calle-input').value = partes[0].trim();
+                        if(partes.length >= 2) document.getElementById('ciudad-input').value = partes[1].trim();
+                    } else {
+                        alert('Lugar no encontrado. Intenta con otros términos.');
+                    }
+                });
+        });
+
+        // Intentar obtener la ubicación actual del usuario si no hay datos previos
+        if (!document.getElementById('lat-input').value && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                map.setView([lat, lng], 15);
+            });
+        }
+    </script>
+}
+

@@ -1,10 +1,12 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model IEnumerable<Delivery.Modelos.DTOs.RepartidorPendienteDto>
 @{
-    ViewData["Title"] = "Aprobaciones de Repartidores";
+    ViewData["Title"] = Localizer["AprobacionesRepartidores"];
 }
 
 <div class="container mt-4">
-    <h2>Solicitudes de Repartidores Pendientes</h2>
+    <h2>@Localizer["SolicitudesRepartidoresPendientes"]</h2>
 
     @if (TempData["Mensaje"] != null)
     {
@@ -13,19 +15,19 @@
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info">No hay solicitudes pendientes en este momento.</div>
+        <div class="alert alert-info">@Localizer["NoHaySolicitudesPendientes"]</div>
     }
     else
     {
         <table class="table table-striped table-hover mt-3 align-middle">
             <thead class="table-dark">
                 <tr>
-                    <th>Perfil</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Cédula</th>
-                    <th>Fecha Registro</th>
-                    <th class="text-center">Acciones</th>
+                    <th>@Localizer["PerfilTag"]</th>
+                    <th>@Localizer["NombreTag"]</th>
+                    <th>@Localizer["EmailTag"]</th>
+                    <th>@Localizer["CedulaTag"]</th>
+                    <th>@Localizer["FechaRegistroTag"]</th>
+                    <th class="text-center">@Localizer["AccionesTag"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,7 +71,7 @@
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="@(modalId)Label">Información del Repartidor</h5>
+                            <h5 class="modal-title" id="@(modalId)Label">@Localizer["InfoRepartidorTitle"]</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
@@ -79,19 +81,19 @@
                                     <h5 class="mt-2">@item.Nombres @item.Apellidos</h5>
                                 </div>
                                 <div class="col-md-8">
-                                    <h6>Datos Personales</h6>
+                                    <h6>@Localizer["DatosPersonalesTitle"]</h6>
                                     <p><strong>Cédula:</strong> @item.Cedula</p>
                                     <p><strong>Email:</strong> @item.Email</p>
-                                    <p><strong>Teléfono:</strong> @item.Telefono</p>
+                                    <p><strong>@Localizer["TelefonoTag"]:</strong> @item.Telefono</p>
                                     <hr />
-                                    <h6>Datos del Vehículo</h6>
-                                    <p><strong>Tipo:</strong> @item.TipoVehiculo</p>
-                                    <p><strong>Placa:</strong> @item.Placa</p>
-                                    <p><strong>Licencia:</strong> @item.LicenciaConducir</p>
+                                    <h6>@Localizer["DatosVehiculoTitle"]</h6>
+                                    <p><strong>@Localizer["TipoVehiculoTag"]:</strong> @item.TipoVehiculo</p>
+                                    <p><strong>@Localizer["PlacaTag"]:</strong> @item.Placa</p>
+                                    <p><strong>@Localizer["LicenciaTag"]:</strong> @item.LicenciaConducir</p>
                                     @if (!string.IsNullOrEmpty(item.FotoLicenciaUrl))
                                     {
                                         <div class="mt-2">
-                                            <strong>Foto de Licencia:</strong><br/>
+                                            <strong>@Localizer["FotoLicenciaTag"]:</strong><br/>
                                             <a href="@item.FotoLicenciaUrl" target="_blank">
                                                 <img src="@item.FotoLicenciaUrl" class="img-fluid rounded mt-1" style="max-height: 200px;" />
                                             </a>
@@ -101,7 +103,7 @@
                             </div>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CerrarBtn"]</button>
                           </div>
                         </div>
                       </div>
@@ -113,20 +115,20 @@
                         <div class="modal-content">
                           <form method="post" asp-action="RechazarRepartidor">
                               <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title" id="@(modalRechazoId)Label">Denegar Solicitud</h5>
+                                <h5 class="modal-title" id="@(modalRechazoId)Label">@Localizer["DenegarSolicitudTitle"]</h5>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                               </div>
                               <div class="modal-body">
-                                <p>¿Estás seguro que deseas denegar la solicitud de <strong>@item.Nombres @item.Apellidos</strong>?</p>
+                                <p>@Localizer["SeguroDenegarSolicitud"] <strong>@item.Nombres @item.Apellidos</strong>?</p>
                                 <input type="hidden" name="id" value="@item.Id" />
                                 <div class="mb-3">
-                                    <label class="form-label">Motivo del rechazo (obligatorio)</label>
+                                    <label class="form-label">@Localizer["MotivoRechazoObligatorio"]</label>
                                     <textarea name="motivoRechazo" class="form-control" rows="3" required></textarea>
                                 </div>
                               </div>
                               <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-danger">Confirmar Denegación</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CancelarBtn"]</button>
+                                <button type="submit" class="btn btn-danger">@Localizer["ConfirmarDenegacionBtn"]</button>
                               </div>
                           </form>
                         </div>
