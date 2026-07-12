@@ -1,7 +1,11 @@
 <Solution>
+  <Folder Name="/Elementos de la solución/">
+    <File Path="DockerFile.API" />
+    <File Path="DockerFile.MVC" />
+  </Folder>
   <Project Path="Delivery.API/Delivery.API.csproj" />
-  <Project Path="Delivery.Modelos/Delivery.Modelos.csproj" />
-  <Project Path="Delivery.Servicios/Delivery.Servicios.csproj" />
   <Project Path="Delivery.Consumer/Delivery.Consumer.csproj" />
+  <Project Path="Delivery.Modelos/Delivery.Modelos.csproj" />
   <Project Path="Delivery.MVC/Delivery.MVC.csproj" />
+  <Project Path="Delivery.Servicios/Delivery.Servicios.csproj" />
 </Solution>

@@ -1,0 +1,28 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:8080
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+COPY ["Delivery.MVC/Delivery.MVC.csproj", "Delivery.MVC/"]
+COPY ["Delivery.Consumer/Delivery.Consumer.csproj", "Delivery.Consumer/"]
+COPY ["Delivery.Modelos/Delivery.Modelos.csproj", "Delivery.Modelos/"]
+COPY ["Delivery.Servicios/Delivery.Servicios.csproj", "Delivery.Servicios/"]
+
+RUN dotnet restore "Delivery.MVC/Delivery.MVC.csproj"
+
+COPY . .
+
+WORKDIR "/src/Delivery.MVC"
+
+RUN dotnet build "Delivery.MVC.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Delivery.MVC.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:ErrorOnDuplicatePublishOutputFiles=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Delivery.MVC.dll"]
