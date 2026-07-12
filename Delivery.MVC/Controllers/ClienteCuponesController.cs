@@ -109,9 +109,10 @@ namespace Delivery.MVC.Controllers
             {
                 CuponId = cupon.Id,
                 UsuarioId = userId,
-                FechaRegistro = System.DateTime.UtcNow,
-                PedidoId = null,
-                FechaUso = null
+                FechaAsignacion = System.DateTime.UtcNow,
+                FechaExpiracion = cupon.FechaFin,
+                Usado = false,
+                Activo = true
             };
 
             await _cuponUsuarioConsumer.CreateAsync(nuevoRegistro);
