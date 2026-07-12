@@ -1,6 +1,8 @@
 @model Delivery.MVC.Models.HomeViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @{
-    ViewData["Title"] = "Inicio";
+    ViewData["Title"] = Localizer["Inicio"];
     var isAuthenticated = User.Identity != null && User.Identity.IsAuthenticated;
     var isCliente = isAuthenticated && User.IsInRole("Cliente");
 }
@@ -10,27 +12,27 @@
     <!-- HOME CLIENTE -->
     <div class="container mt-4">
         <div class="alert alert-primary" role="alert">
-            <h4>¡Hola, @User.Identity?.Name!</h4>
-            <p>Bienvenido de vuelta a RayoExpres. ¿Qué se te antoja hoy?</p>
+            <h4>@Localizer["HolaUsuario", User.Identity?.Name ?? ""]</h4>
+            <p>@Localizer["MensajeBienvenida"]</p>
         </div>
 
         @if (Model.Cupones.Any())
         {
-            <h5>Tus Cupones Activos</h5>
+            <h5>@Localizer["TusCuponesActivos"]</h5>
             <div class="d-flex flex-row overflow-auto gap-3 pb-2 mb-4">
                 @foreach (var cupon in Model.Cupones)
                 {
                     <div class="card border-success" style="min-width: 220px;">
                         <div class="card-body text-center">
                             <h5 class="card-title">@cupon.Codigo</h5>
-                            <p>@(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje ? $"{cupon.ValorDescuento}%" : $"${cupon.ValorDescuento}") de descuento</p>
+                            <p>@(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje ? $"{cupon.ValorDescuento}%" : $"${cupon.ValorDescuento}") @Localizer["DeDescuento"]</p>
                         </div>
                     </div>
                 }
             </div>
         }
 
-        <h3 id="restaurantes">Restaurantes Disponibles</h3>
+        <h3 id="restaurantes">@Localizer["RestaurantesDisponibles"]</h3>
         @if (Model.RestaurantesDestacados.Any())
         {
             <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
@@ -46,12 +48,12 @@
                                 <p class="small">@res.Calle, @res.Ciudad</p>
                                 @if (res.HoraApertura.HasValue && res.HoraCierre.HasValue)
                                 {
-                                    <p class="small">Horario: @res.HoraApertura?.ToString(@"hh\:mm") — @res.HoraCierre?.ToString(@"hh\:mm")</p>
+                                    <p class="small">@Localizer["Horario"]: @res.HoraApertura?.ToString(@"hh\:mm") — @res.HoraCierre?.ToString(@"hh\:mm")</p>
                                 }
-                                <p class="small">Envío: $@res.CostoEnvioBase.ToString("0.00")</p>
+                                <p class="small">@Localizer["Envio"]: $@res.CostoEnvioBase.ToString("0.00")</p>
                             </div>
                             <div class="card-footer">
-                                <a asp-action="Restaurante" asp-route-id="@res.Id">Ver Menú</a>
+                                <a asp-action="Restaurante" asp-route-id="@res.Id">@Localizer["VerMenu"]</a>
                             </div>
                         </div>
                     </div>
@@ -60,10 +62,10 @@
         }
         else
         {
-            <p>No hay restaurantes disponibles en este momento.</p>
+            <p>@Localizer["NoHayRestaurantes"]</p>
         }
 
-        <h3 class="mb-3">Productos Populares</h3>
+        <h3 class="mb-3">@Localizer["ProductosPopulares"]</h3>
         @if (Model.ProductosDestacados.Any())
         {
             <div class="row row-cols-2 row-cols-md-4 g-4 mb-5">
@@ -78,7 +80,7 @@
                                     <input type="hidden" name="productoId" value="@prod.Id" />
                                     <input type="hidden" name="cantidad" value="1" />
                                     <input type="hidden" name="restauranteId" value="@prod.RestauranteId" />
-                                    <button type="submit">Agregar al Carrito</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">@Localizer["AgregarAlCarrito"]</button>
                                 </form>
                             </div>
                         </div>
@@ -94,20 +96,20 @@ else
     <div class="p-5 mb-4 bg-light rounded-3 text-center mt-3">
         <div class="container-fluid py-5">
             <h1 class="display-4 fw-bold text-primary">RayoExpres</h1>
-            <p class="col-md-8 mx-auto fs-4 text-muted">Tu comida favorita, entregada en Ibarra a la velocidad del rayo.</p>
-            <p class="lead">Pide de los mejores restaurantes, con pagos seguros y entregas ultrarrápidas.</p>
+            <p class="col-md-8 mx-auto fs-4 text-muted">@Localizer["TituloHero"]</p>
+            <p class="lead">@Localizer["SubtituloHero"]</p>
             <div class="mt-4">
                 @if (!isAuthenticated)
                 {
-                    <a asp-controller="Auth" asp-action="SeleccionTipoRegistro" class="btn btn-primary btn-lg me-2">Regístrate Ahora</a>
-                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary btn-lg">Iniciar Sesión</a>
+                    <a asp-controller="Auth" asp-action="SeleccionTipoRegistro" class="btn btn-primary btn-lg me-2">@Localizer["RegistrateAhora"]</a>
+                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary btn-lg">@Localizer["IniciarSesion"]</a>
                 }
                 else
                 {
                     var dashboardController = User.IsInRole("Admin") ? "DashboardAdministrador" :
                                               User.IsInRole("Repartidor") ? "DashboardRepartidor" :
                                               User.IsInRole("Restaurante") ? "DashboardRestaurante" : "Home";
-                    <a asp-controller="@dashboardController" asp-action="Index" class="btn btn-primary btn-lg">Ir a mi Panel</a>
+                    <a asp-controller="@dashboardController" asp-action="Index" class="btn btn-primary btn-lg">@Localizer["IrAMiPanel"]</a>
                 }
             </div>
         </div>

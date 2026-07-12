@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- General -->
+  <data name="Idioma" xml:space="preserve"><value>Idioma</value></data>
+  <data name="Espanol" xml:space="preserve"><value>Español</value></data>
+  <data name="Ingles" xml:space="preserve"><value>Inglés</value></data>
+  <data name="Guardar" xml:space="preserve"><value>Guardar</value></data>
+  <data name="Cancelar" xml:space="preserve"><value>Cancelar</value></data>
+
+  <!-- Navbar -->
+  <data name="Inicio" xml:space="preserve"><value>Inicio</value></data>
+  <data name="Restaurantes" xml:space="preserve"><value>Restaurantes</value></data>
+  <data name="MiCarrito" xml:space="preserve"><value>Mi Carrito</value></data>
+  <data name="MisPedidos" xml:space="preserve"><value>Mis Pedidos</value></data>
+  <data name="MisDirecciones" xml:space="preserve"><value>Mis Direcciones</value></data>
+  <data name="MisCupones" xml:space="preserve"><value>🎟 Mis Cupones</value></data>
+  <data name="Administracion" xml:space="preserve"><value>Administración</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>Dashboard</value></data>
+  <data name="Usuarios" xml:space="preserve"><value>Usuarios</value></data>
+  <data name="Repartidores" xml:space="preserve"><value>Repartidores</value></data>
+  <data name="Productos" xml:space="preserve"><value>Productos</value></data>
+  <data name="Pedidos" xml:space="preserve"><value>Pedidos</value></data>
+  <data name="Cupones" xml:space="preserve"><value>Cupones</value></data>
+  <data name="Auditoria" xml:space="preserve"><value>Auditoría</value></data>
+  <data name="PedidosDisponibles" xml:space="preserve"><value>Pedidos Disponibles</value></data>
+  <data name="MisEntregas" xml:space="preserve"><value>Mis Entregas</value></data>
+  <data name="ComoFunciona" xml:space="preserve"><value>Cómo Funciona</value></data>
+  
+  <data name="BuscarPlaceholder" xml:space="preserve"><value>Buscar pizza, sushi...</value></data>
+  <data name="BuscarBoton" xml:space="preserve"><value>Buscar</value></data>
+  
+  <data name="HolaUsuario" xml:space="preserve"><value>Hola, {0}</value></data>
+  <data name="MiPerfil" xml:space="preserve"><value>Mi Perfil</value></data>
+  <data name="PerfilRestaurante" xml:space="preserve"><value>Perfil del Restaurante</value></data>
+  <data name="PerfilRepartidor" xml:space="preserve"><value>Mi Perfil de Repartidor</value></data>
+  <data name="CerrarSesion" xml:space="preserve"><value>Cerrar Sesión</value></data>
+  
+  <data name="IniciarSesion" xml:space="preserve"><value>Iniciar Sesión</value></data>
+  <data name="Registrarse" xml:space="preserve"><value>Registrarse</value></data>
+  
+  <!-- Auth -->
+  <data name="CorreoElectronico" xml:space="preserve"><value>Correo Electrónico</value></data>
+  <data name="Contrasena" xml:space="preserve"><value>Contraseña</value></data>
+  <data name="Recordarme" xml:space="preserve"><value>Recordarme</value></data>
+  <data name="Ingresar" xml:space="preserve"><value>Ingresar</value></data>
+  <data name="OlvidasteContrasena" xml:space="preserve"><value>¿Olvidaste tu contraseña?</value></data>
+  <data name="NoTienesCuenta" xml:space="preserve"><value>¿No tienes cuenta?</value></data>
+  <data name="CrearCuenta" xml:space="preserve"><value>Crear una cuenta</value></data>
+  <data name="EmailPlaceholder" xml:space="preserve"><value>ejemplo@correo.com</value></data>
+  <data name="PasswordPlaceholder" xml:space="preserve"><value>********</value></data>
+
+  <!-- Home -->
+  <data name="MensajeBienvenida" xml:space="preserve"><value>Bienvenido de vuelta a RayoExpres. ¿Qué se te antoja hoy?</value></data>
+  <data name="TusCuponesActivos" xml:space="preserve"><value>Tus Cupones Activos</value></data>
+  <data name="DeDescuento" xml:space="preserve"><value>de descuento</value></data>
+  <data name="RestaurantesDisponibles" xml:space="preserve"><value>Restaurantes Disponibles</value></data>
+  <data name="Horario" xml:space="preserve"><value>Horario</value></data>
+  <data name="Envio" xml:space="preserve"><value>Envío</value></data>
+  <data name="VerMenu" xml:space="preserve"><value>Ver Menú</value></data>
+  <data name="NoHayRestaurantes" xml:space="preserve"><value>No hay restaurantes disponibles en este momento.</value></data>
+  <data name="ProductosPopulares" xml:space="preserve"><value>Productos Populares</value></data>
+  <data name="AgregarAlCarrito" xml:space="preserve"><value>Agregar al Carrito</value></data>
+  
+  <data name="TituloHero" xml:space="preserve"><value>Tu comida favorita, entregada en Ibarra a la velocidad del rayo.</value></data>
+  <data name="SubtituloHero" xml:space="preserve"><value>Pide de los mejores restaurantes, con pagos seguros y entregas ultrarrápidas.</value></data>
+  <data name="RegistrateAhora" xml:space="preserve"><value>Regístrate Ahora</value></data>
+  <data name="IrAMiPanel" xml:space="preserve"><value>Ir a mi Panel</value></data>
+
+</root>

@@ -1,3 +1,5 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -27,57 +29,57 @@
                             @* ── CLIENTE ── *@
                             if (User.IsInRole("Cliente"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Restaurantes</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteCarrito" asp-action="Index">Mi Carrito</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteHistorialPedidos" asp-action="Index">Mis Pedidos</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteDirecciones" asp-action="Index">Mis Direcciones</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteCupones" asp-action="Index">🎟 Mis Cupones</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">@Localizer["Inicio"]</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">@Localizer["Restaurantes"]</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteCarrito" asp-action="Index">@Localizer["MiCarrito"]</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteHistorialPedidos" asp-action="Index">@Localizer["MisPedidos"]</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteDirecciones" asp-action="Index">@Localizer["MisDirecciones"]</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="ClienteCupones" asp-action="Index">@Localizer["MisCupones"]</a></li>
                             }
                             @* ── ADMINISTRADOR ── *@
                             else if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Administración
+                                        @Localizer["Administracion"]
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
-                                        <li><a class="dropdown-item" asp-controller="DashboardAdministrador" asp-action="Index">Dashboard</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminUsuarios" asp-action="Index">Usuarios</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminRestaurantes" asp-action="Index">Restaurantes</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminRepartidores" asp-action="Index">Repartidores</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminProductos" asp-action="Index">Productos</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminPedidos" asp-action="Index">Pedidos</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminCupones" asp-action="Index">Cupones</a></li>
+                                        <li><a class="dropdown-item" asp-controller="DashboardAdministrador" asp-action="Index">@Localizer["Dashboard"]</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminUsuarios" asp-action="Index">@Localizer["Usuarios"]</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminRestaurantes" asp-action="Index">@Localizer["Restaurantes"]</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminRepartidores" asp-action="Index">@Localizer["Repartidores"]</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminProductos" asp-action="Index">@Localizer["Productos"]</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminPedidos" asp-action="Index">@Localizer["Pedidos"]</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdminCupones" asp-action="Index">@Localizer["Cupones"]</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Repartidores">Sol. Repartidores</a></li>
                                         <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Restaurantes">Sol. Restaurantes</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" asp-controller="Auditorias" asp-action="Index">Auditoría</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Auditorias" asp-action="Index">@Localizer["Auditoria"]</a></li>
                                     </ul>
                                 </li>
                             }
                             @* ── RESTAURANTE ── *@
                             else if (User.IsInRole("Restaurante"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="DashboardRestaurante" asp-action="Index">Dashboard</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="RestauranteProductos" asp-action="Index">Productos</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="RestaurantePedidos" asp-action="Index">Pedidos</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="DashboardRestaurante" asp-action="Index">@Localizer["Dashboard"]</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="RestauranteProductos" asp-action="Index">@Localizer["Productos"]</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="RestaurantePedidos" asp-action="Index">@Localizer["Pedidos"]</a></li>
                             }
                             @* ── REPARTIDOR ── *@
                             else if (User.IsInRole("Repartidor"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="DashboardRepartidor" asp-action="Index">Dashboard</a></li>
-                                <li class="nav-item"><a class="nav-link text-warning fw-bold" asp-controller="RepartidorPedidos" asp-action="Disponibles">Pedidos Disponibles</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="RepartidorPedidos" asp-action="Index">Mis Entregas</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="DashboardRepartidor" asp-action="Index">@Localizer["Dashboard"]</a></li>
+                                <li class="nav-item"><a class="nav-link text-warning fw-bold" asp-controller="RepartidorPedidos" asp-action="Disponibles">@Localizer["PedidosDisponibles"]</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="RepartidorPedidos" asp-action="Index">@Localizer["MisEntregas"]</a></li>
                             }
                         }
                         else
                         {
                             @* ── VISITANTE ── *@
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#como-funciona">Cómo Funciona</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#restaurantes">Restaurantes</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">@Localizer["Inicio"]</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#como-funciona">@Localizer["ComoFunciona"]</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#restaurantes">@Localizer["Restaurantes"]</a></li>
                         }
                     </ul>
 
@@ -85,13 +87,36 @@
                     @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
                     {
                         <form class="d-flex me-3" asp-controller="Home" asp-action="Buscar" method="get">
-                            <input class="form-control me-2" type="search" placeholder="Buscar pizza, sushi..." name="q" value="@ViewBag.Query" />
-                            <button class="btn btn-outline-primary" type="submit">Buscar</button>
+                            <input class="form-control me-2" type="search" placeholder="@Localizer["BuscarPlaceholder"]" name="q" value="@ViewBag.Query" />
+                            <button class="btn btn-outline-primary" type="submit">@Localizer["BuscarBoton"]</button>
                         </form>
                     }
 
-                    @* ─── MENÚ DERECHO (usuario / login) ─── *@
+                    @* ─── MENÚ DERECHO (usuario / login / IDIOMA) ─── *@
                     <ul class="navbar-nav">
+                        <!-- SELECTOR DE IDIOMA -->
+                        <li class="nav-item dropdown me-2">
+                            <a class="nav-link dropdown-toggle" href="#" id="idiomaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                🌐 @Localizer["Idioma"]
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="idiomaDropdown">
+                                <li>
+                                    <form asp-controller="Idioma" asp-action="SetLanguage" method="post" class="m-0 p-0">
+                                        <input type="hidden" name="culture" value="es" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                        <button type="submit" class="dropdown-item">🇪🇸 @Localizer["Espanol"]</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form asp-controller="Idioma" asp-action="SetLanguage" method="post" class="m-0 p-0">
+                                        <input type="hidden" name="culture" value="en" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                        <button type="submit" class="dropdown-item">🇺🇸 @Localizer["Ingles"]</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item dropdown">
@@ -101,34 +126,33 @@
                                         var avatarUrl = !string.IsNullOrEmpty(fotoPerfilClaim) ? fotoPerfilClaim : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(User.Identity.Name ?? "U") + "&background=random";
                                     }
                                     <img src="@avatarUrl" alt="Avatar" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;" />
-                                    <span>Hola, @User.Identity.Name</span>
+                                    <span>@Localizer["HolaUsuario", User.Identity.Name]</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUser">
                                     @if (User.IsInRole("Cliente"))
                                     {
-                                        <li><a class="dropdown-item" asp-controller="ClientePerfil" asp-action="CompletarPerfil">Mi Perfil</a></li>
+                                        <li><a class="dropdown-item" asp-controller="ClientePerfil" asp-action="CompletarPerfil">@Localizer["MiPerfil"]</a></li>
                                     }
                                     else if (User.IsInRole("Restaurante"))
                                     {
-                                        <li><a class="dropdown-item" asp-controller="RestaurantePerfil" asp-action="CompletarPerfil">Perfil del Restaurante</a></li>
+                                        <li><a class="dropdown-item" asp-controller="RestaurantePerfil" asp-action="CompletarPerfil">@Localizer["PerfilRestaurante"]</a></li>
                                     }
                                     else if (User.IsInRole("Repartidor"))
                                     {
-                                        <li><a class="dropdown-item" asp-controller="RepartidorPerfil" asp-action="CompletarPerfil">Mi Perfil de Repartidor</a></li>
+                                        <li><a class="dropdown-item" asp-controller="RepartidorPerfil" asp-action="CompletarPerfil">@Localizer["PerfilRepartidor"]</a></li>
                                     }
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" asp-controller="Auth" asp-action="Logout">Cerrar Sesión</a></li>
+                                    <li><a class="dropdown-item text-danger" asp-controller="Auth" asp-action="Logout">@Localizer["CerrarSesion"]</a></li>
                                 </ul>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="btn btn-outline-primary me-2" asp-controller="Auth" asp-action="Login">Iniciar Sesión</a>
+                                <a class="btn btn-outline-primary me-2" asp-controller="Auth" asp-action="Login">@Localizer["IniciarSesion"]</a>
                             </li>
                             <li class="nav-item">
-                                @* Registrarse lleva a la pantalla de selección de tipo de cuenta *@
-                                <a class="btn btn-primary" asp-controller="Auth" asp-action="SeleccionTipoRegistro">Registrarse</a>
+                                <a class="btn btn-primary" asp-controller="Auth" asp-action="SeleccionTipoRegistro">@Localizer["Registrarse"]</a>
                             </li>
                         }
                     </ul>
