@@ -10,10 +10,18 @@ namespace Delivery.MVC.Controllers
     public class UsuariosController : Controller
     {
         private readonly IUsuarioConsumer _consumer;
+        private readonly IRolConsumer _rolConsumer;
 
-        public UsuariosController(IUsuarioConsumer consumer)
+        public UsuariosController(IUsuarioConsumer consumer, IRolConsumer rolConsumer)
         {
             _consumer = consumer;
+            _rolConsumer = rolConsumer;
+        }
+
+        private async Task CargarViewBags()
+        {
+            var roles = await _rolConsumer.GetAllAsync();
+            ViewBag.RolId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(roles, "Id", "Nombre");
         }
 
         public async Task<IActionResult> Index()
@@ -29,8 +37,9 @@ namespace Delivery.MVC.Controllers
             return View(data);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            await CargarViewBags();
             return View();
         }
 
@@ -45,6 +54,7 @@ namespace Delivery.MVC.Controllers
         {
             var data = await _consumer.GetByIdAsync(id);
             if (data == null) return NotFound();
+            await CargarViewBags();
             return View(data);
         }
 

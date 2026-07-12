@@ -65,8 +65,8 @@ namespace Delivery.Servicios.Implementaciones
             existing.CuponId = pedido.CuponId;
             existing.MontoDescuento = pedido.MontoDescuento;
             existing.Notas = pedido.Notas;
-            existing.FechaEntregaEstimada = pedido.FechaEntregaEstimada;
-            existing.FechaEntregaReal = pedido.FechaEntregaReal;
+            existing.FechaEntregaEstimada = pedido.FechaEntregaEstimada?.ToUniversalTime();
+            existing.FechaEntregaReal = pedido.FechaEntregaReal?.ToUniversalTime();
             existing.ActualizadoEn = System.DateTime.UtcNow;
 
             await _context.SaveChangesAsync();

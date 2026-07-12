@@ -4,10 +4,7 @@
 <div class="row"><div class="col-md-6">
 <form asp-action="Create">
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<div class="mb-3">
-<label asp-for="RestauranteId" class="form-label"></label>
-<input asp-for="RestauranteId" class="form-control" />
-<span asp-validation-for="RestauranteId" class="text-danger"></span></div>
+
 <div class="mb-3">
 <label asp-for="Nombre" class="form-label"></label>
 <input asp-for="Nombre" class="form-control" />
@@ -16,22 +13,10 @@
 <label asp-for="Descripcion" class="form-label"></label>
 <input asp-for="Descripcion" class="form-control" />
 <span asp-validation-for="Descripcion" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="CreadoEn" class="form-label"></label>
-<input asp-for="CreadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="CreadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="ActualizadoEn" class="form-label"></label>
-<input asp-for="ActualizadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="ActualizadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Restaurante" class="form-label"></label>
-<input asp-for="Restaurante" class="form-control" />
-<span asp-validation-for="Restaurante" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Productos" class="form-label"></label>
-<input asp-for="Productos" class="form-control" />
-<span asp-validation-for="Productos" class="text-danger"></span></div>
+
+
+
+
 <div class="mb-3"><button type="submit" class="btn btn-primary">Guardar</button></div>
 </form></div></div>
 <div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

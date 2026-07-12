@@ -7,7 +7,7 @@
 <input type="hidden" asp-for="UsuarioId" />
 <div class="mb-3">
 <label asp-for="UsuarioId" class="form-label"></label>
-<input asp-for="UsuarioId" class="form-control" />
+<select asp-for="UsuarioId" class="form-control" asp-items="ViewBag.UsuarioId"></select>
 <span asp-validation-for="UsuarioId" class="text-danger"></span></div>
 <div class="mb-3">
 <label asp-for="LicenciaConducir" class="form-label"></label>
@@ -17,18 +17,9 @@
 <label asp-for="FotoLicenciaUrl" class="form-label"></label>
 <input asp-for="FotoLicenciaUrl" class="form-control" />
 <span asp-validation-for="FotoLicenciaUrl" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="EstadoAprobacion" class="form-label"></label>
-<input asp-for="EstadoAprobacion" class="form-control" />
-<span asp-validation-for="EstadoAprobacion" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="AprobadoPor" class="form-label"></label>
-<input asp-for="AprobadoPor" class="form-control" />
-<span asp-validation-for="AprobadoPor" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="FechaAprobacion" class="form-label"></label>
-<input asp-for="FechaAprobacion" class="form-control" type="datetime-local" />
-<span asp-validation-for="FechaAprobacion" class="text-danger"></span></div>
+
+
+
 <div class="mb-3">
 <label asp-for="Estado" class="form-label"></label>
 <select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<Delivery.Modelos.Enums.EstadoRepartidorEnum>()"></select>
@@ -37,26 +28,11 @@
 <label asp-for="CalificacionPromedio" class="form-label"></label>
 <input asp-for="CalificacionPromedio" class="form-control" />
 <span asp-validation-for="CalificacionPromedio" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="CreadoEn" class="form-label"></label>
-<input asp-for="CreadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="CreadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="ActualizadoEn" class="form-label"></label>
-<input asp-for="ActualizadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="ActualizadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Usuario" class="form-label"></label>
-<input asp-for="Usuario" class="form-control" />
-<span asp-validation-for="Usuario" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="UsuarioAprobador" class="form-label"></label>
-<input asp-for="UsuarioAprobador" class="form-control" />
-<span asp-validation-for="UsuarioAprobador" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Vehiculos" class="form-label"></label>
-<input asp-for="Vehiculos" class="form-control" />
-<span asp-validation-for="Vehiculos" class="text-danger"></span></div>
+
+
+
+
+
 <div class="mb-3">
 <label asp-for="UbicacionActual" class="form-label"></label>
 <input asp-for="UbicacionActual" class="form-control" />

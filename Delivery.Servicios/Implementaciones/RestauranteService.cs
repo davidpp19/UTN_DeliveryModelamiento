@@ -18,12 +18,18 @@ namespace Delivery.Servicios.Implementaciones
 
         public async Task<IEnumerable<Restaurante>> GetAllAsync()
         {
-            return await _context.Restaurantes.ToListAsync();
+            return await _context.Restaurantes
+                .Include(r => r.UsuarioCreador)
+                .Include(r => r.UsuarioAprobador)
+                .ToListAsync();
         }
 
         public async Task<Restaurante?> GetByIdAsync(long id)
         {
-            return await _context.Restaurantes.FindAsync(id);
+            return await _context.Restaurantes
+                .Include(r => r.UsuarioCreador)
+                .Include(r => r.UsuarioAprobador)
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task<Restaurante> CreateAsync(Restaurante restaurante)
@@ -49,12 +55,11 @@ namespace Delivery.Servicios.Implementaciones
             existing.Telefono = restaurante.Telefono;
             existing.Email = restaurante.Email;
             existing.LogoUrl = restaurante.LogoUrl;
+            existing.PortadaUrl = restaurante.PortadaUrl;
+            existing.RedesSociales = restaurante.RedesSociales;
             existing.HoraApertura = restaurante.HoraApertura;
             existing.HoraCierre = restaurante.HoraCierre;
             existing.CostoEnvioBase = restaurante.CostoEnvioBase;
-            existing.Estado = restaurante.Estado;
-            existing.AprobadoPor = restaurante.AprobadoPor;
-            existing.FechaAprobacion = restaurante.FechaAprobacion;
             existing.Abierto = restaurante.Abierto;
             existing.ActualizadoEn = System.DateTime.UtcNow;
 
@@ -66,6 +71,17 @@ namespace Delivery.Servicios.Implementaciones
         {
             var restaurante = await _context.Restaurantes.FindAsync(id);
             if (restaurante == null) return false;
+
+            var tienePedidos = await _context.Pedidos.AnyAsync(p => p.RestauranteId == id);
+            if (tienePedidos)
+            {
+                restaurante.Abierto = false;
+                restaurante.Estado = Delivery.Modelos.Enums.EstadoRestauranteEnum.Suspendido;
+                restaurante.ActualizadoEn = System.DateTime.UtcNow;
+                _context.Restaurantes.Update(restaurante);
+                await _context.SaveChangesAsync();
+                return true;
+            }
 
             _context.Restaurantes.Remove(restaurante);
             await _context.SaveChangesAsync();

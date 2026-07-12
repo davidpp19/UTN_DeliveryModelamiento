@@ -10,10 +10,18 @@ namespace Delivery.MVC.Controllers
     public class CategoriasProductoController : Controller
     {
         private readonly ICategoriaProductoConsumer _consumer;
+        private readonly IRestauranteConsumer _restauranteConsumer;
 
-        public CategoriasProductoController(ICategoriaProductoConsumer consumer)
+        public CategoriasProductoController(ICategoriaProductoConsumer consumer, IRestauranteConsumer restauranteConsumer)
         {
             _consumer = consumer;
+            _restauranteConsumer = restauranteConsumer;
+        }
+
+        private async Task CargarViewBags()
+        {
+            var restaurantes = await _restauranteConsumer.GetAllAsync();
+            ViewBag.RestauranteId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(restaurantes, "Id", "Nombre");
         }
 
         public async Task<IActionResult> Index()
@@ -29,8 +37,9 @@ namespace Delivery.MVC.Controllers
             return View(data);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            await CargarViewBags();
             return View();
         }
 
@@ -45,6 +54,7 @@ namespace Delivery.MVC.Controllers
         {
             var data = await _consumer.GetByIdAsync(id);
             if (data == null) return NotFound();
+            await CargarViewBags();
             return View(data);
         }
 

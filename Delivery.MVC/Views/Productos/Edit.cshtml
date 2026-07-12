@@ -7,11 +7,11 @@
 <input type="hidden" asp-for="Id" />
 <div class="mb-3">
 <label asp-for="RestauranteId" class="form-label"></label>
-<input asp-for="RestauranteId" class="form-control" />
+<select asp-for="RestauranteId" class="form-control" asp-items="ViewBag.RestauranteId"></select>
 <span asp-validation-for="RestauranteId" class="text-danger"></span></div>
 <div class="mb-3">
 <label asp-for="CategoriaId" class="form-label"></label>
-<input asp-for="CategoriaId" class="form-control" />
+<select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.CategoriaId"></select>
 <span asp-validation-for="CategoriaId" class="text-danger"></span></div>
 <div class="mb-3">
 <label asp-for="Nombre" class="form-label"></label>
@@ -37,22 +37,10 @@
 <label asp-for="TiempoPreparacion" class="form-label"></label>
 <input asp-for="TiempoPreparacion" class="form-control" />
 <span asp-validation-for="TiempoPreparacion" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="CreadoEn" class="form-label"></label>
-<input asp-for="CreadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="CreadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="ActualizadoEn" class="form-label"></label>
-<input asp-for="ActualizadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="ActualizadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Restaurante" class="form-label"></label>
-<input asp-for="Restaurante" class="form-control" />
-<span asp-validation-for="Restaurante" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Categoria" class="form-label"></label>
-<input asp-for="Categoria" class="form-control" />
-<span asp-validation-for="Categoria" class="text-danger"></span></div>
+
+
+
+
 <div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
 </form></div></div>
 <div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

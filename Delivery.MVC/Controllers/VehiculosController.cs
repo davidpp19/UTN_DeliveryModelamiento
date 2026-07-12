@@ -10,10 +10,21 @@ namespace Delivery.MVC.Controllers
     public class VehiculosController : Controller
     {
         private readonly IVehiculoConsumer _consumer;
+        private readonly IRepartidorConsumer _repartidorConsumer;
 
-        public VehiculosController(IVehiculoConsumer consumer)
+        public VehiculosController(IVehiculoConsumer consumer, IRepartidorConsumer repartidorConsumer)
         {
             _consumer = consumer;
+            _repartidorConsumer = repartidorConsumer;
+        }
+
+        private async Task CargarViewBags()
+        {
+            var repartidores = await _repartidorConsumer.GetAllAsync();
+            // Assuming Repartidor has a Usuario navigation property, we might just show ID for now, 
+            // but ideally we'd join with Usuario. For now, since it's a simple CRUD, just using Id is better than raw input box.
+            // Wait, we need a string. Let's just use Id since we don't have an easy Name property directly on Repartidor without fetching Usuario.
+            ViewBag.RepartidorId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(repartidores, "Id", "Id");
         }
 
         public async Task<IActionResult> Index()
@@ -29,8 +40,9 @@ namespace Delivery.MVC.Controllers
             return View(data);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            await CargarViewBags();
             return View();
         }
 
@@ -45,6 +57,7 @@ namespace Delivery.MVC.Controllers
         {
             var data = await _consumer.GetByIdAsync(id);
             if (data == null) return NotFound();
+            await CargarViewBags();
             return View(data);
         }
 

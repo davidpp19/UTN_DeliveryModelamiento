@@ -44,8 +44,8 @@ namespace Delivery.Servicios.Implementaciones
             existing.ValorDescuento = cupon.ValorDescuento;
             existing.DescuentoMaximo = cupon.DescuentoMaximo;
             existing.PedidoMinimo = cupon.PedidoMinimo;
-            existing.FechaInicio = cupon.FechaInicio;
-            existing.FechaFin = cupon.FechaFin;
+            existing.FechaInicio = cupon.FechaInicio.ToUniversalTime();
+            existing.FechaFin = cupon.FechaFin.ToUniversalTime();
             existing.LimiteUsos = cupon.LimiteUsos;
             existing.UsosActuales = cupon.UsosActuales;
             existing.Activo = cupon.Activo;

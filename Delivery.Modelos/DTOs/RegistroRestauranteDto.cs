@@ -42,6 +42,12 @@ namespace Delivery.Modelos.DTOs
         [Required(ErrorMessage = "La ciudad es obligatoria")]
         public string Ciudad { get; set; } = null!;
 
+        [Required(ErrorMessage = "Seleccione su ubicación en el mapa")]
+        public decimal? Latitud { get; set; }
+
+        [Required(ErrorMessage = "Seleccione su ubicación en el mapa")]
+        public decimal? Longitud { get; set; }
+
         public string? Categoria { get; set; }
         
         public string? Descripcion { get; set; }

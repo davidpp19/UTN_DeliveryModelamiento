@@ -212,6 +212,8 @@ namespace Delivery.API.Controllers
                 Ruc          = dto.RUC,
                 Calle        = dto.Calle,
                 Ciudad       = dto.Ciudad,
+                Latitud      = dto.Latitud,
+                Longitud     = dto.Longitud,
                 Telefono     = dto.Telefono,
                 Email        = dto.Email,
                 HoraApertura = dto.HoraApertura,

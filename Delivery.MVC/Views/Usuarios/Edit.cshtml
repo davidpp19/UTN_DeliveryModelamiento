@@ -7,7 +7,7 @@
 <input type="hidden" asp-for="Id" />
 <div class="mb-3">
 <label asp-for="RolId" class="form-label"></label>
-<input asp-for="RolId" class="form-control" />
+<select asp-for="RolId" class="form-control" asp-items="ViewBag.RolId"></select>
 <span asp-validation-for="RolId" class="text-danger"></span></div>
 <div class="mb-3">
 <label asp-for="Nombre" class="form-label"></label>
@@ -41,14 +41,8 @@
 <label asp-for="FotoPerfilUrl" class="form-label"></label>
 <input asp-for="FotoPerfilUrl" class="form-control" />
 <span asp-validation-for="FotoPerfilUrl" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="CreadoEn" class="form-label"></label>
-<input asp-for="CreadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="CreadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="ActualizadoEn" class="form-label"></label>
-<input asp-for="ActualizadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="ActualizadoEn" class="text-danger"></span></div>
+
+
 <div class="mb-3">
 <label asp-for="Rol" class="form-label"></label>
 <input asp-for="Rol" class="form-control" />

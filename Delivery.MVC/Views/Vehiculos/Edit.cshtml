@@ -7,7 +7,7 @@
 <input type="hidden" asp-for="Id" />
 <div class="mb-3">
 <label asp-for="RepartidorId" class="form-label"></label>
-<input asp-for="RepartidorId" class="form-control" />
+<select asp-for="RepartidorId" class="form-control" asp-items="ViewBag.RepartidorId"></select>
 <span asp-validation-for="RepartidorId" class="text-danger"></span></div>
 <div class="mb-3">
 <label asp-for="TipoVehiculo" class="form-label"></label>
@@ -37,14 +37,8 @@
 <label asp-for="FotoVehiculoUrl" class="form-label"></label>
 <input asp-for="FotoVehiculoUrl" class="form-control" />
 <span asp-validation-for="FotoVehiculoUrl" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="CreadoEn" class="form-label"></label>
-<input asp-for="CreadoEn" class="form-control" type="datetime-local" />
-<span asp-validation-for="CreadoEn" class="text-danger"></span></div>
-<div class="mb-3">
-<label asp-for="Repartidor" class="form-label"></label>
-<input asp-for="Repartidor" class="form-control" />
-<span asp-validation-for="Repartidor" class="text-danger"></span></div>
+
+
 <div class="mb-3"><button type="submit" class="btn btn-warning">Actualizar</button></div>
 </form></div></div>
 <div><a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a></div>

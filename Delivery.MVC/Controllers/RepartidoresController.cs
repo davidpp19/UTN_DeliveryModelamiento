@@ -10,10 +10,18 @@ namespace Delivery.MVC.Controllers
     public class RepartidoresController : Controller
     {
         private readonly IRepartidorConsumer _consumer;
+        private readonly IUsuarioConsumer _usuarioConsumer;
 
-        public RepartidoresController(IRepartidorConsumer consumer)
+        public RepartidoresController(IRepartidorConsumer consumer, IUsuarioConsumer usuarioConsumer)
         {
             _consumer = consumer;
+            _usuarioConsumer = usuarioConsumer;
+        }
+
+        private async Task CargarViewBags()
+        {
+            var usuarios = await _usuarioConsumer.GetAllAsync();
+            ViewBag.UsuarioId = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(usuarios, "Id", "Nombre");
         }
 
         public async Task<IActionResult> Index()
@@ -29,8 +37,9 @@ namespace Delivery.MVC.Controllers
             return View(data);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            await CargarViewBags();
             return View();
         }
 
@@ -45,6 +54,7 @@ namespace Delivery.MVC.Controllers
         {
             var data = await _consumer.GetByIdAsync(id);
             if (data == null) return NotFound();
+            await CargarViewBags();
             return View(data);
         }
 

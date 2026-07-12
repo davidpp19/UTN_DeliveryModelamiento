@@ -10,6 +10,7 @@
 <th>Descripcion</th>
 <th>Categoria</th>
 <th>Calle</th>
+<th>Creado por</th>
 <th>Acciones</th></tr></thead><tbody>
 @foreach (var item in Model) {<tr>
 <td>@Html.DisplayFor(modelItem => item.Id)</td>
@@ -17,6 +18,7 @@
 <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
 <td>@Html.DisplayFor(modelItem => item.Categoria)</td>
 <td>@Html.DisplayFor(modelItem => item.Calle)</td>
+<td>@(item.UsuarioCreador?.Nombre + " " + item.UsuarioCreador?.Apellidos)</td>
 <td>
 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Detalles</a>
