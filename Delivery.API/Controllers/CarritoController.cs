@@ -18,7 +18,7 @@ namespace Delivery.API.Controllers
         }
 
         [HttpGet("{usuarioId}")]
-        public async Task<ActionResult<Pedido>> GetCarrito(long usuarioId)
+        public async Task<ActionResult<Carrito>> GetCarrito(long usuarioId)
         {
             var carrito = await _carritoService.ObtenerCarritoActivoAsync(usuarioId);
             if (carrito == null) return NotFound(new { message = "No hay un carrito activo para este usuario." });
@@ -27,26 +27,28 @@ namespace Delivery.API.Controllers
         }
 
         [HttpPost("agregar")]
-        public async Task<ActionResult<Pedido>> AgregarProducto([FromBody] AgregarAlCarritoDto dto)
+        public async Task<ActionResult<Carrito>> AgregarProducto([FromBody] AgregarAlCarritoDto dto)
         {
             var carrito = await _carritoService.AgregarProductoAsync(dto);
             return Ok(carrito);
         }
 
-        [HttpDelete("{usuarioId}/quitar/{detallePedidoId}")]
-        public async Task<IActionResult> QuitarProducto(long usuarioId, long detallePedidoId)
+        [HttpDelete("{usuarioId}/quitar/{carritoItemId}")]
+        public async Task<IActionResult> QuitarProducto(long usuarioId, long carritoItemId)
         {
-            var resultado = await _carritoService.QuitarProductoAsync(usuarioId, detallePedidoId);
+            var resultado = await _carritoService.QuitarProductoAsync(usuarioId, carritoItemId);
             if (!resultado) return NotFound();
 
             return NoContent();
         }
 
-        [HttpPost("{usuarioId}/confirmar")]
-        public async Task<ActionResult<Pedido>> ConfirmarCarrito(long usuarioId, [FromBody] long direccionId)
+        [HttpDelete("{usuarioId}/vaciar")]
+        public async Task<IActionResult> VaciarCarrito(long usuarioId)
         {
-            var pedido = await _carritoService.ConfirmarCarritoAsync(usuarioId, direccionId);
-            return Ok(pedido);
+            var resultado = await _carritoService.VaciarCarritoAsync(usuarioId);
+            if (!resultado) return NotFound();
+
+            return NoContent();
         }
     }
 }

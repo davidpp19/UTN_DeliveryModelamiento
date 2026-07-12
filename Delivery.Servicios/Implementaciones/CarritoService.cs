@@ -20,7 +20,7 @@ namespace Delivery.Servicios.Implementaciones
             _context = context;
         }
 
-        public async Task<Pedido> AgregarProductoAsync(AgregarAlCarritoDto dto)
+        public async Task<Carrito> AgregarProductoAsync(AgregarAlCarritoDto dto)
         {
             var restaurante = await _context.Restaurantes.FindAsync(dto.RestauranteId);
             if (restaurante == null || !restaurante.Abierto)
@@ -33,21 +33,20 @@ namespace Delivery.Servicios.Implementaciones
             if (producto.RestauranteId != dto.RestauranteId)
                 throw new BusinessException("El producto no pertenece al restaurante especificado.");
 
-            var carrito = await _context.Pedidos
-                .Include(p => p.Detalles)
-                .FirstOrDefaultAsync(p => p.UsuarioId == dto.UsuarioId && p.EstadoPedido == EstadoPedidoEnum.Borrador);
+            var carrito = await _context.Carritos
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.UsuarioId == dto.UsuarioId);
 
             if (carrito == null)
             {
-                carrito = new Pedido
+                carrito = new Carrito
                 {
                     UsuarioId = dto.UsuarioId,
                     RestauranteId = dto.RestauranteId,
-                    EstadoPedido = EstadoPedidoEnum.Borrador,
-                    FechaPedido = DateTime.UtcNow,
-                    Total = 0
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaActualizacion = DateTime.UtcNow
                 };
-                _context.Pedidos.Add(carrito);
+                _context.Carritos.Add(carrito);
                 await _context.SaveChangesAsync();
             }
             else if (carrito.RestauranteId != dto.RestauranteId)
@@ -55,80 +54,70 @@ namespace Delivery.Servicios.Implementaciones
                 throw new BusinessException("No puedes mezclar productos de diferentes restaurantes en un mismo pedido.");
             }
 
-            var detalle = carrito.Detalles.FirstOrDefault(d => d.ProductoId == dto.ProductoId);
-            if (detalle != null)
+            var item = carrito.Items.FirstOrDefault(i => i.ProductoId == dto.ProductoId);
+            if (item != null)
             {
-                detalle.Cantidad += dto.Cantidad;
+                item.Cantidad += dto.Cantidad;
             }
             else
             {
-                detalle = new DetallePedido
+                item = new CarritoItem
                 {
-                    PedidoId = carrito.Id,
+                    CarritoId = carrito.Id,
                     ProductoId = dto.ProductoId,
                     Cantidad = dto.Cantidad,
                     PrecioUnitario = producto.Precio
                 };
-                _context.DetallesPedido.Add(detalle);
+                _context.CarritoItems.Add(item);
             }
 
-            await _context.SaveChangesAsync();
-
-            // Recalcular Total
-            carrito.Total = carrito.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
-            _context.Pedidos.Update(carrito);
+            carrito.FechaActualizacion = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             return carrito;
         }
 
-        public async Task<Pedido?> ObtenerCarritoActivoAsync(long usuarioId)
+        public async Task<Carrito?> ObtenerCarritoActivoAsync(long usuarioId)
         {
-            return await _context.Pedidos
-                .Include(p => p.Detalles)
-                .ThenInclude(d => d.Producto)
-                .FirstOrDefaultAsync(p => p.UsuarioId == usuarioId && p.EstadoPedido == EstadoPedidoEnum.Borrador);
+            return await _context.Carritos
+                .Include(c => c.Items)
+                .ThenInclude(i => i.Producto)
+                .FirstOrDefaultAsync(c => c.UsuarioId == usuarioId);
         }
 
-        public async Task<bool> QuitarProductoAsync(long usuarioId, long detallePedidoId)
+        public async Task<bool> QuitarProductoAsync(long usuarioId, long carritoItemId)
         {
             var carrito = await ObtenerCarritoActivoAsync(usuarioId);
             if (carrito == null) return false;
 
-            var detalle = carrito.Detalles.FirstOrDefault(d => d.Id == detallePedidoId);
-            if (detalle == null) return false;
+            var item = carrito.Items.FirstOrDefault(i => i.Id == carritoItemId);
+            if (item == null) return false;
 
-            _context.DetallesPedido.Remove(detalle);
+            _context.CarritoItems.Remove(item);
             await _context.SaveChangesAsync();
 
-            carrito.Total = carrito.Detalles.Where(d => d.Id != detallePedidoId).Sum(d => d.Cantidad * d.PrecioUnitario);
-            
-            if (!carrito.Detalles.Any(d => d.Id != detallePedidoId))
+            if (!carrito.Items.Any(i => i.Id != carritoItemId))
             {
-                _context.Pedidos.Remove(carrito);
+                _context.Carritos.Remove(carrito);
             }
             else
             {
-                _context.Pedidos.Update(carrito);
+                carrito.FechaActualizacion = DateTime.UtcNow;
+                _context.Carritos.Update(carrito);
             }
 
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<Pedido> ConfirmarCarritoAsync(long usuarioId, long direccionId)
+        public async Task<bool> VaciarCarritoAsync(long usuarioId)
         {
             var carrito = await ObtenerCarritoActivoAsync(usuarioId);
-            if (carrito == null || !carrito.Detalles.Any())
-                throw new BusinessException("El carrito está vacío o no existe.");
+            if (carrito == null) return false;
 
-            carrito.DireccionEntregaId = direccionId;
-            carrito.EstadoPedido = EstadoPedidoEnum.Pendiente; // Pasa a estado de restaurante
-            
-            _context.Pedidos.Update(carrito);
+            _context.Carritos.Remove(carrito);
             await _context.SaveChangesAsync();
-
-            return carrito;
+            return true;
         }
     }
 }

@@ -7,9 +7,9 @@ namespace Delivery.Servicios.Interfaces
 {
     public interface ICarritoService
     {
-        Task<Pedido> AgregarProductoAsync(AgregarAlCarritoDto dto);
-        Task<Pedido?> ObtenerCarritoActivoAsync(long usuarioId);
-        Task<bool> QuitarProductoAsync(long usuarioId, long detallePedidoId);
-        Task<Pedido> ConfirmarCarritoAsync(long usuarioId, long direccionId);
+        Task<Carrito> AgregarProductoAsync(AgregarAlCarritoDto dto);
+        Task<Carrito?> ObtenerCarritoActivoAsync(long usuarioId);
+        Task<bool> QuitarProductoAsync(long usuarioId, long carritoItemId);
+        Task<bool> VaciarCarritoAsync(long usuarioId);
     }
 }

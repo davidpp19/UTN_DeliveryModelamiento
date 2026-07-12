@@ -153,6 +153,7 @@ namespace Delivery.API.Controllers
             if (restaurante == null) return NotFound();
 
             restaurante.Estado = EstadoRestauranteEnum.Aprobado;
+            restaurante.Abierto = true; // Para asegurar que quede disponible
             restaurante.AprobadoPor = GetAdminId();
             restaurante.FechaAprobacion = DateTime.UtcNow;
             await _restauranteService.UpdateAsync(restaurante);

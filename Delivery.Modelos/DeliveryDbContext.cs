@@ -31,6 +31,8 @@ namespace Delivery.Modelos
         public DbSet<Favorito> Favoritos { get; set; } = null!;
         public DbSet<RegistroAuditoria> RegistrosAuditoria { get; set; } = null!;
         public DbSet<Notificacion> Notificaciones { get; set; } = null!;
+        public DbSet<Carrito> Carritos { get; set; } = null!;
+        public DbSet<CarritoItem> CarritoItems { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

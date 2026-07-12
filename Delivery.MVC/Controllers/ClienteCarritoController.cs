@@ -57,20 +57,20 @@ namespace Delivery.MVC.Controllers
 
         private async Task<CarritoSesionDto> ObtenerCarritoDtoAsync(long userId)
         {
-            var pedido = await _carritoConsumer.GetCarritoAsync(userId);
-            if (pedido == null) return new CarritoSesionDto();
+            var carritoBd = await _carritoConsumer.GetCarritoAsync(userId);
+            if (carritoBd == null) return new CarritoSesionDto();
 
             var dto = new CarritoSesionDto
             {
-                RestauranteId = pedido.RestauranteId
+                RestauranteId = carritoBd.RestauranteId
             };
             
-            var restaurante = await _restauranteConsumer.GetByIdAsync(pedido.RestauranteId);
+            var restaurante = await _restauranteConsumer.GetByIdAsync(carritoBd.RestauranteId);
             if (restaurante != null) dto.NombreRestaurante = restaurante.Nombre;
 
-            if (pedido.Detalles != null)
+            if (carritoBd.Items != null)
             {
-                foreach (var d in pedido.Detalles)
+                foreach (var d in carritoBd.Items)
                 {
                     dto.Items.Add(new CarritoItemSesionDto
                     {
@@ -144,10 +144,10 @@ namespace Delivery.MVC.Controllers
         public async Task<IActionResult> Quitar(long productoId)
         {
             var userId = GetMyUsuarioId();
-            var pedido = await _carritoConsumer.GetCarritoAsync(userId);
-            if (pedido != null && pedido.Detalles != null)
+            var carritoBd = await _carritoConsumer.GetCarritoAsync(userId);
+            if (carritoBd != null && carritoBd.Items != null)
             {
-                var detalle = pedido.Detalles.FirstOrDefault(d => d.ProductoId == productoId);
+                var detalle = carritoBd.Items.FirstOrDefault(d => d.ProductoId == productoId);
                 if (detalle != null)
                 {
                     await _carritoConsumer.QuitarProductoAsync(userId, detalle.Id);
@@ -163,14 +163,7 @@ namespace Delivery.MVC.Controllers
         public async Task<IActionResult> Vaciar()
         {
             var userId = GetMyUsuarioId();
-            var pedido = await _carritoConsumer.GetCarritoAsync(userId);
-            if (pedido != null && pedido.Detalles != null)
-            {
-                foreach (var d in pedido.Detalles)
-                {
-                    await _carritoConsumer.QuitarProductoAsync(userId, d.Id);
-                }
-            }
+            await _carritoConsumer.VaciarCarritoAsync(userId);
             return RedirectToAction("Index");
         }
 

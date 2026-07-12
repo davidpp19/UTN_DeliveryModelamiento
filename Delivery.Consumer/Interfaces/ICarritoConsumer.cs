@@ -6,9 +6,9 @@ namespace Delivery.Consumer.Interfaces
 {
     public interface ICarritoConsumer
     {
-        Task<Pedido?> GetCarritoAsync(long usuarioId);
-        Task<Pedido?> AgregarProductoAsync(AgregarAlCarritoDto dto);
-        Task<bool> QuitarProductoAsync(long usuarioId, long detallePedidoId);
-        Task<Pedido?> ConfirmarCarritoAsync(long usuarioId, long direccionId);
+        Task<Carrito?> GetCarritoAsync(long usuarioId);
+        Task<Carrito?> AgregarProductoAsync(AgregarAlCarritoDto dto);
+        Task<bool> QuitarProductoAsync(long usuarioId, long carritoItemId);
+        Task<bool> VaciarCarritoAsync(long usuarioId);
     }
 }

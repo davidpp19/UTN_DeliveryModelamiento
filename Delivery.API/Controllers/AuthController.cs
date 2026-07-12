@@ -217,7 +217,7 @@ namespace Delivery.API.Controllers
                 HoraApertura = dto.HoraApertura,
                 HoraCierre   = dto.HoraCierre,
                 Estado       = EstadoRestauranteEnum.Pendiente,
-                Abierto      = false,
+                Abierto      = true,
                 CreadoPor    = usuarioCreado.Id,
                 CreadoEn     = ahora
             };
