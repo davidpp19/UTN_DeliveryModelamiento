@@ -127,40 +127,66 @@ namespace Delivery.Servicios.Implementaciones
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // Crear el Pedido — aquí es la ÚNICA vez que se inserta en la tabla pedidos
-                var pedido = new Pedido
-                {
-                    UsuarioId          = usuarioId,
-                    RestauranteId      = carritoSesion.RestauranteId,
-                    DireccionEntregaId = direccionId,        // FK válida y verificada
-                    EstadoPedido       = EstadoPedidoEnum.Aceptado, // Se da por sobreentendido
-                    Subtotal           = subtotal,
-                    CostoEnvio         = costoEnvio,
-                    MontoDescuento     = carritoSesion.Descuento,
-                    CuponId            = carritoSesion.CuponId,
-                    Total              = total - carritoSesion.Descuento,
-                    TipoMetodoPago     = metodoPago,
-                    ComprobanteTransferenciaUrl = carritoSesion.ComprobanteTransferenciaUrl,
-                    Notas              = carritoSesion.Notas,
-                    FechaPedido        = ahora
-                };
-                _context.Pedidos.Add(pedido);
-                await _context.SaveChangesAsync(); // genera el Id del pedido
+                // Buscar si existe un pedido en Borrador para este usuario
+                var pedido = await _context.Pedidos
+                    .Include(p => p.Detalles)
+                    .FirstOrDefaultAsync(p => p.UsuarioId == usuarioId && p.EstadoPedido == EstadoPedidoEnum.Borrador);
 
-                // Crear los DetallePedido
-                foreach (var item in carritoSesion.Items)
+                if (pedido != null)
                 {
-                    var detalle = new DetallePedido
-                    {
-                        PedidoId       = pedido.Id,
-                        ProductoId     = item.ProductoId,
-                        Cantidad       = item.Cantidad,
-                        PrecioUnitario = item.PrecioUnitario
-                    };
-                    _context.DetallesPedido.Add(detalle);
+                    // Actualizar el pedido existente
+                    pedido.RestauranteId      = carritoSesion.RestauranteId;
+                    pedido.DireccionEntregaId = direccionId;
+                    pedido.EstadoPedido       = EstadoPedidoEnum.Aceptado;
+                    pedido.Subtotal           = subtotal;
+                    pedido.CostoEnvio         = costoEnvio;
+                    pedido.MontoDescuento     = carritoSesion.Descuento;
+                    pedido.CuponId            = carritoSesion.CuponId;
+                    pedido.Total              = total - carritoSesion.Descuento;
+                    pedido.TipoMetodoPago     = metodoPago;
+                    pedido.ComprobanteTransferenciaUrl = carritoSesion.ComprobanteTransferenciaUrl;
+                    pedido.Notas              = carritoSesion.Notas;
+                    pedido.FechaPedido        = ahora;
+
+                    _context.Pedidos.Update(pedido);
                 }
-                await _context.SaveChangesAsync();
+                else
+                {
+                    // Crear el Pedido por si acaso no existiera en Borrador
+                    pedido = new Pedido
+                    {
+                        UsuarioId          = usuarioId,
+                        RestauranteId      = carritoSesion.RestauranteId,
+                        DireccionEntregaId = direccionId,
+                        EstadoPedido       = EstadoPedidoEnum.Aceptado,
+                        Subtotal           = subtotal,
+                        CostoEnvio         = costoEnvio,
+                        MontoDescuento     = carritoSesion.Descuento,
+                        CuponId            = carritoSesion.CuponId,
+                        Total              = total - carritoSesion.Descuento,
+                        TipoMetodoPago     = metodoPago,
+                        ComprobanteTransferenciaUrl = carritoSesion.ComprobanteTransferenciaUrl,
+                        Notas              = carritoSesion.Notas,
+                        FechaPedido        = ahora
+                    };
+                    _context.Pedidos.Add(pedido);
+                    await _context.SaveChangesAsync(); // genera el Id del pedido
 
+                    // Crear los DetallePedido
+                    foreach (var item in carritoSesion.Items)
+                    {
+                        var detalle = new DetallePedido
+                        {
+                            PedidoId       = pedido.Id,
+                            ProductoId     = item.ProductoId,
+                            Cantidad       = item.Cantidad,
+                            PrecioUnitario = item.PrecioUnitario
+                        };
+                        _context.DetallesPedido.Add(detalle);
+                    }
+                }
+                
+                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
                 // Devolver el pedido con sus detalles cargados

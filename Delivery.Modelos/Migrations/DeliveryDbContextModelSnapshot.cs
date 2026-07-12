@@ -57,7 +57,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("RestauranteId");
 
-                    b.ToTable("categorias_producto");
+                    b.ToTable("categorias_producto", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Cupon", b =>
@@ -135,7 +135,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("UsuarioExclusivoId");
 
-                    b.ToTable("cupones");
+                    b.ToTable("cupones", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.CuponUsuario", b =>
@@ -187,7 +187,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("cupones_usuarios");
+                    b.ToTable("cupones_usuarios", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.DetallePedido", b =>
@@ -230,7 +230,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("ProductoId");
 
-                    b.ToTable("detalle_pedido");
+                    b.ToTable("detalle_pedido", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Direccion", b =>
@@ -297,7 +297,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("direcciones");
+                    b.ToTable("direcciones", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Favorito", b =>
@@ -318,7 +318,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("RestauranteId");
 
-                    b.ToTable("favoritos");
+                    b.ToTable("favoritos", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.HistorialAsignacionesRepartidor", b =>
@@ -348,7 +348,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("RepartidorId");
 
-                    b.ToTable("historial_asignaciones_repartidor");
+                    b.ToTable("historial_asignaciones_repartidor", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Notificacion", b =>
@@ -387,7 +387,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("notificaciones");
+                    b.ToTable("notificaciones", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Pago", b =>
@@ -432,7 +432,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("PedidoId");
 
-                    b.ToTable("pagos");
+                    b.ToTable("pagos", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Pedido", b =>
@@ -526,7 +526,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("pedidos");
+                    b.ToTable("pedidos", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Producto", b =>
@@ -586,7 +586,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("RestauranteId");
 
-                    b.ToTable("productos");
+                    b.ToTable("productos", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.RegistroAuditoria", b =>
@@ -624,7 +624,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("registros_auditoria");
+                    b.ToTable("registros_auditoria", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Repartidor", b =>
@@ -683,7 +683,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("AprobadoPor");
 
-                    b.ToTable("repartidores");
+                    b.ToTable("repartidores", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Resena", b =>
@@ -741,7 +741,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("resenas");
+                    b.ToTable("resenas", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Restaurante", b =>
@@ -861,7 +861,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("CreadoPor");
 
-                    b.ToTable("restaurantes");
+                    b.ToTable("restaurantes", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Rol", b =>
@@ -894,7 +894,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("roles");
+                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.UbicacionActualRepartidor", b =>
@@ -925,7 +925,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasKey("RepartidorId");
 
-                    b.ToTable("ubicacion_actual_repartidor");
+                    b.ToTable("ubicacion_actual_repartidor", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Usuario", b =>
@@ -1008,7 +1008,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("RolId");
 
-                    b.ToTable("usuarios");
+                    b.ToTable("usuarios", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.Vehiculo", b =>
@@ -1067,7 +1067,7 @@ namespace Delivery.Modelos.Migrations
 
                     b.HasIndex("RepartidorId");
 
-                    b.ToTable("vehiculos");
+                    b.ToTable("vehiculos", (string)null);
                 });
 
             modelBuilder.Entity("Delivery.Modelos.Entidades.CategoriaProducto", b =>

@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Delivery.Modelos.DTOs;
 using Delivery.Modelos.Entidades;
 using Delivery.Consumer.Interfaces;
-using Delivery.MVC.Helpers;
-
 namespace Delivery.MVC.Controllers
 {
     /// <summary>
@@ -28,6 +26,7 @@ namespace Delivery.MVC.Controllers
         private readonly Delivery.MVC.Servicios.IArchivoService _archivoService;
         private readonly ICuponConsumer _cuponConsumer;
         private readonly ICuponUsuarioConsumer _cuponUsuarioConsumer;
+        private readonly ICarritoConsumer _carritoConsumer;
 
         public ClienteCarritoController(
             IDireccionConsumer direccionConsumer,
@@ -36,7 +35,8 @@ namespace Delivery.MVC.Controllers
             IPedidoConsumer pedidoConsumer,
             Delivery.MVC.Servicios.IArchivoService archivoService,
             ICuponConsumer cuponConsumer,
-            ICuponUsuarioConsumer cuponUsuarioConsumer)
+            ICuponUsuarioConsumer cuponUsuarioConsumer,
+            ICarritoConsumer carritoConsumer)
         {
             _direccionConsumer = direccionConsumer;
             _productoConsumer = productoConsumer;
@@ -45,6 +45,7 @@ namespace Delivery.MVC.Controllers
             _archivoService = archivoService;
             _cuponConsumer = cuponConsumer;
             _cuponUsuarioConsumer = cuponUsuarioConsumer;
+            _carritoConsumer = carritoConsumer;
         }
 
         private long GetMyUsuarioId()
@@ -54,15 +55,43 @@ namespace Delivery.MVC.Controllers
             return userId;
         }
 
+        private async Task<CarritoSesionDto> ObtenerCarritoDtoAsync(long userId)
+        {
+            var pedido = await _carritoConsumer.GetCarritoAsync(userId);
+            if (pedido == null) return new CarritoSesionDto();
+
+            var dto = new CarritoSesionDto
+            {
+                RestauranteId = pedido.RestauranteId
+            };
+            
+            var restaurante = await _restauranteConsumer.GetByIdAsync(pedido.RestauranteId);
+            if (restaurante != null) dto.NombreRestaurante = restaurante.Nombre;
+
+            if (pedido.Detalles != null)
+            {
+                foreach (var d in pedido.Detalles)
+                {
+                    dto.Items.Add(new CarritoItemSesionDto
+                    {
+                        ProductoId = d.ProductoId,
+                        NombreProducto = d.Producto?.Nombre ?? "Producto",
+                        ImagenUrl = d.Producto?.ImagenUrl ?? "",
+                        Cantidad = d.Cantidad,
+                        PrecioUnitario = d.PrecioUnitario
+                    });
+                }
+            }
+            return dto;
+        }
+
         // ─────────────────────────────────────────────────────────────────────
         // VER CARRITO
         // ─────────────────────────────────────────────────────────────────────
         public async Task<IActionResult> Index()
         {
-            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session)
-                          ?? new CarritoSesionDto();
-
             var userId = GetMyUsuarioId();
+            var carrito = await ObtenerCarritoDtoAsync(userId);
             var todasDirecciones = await _direccionConsumer.GetAllAsync();
             var misDirecciones = todasDirecciones.Where(d => d.UsuarioId == userId).ToList();
 
@@ -73,81 +102,74 @@ namespace Delivery.MVC.Controllers
         }
 
         // ─────────────────────────────────────────────────────────────────────
-        // AGREGAR PRODUCTO → SOLO modifica Session, NO toca la base de datos
+        // AGREGAR PRODUCTO → Utiliza la base de datos a través de ICarritoConsumer
         // ─────────────────────────────────────────────────────────────────────
         [HttpPost]
         public async Task<IActionResult> Agregar(long productoId, long restauranteId, int cantidad = 1)
         {
-            // Verificar que el producto exista
-            var producto = await _productoConsumer.GetByIdAsync(productoId);
-            if (producto == null || !producto.Disponible)
+            var userId = GetMyUsuarioId();
+            
+            var dto = new AgregarAlCarritoDto
             {
-                TempData["Error"] = "El producto no está disponible.";
-                return RedirectToAction("Restaurante", "Home", new { id = restauranteId });
-            }
+                UsuarioId = userId,
+                ProductoId = productoId,
+                RestauranteId = restauranteId,
+                Cantidad = cantidad
+            };
 
-            // Verificar que el restaurante exista
-            var restaurante = await _restauranteConsumer.GetByIdAsync(restauranteId);
-            if (restaurante == null)
+            try
             {
-                TempData["Error"] = "El restaurante no existe.";
-                return RedirectToAction("Index", "Home");
-            }
-
-            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session)
-                          ?? new CarritoSesionDto();
-
-            // Si el carrito tiene ítems de otro restaurante, impedir mezcla
-            if (carrito.RestauranteId != 0 && carrito.RestauranteId != restauranteId && carrito.Items.Any())
-            {
-                TempData["Error"] = "No puedes mezclar productos de diferentes restaurantes. Vacía el carrito primero.";
-                return RedirectToAction("Index");
-            }
-
-            carrito.RestauranteId     = restauranteId;
-            carrito.NombreRestaurante = restaurante.Nombre;
-
-            // Si el producto ya está en el carrito, incrementar cantidad
-            var itemExistente = carrito.Items.FirstOrDefault(i => i.ProductoId == productoId);
-            if (itemExistente != null)
-            {
-                itemExistente.Cantidad += cantidad;
-            }
-            else
-            {
-                carrito.Items.Add(new CarritoItemSesionDto
+                var resultado = await _carritoConsumer.AgregarProductoAsync(dto);
+                if (resultado == null)
                 {
-                    ProductoId      = productoId,
-                    NombreProducto  = producto.Nombre,
-                    ImagenUrl       = producto.ImagenUrl,
-                    Cantidad        = cantidad,
-                    PrecioUnitario  = producto.Precio
-                });
+                    TempData["Error"] = "No se pudo agregar el producto. Puede que debas vaciar el carrito si es de otro restaurante.";
+                }
+                else
+                {
+                    TempData["Exito"] = "Producto agregado al carrito.";
+                }
             }
-
-            // Guardar en Session → NADA en base de datos
-            CarritoSessionHelper.GuardarCarrito(HttpContext.Session, carrito);
-            TempData["Exito"] = $"'{producto.Nombre}' agregado al carrito.";
+            catch (System.Exception ex)
+            {
+                TempData["Error"] = "Error al agregar: " + ex.Message;
+            }
 
             return RedirectToAction("Index");
         }
 
         // ─────────────────────────────────────────────────────────────────────
-        // QUITAR PRODUCTO → SOLO modifica Session
+        // QUITAR PRODUCTO
         // ─────────────────────────────────────────────────────────────────────
         [HttpPost]
-        public IActionResult Quitar(long productoId)
+        public async Task<IActionResult> Quitar(long productoId)
         {
-            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
-            if (carrito != null)
+            var userId = GetMyUsuarioId();
+            var pedido = await _carritoConsumer.GetCarritoAsync(userId);
+            if (pedido != null && pedido.Detalles != null)
             {
-                carrito.Items.RemoveAll(i => i.ProductoId == productoId);
-                if (!carrito.Items.Any())
+                var detalle = pedido.Detalles.FirstOrDefault(d => d.ProductoId == productoId);
+                if (detalle != null)
                 {
-                    // Carrito vacío → limpiar restaurante también
-                    carrito = new CarritoSesionDto();
+                    await _carritoConsumer.QuitarProductoAsync(userId, detalle.Id);
                 }
-                CarritoSessionHelper.GuardarCarrito(HttpContext.Session, carrito);
+            }
+            return RedirectToAction("Index");
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // VACIAR CARRITO
+        // ─────────────────────────────────────────────────────────────────────
+        [HttpPost]
+        public async Task<IActionResult> Vaciar()
+        {
+            var userId = GetMyUsuarioId();
+            var pedido = await _carritoConsumer.GetCarritoAsync(userId);
+            if (pedido != null && pedido.Detalles != null)
+            {
+                foreach (var d in pedido.Detalles)
+                {
+                    await _carritoConsumer.QuitarProductoAsync(userId, d.Id);
+                }
             }
             return RedirectToAction("Index");
         }
@@ -157,14 +179,14 @@ namespace Delivery.MVC.Controllers
         // ─────────────────────────────────────────────────────────────────────
         public async Task<IActionResult> Checkout()
         {
-            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
+            var userId = GetMyUsuarioId();
+            var carrito = await ObtenerCarritoDtoAsync(userId);
             if (carrito == null || !carrito.Items.Any())
             {
                 TempData["Error"] = "Tu carrito está vacío.";
                 return RedirectToAction("Index");
             }
 
-            var userId = GetMyUsuarioId();
             var todasDirecciones = await _direccionConsumer.GetAllAsync();
             var misDirecciones = todasDirecciones.Where(d => d.UsuarioId == userId).ToList();
 
@@ -200,7 +222,8 @@ namespace Delivery.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> CalcularCostoEnvio(long direccionId, double? lat, double? lon)
         {
-            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
+            var userId = GetMyUsuarioId();
+            var carrito = await ObtenerCarritoDtoAsync(userId);
             if (carrito == null || carrito.RestauranteId == 0) return Json(new { exito = false });
 
             var restaurante = await _restauranteConsumer.GetByIdAsync(carrito.RestauranteId);
@@ -297,11 +320,10 @@ namespace Delivery.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> AplicarCupon(string codigo)
         {
-            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
+            var userId = GetMyUsuarioId();
+            var carrito = await ObtenerCarritoDtoAsync(userId);
             if (carrito == null || string.IsNullOrWhiteSpace(codigo))
                 return Json(new { exito = false, mensaje = "No se proporcionó cupón o carrito vacío." });
-
-            var userId = GetMyUsuarioId();
             
             var todosCupones = await _cuponConsumer.GetAllAsync();
             var cupon = todosCupones.FirstOrDefault(c => c.Codigo.Equals(codigo.Trim(), System.StringComparison.OrdinalIgnoreCase));
@@ -358,14 +380,14 @@ namespace Delivery.MVC.Controllers
             bool guardarDireccion,
             string? cuponCodigo)
         {
-            var carrito = CarritoSessionHelper.ObtenerCarrito(HttpContext.Session);
+            var userId = GetMyUsuarioId();
+            var carrito = await ObtenerCarritoDtoAsync(userId);
             if (carrito == null || !carrito.Items.Any())
             {
                 TempData["Error"] = "Tu carrito está vacío.";
                 return RedirectToAction("Index");
             }
 
-            var userId = GetMyUsuarioId();
             long finalDireccionId = direccionId;
 
             // ... Lógica de nueva dirección ...
@@ -533,7 +555,6 @@ namespace Delivery.MVC.Controllers
                     }
                 }
 
-                CarritoSessionHelper.LimpiarCarrito(HttpContext.Session);
                 TempData["Exito"] = $"¡Pedido #{pedidoCreado.Id} confirmado exitosamente! {TempData["MensajePago"]}";
                 return RedirectToAction("Index", "ClienteHistorialPedidos");
             }
