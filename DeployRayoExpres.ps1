@@ -1,7 +1,7 @@
 # Script de Despliegue de RayoExpres en Microsoft Azure
 # Requisitos: Tener instalado Azure CLI (https://aka.ms/installazurecli) y haber ejecutado 'az login'
 
-$resourceGroup = "RayoExpres-RG"
+$resourceGroup = "RayoExpres-RG-2"
 # CAMBIA 'eastus' si tu suscripción de estudiante no te permite crear recursos en esa región (ej. usa 'centralus', 'brazilsouth' o 'westus')
 $location = "centralus"
 $dbServerName = "rayoexpres-db-" + (Get-Random -Maximum 10000)
@@ -55,18 +55,19 @@ az appservice plan create `
   --is-linux
 
 Write-Host "5. Creando Web App para API..."
+# En Windows, az es un archivo .cmd. Usamos ^| para que Windows CMD no interprete el símbolo como un comando.
 az webapp create `
   --resource-group $resourceGroup `
   --plan $appServicePlan `
   --name $apiAppName `
-  --runtime 'DOTNETCORE|9.0'
+  --runtime "DOTNETCORE^|9.0"
 
 Write-Host "6. Creando Web App para MVC..."
 az webapp create `
   --resource-group $resourceGroup `
   --plan $appServicePlan `
   --name $mvcAppName `
-  --runtime 'DOTNETCORE|9.0'
+  --runtime "DOTNETCORE^|9.0"
 
 Write-Host "7. Configurando Variables de Entorno en API..."
 az webapp config appsettings set `
