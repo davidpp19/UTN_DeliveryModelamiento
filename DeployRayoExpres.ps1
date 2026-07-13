@@ -1,9 +1,10 @@
 # Script de Despliegue de RayoExpres en Microsoft Azure
 # Requisitos: Tener instalado Azure CLI (https://aka.ms/installazurecli) y haber ejecutado 'az login'
 
-$resourceGroup = "RayoExpres-RG-2"
-# CAMBIA 'eastus' si tu suscripción de estudiante no te permite crear recursos en esa región (ej. usa 'centralus', 'brazilsouth' o 'westus')
-$location = "centralus"
+$resourceGroup = "RayoExpres-RG-3"
+# ¡IMPORTANTE!: Tu suscripción tiene políticas estrictas de región. 
+# Si 'centralus' y 'eastus' fallaron, intenta con: 'brazilsouth', 'eastus2', o 'westus2'.
+$location = "brazilsouth"
 $dbServerName = "rayoexpres-db-" + (Get-Random -Maximum 10000)
 $dbAdminUser = "rayoadmin"
 $dbAdminPassword = "SecurePassword123!" # CÁMBIALO
@@ -13,6 +14,11 @@ $storageAccountName = "rayoexprestorage" + (Get-Random -Maximum 10000)
 $appServicePlan = "RayoExpres-Plan"
 $apiAppName = "rayoexpres-api-" + (Get-Random -Maximum 10000)
 $mvcAppName = "rayoexpres-mvc-" + (Get-Random -Maximum 10000)
+
+Write-Host "0. Registrando proveedores de Azure (para evitar el error SubscriptionNotFound)..."
+az provider register --namespace Microsoft.Storage
+az provider register --namespace Microsoft.Web
+az provider register --namespace Microsoft.DBforPostgreSQL
 
 Write-Host "1. Creando Resource Group..."
 az group create --name $resourceGroup --location $location
@@ -55,19 +61,11 @@ az appservice plan create `
   --is-linux
 
 Write-Host "5. Creando Web App para API..."
-# En Windows, az es un archivo .cmd. Usamos ^| para que Windows CMD no interprete el símbolo como un comando.
-az webapp create `
-  --resource-group $resourceGroup `
-  --plan $appServicePlan `
-  --name $apiAppName `
-  --runtime "DOTNETCORE^|9.0"
+# En Windows, para evitar el bug de PowerShell con el símbolo |, usamos cmd.exe directamente
+cmd.exe /c "az webapp create --resource-group $resourceGroup --plan $appServicePlan --name $apiAppName --runtime `"DOTNETCORE|9.0`""
 
 Write-Host "6. Creando Web App para MVC..."
-az webapp create `
-  --resource-group $resourceGroup `
-  --plan $appServicePlan `
-  --name $mvcAppName `
-  --runtime "DOTNETCORE^|9.0"
+cmd.exe /c "az webapp create --resource-group $resourceGroup --plan $appServicePlan --name $mvcAppName --runtime `"DOTNETCORE|9.0`""
 
 Write-Host "7. Configurando Variables de Entorno en API..."
 az webapp config appsettings set `
