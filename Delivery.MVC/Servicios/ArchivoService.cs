@@ -4,16 +4,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace Delivery.MVC.Servicios
 {
     public class ArchivoService : IArchivoService
     {
         private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration _configuration;
+        private readonly string? _blobConnectionString;
 
-        public ArchivoService(IWebHostEnvironment env)
+        public ArchivoService(IWebHostEnvironment env, IConfiguration configuration)
         {
             _env = env;
+            _configuration = configuration;
+            _blobConnectionString = _configuration["BlobStorageConnectionString"];
         }
 
         public async Task<string?> GuardarArchivoAsync(IFormFile archivo, string subCarpeta)
@@ -32,23 +39,44 @@ namespace Delivery.MVC.Servicios
             if (archivo.Length > 5 * 1024 * 1024)
                 throw new ArgumentException("El archivo excede el tamaño máximo permitido de 5MB.");
 
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", subCarpeta);
-            
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
-
             var nombreUnico = $"{Guid.NewGuid()}{extension}";
-            var rutaFisica = Path.Combine(uploadsFolder, nombreUnico);
 
-            using (var fileStream = new FileStream(rutaFisica, FileMode.Create))
+            // Si hay conexión a Blob Storage, usar Azure
+            if (!string.IsNullOrEmpty(_blobConnectionString))
             {
-                await archivo.CopyToAsync(fileStream);
-            }
+                var blobServiceClient = new BlobServiceClient(_blobConnectionString);
+                var containerClient = blobServiceClient.GetBlobContainerClient(subCarpeta.ToLower());
+                
+                await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+                var blobClient = containerClient.GetBlobClient(nombreUnico);
 
-            // Devolver la ruta relativa web (para src de imgs)
-            return $"/uploads/{subCarpeta}/{nombreUnico}";
+                using (var stream = archivo.OpenReadStream())
+                {
+                    await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = archivo.ContentType });
+                }
+
+                return blobClient.Uri.ToString();
+            }
+            else
+            {
+                // Modo local
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", subCarpeta);
+                
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var rutaFisica = Path.Combine(uploadsFolder, nombreUnico);
+
+                using (var fileStream = new FileStream(rutaFisica, FileMode.Create))
+                {
+                    await archivo.CopyToAsync(fileStream);
+                }
+
+                // Devolver la ruta relativa web (para src de imgs)
+                return $"/uploads/{subCarpeta}/{nombreUnico}";
+            }
         }
 
         public bool EliminarArchivo(string rutaRelativa)
@@ -56,17 +84,49 @@ namespace Delivery.MVC.Servicios
             if (string.IsNullOrEmpty(rutaRelativa))
                 return false;
 
-            // Quitar el '/' inicial si existe
-            var rutaRelativaLimpia = rutaRelativa.TrimStart('/');
-            var rutaFisica = Path.Combine(_env.WebRootPath, rutaRelativaLimpia);
-
-            if (File.Exists(rutaFisica))
+            // Identificar si es una URL de Azure o ruta local
+            if (rutaRelativa.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
-                File.Delete(rutaFisica);
-                return true;
-            }
+                if (string.IsNullOrEmpty(_blobConnectionString))
+                    return false; // No hay cadena de conexión, no se puede borrar de Azure
 
-            return false;
+                try
+                {
+                    var uri = new Uri(rutaRelativa);
+                    var segments = uri.Segments;
+                    if (segments.Length >= 3)
+                    {
+                        var containerName = segments[1].TrimEnd('/');
+                        var blobName = segments[2];
+
+                        var blobServiceClient = new BlobServiceClient(_blobConnectionString);
+                        var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+                        var blobClient = containerClient.GetBlobClient(blobName);
+                        
+                        blobClient.DeleteIfExists();
+                        return true;
+                    }
+                    return false;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                // Ruta local
+                var rutaRelativaLimpia = rutaRelativa.TrimStart('/');
+                var rutaFisica = Path.Combine(_env.WebRootPath, rutaRelativaLimpia);
+
+                if (File.Exists(rutaFisica))
+                {
+                    File.Delete(rutaFisica);
+                    return true;
+                }
+
+                return false;
+            }
         }
     }
 }

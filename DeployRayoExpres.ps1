@@ -1,0 +1,102 @@
+# Script de Despliegue de RayoExpres en Microsoft Azure
+# Requisitos: Tener instalado Azure CLI (https://aka.ms/installazurecli) y haber ejecutado 'az login'
+
+$resourceGroup = "RayoExpres-RG"
+$location = "eastus"
+$dbServerName = "rayoexpres-db-" + (Get-Random -Maximum 10000)
+$dbAdminUser = "rayoadmin"
+$dbAdminPassword = "SecurePassword123!" # CÁMBIALO
+$dbName = "RayoExpresDB"
+
+$storageAccountName = "rayoexprestorage" + (Get-Random -Maximum 10000)
+$appServicePlan = "RayoExpres-Plan"
+$apiAppName = "rayoexpres-api-" + (Get-Random -Maximum 10000)
+$mvcAppName = "rayoexpres-mvc-" + (Get-Random -Maximum 10000)
+
+Write-Host "1. Creando Resource Group..."
+az group create --name $resourceGroup --location $location
+
+Write-Host "2. Creando Servidor PostgreSQL Flexible..."
+az postgres flexible-server create `
+  --resource-group $resourceGroup `
+  --name $dbServerName `
+  --location $location `
+  --admin-user $dbAdminUser `
+  --admin-password $dbAdminPassword `
+  --sku-name Standard_B1ms `
+  --tier Burstable `
+  --public-access 0.0.0.0 `
+  --database-name $dbName
+
+$connectionString = "Server=$dbServerName.postgres.database.azure.com;Database=$dbName;Port=5432;User Id=$dbAdminUser;Password=$dbAdminPassword;Ssl Mode=Require;"
+
+Write-Host "3. Creando Azure Blob Storage..."
+az storage account create `
+  --name $storageAccountName `
+  --resource-group $resourceGroup `
+  --location $location `
+  --sku Standard_LRS `
+  --allow-blob-public-access true
+
+$blobStorageConnectionString = az storage account show-connection-string --name $storageAccountName --resource-group $resourceGroup --query connectionString -o tsv
+
+Write-Host "4. Creando App Service Plan..."
+az appservice plan create `
+  --name $appServicePlan `
+  --resource-group $resourceGroup `
+  --location $location `
+  --sku B1 `
+  --is-linux
+
+Write-Host "5. Creando Web App para API..."
+az webapp create `
+  --resource-group $resourceGroup `
+  --plan $appServicePlan `
+  --name $apiAppName `
+  --runtime "DOTNETCORE|9.0"
+
+Write-Host "6. Creando Web App para MVC..."
+az webapp create `
+  --resource-group $resourceGroup `
+  --plan $appServicePlan `
+  --name $mvcAppName `
+  --runtime "DOTNETCORE|9.0"
+
+Write-Host "7. Configurando Variables de Entorno en API..."
+az webapp config appsettings set `
+  --resource-group $resourceGroup `
+  --name $apiAppName `
+  --settings `
+    ConnectionStrings__DefaultConnection=$connectionString `
+    Jwt__Key="UnaClaveLargaYSeguraParaProduccion12345!" `
+    Jwt__Issuer="RayoExpresAPI" `
+    Jwt__Audience="RayoExpresClient" `
+    AllowedOrigins="https://$mvcAppName.azurewebsites.net" `
+    RunSeeder="true"
+
+Write-Host "8. Configurando Variables de Entorno en MVC..."
+az webapp config appsettings set `
+  --resource-group $resourceGroup `
+  --name $mvcAppName `
+  --settings `
+    ApiUrl="https://$apiAppName.azurewebsites.net/" `
+    BlobStorageConnectionString=$blobStorageConnectionString
+
+# Importante: Activar ARR Affinity (Sticky Sessions) para que las sesiones en memoria del MVC funcionen si el plan se escala.
+az webapp update --resource-group $resourceGroup --name $mvcAppName --set clientAffinityEnabled=true
+
+Write-Host "9. Compilando y Publicando Código (Esto requiere estar en la carpeta raíz del proyecto)..."
+
+# Publicando API
+dotnet publish Delivery.API/Delivery.API.csproj -c Release -o ./publish_api
+Compress-Archive -Path ./publish_api/* -DestinationPath api.zip -Force
+az webapp deployment source config-zip --resource-group $resourceGroup --name $apiAppName --src api.zip
+
+# Publicando MVC
+dotnet publish Delivery.MVC/Delivery.MVC.csproj -c Release -o ./publish_mvc
+Compress-Archive -Path ./publish_mvc/* -DestinationPath mvc.zip -Force
+az webapp deployment source config-zip --resource-group $resourceGroup --name $mvcAppName --src mvc.zip
+
+Write-Host "¡Despliegue Finalizado!"
+Write-Host "URL API: https://$apiAppName.azurewebsites.net"
+Write-Host "URL MVC: https://$mvcAppName.azurewebsites.net"

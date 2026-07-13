@@ -24,7 +24,8 @@ builder.Services.AddSwaggerGen();
 // El mapeo MapEnum<>() de Npgsql espera un tipo texto nativo, lo cual generaba
 // incompatibilidad y hacía que los filtros LINQ (.Where) fallaran silenciosamente.
 // Al usar simplemente la cadena de conexión, EF Core convierte los enteros a enums C# correctamente.
-var connectionString = "Server=127.0.0.1;Port=5432;Database=UTN_DeliveryModelamiento;User Id=postgres;Password=Megustanlosgatos:3S;";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                       ?? "Server=127.0.0.1;Port=5432;Database=UTN_DeliveryModelamiento;User Id=postgres;Password=Megustanlosgatos:3S;";
 
 builder.Services.AddDbContext<DeliveryDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -95,9 +96,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Importante para SignalR: CORS si el MVC está en otro puerto
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() 
+                     ?? new[] { "https://localhost:7025", "http://localhost:5242" };
+
 app.UseCors(builder =>
 {
-    builder.WithOrigins("https://localhost:7025", "http://localhost:5242") // Ajustar a los puertos de tu MVC
+    builder.WithOrigins(allowedOrigins)
            .AllowAnyHeader()
            .WithMethods("GET", "POST")
            .AllowCredentials();
@@ -110,11 +114,17 @@ app.MapControllers();
 app.MapHub<Delivery.API.Hubs.NotificacionesHub>("/notificacionesHub");
 
 // Inicializar la Base de Datos (Seed)
-using (var scope = app.Services.CreateScope())
+// Solo ejecutamos el seeder si estamos en Development o si la bandera explícitamente lo solicita
+bool runSeeder = app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("RunSeeder");
+
+if (runSeeder)
 {
-    var context = scope.ServiceProvider.GetRequiredService<Delivery.Modelos.DeliveryDbContext>();
-    var seguridadService = scope.ServiceProvider.GetRequiredService<Delivery.Servicios.Interfaces.ISeguridadService>();
-    await Delivery.API.Data.DbSeeder.SeedAsync(context, seguridadService);
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<Delivery.Modelos.DeliveryDbContext>();
+        var seguridadService = scope.ServiceProvider.GetRequiredService<Delivery.Servicios.Interfaces.ISeguridadService>();
+        await Delivery.API.Data.DbSeeder.SeedAsync(context, seguridadService);
+    }
 }
 
 app.Run();
