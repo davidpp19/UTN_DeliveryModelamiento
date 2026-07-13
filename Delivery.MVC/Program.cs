@@ -39,7 +39,7 @@ builder.Services.AddDeliveryConsumers(client =>
 {
     // Cambiamos a HTTPS para evitar que HttpClient pierda el header Authorization
     // al seguir una redirección 307 (HTTP -> HTTPS).
-    var apiUrl = builder.Configuration["ApiUrl"] ?? "https://localhost:7278/";
+    var apiUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? builder.Configuration["ApiUrl"] ?? "https://localhost:7087/";
     client.BaseAddress = new Uri(apiUrl);
 });
 
@@ -70,12 +70,11 @@ app.UseSession(); // DEBE ir antes de Authentication y Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
+app.UseStaticFiles();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
 app.Run();
