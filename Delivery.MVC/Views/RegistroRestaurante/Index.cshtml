@@ -248,11 +248,13 @@
         });
 
         // Intentar obtener la ubicación actual del usuario si no hay datos previos
+        // Intentar obtener la ubicación actual del usuario si no hay datos previos
         if (!document.getElementById('lat-input').value && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 var lat = position.coords.latitude;
                 var lng = position.coords.longitude;
-                map.setView([lat, lng], 15);
+                map.setView([lat, lng], 16);
+                onMapClick({ latlng: L.latLng(lat, lng) });
             });
         }
     </script>
