@@ -74,6 +74,7 @@ namespace Delivery.API.Data
                     Apellidos    = "RayoExpres",
                     Email        = "admin@rayoexpres.com",
                     Telefono     = "0999999999",
+                    Cedula       = "1000000000",
                     PasswordHash = seguridadService.HashearPassword("Admin123*"),
                     RolId        = rolAdmin.Id,
                     TipoUsuario  = TipoUsuarioEnum.Administrador,
@@ -91,6 +92,7 @@ namespace Delivery.API.Data
                     Apellidos    = "Andrade Pozo",
                     Email        = "cliente@rayoexpres.com",
                     Telefono     = "0988123456",
+                    Cedula       = "1000000001",
                     PasswordHash = seguridadService.HashearPassword("Cliente123*"),
                     RolId        = rolCliente.Id,
                     TipoUsuario  = TipoUsuarioEnum.Cliente,
@@ -102,12 +104,12 @@ namespace Delivery.API.Data
             // Repartidores (datos coherentes con nombres ecuatorianos)
             var repartidoresData = new[]
             {
-                ("Juan",  "Revelo Torres",   "0978456123", "repartidor1@rayoexpres.com"),
-                ("Mario", "Cuasquer Ibarra", "0962345678", "repartidor2@rayoexpres.com"),
-                ("Luis",  "Narváez Pinto",   "0953214567", "repartidor3@rayoexpres.com"),
+                ("Juan",  "Revelo Torres",   "0978456123", "repartidor1@rayoexpres.com", "1000000002"),
+                ("Mario", "Cuasquer Ibarra", "0962345678", "repartidor2@rayoexpres.com", "1000000003"),
+                ("Luis",  "Narváez Pinto",   "0953214567", "repartidor3@rayoexpres.com", "1000000004"),
             };
 
-            foreach (var (nombre, apellidos, telefono, email) in repartidoresData)
+            foreach (var (nombre, apellidos, telefono, email, cedula) in repartidoresData)
             {
                 if (!await context.Usuarios.AnyAsync(u => u.Email == email))
                 {
@@ -117,6 +119,7 @@ namespace Delivery.API.Data
                         Apellidos    = apellidos,
                         Email        = email,
                         Telefono     = telefono,
+                        Cedula       = cedula,
                         PasswordHash = seguridadService.HashearPassword("Repartidor123*"),
                         RolId        = rolRepartidor.Id,
                         TipoUsuario  = TipoUsuarioEnum.Repartidor,
@@ -174,6 +177,7 @@ namespace Delivery.API.Data
                         Apellidos    = "Administrador",
                         Email        = email,
                         Telefono     = "062600000",
+                        Cedula       = "100000000" + (context.Usuarios.Count() % 10).ToString(), // Fake cedula
                         PasswordHash = seguridadService.HashearPassword("Restaurante123*"),
                         RolId        = rolRestaurante.Id,
                         TipoUsuario  = TipoUsuarioEnum.Restaurante,
