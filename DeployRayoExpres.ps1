@@ -171,12 +171,12 @@ $mvcZipPath = Join-Path (Get-Location) "mvc.zip"
 Write-Host "Publicando API..."
 dotnet publish Delivery.API/Delivery.API.csproj -c Release -o ./publish_api
 [System.IO.Compression.ZipFile]::CreateFromDirectory((Join-Path (Get-Location) "publish_api"), $apiZipPath)
-az webapp deployment source config-zip --resource-group $resourceGroup --name $apiAppName --src $apiZipPath
+az webapp deploy --resource-group $resourceGroup --name $apiAppName --src-path $apiZipPath --type zip --timeout 1800000
 
 Write-Host "Publicando MVC..."
 dotnet publish Delivery.MVC/Delivery.MVC.csproj -c Release -o ./publish_mvc
 [System.IO.Compression.ZipFile]::CreateFromDirectory((Join-Path (Get-Location) "publish_mvc"), $mvcZipPath)
-az webapp deployment source config-zip --resource-group $resourceGroup --name $mvcAppName --src $mvcZipPath
+az webapp deploy --resource-group $resourceGroup --name $mvcAppName --src-path $mvcZipPath --type zip --timeout 1800000
 
 Write-Host ""
 Write-Host "=========================================="
