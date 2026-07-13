@@ -38,7 +38,8 @@ namespace Delivery.Consumer.Implementaciones
             {
                 return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
             }
-            return null;
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new System.Exception($"API Error ({response.StatusCode}): {errorContent}");
         }
 
         public async Task<AuthResponseDto?> RegistroRestauranteAsync(RegistroRestauranteDto dto)
@@ -48,7 +49,8 @@ namespace Delivery.Consumer.Implementaciones
             {
                 return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
             }
-            return null;
+            var errorContent = await response.Content.ReadAsStringAsync();
+            throw new System.Exception($"API Error ({response.StatusCode}): {errorContent}");
         }
     }
 }
