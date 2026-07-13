@@ -1,5 +1,6 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @model Delivery.Modelos.Entidades.Pedido
 @{
     ViewData["Title"] = Localizer["DetallePedido"];
@@ -195,7 +196,7 @@
 
             // SignalR for live tracking
             const connection = new signalR.HubConnectionBuilder()
-                .withUrl("https://localhost:7193/notificacionesHub")
+                .withUrl('@Configuration["ApiSettings:BaseUrl"]'.replace(/\/$/, "") + "/notificacionesHub")
                 .withAutomaticReconnect()
                 .build();
 

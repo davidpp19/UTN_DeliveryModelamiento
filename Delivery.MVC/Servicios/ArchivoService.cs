@@ -45,10 +45,10 @@ namespace Delivery.MVC.Servicios
             if (!string.IsNullOrEmpty(_blobConnectionString))
             {
                 var blobServiceClient = new BlobServiceClient(_blobConnectionString);
-                var containerClient = blobServiceClient.GetBlobContainerClient(subCarpeta.ToLower());
+                var containerClient = blobServiceClient.GetBlobContainerClient("archivos");
                 
                 await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
-                var blobClient = containerClient.GetBlobClient(nombreUnico);
+                var blobClient = containerClient.GetBlobClient($"{subCarpeta.ToLower()}/{nombreUnico}");
 
                 using (var stream = archivo.OpenReadStream())
                 {
@@ -97,7 +97,7 @@ namespace Delivery.MVC.Servicios
                     if (segments.Length >= 3)
                     {
                         var containerName = segments[1].TrimEnd('/');
-                        var blobName = segments[2];
+                        var blobName = string.Join("", segments.Skip(2));
 
                         var blobServiceClient = new BlobServiceClient(_blobConnectionString);
                         var containerClient = blobServiceClient.GetBlobContainerClient(containerName);

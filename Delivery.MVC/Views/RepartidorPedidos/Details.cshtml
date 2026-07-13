@@ -1,4 +1,5 @@
 @model Delivery.Modelos.Entidades.Pedido
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{ ViewData["Title"] = "Detalles Pedido"; }
 
 <div class="container mt-4">
@@ -125,7 +126,7 @@
 
         // SignalR setup
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/notificacionesHub")
+            .withUrl('@Configuration["ApiSettings:BaseUrl"]'.replace(/\/$/, "") + "/notificacionesHub")
             .withAutomaticReconnect()
             .build();
 

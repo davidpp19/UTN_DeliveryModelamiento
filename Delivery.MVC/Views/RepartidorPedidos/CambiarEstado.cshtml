@@ -1,4 +1,5 @@
 @model Delivery.Modelos.Entidades.Pedido
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     ViewData["Title"] = "Cambiar Estado del Pedido";
 }
@@ -112,7 +113,7 @@
         });
 
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7193/notificacionesHub")
+            .withUrl('@Configuration["ApiSettings:BaseUrl"]'.replace(/\/$/, "") + "/notificacionesHub")
             .withAutomaticReconnect()
             .build();
 

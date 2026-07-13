@@ -1,4 +1,5 @@
 @model IEnumerable<Delivery.Modelos.Entidades.Pedido>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Pedidos Disponibles";
@@ -55,7 +56,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script>
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:7193/notificacionesHub") // Cambiar al puerto correcto de tu API si difiere
+            .withUrl('@Configuration["ApiSettings:BaseUrl"]'.replace(/\/$/, "") + "/notificacionesHub")
             .withAutomaticReconnect()
             .build();
 
