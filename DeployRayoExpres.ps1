@@ -4,16 +4,16 @@
 # ============================================================
 # CONFIGURACION FIJA - Nombres fijos para reutilizar recursos
 # ============================================================
-$resourceGroup     = "RayoExpres-RG-6"
+$resourceGroup     = "RayoExpres-RG-7"
 $location          = "brazilsouth"
-$dbServerName      = "rayoexpres-db-v6"
+$dbServerName      = "rayoexpres-db-v7"
 $dbAdminUser       = "rayoadmin"
 $dbAdminPassword   = "SecurePassword123!"
 $dbName            = "RayoExpresDB"
-$storageAccountName = "rayoexpresstoragev6"
+$storageAccountName = "rayoexpresstoragev7"
 $appServicePlan    = "RayoExpres-Plan"
-$apiAppName        = "rayoexpres-api-v6"
-$mvcAppName        = "rayoexpres-mvc-v6"
+$apiAppName        = "rayoexpres-api-v7"
+$mvcAppName        = "rayoexpres-mvc-v7"
 # ============================================================
 
 Write-Host "0. Registrando proveedores de Azure..."
@@ -53,6 +53,12 @@ if ($dbExists) {
       --sku-name Standard_B1ms `
       --tier Burstable `
       --public-access 0.0.0.0
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "ERROR CRITICO: Fallo al crear el servidor PostgreSQL. Puede ser por limites de cuota."
+        Write-Host "Cancelando despliegue para evitar errores en cadena..."
+        exit 1
+    }
 }
 
 Write-Host "2.1 Creando la Base de Datos..."
