@@ -34,7 +34,7 @@ foreach ($app in $allApps) {
     $app = $app.Trim()
     if ($app -ne $apiAppName -and $app -ne $mvcAppName -and $app -ne "") {
         Write-Host "   Eliminando app antigua: $app"
-        az webapp delete --resource-group $resourceGroup --name $app | Out-Null
+        az webapp delete --resource-group $resourceGroup --name $app --keep-empty-plan | Out-Null
     }
 }
 Write-Host "   Limpieza completada."
