@@ -18,6 +18,7 @@ namespace Delivery.API.Controllers
         private readonly IVehiculoService _vehiculoService;
         private readonly IRolService _rolService;
         private readonly IRestauranteService _restauranteService;
+        private readonly Delivery.Modelos.DeliveryDbContext _context;
 
         public AuthController(
             ISeguridadService seguridadService,
@@ -25,7 +26,8 @@ namespace Delivery.API.Controllers
             IRepartidorService repartidorService,
             IVehiculoService vehiculoService,
             IRolService rolService,
-            IRestauranteService restauranteService)
+            IRestauranteService restauranteService,
+            Delivery.Modelos.DeliveryDbContext context)
         {
             _seguridadService = seguridadService;
             _usuarioService = usuarioService;
@@ -33,6 +35,7 @@ namespace Delivery.API.Controllers
             _vehiculoService = vehiculoService;
             _rolService = rolService;
             _restauranteService = restauranteService;
+            _context = context;
         }
 
 
@@ -97,65 +100,76 @@ namespace Delivery.API.Controllers
 
             var ahora = DateTime.UtcNow;
 
-            // 1. Crear Usuario
-            var usuario = new Usuario
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                Nombre       = dto.Nombre,
-                Apellidos    = dto.Apellidos,
-                Email        = dto.Email,
-                Telefono     = dto.Telefono,
-                Cedula       = dto.Cedula,
-                PasswordHash = dto.Password, // Se hashea en UsuarioService
-                RolId        = rolRepartidor.Id,
-                TipoUsuario  = TipoUsuarioEnum.Repartidor,
-                Activo       = true,
-                CreadoEn     = ahora
-            };
-            var usuarioCreado = await _usuarioService.CreateAsync(usuario);
-            if (usuarioCreado == null)
-                return StatusCode(500, new { message = "Error al crear el usuario." });
+                // 1. Crear Usuario
+                var usuario = new Usuario
+                {
+                    Nombre       = dto.Nombre,
+                    Apellidos    = dto.Apellidos,
+                    Email        = dto.Email,
+                    Telefono     = dto.Telefono,
+                    Cedula       = dto.Cedula,
+                    PasswordHash = dto.Password,
+                    RolId        = rolRepartidor.Id,
+                    TipoUsuario  = TipoUsuarioEnum.Repartidor,
+                    Activo       = true,
+                    CreadoEn     = ahora
+                };
+                var usuarioCreado = await _usuarioService.CreateAsync(usuario);
+                if (usuarioCreado == null)
+                    throw new Exception("Error al crear el usuario.");
 
-            // 2. Crear Repartidor
-            var repartidor = new Repartidor
-            {
-                UsuarioId        = usuarioCreado.Id,
-                LicenciaConducir = dto.LicenciaConducir,
-                FotoLicenciaUrl  = !string.IsNullOrEmpty(dto.FotoLicenciaBase64) 
-                                   ? $"data:image/jpeg;base64,{dto.FotoLicenciaBase64}" 
-                                   : null,
-                EstadoAprobacion = EstadoAprobacionEnum.Pendiente,
-                Estado           = EstadoRepartidorEnum.Desconectado,
-                CreadoEn         = ahora
-            };
-            var repartidorCreado = await _repartidorService.CreateAsync(repartidor);
-            if (repartidorCreado == null)
-                return StatusCode(500, new { message = "Error al crear el perfil de repartidor." });
+                // 2. Crear Repartidor
+                var repartidor = new Repartidor
+                {
+                    UsuarioId        = usuarioCreado.Id,
+                    LicenciaConducir = dto.LicenciaConducir,
+                    FotoLicenciaUrl  = !string.IsNullOrEmpty(dto.FotoLicenciaBase64) 
+                                       ? $"data:image/jpeg;base64,{dto.FotoLicenciaBase64}" 
+                                       : null,
+                    EstadoAprobacion = EstadoAprobacionEnum.Pendiente,
+                    Estado           = EstadoRepartidorEnum.Desconectado,
+                    CreadoEn         = ahora
+                };
+                var repartidorCreado = await _repartidorService.CreateAsync(repartidor);
+                if (repartidorCreado == null)
+                    throw new Exception("Error al crear el perfil de repartidor.");
 
-            // 3. Crear Vehículo
-            var vehiculo = new Vehiculo
-            {
-                RepartidorId = usuarioCreado.Id,
-                TipoVehiculo = dto.TipoVehiculo,
-                Placa        = dto.Placa,
-                Marca        = dto.Marca,
-                Modelo       = dto.Modelo,
-                Color        = dto.Color,
-                Anio         = dto.Anio,
-                CreadoEn     = ahora
-            };
-            await _vehiculoService.CreateAsync(vehiculo);
+                // 3. Crear Vehículo
+                var vehiculo = new Vehiculo
+                {
+                    RepartidorId = usuarioCreado.Id,
+                    TipoVehiculo = dto.TipoVehiculo,
+                    Placa        = dto.Placa,
+                    Marca        = dto.Marca,
+                    Modelo       = dto.Modelo,
+                    Color        = dto.Color,
+                    Anio         = dto.Anio,
+                    CreadoEn     = ahora
+                };
+                await _vehiculoService.CreateAsync(vehiculo);
 
-            // 4. Devolver token para auto-login
-            var token = _seguridadService.GenerarTokenJwt(usuarioCreado.Id, usuarioCreado.Email, "Repartidor");
-            return Ok(new AuthResponseDto
+                await transaction.CommitAsync();
+
+                // 4. Devolver token para auto-login
+                var token = _seguridadService.GenerarTokenJwt(usuarioCreado.Id, usuarioCreado.Email, "Repartidor");
+                return Ok(new AuthResponseDto
+                {
+                    Token    = token,
+                    UsuarioId = usuarioCreado.Id,
+                    Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
+                    Email    = usuarioCreado.Email,
+                    Rol      = "Repartidor",
+                    FotoPerfilUrl = usuarioCreado.FotoPerfilUrl
+                });
+            }
+            catch (Exception ex)
             {
-                Token    = token,
-                UsuarioId = usuarioCreado.Id,
-                Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
-                Email    = usuarioCreado.Email,
-                Rol      = "Repartidor",
-                FotoPerfilUrl = usuarioCreado.FotoPerfilUrl
-            });
+                await transaction.RollbackAsync();
+                return StatusCode(500, new { message = "Error interno durante el registro: " + ex.Message, details = ex.InnerException?.Message });
+            }
         }
 
         [HttpPost("registro-restaurante")]
@@ -185,59 +199,70 @@ namespace Delivery.API.Controllers
 
             var ahora = DateTime.UtcNow;
 
-            // 1. Crear Usuario
-            var usuario = new Usuario
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                Nombre       = dto.NombrePropietario,
-                Apellidos    = dto.ApellidosPropietario,
-                Email        = dto.Email,
-                Telefono     = dto.Telefono,
-                Cedula       = dto.Cedula,
-                PasswordHash = dto.Password, // Se hashea en UsuarioService
-                RolId        = rolRestaurante.Id,
-                TipoUsuario  = TipoUsuarioEnum.Restaurante,
-                Activo       = true,
-                CreadoEn     = ahora
-            };
-            var usuarioCreado = await _usuarioService.CreateAsync(usuario);
-            if (usuarioCreado == null)
-                return StatusCode(500, new { message = "Error al crear el usuario." });
+                // 1. Crear Usuario
+                var usuario = new Usuario
+                {
+                    Nombre       = dto.NombrePropietario,
+                    Apellidos    = dto.ApellidosPropietario,
+                    Email        = dto.Email,
+                    Telefono     = dto.Telefono,
+                    Cedula       = dto.Cedula,
+                    PasswordHash = dto.Password,
+                    RolId        = rolRestaurante.Id,
+                    TipoUsuario  = TipoUsuarioEnum.Restaurante,
+                    Activo       = true,
+                    CreadoEn     = ahora
+                };
+                var usuarioCreado = await _usuarioService.CreateAsync(usuario);
+                if (usuarioCreado == null)
+                    throw new Exception("Error al crear el usuario.");
 
-            // 2. Crear Restaurante
-            var restaurante = new Restaurante
-            {
-                Nombre       = dto.NombreRestaurante,
-                Descripcion  = dto.Descripcion,
-                Categoria    = dto.Categoria,
-                Ruc          = dto.RUC,
-                Calle        = dto.Calle,
-                Ciudad       = dto.Ciudad,
-                Latitud      = dto.Latitud,
-                Longitud     = dto.Longitud,
-                Telefono     = dto.Telefono,
-                Email        = dto.Email,
-                HoraApertura = dto.HoraApertura,
-                HoraCierre   = dto.HoraCierre,
-                Estado       = EstadoRestauranteEnum.Pendiente,
-                Abierto      = true,
-                CreadoPor    = usuarioCreado.Id,
-                CreadoEn     = ahora
-            };
-            var restauranteCreado = await _restauranteService.CreateAsync(restaurante);
-            if (restauranteCreado == null)
-                return StatusCode(500, new { message = "Error al crear el perfil de restaurante." });
+                // 2. Crear Restaurante
+                var restaurante = new Restaurante
+                {
+                    Nombre       = dto.NombreRestaurante,
+                    Descripcion  = dto.Descripcion,
+                    Categoria    = dto.Categoria,
+                    Ruc          = dto.RUC,
+                    Calle        = dto.Calle,
+                    Ciudad       = dto.Ciudad,
+                    Latitud      = dto.Latitud,
+                    Longitud     = dto.Longitud,
+                    Telefono     = dto.Telefono,
+                    Email        = dto.Email,
+                    HoraApertura = dto.HoraApertura,
+                    HoraCierre   = dto.HoraCierre,
+                    Estado       = EstadoRestauranteEnum.Pendiente,
+                    Abierto      = true,
+                    CreadoPor    = usuarioCreado.Id,
+                    CreadoEn     = ahora
+                };
+                var restauranteCreado = await _restauranteService.CreateAsync(restaurante);
+                if (restauranteCreado == null)
+                    throw new Exception("Error al crear el perfil de restaurante.");
 
-            // 3. Devolver token para auto-login
-            var token = _seguridadService.GenerarTokenJwt(usuarioCreado.Id, usuarioCreado.Email, "Restaurante");
-            return Ok(new AuthResponseDto
+                await transaction.CommitAsync();
+
+                // 3. Devolver token para auto-login
+                var token = _seguridadService.GenerarTokenJwt(usuarioCreado.Id, usuarioCreado.Email, "Restaurante");
+                return Ok(new AuthResponseDto
+                {
+                    Token    = token,
+                    UsuarioId = usuarioCreado.Id,
+                    Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
+                    Email    = usuarioCreado.Email,
+                    Rol      = "Restaurante",
+                    FotoPerfilUrl = usuarioCreado.FotoPerfilUrl
+                });
+            }
+            catch (Exception ex)
             {
-                Token    = token,
-                UsuarioId = usuarioCreado.Id,
-                Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
-                Email    = usuarioCreado.Email,
-                Rol      = "Restaurante",
-                FotoPerfilUrl = usuarioCreado.FotoPerfilUrl
-            });
+                await transaction.RollbackAsync();
+                return StatusCode(500, new { message = "Error interno durante el registro: " + ex.Message, details = ex.InnerException?.Message });
+            }
         }
 
         [HttpPost("logout")]
