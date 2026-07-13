@@ -68,27 +68,28 @@ Write-Host "6. Creando Web App para MVC..."
 cmd.exe /c "az webapp create --resource-group $resourceGroup --plan $appServicePlan --name $mvcAppName --runtime `"DOTNETCORE|9.0`""
 
 Write-Host "7. Configurando Variables de Entorno y Arranque en API..."
-$apiSettings = @{
-    "ConnectionStrings__DefaultConnection" = $connectionString
-    "Jwt__Key" = "UnaClaveLargaYSeguraParaProduccion12345!"
-    "Jwt__Issuer" = "RayoExpresAPI"
-    "Jwt__Audience" = "RayoExpresClient"
-    "AllowedOrigins" = "https://$mvcAppName.azurewebsites.net"
-    "RunSeeder" = "true"
-    "WEBSITE_RUN_FROM_PACKAGE" = "1"
-}
-$apiSettings | ConvertTo-Json | Out-File "api_settings.json" -Encoding utf8
+$apiSettings = @(
+    @{ name = "ConnectionStrings__DefaultConnection"; value = $connectionString; slotSetting = $false },
+    @{ name = "Jwt__Key"; value = "UnaClaveLargaYSeguraParaProduccion12345!"; slotSetting = $false },
+    @{ name = "Jwt__Issuer"; value = "RayoExpresAPI"; slotSetting = $false },
+    @{ name = "Jwt__Audience"; value = "RayoExpresClient"; slotSetting = $false },
+    @{ name = "AllowedOrigins"; value = "https://$mvcAppName.azurewebsites.net"; slotSetting = $false },
+    @{ name = "RunSeeder"; value = "true"; slotSetting = $false },
+    @{ name = "WEBSITE_RUN_FROM_PACKAGE"; value = "1"; slotSetting = $false },
+    @{ name = "WEBSITE_CONTAINER_START_TIME_LIMIT"; value = "1800"; slotSetting = $false }
+)
+$apiSettings | ConvertTo-Json -Depth 10 | Out-File "api_settings.json" -Encoding utf8
 az webapp config appsettings set --resource-group $resourceGroup --name $apiAppName --settings "@api_settings.json"
 
 az webapp config set --resource-group $resourceGroup --name $apiAppName --startup-file "dotnet Delivery.API.dll"
 
 Write-Host "8. Configurando Variables de Entorno y Arranque en MVC..."
-$mvcSettings = @{
-    "ApiUrl" = "https://$apiAppName.azurewebsites.net/"
-    "BlobStorageConnectionString" = $blobStorageConnectionString
-    "WEBSITE_RUN_FROM_PACKAGE" = "1"
-}
-$mvcSettings | ConvertTo-Json | Out-File "mvc_settings.json" -Encoding utf8
+$mvcSettings = @(
+    @{ name = "ApiUrl"; value = "https://$apiAppName.azurewebsites.net/"; slotSetting = $false },
+    @{ name = "BlobStorageConnectionString"; value = $blobStorageConnectionString; slotSetting = $false },
+    @{ name = "WEBSITE_RUN_FROM_PACKAGE"; value = "1"; slotSetting = $false }
+)
+$mvcSettings | ConvertTo-Json -Depth 10 | Out-File "mvc_settings.json" -Encoding utf8
 az webapp config appsettings set --resource-group $resourceGroup --name $mvcAppName --settings "@mvc_settings.json"
 
 az webapp config set --resource-group $resourceGroup --name $mvcAppName --startup-file "dotnet Delivery.MVC.dll"
