@@ -96,12 +96,23 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Importante para SignalR: CORS si el MVC está en otro puerto
-var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() 
-                     ?? new[] { "https://localhost:7025", "http://localhost:5242" };
+var allowedOriginsList = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+if (allowedOriginsList == null || allowedOriginsList.Length == 0)
+{
+    var allowedOriginsStr = builder.Configuration["AllowedOrigins"];
+    if (!string.IsNullOrEmpty(allowedOriginsStr))
+    {
+        allowedOriginsList = allowedOriginsStr.Split(',', StringSplitOptions.RemoveEmptyEntries);
+    }
+    else 
+    {
+        allowedOriginsList = new[] { "https://localhost:7025", "http://localhost:5242" };
+    }
+}
 
 app.UseCors(builder =>
 {
-    builder.WithOrigins(allowedOrigins)
+    builder.WithOrigins(allowedOriginsList)
            .AllowAnyHeader()
            .WithMethods("GET", "POST")
            .AllowCredentials();
