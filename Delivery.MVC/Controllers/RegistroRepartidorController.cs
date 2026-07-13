@@ -68,7 +68,17 @@ namespace Delivery.MVC.Controllers
                 }
             }
 
-            var authResponse = await _authConsumer.RegistroRepartidorAsync(dto);
+            AuthResponseDto authResponse = null;
+            try
+            {
+                authResponse = await _authConsumer.RegistroRepartidorAsync(dto);
+            }
+            catch (System.Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, _localizer["Error de la API: " + ex.Message]);
+                return View(dto);
+            }
+
             if (authResponse != null)
             {
                 // Auto-login después del registro

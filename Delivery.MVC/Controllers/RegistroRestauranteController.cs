@@ -40,11 +40,20 @@ namespace Delivery.MVC.Controllers
                 return View(dto);
             }
 
-            var response = await _authConsumer.RegistroRestauranteAsync(dto);
+            AuthResponseDto response = null;
+            try
+            {
+                response = await _authConsumer.RegistroRestauranteAsync(dto);
+            }
+            catch (System.Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, _localizer["Error de la API: " + ex.Message]);
+                return View(dto);
+            }
 
             if (response == null)
             {
-                ModelState.AddModelError(string.Empty, _localizer["Hubo un error en el registro. Verifique que el correo o RUC no estén en uso."]);
+                ModelState.AddModelError(string.Empty, _localizer["Hubo un error en el registro. No se recibió respuesta."]);
                 return View(dto);
             }
 
