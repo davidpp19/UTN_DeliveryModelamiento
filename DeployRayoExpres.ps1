@@ -38,7 +38,7 @@ Write-Host "2.1 Creando la Base de Datos dentro del servidor..."
 az postgres flexible-server db create `
   --resource-group $resourceGroup `
   --server-name $dbServerName `
-  --database-name $dbName
+  --name $dbName
 
 $connectionString = "Server=$dbServerName.postgres.database.azure.com;Database=$dbName;Port=5432;User Id=$dbAdminUser;Password=$dbAdminPassword;Ssl Mode=Require;"
 
@@ -92,14 +92,24 @@ az webapp update --resource-group $resourceGroup --name $mvcAppName --set client
 
 Write-Host "9. Compilando y Publicando Código (Esto requiere estar en la carpeta raíz del proyecto)..."
 
-# Publicando API
+# Limpiar publicaciones anteriores
+Remove-Item -Recurse -Force ./publish_api -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force ./publish_mvc -ErrorAction SilentlyContinue
+Remove-Item -Force api.zip -ErrorAction SilentlyContinue
+Remove-Item -Force mvc.zip -ErrorAction SilentlyContinue
+
+Write-Host "Publicando API..."
 dotnet publish Delivery.API/Delivery.API.csproj -c Release -o ./publish_api
-Compress-Archive -Path ./publish_api/* -DestinationPath api.zip -Force
+Push-Location ./publish_api
+Compress-Archive -Path * -DestinationPath ../api.zip -Force
+Pop-Location
 az webapp deploy --resource-group $resourceGroup --name $apiAppName --src-path api.zip --type zip
 
-# Publicando MVC
+Write-Host "Publicando MVC..."
 dotnet publish Delivery.MVC/Delivery.MVC.csproj -c Release -o ./publish_mvc
-Compress-Archive -Path ./publish_mvc/* -DestinationPath mvc.zip -Force
+Push-Location ./publish_mvc
+Compress-Archive -Path * -DestinationPath ../mvc.zip -Force
+Pop-Location
 az webapp deploy --resource-group $resourceGroup --name $mvcAppName --src-path mvc.zip --type zip
 
 Write-Host "¡Despliegue Finalizado!"
