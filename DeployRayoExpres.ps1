@@ -67,25 +67,29 @@ cmd.exe /c "az webapp create --resource-group $resourceGroup --plan $appServiceP
 Write-Host "6. Creando Web App para MVC..."
 cmd.exe /c "az webapp create --resource-group $resourceGroup --plan $appServicePlan --name $mvcAppName --runtime `"DOTNETCORE|9.0`""
 
-Write-Host "7. Configurando Variables de Entorno en API..."
+Write-Host "7. Configurando Variables de Entorno y Arranque en API..."
 az webapp config appsettings set `
   --resource-group $resourceGroup `
   --name $apiAppName `
   --settings `
-    ConnectionStrings__DefaultConnection=$connectionString `
+    ConnectionStrings__DefaultConnection="$connectionString" `
     Jwt__Key="UnaClaveLargaYSeguraParaProduccion12345!" `
     Jwt__Issuer="RayoExpresAPI" `
     Jwt__Audience="RayoExpresClient" `
     AllowedOrigins="https://$mvcAppName.azurewebsites.net" `
     RunSeeder="true"
 
-Write-Host "8. Configurando Variables de Entorno en MVC..."
+az webapp config set --resource-group $resourceGroup --name $apiAppName --startup-file "dotnet Delivery.API.dll"
+
+Write-Host "8. Configurando Variables de Entorno y Arranque en MVC..."
 az webapp config appsettings set `
   --resource-group $resourceGroup `
   --name $mvcAppName `
   --settings `
     ApiUrl="https://$apiAppName.azurewebsites.net/" `
-    BlobStorageConnectionString=$blobStorageConnectionString
+    BlobStorageConnectionString="$blobStorageConnectionString"
+
+az webapp config set --resource-group $resourceGroup --name $mvcAppName --startup-file "dotnet Delivery.MVC.dll"
 
 # Importante: Activar ARR Affinity (Sticky Sessions) para que las sesiones en memoria del MVC funcionen si el plan se escala.
 az webapp update --resource-group $resourceGroup --name $mvcAppName --set clientAffinityEnabled=true
@@ -98,19 +102,21 @@ Remove-Item -Recurse -Force ./publish_mvc -ErrorAction SilentlyContinue
 Remove-Item -Force api.zip -ErrorAction SilentlyContinue
 Remove-Item -Force mvc.zip -ErrorAction SilentlyContinue
 
+# Cargar librería para comprimir de forma segura en Windows
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+$apiZipPath = Join-Path (Get-Location) "api.zip"
+$mvcZipPath = Join-Path (Get-Location) "mvc.zip"
+
 Write-Host "Publicando API..."
 dotnet publish Delivery.API/Delivery.API.csproj -c Release -o ./publish_api
-Push-Location ./publish_api
-Compress-Archive -Path * -DestinationPath ../api.zip -Force
-Pop-Location
-az webapp deploy --resource-group $resourceGroup --name $apiAppName --src-path api.zip --type zip
+[System.IO.Compression.ZipFile]::CreateFromDirectory((Join-Path (Get-Location) "publish_api"), $apiZipPath)
+az webapp deployment source config-zip --resource-group $resourceGroup --name $apiAppName --src $apiZipPath
 
 Write-Host "Publicando MVC..."
 dotnet publish Delivery.MVC/Delivery.MVC.csproj -c Release -o ./publish_mvc
-Push-Location ./publish_mvc
-Compress-Archive -Path * -DestinationPath ../mvc.zip -Force
-Pop-Location
-az webapp deploy --resource-group $resourceGroup --name $mvcAppName --src-path mvc.zip --type zip
+[System.IO.Compression.ZipFile]::CreateFromDirectory((Join-Path (Get-Location) "publish_mvc"), $mvcZipPath)
+az webapp deployment source config-zip --resource-group $resourceGroup --name $mvcAppName --src $mvcZipPath
 
 Write-Host "¡Despliegue Finalizado!"
 Write-Host "URL API: https://$apiAppName.azurewebsites.net"
