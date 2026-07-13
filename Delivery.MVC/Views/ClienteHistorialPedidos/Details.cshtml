@@ -165,9 +165,27 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
-    @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino || Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.ListoParaRecoger)
-    {
-        <script>
+    <script>
+        // SIEMPRE conectarse a SignalR para escuchar cambios de estado
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl('@Configuration["ApiSettings:BaseUrl"]'.replace(/\/$/, "") + "/notificacionesHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("EstadoPedidoCambiado", function (pedidoId, nuevoEstado) {
+            if (pedidoId == @Model.Id) {
+                location.reload();
+            }
+        });
+
+        connection.start().then(function () {
+            console.log("Conectado a SignalR para tracking del pedido @Model.Id");
+            connection.invoke("UnirseGrupoPedido", "@Model.Id").catch(err => console.error(err));
+            connection.invoke("UnirseGrupoCliente", "@Model.UsuarioId").catch(err => console.error(err));
+        }).catch(err => console.error(err));
+
+        // Solo inicializar el mapa si el elemento existe (cuando está En Camino)
+        if (document.getElementById('map')) {
             var map = L.map('map').setView([0.3517, -78.1222], 14);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -187,18 +205,11 @@
                 cliMarker = L.marker([cliLat, cliLng]).addTo(map).bindPopup('Tu Dirección');
             }
 
-            // Repartidor icon
             var repIcon = L.icon({
                 iconUrl: 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png', // Moto icon
                 iconSize: [32, 32],
                 iconAnchor: [16, 32]
             });
-
-            // SignalR for live tracking
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl('@Configuration["ApiSettings:BaseUrl"]'.replace(/\/$/, "") + "/notificacionesHub")
-                .withAutomaticReconnect()
-                .build();
 
             connection.on("RecibirUbicacionRepartidor", function (lat, lng) {
                 if (repMarker) {
@@ -222,7 +233,6 @@
 
                             currentRouteLine = L.polyline(latLngs, { color: 'green', weight: 4 }).addTo(map);
                             
-                            // Update labels
                             const distanciaKm = (routeData.distance / 1000).toFixed(1);
                             const tiempoMin = Math.ceil(routeData.duration / 60);
 
@@ -232,18 +242,6 @@
                         }
                     });
             });
-
-            connection.on("EstadoPedidoCambiado", function (pedidoId, nuevoEstado) {
-                if (pedidoId == @Model.Id) {
-                    location.reload();
-                }
-            });
-
-            connection.start().then(function () {
-                console.log("Conectado a SignalR para tracking del pedido @Model.Id");
-                connection.invoke("UnirseGrupoPedido", "@Model.Id").catch(err => console.error(err));
-                connection.invoke("UnirseGrupoCliente", "@Model.UsuarioId").catch(err => console.error(err));
-            }).catch(err => console.error(err));
-        </script>
-    }
+        }
+    </script>
 }
