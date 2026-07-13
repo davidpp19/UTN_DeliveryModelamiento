@@ -168,7 +168,7 @@ az webapp config appsettings set `
     "Jwt__Issuer=RayoExpresAPI" `
     "Jwt__Audience=RayoExpresClient" `
     "AllowedOrigins=https://$mvcAppName.azurewebsites.net" `
-    "RunSeeder=true" `
+    "RunSeeder=false" `
     "WEBSITE_RUN_FROM_PACKAGE=1" `
     "WEBSITES_CONTAINER_START_TIME_LIMIT=1800" | Out-Null
 
