@@ -8,7 +8,7 @@
 # ============================================================
 $resourceGroup      = "RayoExpres-RG-7"
 $locationDB         = "brazilsouth"      # Para PostgreSQL (unica region con soporte)
-$locationApps       = "southcentralus"   # Para App Service (unica region con cuota B1)
+$locationApps       = "northcentralus"   # Para App Service (evitando throttling en southcentralus)
 $dbServerName       = "rayoexpres-db-v7"
 $dbAdminUser        = "rayoadmin"
 $dbAdminPassword    = "SecurePassword123!"
