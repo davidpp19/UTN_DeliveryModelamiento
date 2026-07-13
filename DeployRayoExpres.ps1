@@ -76,7 +76,7 @@ $apiSettings = @(
     @{ name = "AllowedOrigins"; value = "https://$mvcAppName.azurewebsites.net"; slotSetting = $false },
     @{ name = "RunSeeder"; value = "true"; slotSetting = $false },
     @{ name = "WEBSITE_RUN_FROM_PACKAGE"; value = "1"; slotSetting = $false },
-    @{ name = "WEBSITE_CONTAINER_START_TIME_LIMIT"; value = "1800"; slotSetting = $false }
+    @{ name = "WEBSITES_CONTAINER_START_TIME_LIMIT"; value = "1800"; slotSetting = $false }
 )
 $apiSettings | ConvertTo-Json -Depth 10 | Out-File "api_settings.json" -Encoding utf8
 az webapp config appsettings set --resource-group $resourceGroup --name $apiAppName --settings "@api_settings.json"
