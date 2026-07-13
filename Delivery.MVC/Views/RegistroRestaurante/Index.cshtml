@@ -192,8 +192,9 @@
                 marker = L.marker(e.latlng).addTo(map);
             }
 
-            document.getElementById('lat-input').value = lat.toFixed(8);
-            document.getElementById('lng-input').value = lng.toFixed(8);
+            var separator = (1.1).toLocaleString().substring(1, 2);
+            document.getElementById('lat-input').value = lat.toFixed(8).replace('.', separator);
+            document.getElementById('lng-input').value = lng.toFixed(8).replace('.', separator);
 
             // Reverse Geocoding (Nominatim API)
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
@@ -234,8 +235,9 @@
                             marker = L.marker([lat, lon]).addTo(map);
                         }
 
-                        document.getElementById('lat-input').value = lat.toFixed(8);
-                        document.getElementById('lng-input').value = lon.toFixed(8);
+                        var separator = (1.1).toLocaleString().substring(1, 2);
+                        document.getElementById('lat-input').value = lat.toFixed(8).replace('.', separator);
+                        document.getElementById('lng-input').value = lon.toFixed(8).replace('.', separator);
                         
                         // Parse name
                         var partes = result.display_name.split(',');

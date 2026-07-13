@@ -387,8 +387,9 @@
         });
 
         function actualizarCamposUbicacion(lat, lng) {
-            document.getElementById('nuevaLatitud').value = lat;
-            document.getElementById('nuevaLongitud').value = lng;
+            var separator = (1.1).toLocaleString().substring(1, 2);
+            document.getElementById('nuevaLatitud').value = lat.toFixed(8).replace('.', separator);
+            document.getElementById('nuevaLongitud').value = lng.toFixed(8).replace('.', separator);
         }
 
         // Búsqueda de Direcciones (Nominatim)
