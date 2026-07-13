@@ -68,26 +68,28 @@ Write-Host "6. Creando Web App para MVC..."
 cmd.exe /c "az webapp create --resource-group $resourceGroup --plan $appServicePlan --name $mvcAppName --runtime `"DOTNETCORE|9.0`""
 
 Write-Host "7. Configurando Variables de Entorno y Arranque en API..."
-az webapp config appsettings set `
-  --resource-group $resourceGroup `
-  --name $apiAppName `
-  --settings `
-    ConnectionStrings__DefaultConnection="$connectionString" `
-    Jwt__Key="UnaClaveLargaYSeguraParaProduccion12345!" `
-    Jwt__Issuer="RayoExpresAPI" `
-    Jwt__Audience="RayoExpresClient" `
-    AllowedOrigins="https://$mvcAppName.azurewebsites.net" `
-    RunSeeder="true"
+$apiSettings = @{
+    "ConnectionStrings__DefaultConnection" = $connectionString
+    "Jwt__Key" = "UnaClaveLargaYSeguraParaProduccion12345!"
+    "Jwt__Issuer" = "RayoExpresAPI"
+    "Jwt__Audience" = "RayoExpresClient"
+    "AllowedOrigins" = "https://$mvcAppName.azurewebsites.net"
+    "RunSeeder" = "true"
+    "WEBSITE_RUN_FROM_PACKAGE" = "1"
+}
+$apiSettings | ConvertTo-Json | Out-File "api_settings.json" -Encoding utf8
+az webapp config appsettings set --resource-group $resourceGroup --name $apiAppName --settings "@api_settings.json"
 
 az webapp config set --resource-group $resourceGroup --name $apiAppName --startup-file "dotnet Delivery.API.dll"
 
 Write-Host "8. Configurando Variables de Entorno y Arranque en MVC..."
-az webapp config appsettings set `
-  --resource-group $resourceGroup `
-  --name $mvcAppName `
-  --settings `
-    ApiUrl="https://$apiAppName.azurewebsites.net/" `
-    BlobStorageConnectionString="$blobStorageConnectionString"
+$mvcSettings = @{
+    "ApiUrl" = "https://$apiAppName.azurewebsites.net/"
+    "BlobStorageConnectionString" = $blobStorageConnectionString
+    "WEBSITE_RUN_FROM_PACKAGE" = "1"
+}
+$mvcSettings | ConvertTo-Json | Out-File "mvc_settings.json" -Encoding utf8
+az webapp config appsettings set --resource-group $resourceGroup --name $mvcAppName --settings "@mvc_settings.json"
 
 az webapp config set --resource-group $resourceGroup --name $mvcAppName --startup-file "dotnet Delivery.MVC.dll"
 
