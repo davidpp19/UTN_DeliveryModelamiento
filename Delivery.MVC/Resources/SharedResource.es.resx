@@ -36,10 +36,10 @@
     <value>Idioma</value>
   </data>
   <data name="Espanol" xml:space="preserve">
-    <value>EspaÃ±ol</value>
+    <value>Español</value>
   </data>
   <data name="Ingles" xml:space="preserve">
-    <value>InglÃ©s</value>
+    <value>Inglés</value>
   </data>
   <data name="Guardar" xml:space="preserve">
     <value>Guardar</value>
@@ -67,7 +67,7 @@
     <value>ðŸŽŸ Mis Cupones</value>
   </data>
   <data name="Administracion" xml:space="preserve">
-    <value>AdministraciÃ³n</value>
+    <value>Administración</value>
   </data>
   <data name="Dashboard" xml:space="preserve">
     <value>Dashboard</value>
@@ -88,7 +88,7 @@
     <value>Cupones</value>
   </data>
   <data name="Auditoria" xml:space="preserve">
-    <value>AuditorÃ­a</value>
+    <value>Auditoría</value>
   </data>
   <data name="PedidosDisponibles" xml:space="preserve">
     <value>Pedidos Disponibles</value>
@@ -97,7 +97,7 @@
     <value>Mis Entregas</value>
   </data>
   <data name="ComoFunciona" xml:space="preserve">
-    <value>CÃ³mo Funciona</value>
+    <value>Cómo Funciona</value>
   </data>
   <data name="BuscarPlaceholder" xml:space="preserve">
     <value>Buscar pizza, sushi...</value>
@@ -118,20 +118,20 @@
     <value>Mi Perfil de Repartidor</value>
   </data>
   <data name="CerrarSesion" xml:space="preserve">
-    <value>Cerrar SesiÃ³n</value>
+    <value>Cerrar Sesión</value>
   </data>
   <data name="IniciarSesion" xml:space="preserve">
-    <value>Iniciar SesiÃ³n</value>
+    <value>Iniciar Sesión</value>
   </data>
   <data name="Registrarse" xml:space="preserve">
     <value>Registrarse</value>
   </data>
   <!-- Auth -->
   <data name="CorreoElectronico" xml:space="preserve">
-    <value>Correo ElectrÃ³nico</value>
+    <value>Correo Electrónico</value>
   </data>
   <data name="Contrasena" xml:space="preserve">
-    <value>ContraseÃ±a</value>
+    <value>Contraseña</value>
   </data>
   <data name="Recordarme" xml:space="preserve">
     <value>Recordarme</value>
@@ -140,10 +140,10 @@
     <value>Ingresar</value>
   </data>
   <data name="OlvidasteContrasena" xml:space="preserve">
-    <value>Â¿Olvidaste tu contraseÃ±a?</value>
+    <value>¿Olvidaste tu contraseña?</value>
   </data>
   <data name="NoTienesCuenta" xml:space="preserve">
-    <value>Â¿No tienes cuenta?</value>
+    <value>¿No tienes cuenta?</value>
   </data>
   <data name="CrearCuenta" xml:space="preserve">
     <value>Crear una cuenta</value>
@@ -156,7 +156,7 @@
   </data>
   <!-- Home -->
   <data name="MensajeBienvenida" xml:space="preserve">
-    <value>Bienvenido de vuelta a RayoExpres. Â¿QuÃ© se te antoja hoy?</value>
+    <value>Bienvenido de vuelta a RayoExpres. ¿Qué se te antoja hoy?</value>
   </data>
   <data name="TusCuponesActivos" xml:space="preserve">
     <value>Tus Cupones Activos</value>
@@ -171,10 +171,10 @@
     <value>Horario</value>
   </data>
   <data name="Envio" xml:space="preserve">
-    <value>EnvÃ­o</value>
+    <value>Envío</value>
   </data>
   <data name="VerMenu" xml:space="preserve">
-    <value>Ver MenÃº</value>
+    <value>Ver Menú</value>
   </data>
   <data name="NoHayRestaurantes" xml:space="preserve">
     <value>No hay restaurantes disponibles en este momento.</value>
@@ -189,10 +189,10 @@
     <value>Tu comida favorita, entregada en Ibarra a la velocidad del rayo.</value>
   </data>
   <data name="SubtituloHero" xml:space="preserve">
-    <value>Pide de los mejores restaurantes, con pagos seguros y entregas ultrarrÃ¡pidas.</value>
+    <value>Pide de los mejores restaurantes, con pagos seguros y entregas ultrarrápidas.</value>
   </data>
   <data name="RegistrateAhora" xml:space="preserve">
-    <value>RegÃ­strate Ahora</value>
+    <value>Regístrate Ahora</value>
   </data>
   <data name="IrAMiPanel" xml:space="preserve">
     <value>Ir a mi Panel</value>
@@ -216,7 +216,7 @@
     <value>Soy Repartidor</value>
   </data>
   <data name="SoyRepartidorDesc" xml:space="preserve">
-    <value>Quiero hacer entregas y ganar dinero con mi vehÃ­culo.</value>
+    <value>Quiero hacer entregas y ganar dinero con mi vehículo.</value>
   </data>
   <data name="RegRepartidor" xml:space="preserve">
     <value>Registrarme como Repartidor</value>
@@ -225,13 +225,13 @@
     <value>Tengo un Restaurante</value>
   </data>
   <data name="SoyRestauranteDesc" xml:space="preserve">
-    <value>Quiero publicar mi negocio y recibir pedidos en lÃ­nea.</value>
+    <value>Quiero publicar mi negocio y recibir pedidos en línea.</value>
   </data>
   <data name="RegRestaurante" xml:space="preserve">
     <value>Registrar mi Restaurante</value>
   </data>
   <data name="YaTienesCuenta" xml:space="preserve">
-    <value>Â¿Ya tienes cuenta?</value>
+    <value>¿Ya tienes cuenta?</value>
   </data>
   <data name="RegistroClienteTitulo" xml:space="preserve">
     <value>Registro de Usuario</value>
@@ -249,25 +249,25 @@
     <value>Apellidos</value>
   </data>
   <data name="ApellidosPlaceholder" xml:space="preserve">
-    <value>PÃ©rez</value>
+    <value>Pérez</value>
   </data>
   <data name="Telefono" xml:space="preserve">
-    <value>TelÃ©fono</value>
+    <value>Teléfono</value>
   </data>
   <data name="Cedula" xml:space="preserve">
-    <value>CÃ©dula de Identidad</value>
+    <value>Cédula de Identidad</value>
   </data>
   <data name="ConfirmarContrasena" xml:space="preserve">
-    <value>Confirmar ContraseÃ±a</value>
+    <value>Confirmar Contraseña</value>
   </data>
   <data name="RegRepartidorTitulo" xml:space="preserve">
     <value>Registro de Repartidor</value>
   </data>
   <data name="RegRepartidorDesc" xml:space="preserve">
-    <value>Completa el formulario para unirte como repartidor de RayoExpres. Tu cuenta serÃ¡ revisada antes de ser activada.</value>
+    <value>Completa el formulario para unirte como repartidor de RayoExpres. Tu cuenta será revisada antes de ser activada.</value>
   </data>
   <data name="VolverSeleccion" xml:space="preserve">
-    <value>Volver a selecciÃ³n de tipo de cuenta</value>
+    <value>Volver a selección de tipo de cuenta</value>
   </data>
   <data name="DatosPersonales" xml:space="preserve">
     <value>Datos Personales</value>
@@ -279,10 +279,10 @@
     <value>Tus apellidos</value>
   </data>
   <data name="DatosVehiculo" xml:space="preserve">
-    <value>Datos del VehÃ­culo</value>
+    <value>Datos del Vehículo</value>
   </data>
   <data name="TipoVehiculo" xml:space="preserve">
-    <value>Tipo de VehÃ­culo</value>
+    <value>Tipo de Vehículo</value>
   </data>
   <data name="ConfirmarTipo" xml:space="preserve">
     <value>Confirmar Tipo</value>
@@ -294,10 +294,10 @@
     <value>Datos de Licencia</value>
   </data>
   <data name="NumeroLicencia" xml:space="preserve">
-    <value>NÃºmero de Licencia de Conducir</value>
+    <value>Número de Licencia de Conducir</value>
   </data>
   <data name="FotoLicencia" xml:space="preserve">
-    <value>FotografÃ­a de la Licencia</value>
+    <value>Fotografía de la Licencia</value>
   </data>
   <data name="FotoLicenciaDesc" xml:space="preserve">
     <value>Adjunta una foto clara de tu licencia de conducir.</value>
@@ -315,7 +315,7 @@
     <value>Placa</value>
   </data>
   <data name="AnioVehiculo" xml:space="preserve">
-    <value>AÃ±o del VehÃ­culo</value>
+    <value>Año del Vehículo</value>
   </data>
   <data name="RegRestauranteTitulo" xml:space="preserve">
     <value>Registra tu Restaurante en RayoExpres</value>
@@ -330,13 +330,13 @@
     <value>Nombre del Restaurante</value>
   </data>
   <data name="Descripcion" xml:space="preserve">
-    <value>DescripciÃ³n</value>
+    <value>Descripción</value>
   </data>
   <data name="RUC" xml:space="preserve">
     <value>RUC</value>
   </data>
   <data name="CategoriaEjemplo" xml:space="preserve">
-    <value>CategorÃ­a (ej: Pizza, Sushi)</value>
+    <value>Categoría (ej: Pizza, Sushi)</value>
   </data>
   <data name="HoraApertura" xml:space="preserve">
     <value>Hora de Apertura</value>
@@ -345,16 +345,16 @@
     <value>Hora de Cierre</value>
   </data>
   <data name="Ubicacion" xml:space="preserve">
-    <value>UbicaciÃ³n</value>
+    <value>Ubicación</value>
   </data>
   <data name="BuscaDireccionMapa" xml:space="preserve">
-    <value>Busca tu direcciÃ³n o arrastra el marcador en el mapa.</value>
+    <value>Busca tu dirección o arrastra el marcador en el mapa.</value>
   </data>
   <data name="BuscarDireccion" xml:space="preserve">
-    <value>Buscar DirecciÃ³n</value>
+    <value>Buscar Dirección</value>
   </data>
   <data name="DetallesUbicacion" xml:space="preserve">
-    <value>Detalles de UbicaciÃ³n</value>
+    <value>Detalles de Ubicación</value>
   </data>
   <data name="Calle" xml:space="preserve">
     <value>Calle</value>
@@ -363,7 +363,7 @@
     <value>Ciudad</value>
   </data>
   <data name="CodigoPostal" xml:space="preserve">
-    <value>CÃ³digo Postal</value>
+    <value>Código Postal</value>
   </data>
   <data name="LogoRestaurante" xml:space="preserve">
     <value>Logo del Restaurante</value>
@@ -393,49 +393,49 @@
     <value>Pendiente</value>
   </data>
   <data name="SeleccioneDireccionMapa" xml:space="preserve">
-    <value>Seleccione direcciÃ³n en el mapa</value>
+    <value>Seleccione dirección en el mapa</value>
   </data>
   <data name="CostoEnvio" xml:space="preserve">
-    <value>Costo de EnvÃ­o</value>
+    <value>Costo de Envío</value>
   </data>
   <data name="CuponAplicado" xml:space="preserve">
-    <value>CupÃ³n aplicado</value>
+    <value>Cupón aplicado</value>
   </data>
   <data name="TotalUSD" xml:space="preserve">
     <value>Total (USD)</value>
   </data>
   <data name="SeleccionarCupon" xml:space="preserve">
-    <value>-- Seleccionar cupÃ³n --</value>
+    <value>-- Seleccionar cupón --</value>
   </data>
   <data name="AplicarCuponBtn" xml:space="preserve">
-    <value>Aplicar cupÃ³n</value>
+    <value>Aplicar cupón</value>
   </data>
   <data name="TarifaEnvioTag" xml:space="preserve">
-    <value>Tarifa de envÃ­o:</value>
+    <value>Tarifa de envío:</value>
   </data>
   <data name="TarifaEnvioDesc" xml:space="preserve">
     <value>$1.50 (hasta 3 km). $0.25 por km adicional.</value>
   </data>
   <data name="DireccionEntrega" xml:space="preserve">
-    <value>DirecciÃ³n de Entrega</value>
+    <value>Dirección de Entrega</value>
   </data>
   <data name="TusDirecciones" xml:space="preserve">
     <value>Tus direcciones guardadas</value>
   </data>
   <data name="UsarOtraDireccion" xml:space="preserve">
-    <value>-- Usar otra direcciÃ³n (Buscar en el mapa) --</value>
+    <value>-- Usar otra dirección (Buscar en el mapa) --</value>
   </data>
   <data name="BuscarCallePlaceHolder" xml:space="preserve">
     <value>ðŸ” Escribe para buscar una calle o lugar...</value>
   </data>
   <data name="ArrastrarMarcadorDesc" xml:space="preserve">
-    <value>ðŸ“ Puedes arrastrar el marcador rojo para afinar tu ubicaciÃ³n exacta.</value>
+    <value>ðŸ“ Puedes arrastrar el marcador rojo para afinar tu ubicación exacta.</value>
   </data>
   <data name="CalleAvenidaDetectada" xml:space="preserve">
     <value>Calle / Avenida principal detectada</value>
   </data>
   <data name="GuardarDireccionParaCompras" xml:space="preserve">
-    <value>Guardar esta direcciÃ³n para mis prÃ³ximas compras</value>
+    <value>Guardar esta dirección para mis próximas compras</value>
   </data>
   <data name="AliasEjemplo" xml:space="preserve">
     <value>Alias (Ej. Casa, Trabajo)</value>
@@ -450,13 +450,13 @@
     <value>Frente al parque</value>
   </data>
   <data name="MetodoPago" xml:space="preserve">
-    <value>MÃ©todo de Pago</value>
+    <value>Método de Pago</value>
   </data>
   <data name="EfectivoDesc" xml:space="preserve">
     <value>Efectivo (Al recibir el pedido)</value>
   </data>
   <data name="TarjetaDesc" xml:space="preserve">
-    <value>Tarjeta de CrÃ©dito / DÃ©bito</value>
+    <value>Tarjeta de Crédito / Débito</value>
   </data>
   <data name="TransferenciaDesc" xml:space="preserve">
     <value>Transferencia Bancaria</value>
@@ -471,10 +471,10 @@
     <value>EJ. JUAN PEREZ</value>
   </data>
   <data name="NumeroTarjeta" xml:space="preserve">
-    <value>NÃºmero de tarjeta</value>
+    <value>Número de tarjeta</value>
   </data>
   <data name="Expiracion" xml:space="preserve">
-    <value>ExpiraciÃ³n</value>
+    <value>Expiración</value>
   </data>
   <data name="CVV" xml:space="preserve">
     <value>CVV</value>
@@ -501,7 +501,7 @@
     <value>Corriente</value>
   </data>
   <data name="NumCuentaTag" xml:space="preserve">
-    <value>NÃºmero de cuenta:</value>
+    <value>Número de cuenta:</value>
   </data>
   <data name="SubirComprobante" xml:space="preserve">
     <value>Subir Comprobante</value>
@@ -510,7 +510,7 @@
     <value>Confirmar y Pagar</value>
   </data>
   <data name="CarritoVacio" xml:space="preserve">
-    <value>Tu carrito estÃ¡ vacÃ­o</value>
+    <value>Tu carrito está vacío</value>
   </data>
   <data name="CarritoVacioDesc" xml:space="preserve">
     <value>Explora los restaurantes y agrega productos para comenzar tu pedido.</value>
@@ -534,7 +534,7 @@
     <value>Subtotal</value>
   </data>
   <data name="AccionCol" xml:space="preserve">
-    <value>AcciÃ³n</value>
+    <value>Acción</value>
   </data>
   <data name="QuitarBtn" xml:space="preserve">
     <value>Quitar</value>
@@ -546,31 +546,31 @@
     <value>Vaciar Carrito</value>
   </data>
   <data name="SinDireccionAlert" xml:space="preserve">
-    <value>No tienes ninguna direcciÃ³n de entrega registrada.</value>
+    <value>No tienes ninguna dirección de entrega registrada.</value>
   </data>
   <data name="SinDireccionDesc" xml:space="preserve">
-    <value>Debes agregar una direcciÃ³n antes de confirmar tu pedido.</value>
+    <value>Debes agregar una dirección antes de confirmar tu pedido.</value>
   </data>
   <data name="AgregarDireccionBtn" xml:space="preserve">
-    <value>Agregar Mi Primera DirecciÃ³n</value>
+    <value>Agregar Mi Primera Dirección</value>
   </data>
   <data name="ProcederPagoBtn" xml:space="preserve">
     <value>Proceder al Pago</value>
   </data>
   <data name="GestionaCupones" xml:space="preserve">
-    <value>Gestiona tus cupones de descuento y cÃ³digos promocionales.</value>
+    <value>Gestiona tus cupones de descuento y códigos promocionales.</value>
   </data>
   <data name="AgregarCuponBtn" xml:space="preserve">
-    <value>Agregar CupÃ³n</value>
+    <value>Agregar Cupón</value>
   </data>
   <data name="RegistrarNuevoCupon" xml:space="preserve">
-    <value>Registrar Nuevo CupÃ³n</value>
+    <value>Registrar Nuevo Cupón</value>
   </data>
   <data name="CodigoCuponTag" xml:space="preserve">
-    <value>CÃ³digo del cupÃ³n</value>
+    <value>Código del cupón</value>
   </data>
   <data name="IngresarCodigoPlaceholder" xml:space="preserve">
-    <value>Ingresar cÃ³digo</value>
+    <value>Ingresar código</value>
   </data>
   <data name="CancelarBtn" xml:space="preserve">
     <value>Cancelar</value>
@@ -579,10 +579,10 @@
     <value>Agregar</value>
   </data>
   <data name="SinCupones" xml:space="preserve">
-    <value>AÃºn no tienes cupones registrados.</value>
+    <value>Aún no tienes cupones registrados.</value>
   </data>
   <data name="SinCuponesDesc" xml:space="preserve">
-    <value>Ingresa un cÃ³digo en la parte superior para agregarlo a tu cuenta.</value>
+    <value>Ingresa un código en la parte superior para agregarlo a tu cuenta.</value>
   </data>
   <data name="Disponible" xml:space="preserve">
     <value>DISPONIBLE</value>
@@ -594,16 +594,16 @@
     <value>VENCIDO</value>
   </data>
   <data name="DescripcionTag" xml:space="preserve">
-    <value>DescripciÃ³n:</value>
+    <value>Descripción:</value>
   </data>
   <data name="TopeMaximoTag" xml:space="preserve">
-    <value>Tope mÃ¡ximo:</value>
+    <value>Tope máximo:</value>
   </data>
   <data name="VenceTag" xml:space="preserve">
     <value>Vence:</value>
   </data>
   <data name="DiasRestantesTag" xml:space="preserve">
-    <value>DÃ­as restantes:</value>
+    <value>Días restantes:</value>
   </data>
   <data name="ExpiraHoy" xml:space="preserve">
     <value>Expira hoy</value>
@@ -612,19 +612,19 @@
     <value>Registrado:</value>
   </data>
   <data name="CompraMinimaTag" xml:space="preserve">
-    <value>Compra mÃ­nima:</value>
+    <value>Compra mínima:</value>
   </data>
   <data name="CopiarCodigoBtn" xml:space="preserve">
-    <value>Copiar CÃ³digo</value>
+    <value>Copiar Código</value>
   </data>
   <data name="UtilizadoElTag" xml:space="preserve">
     <value>Utilizado el </value>
   </data>
   <data name="NuevaDireccion" xml:space="preserve">
-    <value>Nueva DirecciÃ³n</value>
+    <value>Nueva Dirección</value>
   </data>
   <data name="BuscaMapaDireccionDesc" xml:space="preserve">
-    <value>Busca en el mapa o haz clic para ubicar tu direcciÃ³n exacta.</value>
+    <value>Busca en el mapa o haz clic para ubicar tu dirección exacta.</value>
   </data>
   <data name="BuscarLugarTag" xml:space="preserve">
     <value>Buscar Lugar</value>
@@ -651,13 +651,13 @@
     <value>Ej: Av. 17 de Julio</value>
   </data>
   <data name="NumeroTag" xml:space="preserve">
-    <value>NÃºmero</value>
+    <value>Número</value>
   </data>
   <data name="EjemploNumero" xml:space="preserve">
     <value>Ej: 5-32</value>
   </data>
   <data name="InterseccionTag" xml:space="preserve">
-    <value>IntersecciÃ³n</value>
+    <value>Intersección</value>
   </data>
   <data name="EjemploInterseccion" xml:space="preserve">
     <value>Ej: Calle 2</value>
@@ -675,10 +675,10 @@
     <value>Ej: Ibarra</value>
   </data>
   <data name="UbicacionGPSTag" xml:space="preserve">
-    <value>UbicaciÃ³n GPS</value>
+    <value>Ubicación GPS</value>
   </data>
   <data name="MapaRellenaraDesc" xml:space="preserve">
-    <value>El mapa rellenarÃ¡ estos campos automÃ¡ticamente.</value>
+    <value>El mapa rellenará estos campos automáticamente.</value>
   </data>
   <data name="LatitudTag" xml:space="preserve">
     <value>Latitud</value>
@@ -687,7 +687,7 @@
     <value>Longitud</value>
   </data>
   <data name="GuardarDireccionBtn" xml:space="preserve">
-    <value>Guardar DirecciÃ³n</value>
+    <value>Guardar Dirección</value>
   </data>
   <data name="VolverListaBtn" xml:space="preserve">
     <value>Volver a la lista</value>
@@ -696,13 +696,13 @@
     <value>Gestiona tus direcciones de entrega para agilizar tus pedidos.</value>
   </data>
   <data name="NuevaDireccionBtn" xml:space="preserve">
-    <value>Nueva DirecciÃ³n</value>
+    <value>Nueva Dirección</value>
   </data>
   <data name="SinDirecciones" xml:space="preserve">
-    <value>AÃºn no tienes direcciones registradas.</value>
+    <value>Aún no tienes direcciones registradas.</value>
   </data>
   <data name="AgregaPrimeraDireccionDesc" xml:space="preserve">
-    <value>Agrega tu primera direcciÃ³n para comenzar a pedir.</value>
+    <value>Agrega tu primera dirección para comenzar a pedir.</value>
   </data>
   <data name="EditarBtn" xml:space="preserve">
     <value>Editar</value>
@@ -711,34 +711,34 @@
     <value>Eliminar</value>
   </data>
   <data name="EditarDireccion" xml:space="preserve">
-    <value>Editar DirecciÃ³n</value>
+    <value>Editar Dirección</value>
   </data>
   <data name="ActualizaLugarEntregaDesc" xml:space="preserve">
-    <value>Actualiza la informaciÃ³n de tu lugar de entrega.</value>
+    <value>Actualiza la información de tu lugar de entrega.</value>
   </data>
   <data name="BuscaBarrioMapaActDesc" xml:space="preserve">
     <value>Busca tu barrio o calle y haz clic en el mapa para actualizar coordenadas.</value>
   </data>
   <data name="MapaActualizaraDesc" xml:space="preserve">
-    <value>El mapa actualizarÃ¡ estos campos.</value>
+    <value>El mapa actualizará estos campos.</value>
   </data>
   <data name="GuardarCambiosBtn" xml:space="preserve">
     <value>Guardar Cambios</value>
   </data>
   <data name="EliminarDireccion" xml:space="preserve">
-    <value>Eliminar DirecciÃ³n</value>
+    <value>Eliminar Dirección</value>
   </data>
   <data name="ConfirmarEliminarDireccion" xml:space="preserve">
-    <value>Â¿EstÃ¡s seguro de que deseas eliminar esta direcciÃ³n?</value>
+    <value>¿Estás seguro de que deseas eliminar esta dirección?</value>
   </data>
   <data name="AccionNoDeshacer" xml:space="preserve">
-    <value>Esta acciÃ³n no se puede deshacer.</value>
+    <value>Esta acción no se puede deshacer.</value>
   </data>
   <data name="SiEliminarDireccionBtn" xml:space="preserve">
-    <value>SÃ­, Eliminar DirecciÃ³n</value>
+    <value>Sí, Eliminar Dirección</value>
   </data>
   <data name="DetallesDireccion" xml:space="preserve">
-    <value>Detalles de DirecciÃ³n</value>
+    <value>Detalles de Dirección</value>
   </data>
   <data name="MisFavoritos" xml:space="preserve">
     <value>Mis Favoritos</value>
@@ -768,13 +768,13 @@
     <value>Eliminar Favorito</value>
   </data>
   <data name="SeguroEliminarFavorito" xml:space="preserve">
-    <value>Â¿EstÃ¡s seguro de que quieres eliminar esto?</value>
+    <value>¿Estás seguro de que quieres eliminar esto?</value>
   </data>
   <data name="CalificarPedido" xml:space="preserve">
     <value>Calificar Pedido</value>
   </data>
   <data name="CalificacionEstrellasTag" xml:space="preserve">
-    <value>CalificaciÃ³n (1 a 5 estrellas)</value>
+    <value>Calificación (1 a 5 estrellas)</value>
   </data>
   <data name="CincoExcelente" xml:space="preserve">
     <value>5 - Excelente</value>
@@ -795,10 +795,10 @@
     <value>Comentario (Opcional)</value>
   </data>
   <data name="QueTeParecioComidaPlaceholder" xml:space="preserve">
-    <value>Â¿QuÃ© te pareciÃ³ la comida y el servicio?</value>
+    <value>¿Qué te pareció la comida y el servicio?</value>
   </data>
   <data name="EnviarCalificacionBtn" xml:space="preserve">
-    <value>Enviar CalificaciÃ³n</value>
+    <value>Enviar Calificación</value>
   </data>
   <data name="DetallePedido" xml:space="preserve">
     <value>Detalle del Pedido</value>
@@ -807,7 +807,7 @@
     <value>Detalles de tu Pedido</value>
   </data>
   <data name="InformacionGeneralTag" xml:space="preserve">
-    <value>InformaciÃ³n General</value>
+    <value>Información General</value>
   </data>
   <data name="FechaPedidoTag" xml:space="preserve">
     <value>Fecha Pedido</value>
@@ -816,10 +816,10 @@
     <value>Estado</value>
   </data>
   <data name="DireccionTag" xml:space="preserve">
-    <value>DirecciÃ³n</value>
+    <value>Dirección</value>
   </data>
   <data name="MetodoPagoTag" xml:space="preserve">
-    <value>MÃ©todo de Pago</value>
+    <value>Método de Pago</value>
   </data>
   <data name="RepartidorTag" xml:space="preserve">
     <value>Repartidor</value>
@@ -864,7 +864,7 @@
     <value>No se encontraron pedidos.</value>
   </data>
   <data name="NoTienesPedidosRegistrados" xml:space="preserve">
-    <value>No tienes pedidos registrados todavÃ­a.</value>
+    <value>No tienes pedidos registrados todavía.</value>
   </data>
   <data name="ExplorarRestaurantesBtn" xml:space="preserve">
     <value>Explorar Restaurantes</value>
@@ -873,7 +873,7 @@
     <value>Pedido</value>
   </data>
   <data name="ArticulosTag" xml:space="preserve">
-    <value>ArtÃ­culos</value>
+    <value>Artículos</value>
   </data>
   <data name="TotalTag" xml:space="preserve">
     <value>Total</value>
@@ -882,7 +882,7 @@
     <value>Ver Detalles</value>
   </data>
   <data name="CalificarBtn" xml:space="preserve">
-    <value>Â¡Calificar!</value>
+    <value>¡Calificar!</value>
   </data>
   <data name="CompletarPerfil" xml:space="preserve">
     <value>Completar Perfil</value>
@@ -900,10 +900,10 @@
     <value>Apellidos</value>
   </data>
   <data name="TelefonoTag" xml:space="preserve">
-    <value>TelÃ©fono</value>
+    <value>Teléfono</value>
   </data>
   <data name="CedulaTag" xml:space="preserve">
-    <value>CÃ©dula</value>
+    <value>Cédula</value>
   </data>
   <data name="GuardarPerfilBtn" xml:space="preserve">
     <value>Guardar Perfil</value>
@@ -918,25 +918,25 @@
     <value>Producto agregado al carrito.</value>
   </data>
   <data name="CarritoVacioError" xml:space="preserve">
-    <value>Tu carrito estÃ¡ vacÃ­o.</value>
+    <value>Tu carrito está vacío.</value>
   </data>
   <data name="RegistrarDireccionError" xml:space="preserve">
-    <value>Necesitas registrar una direcciÃ³n antes de confirmar tu pedido.</value>
+    <value>Necesitas registrar una dirección antes de confirmar tu pedido.</value>
   </data>
   <data name="UbicacionValidaError" xml:space="preserve">
-    <value>Debes proporcionar una ubicaciÃ³n vÃ¡lida en el mapa.</value>
+    <value>Debes proporcionar una ubicación válida en el mapa.</value>
   </data>
   <data name="ErrorGuardarUbicacion" xml:space="preserve">
-    <value>No se pudo guardar la ubicaciÃ³n en el sistema.</value>
+    <value>No se pudo guardar la ubicación en el sistema.</value>
   </data>
   <data name="DireccionInvalidaError" xml:space="preserve">
-    <value>Debes seleccionar una direcciÃ³n de entrega vÃ¡lida.</value>
+    <value>Debes seleccionar una dirección de entrega válida.</value>
   </data>
   <data name="CamposTarjetaError" xml:space="preserve">
     <value>Todos los campos de la tarjeta son obligatorios.</value>
   </data>
   <data name="TarjetaInvalidaError" xml:space="preserve">
-    <value>El nÃºmero de tarjeta no es vÃ¡lido (ValidaciÃ³n Luhn fallida).</value>
+    <value>El número de tarjeta no es válido (Validación Luhn fallida).</value>
   </data>
   <data name="TarjetaNoSoportadaError" xml:space="preserve">
     <value>La tarjeta no es Visa, Mastercard, Amex ni Discover.</value>
@@ -945,25 +945,25 @@
     <value>Hubo un problema al procesar tu pedido. Por favor intenta de nuevo.</value>
   </data>
   <data name="IngresarCodigoError" xml:space="preserve">
-    <value>Debes ingresar un cÃ³digo.</value>
+    <value>Debes ingresar un código.</value>
   </data>
   <data name="CuponDesactivadoError" xml:space="preserve">
-    <value>El cupÃ³n se encuentra desactivado.</value>
+    <value>El cupón se encuentra desactivado.</value>
   </data>
   <data name="CuponExpiradoError" xml:space="preserve">
-    <value>El cupÃ³n ha expirado.</value>
+    <value>El cupón ha expirado.</value>
   </data>
   <data name="CuponUtilizadoError" xml:space="preserve">
-    <value>Este cupÃ³n ya fue utilizado.</value>
+    <value>Este cupón ya fue utilizado.</value>
   </data>
   <data name="CuponAgregadoError" xml:space="preserve">
-    <value>Este cupÃ³n ya fue agregado.</value>
+    <value>Este cupón ya fue agregado.</value>
   </data>
   <data name="DireccionEliminadaExito" xml:space="preserve">
-    <value>DirecciÃ³n eliminada correctamente.</value>
+    <value>Dirección eliminada correctamente.</value>
   </data>
   <data name="DireccionAsociadaPedidoError" xml:space="preserve">
-    <value>No se puede eliminar la direcciÃ³n porque estÃ¡ asociada a uno o mÃ¡s pedidos en el historial.</value>
+    <value>No se puede eliminar la dirección porque está asociada a uno o más pedidos en el historial.</value>
   </data>
   <data name="PerfilActualizadoExito" xml:space="preserve">
     <value>Perfil actualizado exitosamente.</value>
@@ -990,7 +990,7 @@
     <value>Fecha Registro</value>
   </data>
   <data name="MostrarInformacionBtn" xml:space="preserve">
-    <value>Mostrar informaciÃ³n</value>
+    <value>Mostrar información</value>
   </data>
   <data name="AprobarBtn" xml:space="preserve">
     <value>Aprobar</value>
@@ -999,13 +999,13 @@
     <value>Denegar</value>
   </data>
   <data name="InfoRepartidorTitle" xml:space="preserve">
-    <value>InformaciÃ³n del Repartidor</value>
+    <value>Información del Repartidor</value>
   </data>
   <data name="DatosPersonalesTitle" xml:space="preserve">
     <value>Datos Personales</value>
   </data>
   <data name="DatosVehiculoTitle" xml:space="preserve">
-    <value>Datos del VehÃ­culo</value>
+    <value>Datos del Vehículo</value>
   </data>
   <data name="TipoVehiculoTag" xml:space="preserve">
     <value>Tipo</value>
@@ -1023,13 +1023,13 @@
     <value>Denegar Solicitud</value>
   </data>
   <data name="SeguroDenegarSolicitud" xml:space="preserve">
-    <value>Â¿EstÃ¡s seguro que deseas denegar la solicitud de</value>
+    <value>¿Estás seguro que deseas denegar la solicitud de</value>
   </data>
   <data name="MotivoRechazoObligatorio" xml:space="preserve">
     <value>Motivo del rechazo (obligatorio)</value>
   </data>
   <data name="ConfirmarDenegacionBtn" xml:space="preserve">
-    <value>Confirmar DenegaciÃ³n</value>
+    <value>Confirmar Denegación</value>
   </data>
   <data name="AprobacionesRestaurantes" xml:space="preserve">
     <value>Aprobaciones de Restaurantes</value>
@@ -1041,13 +1041,13 @@
     <value>Logo</value>
   </data>
   <data name="CategoriaTag" xml:space="preserve">
-    <value>CategorÃ­a</value>
+    <value>Categoría</value>
   </data>
   <data name="PropietarioTag" xml:space="preserve">
     <value>Propietario</value>
   </data>
   <data name="InfoRestauranteTitle" xml:space="preserve">
-    <value>InformaciÃ³n del Restaurante</value>
+    <value>Información del Restaurante</value>
   </data>
   <data name="DatosEstablecimientoTitle" xml:space="preserve">
     <value>Datos del Establecimiento</value>
@@ -1059,16 +1059,16 @@
     <value>Email Propietario</value>
   </data>
   <data name="SeguroDenegarSolicitudRest" xml:space="preserve">
-    <value>Â¿EstÃ¡s seguro que deseas denegar la solicitud del restaurante</value>
+    <value>¿Estás seguro que deseas denegar la solicitud del restaurante</value>
   </data>
   <data name="GestionCupones" xml:space="preserve">
-    <value>GestiÃ³n de Cupones</value>
+    <value>Gestión de Cupones</value>
   </data>
   <data name="CuponesSistema" xml:space="preserve">
     <value>Cupones del Sistema</value>
   </data>
   <data name="CodigoTag" xml:space="preserve">
-    <value>CÃ³digo</value>
+    <value>Código</value>
   </data>
   <data name="DescuentoTag" xml:space="preserve">
     <value>Descuento</value>
@@ -1077,13 +1077,13 @@
     <value>Activo</value>
   </data>
   <data name="SiTag" xml:space="preserve">
-    <value>SÃ­</value>
+    <value>Sí</value>
   </data>
   <data name="NoTag" xml:space="preserve">
     <value>No</value>
   </data>
   <data name="GestionPedidos" xml:space="preserve">
-    <value>GestiÃ³n de Pedidos</value>
+    <value>Gestión de Pedidos</value>
   </data>
   <data name="TodosLosPedidos" xml:space="preserve">
     <value>Todos los Pedidos</value>
@@ -1092,7 +1092,7 @@
     <value>Cliente ID</value>
   </data>
   <data name="GestionProductos" xml:space="preserve">
-    <value>GestiÃ³n de Productos</value>
+    <value>Gestión de Productos</value>
   </data>
   <data name="TodosLosProductos" xml:space="preserve">
     <value>Todos los Productos</value>
@@ -1101,43 +1101,43 @@
     <value>Precio</value>
   </data>
   <data name="GestionRepartidores" xml:space="preserve">
-    <value>GestiÃ³n de Repartidores</value>
+    <value>Gestión de Repartidores</value>
   </data>
   <data name="RepartidoresRegistrados" xml:space="preserve">
     <value>Repartidores Registrados</value>
   </data>
   <data name="VistaBasicaAdminParaAprobarRep" xml:space="preserve">
-    <value>Vista bÃ¡sica para el administrador. Para aprobar o rechazar, ir a Solicitudes.</value>
+    <value>Vista básica para el administrador. Para aprobar o rechazar, ir a Solicitudes.</value>
   </data>
   <data name="GestionRestaurantes" xml:space="preserve">
-    <value>GestiÃ³n de Restaurantes</value>
+    <value>Gestión de Restaurantes</value>
   </data>
   <data name="RestaurantesRegistrados" xml:space="preserve">
     <value>Restaurantes Registrados</value>
   </data>
   <data name="VistaBasicaAdminParaAprobarRest" xml:space="preserve">
-    <value>Vista bÃ¡sica para el administrador. Para aprobar o rechazar, ir a Solicitudes.</value>
+    <value>Vista básica para el administrador. Para aprobar o rechazar, ir a Solicitudes.</value>
   </data>
   <data name="NombreComercialTag" xml:space="preserve">
     <value>Nombre Comercial</value>
   </data>
   <data name="GestionUsuarios" xml:space="preserve">
-    <value>GestiÃ³n de Usuarios</value>
+    <value>Gestión de Usuarios</value>
   </data>
   <data name="UsuariosSistema" xml:space="preserve">
     <value>Usuarios del Sistema</value>
   </data>
   <data name="VistaBasicaLecturaUsuarios" xml:space="preserve">
-    <value>Esta es una vista bÃ¡sica de solo lectura para evitar errores 404.</value>
+    <value>Esta es una vista básica de solo lectura para evitar errores 404.</value>
   </data>
   <data name="PanelAdministrador" xml:space="preserve">
     <value>Panel de Administrador</value>
   </data>
   <data name="PanelAdministracion" xml:space="preserve">
-    <value>Panel de AdministraciÃ³n</value>
+    <value>Panel de Administración</value>
   </data>
   <data name="BienvenidoCentroControl" xml:space="preserve">
-    <value>Bienvenido al centro de control de RayoExpres. Desde aquÃ­ puedes gestionar todos los mÃ³dulos del sistema.</value>
+    <value>Bienvenido al centro de control de RayoExpres. Desde aquí puedes gestionar todos los módulos del sistema.</value>
   </data>
   <data name="UsuariosCardTitle" xml:space="preserve">
     <value>Usuarios</value>
@@ -1161,19 +1161,19 @@
     <value>Productos</value>
   </data>
   <data name="ControlGeneralCatalogoDesc" xml:space="preserve">
-    <value>Control general del catÃ¡logo de productos.</value>
+    <value>Control general del catálogo de productos.</value>
   </data>
   <data name="IrAProductosBtn" xml:space="preserve">
     <value>Ir a Productos</value>
   </data>
   <data name="CategoriasCardTitle" xml:space="preserve">
-    <value>CategorÃ­as</value>
+    <value>Categorías</value>
   </data>
   <data name="GestionCategoriasDesc" xml:space="preserve">
-    <value>GestiÃ³n de categorÃ­as de productos.</value>
+    <value>Gestión de categorías de productos.</value>
   </data>
   <data name="IrACategoriasBtn" xml:space="preserve">
-    <value>Ir a CategorÃ­as</value>
+    <value>Ir a Categorías</value>
   </data>
   <data name="PedidosCardTitle" xml:space="preserve">
     <value>Pedidos</value>
@@ -1188,25 +1188,25 @@
     <value>Repartidores</value>
   </data>
   <data name="GestionRepartidoresEstadosDesc" xml:space="preserve">
-    <value>GestiÃ³n de repartidores y sus estados.</value>
+    <value>Gestión de repartidores y sus estados.</value>
   </data>
   <data name="IrARepartidoresBtn" xml:space="preserve">
     <value>Ir a Repartidores</value>
   </data>
   <data name="VehiculosCardTitle" xml:space="preserve">
-    <value>VehÃ­culos</value>
+    <value>Vehículos</value>
   </data>
   <data name="GestionVehiculosDesc" xml:space="preserve">
-    <value>GestiÃ³n de vehÃ­culos de los repartidores.</value>
+    <value>Gestión de vehículos de los repartidores.</value>
   </data>
   <data name="IrAVehiculosBtn" xml:space="preserve">
-    <value>Ir a VehÃ­culos</value>
+    <value>Ir a Vehículos</value>
   </data>
   <data name="CuponesCardTitle" xml:space="preserve">
     <value>Cupones</value>
   </data>
   <data name="AdministracionPromocionesDesc" xml:space="preserve">
-    <value>AdministraciÃ³n de promociones y cupones.</value>
+    <value>Administración de promociones y cupones.</value>
   </data>
   <data name="IrACuponesBtn" xml:space="preserve">
     <value>Ir a Cupones</value>
@@ -1224,19 +1224,19 @@
     <value>Calificaciones</value>
   </data>
   <data name="ModeracionResenasDesc" xml:space="preserve">
-    <value>ModeraciÃ³n de reseÃ±as a restaurantes y repartidores.</value>
+    <value>Moderación de reseñas a restaurantes y repartidores.</value>
   </data>
   <data name="IrAResenasBtn" xml:space="preserve">
-    <value>Ir a ReseÃ±as</value>
+    <value>Ir a Reseñas</value>
   </data>
   <data name="AuditoriaCardTitle" xml:space="preserve">
-    <value>AuditorÃ­a</value>
+    <value>Auditoría</value>
   </data>
   <data name="RegistrosAccionesDesc" xml:space="preserve">
     <value>Registros de acciones importantes en el sistema.</value>
   </data>
   <data name="IrAAuditoriaBtn" xml:space="preserve">
-    <value>Ir a AuditorÃ­a</value>
+    <value>Ir a Auditoría</value>
   </data>
   <data name="RepartidorAprobadoMsj" xml:space="preserve">
     <value>Repartidor aprobado.</value>
@@ -1251,7 +1251,7 @@
     <value>Restaurante rechazado.</value>
   </data>
   <data name="ConfirmarEliminarMsg" xml:space="preserve">
-    <value>Â¿EstÃ¡s seguro de que quieres eliminar esto?</value>
+    <value>¿Estás seguro de que quieres eliminar esto?</value>
   </data>
   <data name="GuardarBtn" xml:space="preserve">
     <value>Guardar</value>
@@ -1269,49 +1269,49 @@
     <value>Acciones</value>
   </data>
   <data name="CrearCategoriaProductoTitle" xml:space="preserve">
-    <value>Crear CategorÃ­a de Producto</value>
+    <value>Crear Categoría de Producto</value>
   </data>
   <data name="EliminarCategoriaProductoTitle" xml:space="preserve">
-    <value>Eliminar CategorÃ­a de Producto</value>
+    <value>Eliminar Categoría de Producto</value>
   </data>
   <data name="DetallesCategoriaProductoTitle" xml:space="preserve">
-    <value>Detalles de CategorÃ­a de Producto</value>
+    <value>Detalles de Categoría de Producto</value>
   </data>
   <data name="EditarCategoriaProductoTitle" xml:space="preserve">
-    <value>Editar CategorÃ­a de Producto</value>
+    <value>Editar Categoría de Producto</value>
   </data>
   <data name="CategoriasProductoTitle" xml:space="preserve">
-    <value>CategorÃ­as de Producto</value>
+    <value>Categorías de Producto</value>
   </data>
   <data name="CrearVehiculoTitle" xml:space="preserve">
-    <value>Crear VehÃ­culo</value>
+    <value>Crear Vehículo</value>
   </data>
   <data name="EliminarVehiculoTitle" xml:space="preserve">
-    <value>Eliminar VehÃ­culo</value>
+    <value>Eliminar Vehículo</value>
   </data>
   <data name="DetallesVehiculoTitle" xml:space="preserve">
-    <value>Detalles de VehÃ­culo</value>
+    <value>Detalles de Vehículo</value>
   </data>
   <data name="EditarVehiculoTitle" xml:space="preserve">
-    <value>Editar VehÃ­culo</value>
+    <value>Editar Vehículo</value>
   </data>
   <data name="VehiculosTitle" xml:space="preserve">
-    <value>VehÃ­culos</value>
+    <value>Vehículos</value>
   </data>
   <data name="CrearAuditoriaTitle" xml:space="preserve">
-    <value>Crear Registro de AuditorÃ­a</value>
+    <value>Crear Registro de Auditoría</value>
   </data>
   <data name="EliminarAuditoriaTitle" xml:space="preserve">
-    <value>Eliminar Registro de AuditorÃ­a</value>
+    <value>Eliminar Registro de Auditoría</value>
   </data>
   <data name="DetallesAuditoriaTitle" xml:space="preserve">
-    <value>Detalles de Registro de AuditorÃ­a</value>
+    <value>Detalles de Registro de Auditoría</value>
   </data>
   <data name="EditarAuditoriaTitle" xml:space="preserve">
-    <value>Editar Registro de AuditorÃ­a</value>
+    <value>Editar Registro de Auditoría</value>
   </data>
   <data name="AuditoriasTitle" xml:space="preserve">
-    <value>Registros de AuditorÃ­a</value>
+    <value>Registros de Auditoría</value>
   </data>
   <data name="CrearPagoTitle" xml:space="preserve">
     <value>Crear Pago</value>
@@ -1329,19 +1329,19 @@
     <value>Pagos</value>
   </data>
   <data name="CrearResenaTitle" xml:space="preserve">
-    <value>Crear ReseÃ±a</value>
+    <value>Crear Reseña</value>
   </data>
   <data name="EliminarResenaTitle" xml:space="preserve">
-    <value>Eliminar ReseÃ±a</value>
+    <value>Eliminar Reseña</value>
   </data>
   <data name="DetallesResenaTitle" xml:space="preserve">
-    <value>Detalles de ReseÃ±a</value>
+    <value>Detalles de Reseña</value>
   </data>
   <data name="EditarResenaTitle" xml:space="preserve">
-    <value>Editar ReseÃ±a</value>
+    <value>Editar Reseña</value>
   </data>
   <data name="ResenasTitle" xml:space="preserve">
-    <value>ReseÃ±as</value>
+    <value>Reseñas</value>
   </data>
   <data name="CrearRolTitle" xml:space="preserve">
     <value>Crear Rol</value>
@@ -1362,22 +1362,22 @@
     <value>Id / Info</value>
   </data>
   <data name="CrearCuponTitle" xml:space="preserve">
-    <value>Crear CupÃ³n</value>
+    <value>Crear Cupón</value>
   </data>
   <data name="CrearCuponGlobalTitle" xml:space="preserve">
-    <value>Crear CupÃ³n Global</value>
+    <value>Crear Cupón Global</value>
   </data>
   <data name="EliminarCuponTitle" xml:space="preserve">
-    <value>Eliminar CupÃ³n</value>
+    <value>Eliminar Cupón</value>
   </data>
   <data name="DetallesCuponTitle" xml:space="preserve">
-    <value>Detalles del CupÃ³n</value>
+    <value>Detalles del Cupón</value>
   </data>
   <data name="EditarCuponTitle" xml:space="preserve">
-    <value>Editar CupÃ³n</value>
+    <value>Editar Cupón</value>
   </data>
   <data name="EditarCuponGlobalTitle" xml:space="preserve">
-    <value>Editar CupÃ³n Global</value>
+    <value>Editar Cupón Global</value>
   </data>
   <data name="CuponesTitle" xml:space="preserve">
     <value>Cupones</value>
@@ -1395,22 +1395,22 @@
     <value>Valor (Ej. 10 para 10% o $10)</value>
   </data>
   <data name="DescuentoMaximoTag" xml:space="preserve">
-    <value>Descuento MÃ¡ximo ($) (Solo para Porcentaje)</value>
+    <value>Descuento Máximo ($) (Solo para Porcentaje)</value>
   </data>
   <data name="PedidoMinimoTag" xml:space="preserve">
-    <value>Pedido MÃ­nimo ($)</value>
+    <value>Pedido Mínimo ($)</value>
   </data>
   <data name="DuracionCuponTag" xml:space="preserve">
-    <value>DuraciÃ³n del CupÃ³n</value>
+    <value>Duración del Cupón</value>
   </data>
   <data name="LimiteUsosTag" xml:space="preserve">
-    <value>LÃ­mite de Usos (0 o vacÃ­o = Sin lÃ­mite)</value>
+    <value>Límite de Usos (0 o vacío = Sin límite)</value>
   </data>
   <data name="CuponActivoTag" xml:space="preserve">
-    <value>CupÃ³n Activo</value>
+    <value>Cupón Activo</value>
   </data>
   <data name="EsPublicoTag" xml:space="preserve">
-    <value>Es PÃºblico (cualquiera puede registrarlo)</value>
+    <value>Es Público (cualquiera puede registrarlo)</value>
   </data>
   <data name="CrearPedidoTitle" xml:space="preserve">
     <value>Crear Pedido</value>
@@ -1488,7 +1488,7 @@
     <value>Usuarios</value>
   </data>
   <data name="ResultadosBusquedaTitle" xml:space="preserve">
-    <value>Resultados de BÃºsqueda</value>
+    <value>Resultados de Búsqueda</value>
   </data>
   <data name="ResultadosPara" xml:space="preserve">
     <value>Resultados para "{0}"</value>
@@ -1497,37 +1497,37 @@
     <value>Restaurantes Encontrados ({0})</value>
   </data>
   <data name="NoRestaurantesBusqueda" xml:space="preserve">
-    <value>No se encontraron restaurantes con ese tÃ©rmino.</value>
+    <value>No se encontraron restaurantes con ese término.</value>
   </data>
   <data name="ProductosEncontrados" xml:space="preserve">
     <value>Productos Encontrados ({0})</value>
   </data>
   <data name="NoProductosBusqueda" xml:space="preserve">
-    <value>No se encontraron productos con ese tÃ©rmino.</value>
+    <value>No se encontraron productos con ese término.</value>
   </data>
   <data name="CuentaEnRevisionTitle" xml:space="preserve">
-    <value>Cuenta en RevisiÃ³n</value>
+    <value>Cuenta en Revisión</value>
   </data>
   <data name="SolicitudRecibida" xml:space="preserve">
-    <value>Tu solicitud de registro ha sido recibida y se encuentra actualmente en estado &lt;strong&gt;Pendiente de AprobaciÃ³n&lt;/strong&gt;.</value>
+    <value>Tu solicitud de registro ha sido recibida y se encuentra actualmente en estado &lt;strong&gt;Pendiente de Aprobación&lt;/strong&gt;.</value>
   </data>
   <data name="AdminRevisaraBreve" xml:space="preserve">
-    <value>Un administrador revisarÃ¡ tu informaciÃ³n en breve. RecibirÃ¡s una notificaciÃ³n cuando tu cuenta sea aprobada y puedas acceder al panel de control.</value>
+    <value>Un administrador revisará tu información en breve. Recibirás una notificación cuando tu cuenta sea aprobada y puedas acceder al panel de control.</value>
   </data>
   <data name="VolverInicioBtn" xml:space="preserve">
     <value>Volver al Inicio</value>
   </data>
   <data name="EntregasRapidasTitle" xml:space="preserve">
-    <value>Entregas RÃ¡pidas</value>
+    <value>Entregas Rápidas</value>
   </data>
   <data name="EntregasRapidasDesc" xml:space="preserve">
-    <value>Nuestros repartidores estÃ¡n siempre cerca para que tu comida llegue caliente.</value>
+    <value>Nuestros repartidores están siempre cerca para que tu comida llegue caliente.</value>
   </data>
   <data name="PagosSegurosTitle" xml:space="preserve">
     <value>Pagos Seguros</value>
   </data>
   <data name="PagosSegurosDesc" xml:space="preserve">
-    <value>MÃºltiples mÃ©todos de pago avalados por estrictos estÃ¡ndares de seguridad.</value>
+    <value>Múltiples métodos de pago avalados por estrictos estándares de seguridad.</value>
   </data>
   <data name="MejoresLocalesTitle" xml:space="preserve">
     <value>Los Mejores Locales</value>
@@ -1536,7 +1536,7 @@
     <value>Los mejores restaurantes de Ibarra en un solo lugar.</value>
   </data>
   <data name="ComoFuncionaTitle" xml:space="preserve">
-    <value>Â¿CÃ³mo funciona RayoExpres?</value>
+    <value>¿Cómo funciona RayoExpres?</value>
   </data>
   <data name="BuscaTitle" xml:space="preserve">
     <value>Busca</value>
@@ -1566,7 +1566,7 @@
     <value>Restaurantes Aliados en Ibarra</value>
   </data>
   <data name="IniciaSesionVerMenu" xml:space="preserve">
-    <value>Inicia sesiÃ³n para ver el menÃº</value>
+    <value>Inicia sesión para ver el menú</value>
   </data>
   <data name="NoRestaurantesDisponibles" xml:space="preserve">
     <value>No hay restaurantes disponibles en este momento.</value>
@@ -1578,28 +1578,28 @@
     <value>Lamentamos informarte que tu solicitud de registro ha sido &lt;strong&gt;rechazada&lt;/strong&gt; por un administrador.</value>
   </data>
   <data name="RechazoSoporte" xml:space="preserve">
-    <value>Para mÃ¡s informaciÃ³n o si crees que esto es un error, por favor comunÃ­cate con soporte.</value>
+    <value>Para más información o si crees que esto es un error, por favor comunícate con soporte.</value>
   </data>
   <data name="MenuDelRestaurante" xml:space="preserve">
-    <value>MenÃº del Restaurante</value>
+    <value>Menú del Restaurante</value>
   </data>
   <data name="IniciaSesionPedir" xml:space="preserve">
-    <value>Inicia sesiÃ³n para pedir</value>
+    <value>Inicia sesión para pedir</value>
   </data>
   <data name="NoProductosDisponiblesRest" xml:space="preserve">
-    <value>Este restaurante aÃºn no tiene productos disponibles.</value>
+    <value>Este restaurante aún no tiene productos disponibles.</value>
   </data>
   <data name="AccesoDenegadoTitle" xml:space="preserve">
     <value>Acceso Denegado</value>
   </data>
   <data name="SinPermisosAcceso" xml:space="preserve">
-    <value>No tienes los permisos necesarios para acceder a esta pÃ¡gina.</value>
+    <value>No tienes los permisos necesarios para acceder a esta página.</value>
   </data>
   <data name="RecuperarContrasenaTitle" xml:space="preserve">
-    <value>Recuperar ContraseÃ±a</value>
+    <value>Recuperar Contraseña</value>
   </data>
   <data name="RecuperarDesc" xml:space="preserve">
-    <value>Ingresa tu correo electrÃ³nico y te enviaremos las instrucciones para restablecer tu contraseÃ±a.</value>
+    <value>Ingresa tu correo electrónico y te enviaremos las instrucciones para restablecer tu contraseña.</value>
   </data>
   <data name="EnviarInstruccionesBtn" xml:space="preserve">
     <value>Enviar Instrucciones</value>

@@ -371,7 +371,7 @@
   <data name="RegRestauranteBtn" xml:space="preserve">
     <value>Register Restaurant</value>
   </data>
-  <data name="Confirme su contraseÃ±a" xml:space="preserve">
+  <data name="Confirme su contraseña" xml:space="preserve">
     <value>Confirm your password</value>
   </data>
   <data name="El RUC es obligatorio" xml:space="preserve">
@@ -389,7 +389,7 @@
   <data name="El email es obligatorio" xml:space="preserve">
     <value>Email is required</value>
   </data>
-  <data name="El email no tiene un formato vÃ¡lido" xml:space="preserve">
+  <data name="El email no tiene un formato válido" xml:space="preserve">
     <value>Invalid email format</value>
   </data>
   <data name="El modelo es requerido" xml:space="preserve">
@@ -404,43 +404,43 @@
   <data name="El nombre es requerido" xml:space="preserve">
     <value>First name is required</value>
   </data>
-  <data name="El nÃºmero de licencia es requerido" xml:space="preserve">
+  <data name="El número de licencia es requerido" xml:space="preserve">
     <value>License number is required</value>
   </data>
-  <data name="El telÃ©fono es obligatorio" xml:space="preserve">
+  <data name="El teléfono es obligatorio" xml:space="preserve">
     <value>Phone number is required</value>
   </data>
-  <data name="El telÃ©fono es requerido" xml:space="preserve">
+  <data name="El teléfono es requerido" xml:space="preserve">
     <value>Phone number is required</value>
   </data>
-  <data name="El tipo de vehÃ­culo es requerido" xml:space="preserve">
+  <data name="El tipo de vehículo es requerido" xml:space="preserve">
     <value>Vehicle type is required</value>
   </data>
-  <data name="Formato de correo invÃ¡lido" xml:space="preserve">
+  <data name="Formato de correo inválido" xml:space="preserve">
     <value>Invalid email format</value>
   </data>
   <data name="La ciudad es obligatoria" xml:space="preserve">
     <value>City is required</value>
   </data>
-  <data name="La confirmaciÃ³n de la contraseÃ±a es obligatoria" xml:space="preserve">
+  <data name="La confirmación de la contraseña es obligatoria" xml:space="preserve">
     <value>Password confirmation is required</value>
   </data>
-  <data name="La contraseÃ±a debe tener al menos 6 caracteres" xml:space="preserve">
+  <data name="La contraseña debe tener al menos 6 caracteres" xml:space="preserve">
     <value>Password must be at least 6 characters</value>
   </data>
-  <data name="La contraseÃ±a es obligatoria" xml:space="preserve">
+  <data name="La contraseña es obligatoria" xml:space="preserve">
     <value>Password is required</value>
   </data>
-  <data name="La contraseÃ±a es requerida" xml:space="preserve">
+  <data name="La contraseña es requerida" xml:space="preserve">
     <value>Password is required</value>
   </data>
-  <data name="La cÃ©dula es obligatoria" xml:space="preserve">
+  <data name="La cédula es obligatoria" xml:space="preserve">
     <value>ID number is required</value>
   </data>
-  <data name="La cÃ©dula es requerida" xml:space="preserve">
+  <data name="La cédula es requerida" xml:space="preserve">
     <value>ID number is required</value>
   </data>
-  <data name="La direcciÃ³n (calle) es obligatoria" xml:space="preserve">
+  <data name="La dirección (calle) es obligatoria" xml:space="preserve">
     <value>Street address is required</value>
   </data>
   <data name="La marca es requerida" xml:space="preserve">
@@ -449,7 +449,7 @@
   <data name="La placa es requerida" xml:space="preserve">
     <value>License plate is required</value>
   </data>
-  <data name="Las contraseÃ±as no coinciden" xml:space="preserve">
+  <data name="Las contraseñas no coinciden" xml:space="preserve">
     <value>Passwords do not match</value>
   </data>
   <data name="Los apellidos del propietario son obligatorios" xml:space="preserve">
@@ -458,34 +458,34 @@
   <data name="Los apellidos son requeridos" xml:space="preserve">
     <value>Last names are required</value>
   </data>
-  <data name="MÃ¡ximo 20 caracteres" xml:space="preserve">
+  <data name="Máximo 20 caracteres" xml:space="preserve">
     <value>Maximum 20 characters</value>
   </data>
-  <data name="MÃ­nimo 6 caracteres" xml:space="preserve">
+  <data name="Mínimo 6 caracteres" xml:space="preserve">
     <value>Minimum 6 characters</value>
   </data>
-  <data name="Seleccione su ubicaciÃ³n en el mapa" xml:space="preserve">
+  <data name="Seleccione su ubicación en el mapa" xml:space="preserve">
     <value>Select your location on the map</value>
   </data>
   <data name="Credenciales incorrectas." xml:space="preserve">
     <value>Invalid credentials.</value>
   </data>
-  <data name="OcurriÃ³ un error al registrar el usuario. Es posible que el correo o la cÃ©dula ya estÃ©n registrados." xml:space="preserve">
+  <data name="Ocurrió un error al registrar el usuario. Es posible que el correo o la cédula ya estén registrados." xml:space="preserve">
     <value>An error occurred while registering the user. The email or ID may already be registered.</value>
   </data>
   <data name="El correo es requerido." xml:space="preserve">
     <value>Email is required.</value>
   </data>
-  <data name="La fotografÃ­a de la licencia es obligatoria para motos y carros." xml:space="preserve">
+  <data name="La fotografía de la licencia es obligatoria para motos y carros." xml:space="preserve">
     <value>A license photo is mandatory for motorcycles and cars.</value>
   </data>
-  <data name="Registro exitoso. Tu cuenta estÃ¡ pendiente de aprobaciÃ³n por el administrador." xml:space="preserve">
+  <data name="Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador." xml:space="preserve">
     <value>Registration successful. Your account is pending administrator approval.</value>
   </data>
   <data name="No se pudo completar el registro. El correo puede ya estar registrado." xml:space="preserve">
     <value>Registration could not be completed. The email may already be registered.</value>
   </data>
-  <data name="Hubo un error en el registro. Verifique que el correo o RUC no estÃ©n en uso." xml:space="preserve">
+  <data name="Hubo un error en el registro. Verifique que el correo o RUC no estén en uso." xml:space="preserve">
     <value>There was a registration error. Check that the email or Tax ID are not in use.</value>
   </data>
   <data name="CheckoutTitulo" xml:space="preserve">

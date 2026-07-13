@@ -55,6 +55,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// IMPORTANT: UseStaticFiles must come BEFORE UseRouting!
+app.UseStaticFiles();
+
 var supportedCultures = new[] { "es", "en" };
 var localizationOptions = new RequestLocalizationOptions()
     .SetDefaultCulture(supportedCultures[0])
@@ -70,24 +73,8 @@ app.UseSession(); // DEBE ir antes de Authentication y Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Forzar servir estáticos desde wwwroot físico (soluciona problema en Azure Linux ZipDeploy)
-var wwwrootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
-if (Directory.Exists(wwwrootPath))
-{
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(wwwrootPath),
-        RequestPath = ""
-    });
-}
-else
-{
-    app.UseStaticFiles();
-}
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
 app.Run();
