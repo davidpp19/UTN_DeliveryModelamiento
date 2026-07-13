@@ -70,7 +70,20 @@ app.UseSession(); // DEBE ir antes de Authentication y Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseStaticFiles();
+// Forzar servir estáticos desde wwwroot físico (soluciona problema en Azure Linux ZipDeploy)
+var wwwrootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+if (Directory.Exists(wwwrootPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(wwwrootPath),
+        RequestPath = ""
+    });
+}
+else
+{
+    app.UseStaticFiles();
+}
 
 app.MapControllerRoute(
     name: "default",
