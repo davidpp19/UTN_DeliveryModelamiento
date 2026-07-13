@@ -2,7 +2,8 @@
 # Requisitos: Tener instalado Azure CLI (https://aka.ms/installazurecli) y haber ejecutado 'az login'
 
 $resourceGroup = "RayoExpres-RG"
-$location = "eastus"
+# CAMBIA 'eastus' si tu suscripción de estudiante no te permite crear recursos en esa región (ej. usa 'centralus', 'brazilsouth' o 'westus')
+$location = "centralus"
 $dbServerName = "rayoexpres-db-" + (Get-Random -Maximum 10000)
 $dbAdminUser = "rayoadmin"
 $dbAdminPassword = "SecurePassword123!" # CÁMBIALO
@@ -25,7 +26,12 @@ az postgres flexible-server create `
   --admin-password $dbAdminPassword `
   --sku-name Standard_B1ms `
   --tier Burstable `
-  --public-access 0.0.0.0 `
+  --public-access 0.0.0.0
+
+Write-Host "2.1 Creando la Base de Datos dentro del servidor..."
+az postgres flexible-server db create `
+  --resource-group $resourceGroup `
+  --server-name $dbServerName `
   --database-name $dbName
 
 $connectionString = "Server=$dbServerName.postgres.database.azure.com;Database=$dbName;Port=5432;User Id=$dbAdminUser;Password=$dbAdminPassword;Ssl Mode=Require;"
@@ -53,14 +59,14 @@ az webapp create `
   --resource-group $resourceGroup `
   --plan $appServicePlan `
   --name $apiAppName `
-  --runtime "DOTNETCORE|9.0"
+  --runtime 'DOTNETCORE|9.0'
 
 Write-Host "6. Creando Web App para MVC..."
 az webapp create `
   --resource-group $resourceGroup `
   --plan $appServicePlan `
   --name $mvcAppName `
-  --runtime "DOTNETCORE|9.0"
+  --runtime 'DOTNETCORE|9.0'
 
 Write-Host "7. Configurando Variables de Entorno en API..."
 az webapp config appsettings set `
@@ -90,12 +96,12 @@ Write-Host "9. Compilando y Publicando Código (Esto requiere estar en la carpet
 # Publicando API
 dotnet publish Delivery.API/Delivery.API.csproj -c Release -o ./publish_api
 Compress-Archive -Path ./publish_api/* -DestinationPath api.zip -Force
-az webapp deployment source config-zip --resource-group $resourceGroup --name $apiAppName --src api.zip
+az webapp deploy --resource-group $resourceGroup --name $apiAppName --src-path api.zip --type zip
 
 # Publicando MVC
 dotnet publish Delivery.MVC/Delivery.MVC.csproj -c Release -o ./publish_mvc
 Compress-Archive -Path ./publish_mvc/* -DestinationPath mvc.zip -Force
-az webapp deployment source config-zip --resource-group $resourceGroup --name $mvcAppName --src mvc.zip
+az webapp deploy --resource-group $resourceGroup --name $mvcAppName --src-path mvc.zip --type zip
 
 Write-Host "¡Despliegue Finalizado!"
 Write-Host "URL API: https://$apiAppName.azurewebsites.net"
