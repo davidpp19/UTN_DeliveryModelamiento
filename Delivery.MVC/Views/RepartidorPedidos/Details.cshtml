@@ -126,7 +126,7 @@
 
         // SignalR setup
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('@Configuration["ApiSettings:BaseUrl"]'.replace(/\/$/, "") + "/notificacionesHub")
+            .withUrl('@(Configuration["ApiSettings:BaseUrl"] ?? Configuration["ApiUrl"] ?? "https://localhost:7087")'.replace(/\/$/, "") + "/notificacionesHub")
             .withAutomaticReconnect()
             .build();
 
