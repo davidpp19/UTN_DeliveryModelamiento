@@ -268,7 +268,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             togglePaymentSections();
 
-            // Inicializar el mapa centrado en Ecuador (zoom 6) sin colocar ningún marcador.
+            var serverDecimalSeparator = '@System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator';
             map = L.map('mapaCheckout').setView([-1.8312, -78.1834], 6);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -387,9 +387,8 @@
         });
 
         function actualizarCamposUbicacion(lat, lng) {
-            var separator = (1.1).toLocaleString().substring(1, 2);
-            document.getElementById('nuevaLatitud').value = lat.toFixed(8).replace('.', separator);
-            document.getElementById('nuevaLongitud').value = lng.toFixed(8).replace('.', separator);
+            document.getElementById('nuevaLatitud').value = lat.toFixed(8).replace('.', serverDecimalSeparator);
+            document.getElementById('nuevaLongitud').value = lng.toFixed(8).replace('.', serverDecimalSeparator);
         }
 
         // Búsqueda de Direcciones (Nominatim)

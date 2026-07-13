@@ -87,6 +87,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
+        var serverDecimalSeparator = '@System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator';
         // Inicializar mapa centrado en Ecuador
         var map = L.map('map').setView([-1.8312, -78.1834], 6);
 
@@ -108,9 +109,8 @@
                 marker = L.marker(e.latlng).addTo(map);
             }
 
-            var separator = (1.1).toLocaleString().substring(1, 2);
-            document.getElementById('lat-input').value = lat.toFixed(8).replace('.', separator);
-            document.getElementById('lng-input').value = lng.toFixed(8).replace('.', separator);
+            document.getElementById('lat-input').value = lat.toFixed(8).replace('.', serverDecimalSeparator);
+            document.getElementById('lng-input').value = lng.toFixed(8).replace('.', serverDecimalSeparator);
 
             // Reverse Geocoding (Nominatim API)
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
@@ -151,9 +151,8 @@
                             marker = L.marker([lat, lon]).addTo(map);
                         }
 
-                        var separator = (1.1).toLocaleString().substring(1, 2);
-                        document.getElementById('lat-input').value = lat.toFixed(8).replace('.', separator);
-                        document.getElementById('lng-input').value = lon.toFixed(8).replace('.', separator);
+                        document.getElementById('lat-input').value = lat.toFixed(8).replace('.', serverDecimalSeparator);
+                        document.getElementById('lng-input').value = lon.toFixed(8).replace('.', serverDecimalSeparator);
                         
                         // Parse name
                         var partes = result.display_name.split(',');

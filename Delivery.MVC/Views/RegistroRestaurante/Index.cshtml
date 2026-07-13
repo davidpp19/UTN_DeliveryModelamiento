@@ -164,9 +164,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
+        var serverDecimalSeparator = '@System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator';
         // Inicializar mapa centrado en Ibarra, Ecuador por defecto
-        var centerLat = document.getElementById('lat-input').value ? parseFloat(document.getElementById('lat-input').value) : 0.3517;
-        var centerLng = document.getElementById('lng-input').value ? parseFloat(document.getElementById('lng-input').value) : -78.1222;
+        var centerLat = document.getElementById('lat-input').value ? parseFloat(document.getElementById('lat-input').value.replace(serverDecimalSeparator, '.')) : 0.3517;
+        var centerLng = document.getElementById('lng-input').value ? parseFloat(document.getElementById('lng-input').value.replace(serverDecimalSeparator, '.')) : -78.1222;
         var zoomLevel = document.getElementById('lat-input').value ? 16 : 14;
 
         var map = L.map('map').setView([centerLat, centerLng], zoomLevel);
@@ -192,9 +193,8 @@
                 marker = L.marker(e.latlng).addTo(map);
             }
 
-            var separator = (1.1).toLocaleString().substring(1, 2);
-            document.getElementById('lat-input').value = lat.toFixed(8).replace('.', separator);
-            document.getElementById('lng-input').value = lng.toFixed(8).replace('.', separator);
+            document.getElementById('lat-input').value = lat.toFixed(8).replace('.', serverDecimalSeparator);
+            document.getElementById('lng-input').value = lng.toFixed(8).replace('.', serverDecimalSeparator);
 
             // Reverse Geocoding (Nominatim API)
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
@@ -235,9 +235,8 @@
                             marker = L.marker([lat, lon]).addTo(map);
                         }
 
-                        var separator = (1.1).toLocaleString().substring(1, 2);
-                        document.getElementById('lat-input').value = lat.toFixed(8).replace('.', separator);
-                        document.getElementById('lng-input').value = lon.toFixed(8).replace('.', separator);
+                        document.getElementById('lat-input').value = lat.toFixed(8).replace('.', serverDecimalSeparator);
+                        document.getElementById('lng-input').value = lon.toFixed(8).replace('.', serverDecimalSeparator);
                         
                         // Parse name
                         var partes = result.display_name.split(',');
