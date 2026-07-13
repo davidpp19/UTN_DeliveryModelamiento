@@ -4,16 +4,16 @@
 # ============================================================
 # CONFIGURACION FIJA - Nombres fijos para reutilizar recursos
 # ============================================================
-$resourceGroup     = "RayoExpres-RG-5"
-$location          = "southcentralus"
-$dbServerName      = "rayoexpres-db-v5"
+$resourceGroup     = "RayoExpres-RG-6"
+$location          = "brazilsouth"
+$dbServerName      = "rayoexpres-db-v6"
 $dbAdminUser       = "rayoadmin"
 $dbAdminPassword   = "SecurePassword123!"
 $dbName            = "RayoExpresDB"
-$storageAccountName = "rayoexpresstoragev5"
+$storageAccountName = "rayoexpresstoragev6"
 $appServicePlan    = "RayoExpres-Plan"
-$apiAppName        = "rayoexpres-api-v5"
-$mvcAppName        = "rayoexpres-mvc-v5"
+$apiAppName        = "rayoexpres-api-v6"
+$mvcAppName        = "rayoexpres-mvc-v6"
 # ============================================================
 
 Write-Host "0. Registrando proveedores de Azure..."
