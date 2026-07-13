@@ -167,7 +167,7 @@
                     map.setView([lat, lng]);
 
                     if (connection.state === signalR.HubConnectionState.Connected) {
-                        connection.invoke("EnviarUbicacionRepartidor", "@Model.Id", lat, lng)
+                        connection.invoke("EnviarUbicacionRepartidor", "@Model.Id", lat, lng, @Model.RepartidorId)
                             .catch(err => console.error("Error al enviar ubicación: " + err));
                     }
                 }, function(error) {
@@ -181,5 +181,17 @@
                 alert("Geolocalización no soportada por este navegador.");
             }
         });
+
+        // Auto-start GPS if status is EnCamino
+        @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino)
+        {
+            <text>
+            setTimeout(function() {
+                if (watchId === null) {
+                    document.getElementById('btnCompartirUbicacion').click();
+                }
+            }, 1500); // Dar tiempo a que SignalR conecte
+            </text>
+        }
     </script>
 }
