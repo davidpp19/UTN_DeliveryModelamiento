@@ -1,0 +1,56 @@
+name: Desplegar a Azure
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # ==========================================
+      # BUILD Y DEPLOY: API
+      # ==========================================
+      - name: Restaurar dependencias (API)
+        run: dotnet restore Delivery.API/Delivery.API.csproj
+
+      - name: Compilar y Publicar (API)
+        run: dotnet publish Delivery.API/Delivery.API.csproj -c Release -o ./publish_api
+
+      - name: Desplegar API a Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'rayoexpres-api-v7'
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_API }}
+          package: './publish_api'
+
+      # ==========================================
+      # BUILD Y DEPLOY: MVC
+      # ==========================================
+      - name: Restaurar dependencias (MVC)
+        run: dotnet restore Delivery.MVC/Delivery.MVC.csproj
+
+      - name: Compilar y Publicar (MVC)
+        run: dotnet publish Delivery.MVC/Delivery.MVC.csproj -c Release -o ./publish_mvc
+
+      - name: Desplegar MVC a Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'rayoexpres-mvc-v7'
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_MVC }}
+          package: './publish_mvc'
