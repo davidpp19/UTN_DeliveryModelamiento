@@ -2,18 +2,21 @@
 # Requisitos: Tener instalado Azure CLI (https://aka.ms/installazurecli) y haber ejecutado 'az login'
 
 # ============================================================
-# CONFIGURACION FIJA - Nombres fijos para reutilizar recursos
+# CONFIGURACION - Separamos regiones segun soporte de cuota
+# PostgreSQL SOLO funciona en brazilsouth para esta suscripcion
+# App Service B1 SOLO tiene cuota en southcentralus
 # ============================================================
-$resourceGroup     = "RayoExpres-RG-7"
-$location          = "brazilsouth"
-$dbServerName      = "rayoexpres-db-v7"
-$dbAdminUser       = "rayoadmin"
-$dbAdminPassword   = "SecurePassword123!"
-$dbName            = "RayoExpresDB"
+$resourceGroup      = "RayoExpres-RG-7"
+$locationDB         = "brazilsouth"      # Para PostgreSQL (unica region con soporte)
+$locationApps       = "southcentralus"   # Para App Service (unica region con cuota B1)
+$dbServerName       = "rayoexpres-db-v7"
+$dbAdminUser        = "rayoadmin"
+$dbAdminPassword    = "SecurePassword123!"
+$dbName             = "RayoExpresDB"
 $storageAccountName = "rayoexpresstoragev7"
-$appServicePlan    = "RayoExpres-Plan"
-$apiAppName        = "rayoexpres-api-v7"
-$mvcAppName        = "rayoexpres-mvc-v7"
+$appServicePlan     = "RayoExpres-Plan"
+$apiAppName         = "rayoexpres-api-v7"
+$mvcAppName         = "rayoexpres-mvc-v7"
 # ============================================================
 
 Write-Host "0. Registrando proveedores de Azure..."
@@ -22,24 +25,27 @@ az provider register --namespace Microsoft.Web --wait | Out-Null
 az provider register --namespace Microsoft.DBforPostgreSQL --wait | Out-Null
 
 Write-Host "1. Creando/Verificando Resource Group..."
-az group create --name $resourceGroup --location $location | Out-Null
+az group create --name $resourceGroup --location $locationDB | Out-Null
 Write-Host "   Resource Group: OK"
 
 # ============================================================
-# LIMPIEZA: Eliminar apps viejas con nombres distintos al final
+# LIMPIEZA: Eliminar apps viejas del plan
 # ============================================================
-Write-Host "1.5 Limpiando apps antiguas del plan para liberar recursos..."
-$allApps = az webapp list --resource-group $resourceGroup --query "[].name" -o tsv
+Write-Host "1.5 Limpiando apps antiguas del plan..."
+$allApps = az webapp list --resource-group $resourceGroup --query "[].name" -o tsv 2>$null
 foreach ($app in $allApps) {
     $app = $app.Trim()
     if ($app -ne $apiAppName -and $app -ne $mvcAppName -and $app -ne "") {
         Write-Host "   Eliminando app antigua: $app"
-        az webapp delete --resource-group $resourceGroup --name $app --keep-empty-plan | Out-Null
+        az webapp delete --resource-group $resourceGroup --name $app --keep-empty-plan 2>$null | Out-Null
     }
 }
 Write-Host "   Limpieza completada."
 
-Write-Host "2. Creando Servidor PostgreSQL Flexible..."
+# ============================================================
+# BASE DE DATOS (brazilsouth - unica region valida)
+# ============================================================
+Write-Host "2. Creando Servidor PostgreSQL Flexible en brazilsouth..."
 $dbExists = az postgres flexible-server show --resource-group $resourceGroup --name $dbServerName 2>$null
 if ($dbExists) {
     Write-Host "   Servidor de base de datos ya existe, reutilizando..."
@@ -47,7 +53,7 @@ if ($dbExists) {
     az postgres flexible-server create `
       --resource-group $resourceGroup `
       --name $dbServerName `
-      --location $location `
+      --location $locationDB `
       --admin-user $dbAdminUser `
       --admin-password $dbAdminPassword `
       --sku-name Standard_B1ms `
@@ -55,11 +61,11 @@ if ($dbExists) {
       --public-access 0.0.0.0
 
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "ERROR CRITICO: Fallo al crear el servidor PostgreSQL. Puede ser por limites de cuota."
-        Write-Host "Cancelando despliegue para evitar errores en cadena..."
+        Write-Host "ERROR CRITICO: Fallo al crear PostgreSQL. Verifica cuotas en brazilsouth."
         exit 1
     }
 }
+Write-Host "   Servidor PostgreSQL: OK"
 
 Write-Host "2.1 Creando la Base de Datos..."
 az postgres flexible-server db create `
@@ -70,6 +76,9 @@ Write-Host "   Base de datos: OK"
 
 $connectionString = "Server=$dbServerName.postgres.database.azure.com;Database=$dbName;Port=5432;User Id=$dbAdminUser;Password=$dbAdminPassword;Ssl Mode=Require;"
 
+# ============================================================
+# BLOB STORAGE (brazilsouth - ya creado)
+# ============================================================
 Write-Host "3. Creando Azure Blob Storage..."
 $storageExists = az storage account show --name $storageAccountName --resource-group $resourceGroup 2>$null
 if ($storageExists) {
@@ -78,14 +87,17 @@ if ($storageExists) {
     az storage account create `
       --name $storageAccountName `
       --resource-group $resourceGroup `
-      --location $location `
+      --location $locationDB `
       --sku Standard_LRS `
-      --allow-blob-public-access true
+      --allow-blob-public-access true | Out-Null
 }
 $blobStorageConnectionString = az storage account show-connection-string --name $storageAccountName --resource-group $resourceGroup --query connectionString -o tsv
 Write-Host "   Blob Storage: OK"
 
-Write-Host "4. Creando App Service Plan..."
+# ============================================================
+# APP SERVICE PLAN (southcentralus - unica region con cuota B1)
+# ============================================================
+Write-Host "4. Creando App Service Plan en southcentralus..."
 $planExists = az appservice plan show --name $appServicePlan --resource-group $resourceGroup 2>$null
 if ($planExists) {
     Write-Host "   App Service Plan ya existe, reutilizando..."
@@ -93,18 +105,35 @@ if ($planExists) {
     az appservice plan create `
       --name $appServicePlan `
       --resource-group $resourceGroup `
-      --location $location `
+      --location $locationApps `
       --sku B1 `
       --is-linux
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "ERROR CRITICO: Fallo al crear App Service Plan. Verifica cuota B1 en southcentralus."
+        exit 1
+    }
 }
 Write-Host "   App Service Plan: OK"
 
+# ============================================================
+# WEB APPS
+# ============================================================
 Write-Host "5. Creando/Verificando Web App para API..."
 $apiExists = az webapp show --resource-group $resourceGroup --name $apiAppName 2>$null
 if ($apiExists) {
     Write-Host "   Web App API ya existe, reutilizando..."
 } else {
-    cmd.exe /c "az webapp create --resource-group $resourceGroup --plan $appServicePlan --name $apiAppName --runtime `"DOTNETCORE|9.0`""
+    az webapp create `
+      --resource-group $resourceGroup `
+      --plan $appServicePlan `
+      --name $apiAppName `
+      --runtime "DOTNETCORE:9.0"
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "ERROR CRITICO: Fallo al crear Web App API."
+        exit 1
+    }
 }
 Write-Host "   Web App API: OK"
 
@@ -113,12 +142,21 @@ $mvcExists = az webapp show --resource-group $resourceGroup --name $mvcAppName 2
 if ($mvcExists) {
     Write-Host "   Web App MVC ya existe, reutilizando..."
 } else {
-    cmd.exe /c "az webapp create --resource-group $resourceGroup --plan $appServicePlan --name $mvcAppName --runtime `"DOTNETCORE|9.0`""
+    az webapp create `
+      --resource-group $resourceGroup `
+      --plan $appServicePlan `
+      --name $mvcAppName `
+      --runtime "DOTNETCORE:9.0"
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "ERROR CRITICO: Fallo al crear Web App MVC."
+        exit 1
+    }
 }
 Write-Host "   Web App MVC: OK"
 
 # ============================================================
-# CONFIGURAR VARIABLES DE ENTORNO usando el metodo directo
+# CONFIGURAR VARIABLES DE ENTORNO
 # ============================================================
 Write-Host "7. Configurando Variables de Entorno en API..."
 az webapp config appsettings set `
