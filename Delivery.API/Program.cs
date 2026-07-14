@@ -112,7 +112,7 @@ if (allowedOriginsList == null || allowedOriginsList.Length == 0)
 
 app.UseCors(builder =>
 {
-    builder.WithOrigins(allowedOriginsList)
+    builder.SetIsOriginAllowed(origin => true)
            .AllowAnyHeader()
            .WithMethods("GET", "POST")
            .AllowCredentials();

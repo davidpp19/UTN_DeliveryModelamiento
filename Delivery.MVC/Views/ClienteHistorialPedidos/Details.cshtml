@@ -172,21 +172,12 @@
             .withAutomaticReconnect()
             .build();
 
-        connection.on("EstadoPedidoCambiado", function (pedidoId, nuevoEstado) {
-            if (pedidoId == @Model.Id) {
-                location.reload();
-            }
-        });
+        // Primero inicializar el mapa si existe y registrar los eventos de SignalR
+        var restMarker, cliMarker, repMarker, currentRouteLine;
+        var map;
 
-        connection.start().then(function () {
-            console.log("Conectado a SignalR para tracking del pedido @Model.Id");
-            connection.invoke("UnirseGrupoPedido", "@Model.Id").catch(err => console.error(err));
-            connection.invoke("UnirseGrupoCliente", "@Model.UsuarioId").catch(err => console.error(err));
-        }).catch(err => console.error(err));
-
-        // Solo inicializar el mapa si el elemento existe (cuando está En Camino)
         if (document.getElementById('map')) {
-            var map = L.map('map').setView([0.3517, -78.1222], 14);
+            map = L.map('map').setView([0.3517, -78.1222], 14);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
@@ -197,8 +188,6 @@
             var restLng = @(Model.Restaurante?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
             var cliLat = @(Model.DireccionEntrega?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
             var cliLng = @(Model.DireccionEntrega?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
-
-            var restMarker, cliMarker, repMarker, currentRouteLine;
 
             if (restLat !== 0 && cliLat !== 0) {
                 restMarker = L.marker([restLat, restLng]).addTo(map).bindPopup('Restaurante');
@@ -211,6 +200,7 @@
                 iconAnchor: [16, 32]
             });
 
+            // IMPORTANT: Register event handler BEFORE starting connection
             connection.on("RecibirUbicacionRepartidor", function (lat, lng) {
                 if (repMarker) {
                     repMarker.setLatLng([lat, lng]);
@@ -218,7 +208,7 @@
                     repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Repartidor');
                 }
 
-                // Calcular ETA usando OSRM desde la moto hasta el cliente
+                // Calcular ETA usando OSRM
                 fetch(`https://router.project-osrm.org/route/v1/driving/${lng},${lat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
                     .then(res => res.json())
                     .then(data => {
@@ -243,5 +233,18 @@
                     });
             });
         }
+
+        connection.on("EstadoPedidoCambiado", function (pedidoId, nuevoEstado) {
+            if (pedidoId == @Model.Id) {
+                location.reload();
+            }
+        });
+
+        // DESPUES de registrar todos los .on, iniciamos la conexión
+        connection.start().then(function () {
+            console.log("Conectado a SignalR para tracking del pedido @Model.Id");
+            connection.invoke("UnirseGrupoPedido", "@Model.Id").catch(err => console.error(err));
+            connection.invoke("UnirseGrupoCliente", "@Model.UsuarioId").catch(err => console.error(err));
+        }).catch(err => console.error(err));
     </script>
 }
