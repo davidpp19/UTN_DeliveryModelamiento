@@ -113,10 +113,15 @@
             iconAnchor: [18, 36]
         });
 
-        if (restLat !== 0 && cliLat !== 0) {
+        if (restLat !== 0) {
             restMarker = L.marker([restLat, restLng], { icon: restIcon }).addTo(map).bindPopup('Restaurante');
+        }
+        
+        if (cliLat !== 0) {
             cliMarker = L.marker([cliLat, cliLng], { icon: cliIcon }).addTo(map).bindPopup('Lugar de Entrega (Cliente)');
+        }
 
+        if (restLat !== 0 && cliLat !== 0) {
             // Draw route with OSRM
             fetch(`https://router.project-osrm.org/route/v1/driving/${restLng},${restLat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
                 .then(res => res.json())
@@ -132,7 +137,11 @@
                             console.error("Error al encuadrar ruta inicial:", e);
                         }
                     }
-                });
+                }).catch(e => console.error(e));
+        } else if (restLat !== 0) {
+            map.setView([restLat, restLng], 15);
+        } else if (cliLat !== 0) {
+            map.setView([cliLat, cliLng], 15);
         }
 
         // Repartidor icon
