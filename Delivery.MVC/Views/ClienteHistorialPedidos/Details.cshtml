@@ -192,6 +192,9 @@
             if (restLat !== 0 && cliLat !== 0) {
                 restMarker = L.marker([restLat, restLng]).addTo(map).bindPopup('Restaurante');
                 cliMarker = L.marker([cliLat, cliLng]).addTo(map).bindPopup('Tu Dirección');
+                
+                // Encuadrar inicialmente entre restaurante y cliente
+                map.fitBounds([ [restLat, restLng], [cliLat, cliLng] ], { padding: [50, 50] });
             }
 
             var repIcon = L.icon({
@@ -208,8 +211,8 @@
                     repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Repartidor');
                 }
                 
-                // Centrar inmediatamente el mapa en el repartidor (suavemente)
-                map.panTo(new L.LatLng(lat, lng));
+                // Centrar forzosamente el mapa en el repartidor (setView ignora la distancia máxima)
+                map.setView([lat, lng], 16);
 
                 // Calcular ETA usando OSRM
                 fetch(`https://router.project-osrm.org/route/v1/driving/${lng},${lat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
