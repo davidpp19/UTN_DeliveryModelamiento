@@ -193,8 +193,13 @@
                 restMarker = L.marker([restLat, restLng]).addTo(map).bindPopup('Restaurante');
                 cliMarker = L.marker([cliLat, cliLng]).addTo(map).bindPopup('Tu Dirección');
                 
-                // Encuadrar inicialmente entre restaurante y cliente
-                map.fitBounds([ [restLat, restLng], [cliLat, cliLng] ], { padding: [50, 50] });
+                try {
+                    // Encuadrar inicialmente entre restaurante y cliente de forma segura
+                    var bounds = L.latLngBounds([restLat, restLng], [cliLat, cliLng]);
+                    map.fitBounds(bounds);
+                } catch (e) {
+                    console.error("Error al encuadrar el mapa:", e);
+                }
             }
 
             var repIcon = L.icon({
