@@ -207,6 +207,9 @@
                 } else {
                     repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Repartidor');
                 }
+                
+                // Centrar inmediatamente el mapa en el repartidor (suavemente)
+                map.panTo(new L.LatLng(lat, lng));
 
                 // Calcular ETA usando OSRM
                 fetch(`https://router.project-osrm.org/route/v1/driving/${lng},${lat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
@@ -223,9 +226,6 @@
 
                             currentRouteLine = L.polyline(latLngs, { color: 'green', weight: 4 }).addTo(map);
                             
-                            // Auto-centrar el mapa para mostrar el repartidor y el destino
-                            map.fitBounds(currentRouteLine.getBounds(), { padding: [50, 50] });
-                            
                             const distanciaKm = (routeData.distance / 1000).toFixed(1);
                             const tiempoMin = Math.ceil(routeData.duration / 60);
 
@@ -233,7 +233,7 @@
                             document.getElementById('tiempo-lbl').innerText = tiempoMin + " min";
                             document.getElementById('eta-badge').innerText = "Llega en ~" + tiempoMin + " min";
                         }
-                    });
+                    }).catch(err => console.error("Error en OSRM:", err));
             });
         }
 
