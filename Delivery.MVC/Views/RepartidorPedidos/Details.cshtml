@@ -98,19 +98,21 @@
         var cliLat = @(Model.DireccionEntrega?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
         var cliLng = @(Model.DireccionEntrega?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
 
-        var restMarker, cliMarker, repMarker;
-
-        // Custom icons
-        var cliIcon = L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1946/1946488.png', // House icon
-            iconSize: [32, 32],
-            iconAnchor: [16, 32]
+        // Custom icons usando SVG en línea (para evitar bloqueos de imágenes externas)
+        var houseSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36"><path fill="#28a745" d="M12 3L2 12h3v8h14v-8h3L12 3zm0 2.7l6 5.3v7h-4v-5H10v5H6v-7l6-5.3z"/></svg>`;
+        var cliIcon = L.divIcon({
+            html: houseSvg,
+            className: '',
+            iconSize: [36, 36],
+            iconAnchor: [18, 36]
         });
         
-        var restIcon = L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1046/1046784.png', // Restaurant icon
-            iconSize: [32, 32],
-            iconAnchor: [16, 32]
+        var restSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36"><path fill="#dc3545" d="M11 9H9V2H7v7H5V2H3v7c0 2.1 1.6 3.8 3.6 4v9h1.8v-9C10.4 12.8 12 11.1 12 9V2h-1v7zm5-7v9h-2v11h2v-11h2V2h-2z"/></svg>`;
+        var restIcon = L.divIcon({
+            html: restSvg,
+            className: '',
+            iconSize: [36, 36],
+            iconAnchor: [18, 36]
         });
 
         if (restLat !== 0 && cliLat !== 0) {
