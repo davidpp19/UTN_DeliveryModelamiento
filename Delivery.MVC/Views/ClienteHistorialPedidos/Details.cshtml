@@ -223,6 +223,9 @@
 
                             currentRouteLine = L.polyline(latLngs, { color: 'green', weight: 4 }).addTo(map);
                             
+                            // Auto-centrar el mapa para mostrar el repartidor y el destino
+                            map.fitBounds(currentRouteLine.getBounds(), { padding: [50, 50] });
+                            
                             const distanciaKm = (routeData.distance / 1000).toFixed(1);
                             const tiempoMin = Math.ceil(routeData.duration / 60);
 
