@@ -112,7 +112,12 @@
                         var route = data.routes[0].geometry.coordinates;
                         var latLngs = route.map(coord => [coord[1], coord[0]]);
                         L.polyline(latLngs, { color: 'blue', weight: 4 }).addTo(map);
-                        map.fitBounds(L.polyline(latLngs).getBounds());
+                        
+                        try {
+                            map.fitBounds(L.polyline(latLngs).getBounds());
+                        } catch (e) {
+                            console.error("Error al encuadrar ruta inicial:", e);
+                        }
                     }
                 });
         }
