@@ -164,7 +164,30 @@
                     } else {
                         repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Tú');
                     }
-                    map.setView([lat, lng]);
+                    map.setView([lat, lng], 16); // Siempre seguir al repartidor
+
+                    // Calcular ruta dinámica desde la moto hasta el cliente
+                    if (cliLat !== 0 && cliLng !== 0) {
+                        fetch(`https://router.project-osrm.org/route/v1/driving/${lng},${lat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.routes && data.routes.length > 0) {
+                                    var routeData = data.routes[0];
+                                    var routeCoords = routeData.geometry.coordinates;
+                                    var latLngs = routeCoords.map(coord => [coord[1], coord[0]]);
+
+                                    if (window.currentDynamicRoute) {
+                                        map.removeLayer(window.currentDynamicRoute);
+                                    }
+                                    
+                                    window.currentDynamicRoute = L.polyline(latLngs, { color: 'purple', weight: 5, opacity: 0.8 }).addTo(map);
+                                    
+                                    const distanciaKm = (routeData.distance / 1000).toFixed(1);
+                                    const tiempoMin = Math.ceil(routeData.duration / 60);
+                                    document.getElementById('gpsStatus').innerText = `Enviando... (A ${distanciaKm}km / ~${tiempoMin} min del cliente)`;
+                                }
+                            }).catch(e => console.error("OSRM Error:", e));
+                    }
 
                     if (connection.state === signalR.HubConnectionState.Connected) {
                         connection.invoke("EnviarUbicacionRepartidor", "@Model.Id", lat, lng, @Model.RepartidorId)
