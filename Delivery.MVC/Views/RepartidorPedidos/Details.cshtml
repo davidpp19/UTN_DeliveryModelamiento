@@ -100,9 +100,22 @@
 
         var restMarker, cliMarker, repMarker;
 
+        // Custom icons
+        var cliIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1946/1946488.png', // House icon
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        });
+        
+        var restIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1046/1046784.png', // Restaurant icon
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        });
+
         if (restLat !== 0 && cliLat !== 0) {
-            restMarker = L.marker([restLat, restLng]).addTo(map).bindPopup('Restaurante');
-            cliMarker = L.marker([cliLat, cliLng]).addTo(map).bindPopup('Cliente');
+            restMarker = L.marker([restLat, restLng], { icon: restIcon }).addTo(map).bindPopup('Restaurante');
+            cliMarker = L.marker([cliLat, cliLng], { icon: cliIcon }).addTo(map).bindPopup('Lugar de Entrega (Cliente)');
 
             // Draw route with OSRM
             fetch(`https://router.project-osrm.org/route/v1/driving/${restLng},${restLat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
