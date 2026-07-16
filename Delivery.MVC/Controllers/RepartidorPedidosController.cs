@@ -146,5 +146,38 @@ namespace Delivery.MVC.Controllers
             ModelState.AddModelError(string.Empty, "Error al actualizar el estado del pedido.");
             return View(data);
         }
+
+        public async Task<IActionResult> Cancelar(long id)
+        {
+            var userId = GetMyUsuarioId();
+            var data = await _pedidoConsumer.GetByIdAsync(id);
+            if (data == null || data.RepartidorId != userId) return NotFound();
+            return View(data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelarConfirmado(long id)
+        {
+            var userId = GetMyUsuarioId();
+            var data = await _pedidoConsumer.GetByIdAsync(id);
+            if (data == null || data.RepartidorId != userId) return NotFound();
+
+            // Lógica de cancelación: se libera el pedido
+            data.RepartidorId = null;
+            data.EstadoPedido = EstadoPedidoEnum.Pendiente;
+
+            var result = await _pedidoConsumer.UpdateAsync(id, data);
+            if (result)
+            {
+                // TODO: Notificar vía SignalR que hay un nuevo pedido disponible
+                TempData["Exito"] = "Has cancelado la entrega. El pedido volverá a estar disponible para otros repartidores.";
+            }
+            else
+            {
+                TempData["Error"] = "Hubo un error al cancelar la entrega.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

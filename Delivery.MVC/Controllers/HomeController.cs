@@ -18,6 +18,7 @@ public class HomeController : Controller
     private readonly ICategoriaProductoConsumer _categoriaConsumer;
     private readonly ICuponConsumer _cuponConsumer;
     private readonly IProductoConsumer _productoConsumer;
+    private readonly ICuponUsuarioConsumer _cuponUsuarioConsumer;
 
     // Imágenes públicas estables por categoría de comida
     private static readonly Dictionary<string, string> _imagenesPorCategoria = new(StringComparer.OrdinalIgnoreCase)
@@ -71,20 +72,21 @@ public class HomeController : Controller
         IRestauranteConsumer restauranteConsumer,
         ICategoriaProductoConsumer categoriaConsumer,
         ICuponConsumer cuponConsumer,
-        IProductoConsumer productoConsumer)
+        IProductoConsumer productoConsumer,
+        ICuponUsuarioConsumer cuponUsuarioConsumer)
     {
         _logger = logger;
         _restauranteConsumer = restauranteConsumer;
         _categoriaConsumer = categoriaConsumer;
         _cuponConsumer = cuponConsumer;
         _productoConsumer = productoConsumer;
+        _cuponUsuarioConsumer = cuponUsuarioConsumer;
     }
 
     public async Task<IActionResult> Index()
     {
         var restaurantes = (await _restauranteConsumer.GetAllAsync())?.ToList() ?? new List<Restaurante>();
         var categorias   = await _categoriaConsumer.GetAllAsync();
-        var cupones      = await _cuponConsumer.GetAllAsync();
         var productos    = await _productoConsumer.GetAllAsync();
 
         // Asignar imagen a cada restaurante que no tenga logoUrl
@@ -95,17 +97,30 @@ public class HomeController : Controller
         }
 
         var restaurantesActivos = restaurantes.Where(r => r.Abierto).ToList();
+        
+        // Obtener cupones solo si el usuario es cliente
+        List<Cupon> misCupones = new List<Cupon>();
+        if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
+        {
+            var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (long.TryParse(userIdString, out long userId))
+            {
+                var cuponesUsuarios = await _cuponUsuarioConsumer.GetAllAsync();
+                misCupones = cuponesUsuarios?
+                    .Where(cu => cu.UsuarioId == userId && cu.PedidoId == null && cu.Cupon != null && cu.Cupon.Activo && cu.Cupon.FechaFin >= DateTime.UtcNow)
+                    .Select(cu => cu.Cupon!)
+                    .Take(3)
+                    .ToList() ?? new List<Cupon>();
+            }
+        }
 
         var vm = new HomeViewModel
         {
-            // Todos los restaurantes activos para la vista pública
             TodosRestaurantes      = restaurantesActivos,
-            // Destacados para el cliente (los primeros 6 activos)
             RestaurantesDestacados = restaurantesActivos.Take(6).ToList(),
-            // Nuevos para la sección pública (los 3 más recientes)
             NuevosRestaurantes     = restaurantes.OrderByDescending(r => r.Id).Take(3).ToList(),
             Categorias             = categorias ?? new List<CategoriaProducto>(),
-            Cupones                = cupones?.Where(c => c.Activo && c.FechaFin >= DateTime.UtcNow).Take(3) ?? new List<Cupon>(),
+            Cupones                = misCupones,
             ProductosDestacados    = productos?.Take(8) ?? new List<Producto>()
         };
 

@@ -19,6 +19,7 @@ namespace Delivery.Servicios.Implementaciones
         public async Task<IEnumerable<Repartidor>> GetAllAsync()
         {
             return await _context.Repartidores
+                .AsNoTracking()
                 .Include(r => r.Usuario)
                 .Include(r => r.Vehiculos)
                 .ToListAsync();

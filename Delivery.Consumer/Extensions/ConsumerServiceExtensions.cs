@@ -35,6 +35,7 @@ namespace Delivery.Consumer.Extensions
             services.AddHttpClient<IDashboardConsumer, DashboardConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
             services.AddHttpClient<ICarritoConsumer, CarritoConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
             services.AddHttpClient<IAdminAprobacionesConsumer, AdminAprobacionesConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
+            services.AddHttpClient<INotificacionConsumer, NotificacionConsumer>(configureClient).AddHttpMessageHandler<AuthTokenHandler>();
 
             return services;
         }

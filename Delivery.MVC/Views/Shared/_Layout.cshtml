@@ -54,8 +54,8 @@
                                         <li><a class="dropdown-item" asp-controller="AdminPedidos" asp-action="Index">@Localizer["Pedidos"]</a></li>
                                         <li><a class="dropdown-item" asp-controller="AdminCupones" asp-action="Index">@Localizer["Cupones"]</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Repartidores">Sol. Repartidores</a></li>
-                                        <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Restaurantes">Sol. Restaurantes</a></li>
+                                        <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Repartidores">@Localizer["SolRepartidores"]</a></li>
+                                        <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Restaurantes">@Localizer["SolRestaurantes"]</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" asp-controller="Auditorias" asp-action="Index">@Localizer["Auditoria"]</a></li>
                                     </ul>
@@ -99,21 +99,21 @@
                         <!-- SELECTOR DE IDIOMA -->
                         <li class="nav-item dropdown me-2">
                             <a class="nav-link dropdown-toggle" href="#" id="idiomaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                🌐 @Localizer["Idioma"]
+                                <i class="bi bi-globe"></i> @Localizer["Idioma"]
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="idiomaDropdown">
                                 <li>
                                     <form asp-controller="Idioma" asp-action="SetLanguage" method="post" class="m-0 p-0">
                                         <input type="hidden" name="culture" value="es" />
                                         <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-                                        <button type="submit" class="dropdown-item">🇪🇸 @Localizer["Espanol"]</button>
+                                        <button type="submit" class="dropdown-item"><i class="bi bi-translate"></i> @Localizer["Espanol"]</button>
                                     </form>
                                 </li>
                                 <li>
                                     <form asp-controller="Idioma" asp-action="SetLanguage" method="post" class="m-0 p-0">
                                         <input type="hidden" name="culture" value="en" />
                                         <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-                                        <button type="submit" class="dropdown-item">🇺🇸 @Localizer["Ingles"]</button>
+                                        <button type="submit" class="dropdown-item"><i class="bi bi-translate"></i> @Localizer["Ingles"]</button>
                                     </form>
                                 </li>
                             </ul>
@@ -121,6 +121,20 @@
 
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
+                            <!-- NOTIFICACIONES -->
+                            <li class="nav-item dropdown me-3 mt-1">
+                                <a class="nav-link position-relative" href="#" id="navbarNotificaciones" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-bell fs-5"></i>
+                                    <span id="notificaciones-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+                                        0
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarNotificaciones" style="width: 300px; max-height: 400px; overflow-y: auto;" id="notificaciones-list">
+                                    <li><span class="dropdown-item text-center text-muted small">Cargando...</span></li>
+                                </ul>
+                            </li>
+                            <!-- FIN NOTIFICACIONES -->
+
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle fw-bold d-flex align-items-center" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     @{
@@ -178,6 +192,70 @@
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                cargarNotificaciones();
+                // setInterval(cargarNotificaciones, 30000); // Opcional: auto-recargar cada 30s
+            });
+
+            function cargarNotificaciones() {
+                fetch('/Notificaciones/GetMisNotificaciones')
+                    .then(response => response.json())
+                    .then(data => {
+                        const lista = document.getElementById('notificaciones-list');
+                        const badge = document.getElementById('notificaciones-badge');
+                        
+                        lista.innerHTML = '';
+                        let noLeidas = 0;
+
+                        if (!data || data.length === 0) {
+                            lista.innerHTML = '<li><span class="dropdown-item text-center text-muted small">No tienes notificaciones</span></li>';
+                            badge.classList.add('d-none');
+                            return;
+                        }
+
+                        data.forEach(n => {
+                            if (!n.leida) noLeidas++;
+                            
+                            const li = document.createElement('li');
+                            li.innerHTML = `
+                                <a class="dropdown-item ${n.leida ? '' : 'fw-bold bg-light'}" href="#" onclick="marcarLeida(${n.id}, event)">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <small class="text-muted">${new Date(n.creadaEn).toLocaleDateString()}</small>
+                                    </div>
+                                    <p class="mb-1 text-wrap" style="font-size: 0.9rem;">${n.mensaje}</p>
+                                </a>
+                                <li><hr class="dropdown-divider"></li>
+                            `;
+                            lista.appendChild(li);
+                        });
+
+                        if (noLeidas > 0) {
+                            badge.textContent = noLeidas;
+                            badge.classList.remove('d-none');
+                        } else {
+                            badge.classList.add('d-none');
+                        }
+                    })
+                    .catch(error => console.error('Error al cargar notificaciones:', error));
+            }
+
+            function marcarLeida(id, event) {
+                event.preventDefault();
+                fetch('/Notificaciones/MarcarComoLeida/' + id, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exito) {
+                            cargarNotificaciones();
+                        }
+                    });
+            }
+        </script>
+    }
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

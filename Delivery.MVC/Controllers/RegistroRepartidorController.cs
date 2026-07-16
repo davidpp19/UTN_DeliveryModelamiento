@@ -68,7 +68,7 @@ namespace Delivery.MVC.Controllers
                 }
             }
 
-            AuthResponseDto authResponse = null;
+            AuthResponseDto? authResponse = null;
             try
             {
                 authResponse = await _authConsumer.RegistroRepartidorAsync(dto);

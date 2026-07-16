@@ -33,14 +33,25 @@ namespace Delivery.MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(RegistroRestauranteDto dto)
+        public async Task<IActionResult> Index(RegistroRestauranteDto dto, string? latStr, string? lngStr)
         {
+            if (!string.IsNullOrEmpty(latStr) && decimal.TryParse(latStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal lat))
+            {
+                dto.Latitud = lat;
+                ModelState.Remove("Latitud");
+            }
+            if (!string.IsNullOrEmpty(lngStr) && decimal.TryParse(lngStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal lng))
+            {
+                dto.Longitud = lng;
+                ModelState.Remove("Longitud");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(dto);
             }
 
-            AuthResponseDto response = null;
+            AuthResponseDto? response = null;
             try
             {
                 response = await _authConsumer.RegistroRestauranteAsync(dto);

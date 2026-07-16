@@ -236,7 +236,7 @@ namespace Delivery.MVC.Controllers
 
             if (restaurante == null || !restaurante.Latitud.HasValue || !restaurante.Longitud.HasValue || !dLat.HasValue || !dLon.HasValue)
             {
-                return Json(new { exito = true, costo = restaurante?.CostoEnvioBase ?? 1.50m, distancia = 0, tiempo = 0 });
+                return Json(new { exito = true, costo = 1.50m, distancia = 0, tiempo = 0 });
             }
 
             try
@@ -370,8 +370,8 @@ namespace Delivery.MVC.Controllers
             Microsoft.AspNetCore.Http.IFormFile? comprobante,
             string? nuevaCalle,
             string? nuevaCiudad,
-            double? nuevaLatitud,
-            double? nuevaLongitud,
+            string? nuevaLatitudStr,
+            string? nuevaLongitudStr,
             string? nuevoAlias,
             string? nuevaReferencia,
             bool guardarDireccion,
@@ -386,6 +386,19 @@ namespace Delivery.MVC.Controllers
             }
 
             long finalDireccionId = direccionId;
+            double? nuevaLatitud = null;
+            double? nuevaLongitud = null;
+
+            if (!string.IsNullOrEmpty(nuevaLatitudStr))
+            {
+                if (double.TryParse(nuevaLatitudStr.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsedLat))
+                    nuevaLatitud = parsedLat;
+            }
+            if (!string.IsNullOrEmpty(nuevaLongitudStr))
+            {
+                if (double.TryParse(nuevaLongitudStr.Replace(",", "."), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsedLng))
+                    nuevaLongitud = parsedLng;
+            }
 
             // ... Lógica de nueva dirección ...
             if (direccionId == 0)

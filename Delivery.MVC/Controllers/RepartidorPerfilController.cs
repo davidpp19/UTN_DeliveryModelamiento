@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
 using Delivery.Consumer.Interfaces;
 using Delivery.MVC.Servicios;
 
@@ -74,6 +75,14 @@ namespace Delivery.MVC.Controllers
                         {
                             miUsuario.FotoPerfilUrl = fotoUrl;
                             await _usuarioConsumer.UpdateAsync(userId, miUsuario);
+                            
+                            // Refrescar claim de FotoPerfilUrl
+                            var claimsIdentity = (ClaimsIdentity)User.Identity!;
+                            var existingClaim = claimsIdentity.FindFirst("FotoPerfilUrl");
+                            if (existingClaim != null) claimsIdentity.RemoveClaim(existingClaim);
+                            
+                            claimsIdentity.AddClaim(new Claim("FotoPerfilUrl", fotoUrl));
+                            await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
                         }
                     }
                 }

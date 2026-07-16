@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
 using Delivery.Consumer.Interfaces;
 using Delivery.MVC.Servicios;
 
@@ -80,6 +81,18 @@ namespace Delivery.MVC.Controllers
 
             await _usuarioConsumer.UpdateAsync(miUsuario.Id, miUsuario);
             
+            // Refrescar claim de FotoPerfilUrl
+            if (fotoPerfil != null && !string.IsNullOrEmpty(miUsuario.FotoPerfilUrl))
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity!;
+                var existingClaim = claimsIdentity.FindFirst("FotoPerfilUrl");
+                if (existingClaim != null) claimsIdentity.RemoveClaim(existingClaim);
+                
+                claimsIdentity.AddClaim(new Claim("FotoPerfilUrl", miUsuario.FotoPerfilUrl));
+                
+                await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+            }
+
             TempData["Exito"] = "Perfil actualizado exitosamente.";
             return RedirectToAction(nameof(CompletarPerfil));
         }

@@ -20,7 +20,7 @@ namespace Delivery.Servicios.Implementaciones
 
         public async Task<IEnumerable<Usuario>> GetAllAsync()
         {
-            return await _context.Usuarios.Include(u => u.Rol).ToListAsync();
+            return await _context.Usuarios.AsNoTracking().Include(u => u.Rol).ToListAsync();
         }
 
         public async Task<Usuario?> GetByIdAsync(long id)

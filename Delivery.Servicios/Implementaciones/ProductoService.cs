@@ -18,7 +18,7 @@ namespace Delivery.Servicios.Implementaciones
 
         public async Task<IEnumerable<Producto>> GetAllAsync()
         {
-            return await _context.Productos.Include(p => p.Restaurante).Include(p => p.Categoria).ToListAsync();
+            return await _context.Productos.AsNoTracking().Include(p => p.Restaurante).Include(p => p.Categoria).ToListAsync();
         }
 
         public async Task<Producto?> GetByIdAsync(long id)

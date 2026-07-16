@@ -19,6 +19,7 @@ namespace Delivery.Servicios.Implementaciones
         public async Task<IEnumerable<Restaurante>> GetAllAsync()
         {
             return await _context.Restaurantes
+                .AsNoTracking()
                 .Include(r => r.UsuarioCreador)
                 .Include(r => r.UsuarioAprobador)
                 .ToListAsync();

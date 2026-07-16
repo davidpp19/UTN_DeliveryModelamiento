@@ -26,6 +26,7 @@ namespace Delivery.Servicios.Implementaciones
         public async Task<IEnumerable<Pedido>> GetAllAsync()
         {
             return await _context.Pedidos
+                .AsNoTracking()
                 .Include(p => p.Detalles)
                 .Include(p => p.Pagos)
                 .ToListAsync();

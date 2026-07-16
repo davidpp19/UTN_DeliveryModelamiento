@@ -178,8 +178,8 @@
                 </div>
 
                 <input type="hidden" id="nuevaCiudad" name="nuevaCiudad" value="">
-                <input type="hidden" id="nuevaLatitud" name="nuevaLatitud">
-                <input type="hidden" id="nuevaLongitud" name="nuevaLongitud">
+                <input type="hidden" id="nuevaLatitud" name="nuevaLatitudStr">
+                <input type="hidden" id="nuevaLongitud" name="nuevaLongitudStr">
 
                 <hr class="mb-4">
 
@@ -387,8 +387,8 @@
         });
 
         function actualizarCamposUbicacion(lat, lng) {
-            document.getElementById('nuevaLatitud').value = lat.toFixed(8).replace('.', serverDecimalSeparator);
-            document.getElementById('nuevaLongitud').value = lng.toFixed(8).replace('.', serverDecimalSeparator);
+            document.getElementById('nuevaLatitud').value = lat.toFixed(8).replace(',', '.');
+            document.getElementById('nuevaLongitud').value = lng.toFixed(8).replace(',', '.');
         }
 
         // Búsqueda de Direcciones (Nominatim)

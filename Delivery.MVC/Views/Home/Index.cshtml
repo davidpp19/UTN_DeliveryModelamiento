@@ -50,7 +50,7 @@
                                 {
                                     <p class="small">@Localizer["Horario"]: @res.HoraApertura?.ToString(@"hh\:mm") — @res.HoraCierre?.ToString(@"hh\:mm")</p>
                                 }
-                                <p class="small">@Localizer["Envio"]: $@res.CostoEnvioBase.ToString("0.00")</p>
+                                <p class="small">@Localizer["Envio"]: $1.50 (Base)</p>
                             </div>
                             <div class="card-footer">
                                 <a asp-action="Restaurante" asp-route-id="@res.Id">@Localizer["VerMenu"]</a>
@@ -185,7 +185,7 @@ else
                                     {
                                         <p class="small">Horario: @res.HoraApertura?.ToString(@"hh\:mm") — @res.HoraCierre?.ToString(@"hh\:mm")</p>
                                     }
-                                    <p class="small">Costo envío: $@res.CostoEnvioBase.ToString("0.00")</p>
+                                    <p class="small">Costo envío: $1.50 (Base)</p>
                                 </div>
                                 <div class="card-footer text-center">
                                     <a asp-controller="Auth" asp-action="Login">@Localizer["IniciaSesionVerMenu"]</a>

@@ -53,9 +53,19 @@
                 <div class="card-body">
                     <a asp-action="CambiarEstado" asp-route-id="@Model.Id" class="btn btn-warning mb-3 w-100">Actualizar Estado</a>
                     
-                    <button class="btn btn-primary w-100" id="btnCompartirUbicacion">Empezar a Compartir Ubicación (GPS)</button>
-                    <small class="text-muted mt-2 d-block">Presiona para que el cliente pueda ver tu ubicación en tiempo real mientras vas en camino.</small>
-                    <div id="gpsStatus" class="mt-2 text-info"></div>
+                    @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino)
+                    {
+                        <div class="alert alert-info">
+                            <strong><i class="bi bi-broadcast"></i> GPS Automático:</strong> Tu ubicación se está compartiendo con el cliente.
+                        </div>
+                    }
+                    else if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
+                    {
+                        <div class="alert alert-success">
+                            <strong><i class="bi bi-check-circle"></i> Entregado:</strong> El seguimiento GPS ha finalizado.
+                        </div>
+                    }
+                    <div id="gpsStatus" class="mt-2 text-info fw-bold"></div>
                 </div>
             </div>
         </div>
@@ -164,84 +174,64 @@
 
         let watchId = null;
 
-        document.getElementById('btnCompartirUbicacion').addEventListener('click', function() {
-            if (watchId !== null) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-                this.innerText = "Empezar a Compartir Ubicación (GPS)";
-                this.classList.remove('btn-danger');
-                this.classList.add('btn-primary');
-                document.getElementById('gpsStatus').innerText = "Transmisión detenida.";
-                return;
-            }
-
-            if (navigator.geolocation) {
-                this.innerText = "Detener Transmisión de Ubicación";
-                this.classList.remove('btn-primary');
-                this.classList.add('btn-danger');
-                document.getElementById('gpsStatus').innerText = "Buscando ubicación...";
-
-                watchId = navigator.geolocation.watchPosition(function(position) {
-                    var lat = position.coords.latitude;
-                    var lng = position.coords.longitude;
-                    
-                    document.getElementById('gpsStatus').innerText = `Enviando... Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`;
-
-                    if (repMarker) {
-                        repMarker.setLatLng([lat, lng]);
-                    } else {
-                        repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Tú');
-                    }
-                    map.setView([lat, lng], 16); // Siempre seguir al repartidor
-
-                    // Calcular ruta dinámica desde la moto hasta el cliente
-                    if (cliLat !== 0 && cliLng !== 0) {
-                        fetch(`https://router.project-osrm.org/route/v1/driving/${lng},${lat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.routes && data.routes.length > 0) {
-                                    var routeData = data.routes[0];
-                                    var routeCoords = routeData.geometry.coordinates;
-                                    var latLngs = routeCoords.map(coord => [coord[1], coord[0]]);
-
-                                    if (window.currentDynamicRoute) {
-                                        map.removeLayer(window.currentDynamicRoute);
-                                    }
-                                    
-                                    window.currentDynamicRoute = L.polyline(latLngs, { color: 'purple', weight: 5, opacity: 0.8 }).addTo(map);
-                                    
-                                    const distanciaKm = (routeData.distance / 1000).toFixed(1);
-                                    const tiempoMin = Math.ceil(routeData.duration / 60);
-                                    document.getElementById('gpsStatus').innerText = `Enviando... (A ${distanciaKm}km / ~${tiempoMin} min del cliente)`;
-                                }
-                            }).catch(e => console.error("OSRM Error:", e));
-                    }
-
-                    if (connection.state === signalR.HubConnectionState.Connected) {
-                        connection.invoke("EnviarUbicacionRepartidor", "@Model.Id", lat, lng, @Model.RepartidorId)
-                            .catch(err => console.error("Error al enviar ubicación: " + err));
-                    }
-                }, function(error) {
-                    document.getElementById('gpsStatus').innerText = "Error obteniendo GPS: " + error.message;
-                }, {
-                    enableHighAccuracy: true,
-                    maximumAge: 10000,
-                    timeout: 5000
-                });
-            } else {
-                alert("Geolocalización no soportada por este navegador.");
-            }
-        });
-
-        // Auto-start GPS if status is EnCamino
         @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino)
         {
             <text>
             setTimeout(function() {
-                if (watchId === null) {
-                    document.getElementById('btnCompartirUbicacion').click();
+                if (navigator.geolocation) {
+                    document.getElementById('gpsStatus').innerText = "Buscando ubicación...";
+
+                    watchId = navigator.geolocation.watchPosition(function(position) {
+                        var lat = position.coords.latitude;
+                        var lng = position.coords.longitude;
+                        
+                        document.getElementById('gpsStatus').innerText = `Transmitiendo... Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`;
+
+                        if (repMarker) {
+                            repMarker.setLatLng([lat, lng]);
+                        } else {
+                            repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Tú');
+                        }
+                        map.setView([lat, lng], 16); 
+
+                        if (cliLat !== 0 && cliLng !== 0) {
+                            fetch(`https://router.project-osrm.org/route/v1/driving/${lng},${lat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.routes && data.routes.length > 0) {
+                                        var routeData = data.routes[0];
+                                        var routeCoords = routeData.geometry.coordinates;
+                                        var latLngs = routeCoords.map(coord => [coord[1], coord[0]]);
+
+                                        if (window.currentDynamicRoute) {
+                                            map.removeLayer(window.currentDynamicRoute);
+                                        }
+                                        
+                                        window.currentDynamicRoute = L.polyline(latLngs, { color: 'purple', weight: 5, opacity: 0.8 }).addTo(map);
+                                        
+                                        const distanciaKm = (routeData.distance / 1000).toFixed(1);
+                                        const tiempoMin = Math.ceil(routeData.duration / 60);
+                                        document.getElementById('gpsStatus').innerText = `Transmitiendo... (A ${distanciaKm}km / ~${tiempoMin} min del cliente)`;
+                                    }
+                                }).catch(e => console.error("OSRM Error:", e));
+                        }
+
+                        if (connection.state === signalR.HubConnectionState.Connected) {
+                            connection.invoke("EnviarUbicacionRepartidor", "@Model.Id", lat, lng, @Model.RepartidorId)
+                                .catch(err => console.error("Error al enviar ubicación: " + err));
+                        }
+                    }, function(error) {
+                        document.getElementById('gpsStatus').className = "mt-2 text-danger fw-bold";
+                        document.getElementById('gpsStatus').innerText = "Error obteniendo GPS: " + error.message;
+                    }, {
+                        enableHighAccuracy: true,
+                        maximumAge: 10000,
+                        timeout: 5000
+                    });
+                } else {
+                    document.getElementById('gpsStatus').innerText = "Geolocalización no soportada por este navegador.";
                 }
-            }, 1500); // Dar tiempo a que SignalR conecte
+            }, 1000); 
             </text>
         }
     </script>

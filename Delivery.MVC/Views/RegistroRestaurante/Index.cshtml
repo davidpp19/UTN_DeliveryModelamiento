@@ -133,13 +133,13 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label asp-for="Latitud" class="form-label">Latitud</label>
-                            <input asp-for="Latitud" id="lat-input" class="form-control bg-light" readonly />
+                            <label class="form-label">Latitud</label>
+                            <input type="text" name="latStr" id="lat-input" class="form-control bg-light" readonly value="@Model.Latitud?.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                             <span asp-validation-for="Latitud" class="text-danger"></span>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label asp-for="Longitud" class="form-label">Longitud</label>
-                            <input asp-for="Longitud" id="lng-input" class="form-control bg-light" readonly />
+                            <label class="form-label">Longitud</label>
+                            <input type="text" name="lngStr" id="lng-input" class="form-control bg-light" readonly value="@Model.Longitud?.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                             <span asp-validation-for="Longitud" class="text-danger"></span>
                         </div>
                     </div>

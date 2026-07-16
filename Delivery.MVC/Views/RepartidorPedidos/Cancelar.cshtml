@@ -1,0 +1,20 @@
+@model Delivery.Modelos.Entidades.Pedido
+@{ ViewData["Title"] = "Cancelar Entrega"; }
+<h1 class="my-4 text-danger">¿Estás seguro de que quieres cancelar esta entrega?</h1>
+<p class="text-muted">Si cancelas, el pedido volverá a estar disponible para que otro repartidor lo acepte. Esto puede afectar tu calificación.</p>
+<hr />
+<dl class="row">
+    <dt class="col-sm-3">Nº Pedido</dt>
+    <dd class="col-sm-9">#@Model.Id</dd>
+    <dt class="col-sm-3">Restaurante</dt>
+    <dd class="col-sm-9">@(Model.Restaurante?.Nombre)</dd>
+    <dt class="col-sm-3">Cliente</dt>
+    <dd class="col-sm-9">@(Model.Usuario?.Nombre)</dd>
+    <dt class="col-sm-3">Dirección</dt>
+    <dd class="col-sm-9">@(Model.DireccionEntrega?.Calle)</dd>
+</dl>
+<form asp-action="CancelarConfirmado" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle"></i> Sí, cancelar entrega</button>
+    <a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver</a>
+</form>
