@@ -13,7 +13,7 @@
                     <p><strong>Estado:</strong> <span class="badge bg-secondary">@Model.EstadoPedido</span></p>
                     <p><strong>Fecha del Pedido:</strong> @Model.FechaPedido.ToLocalTime().ToString("g")</p>
                     <p><strong>Cliente:</strong> @(Model.Usuario?.Nombre) @(Model.Usuario?.Apellidos)</p>
-                    <p><strong>Repartidor Asignado:</strong> @(Model.RepartidorId.HasValue ? "Asignado" : "Pendiente")</p>
+                    <p><strong>Repartidor Asignado:</strong> @(Model.Repartidor?.Usuario != null ? Model.Repartidor.Usuario.Nombre + " " + Model.Repartidor.Usuario.Apellidos : "Pendiente")</p>
                     @if (!string.IsNullOrEmpty(Model.Notas))
                     {
                         <p><strong>Notas:</strong> @Model.Notas</p>

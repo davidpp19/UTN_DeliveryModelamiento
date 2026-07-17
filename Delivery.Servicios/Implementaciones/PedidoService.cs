@@ -32,6 +32,7 @@ namespace Delivery.Servicios.Implementaciones
                 .Include(p => p.Usuario)
                 .Include(p => p.Restaurante)
                 .Include(p => p.DireccionEntrega)
+                .Include(p => p.Repartidor).ThenInclude(r => r.Usuario)
                 .ToListAsync();
         }
 

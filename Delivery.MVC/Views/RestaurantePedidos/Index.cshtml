@@ -20,7 +20,7 @@
             <tr>
                 <td>#@item.Id</td>
                 <td>@(item.Usuario?.Nombre + " " + item.Usuario?.Apellidos)</td>
-                <td>@(item.RepartidorId.HasValue ? "Asignado" : "Pendiente")</td>
+                <td>@(item.Repartidor?.Usuario != null ? item.Repartidor.Usuario.Nombre + " " + item.Repartidor.Usuario.Apellidos : "Pendiente")</td>
                 <td><span class="badge bg-secondary">@item.EstadoPedido</span></td>
                 <td>@item.FechaPedido.ToLocalTime().ToString("g")</td>
                 <td>$@item.Total.ToString("0.00")</td>
