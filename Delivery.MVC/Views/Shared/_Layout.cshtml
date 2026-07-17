@@ -65,6 +65,7 @@
                             else if (User.IsInRole("Restaurante"))
                             {
                                 <li class="nav-item"><a class="nav-link" asp-controller="DashboardRestaurante" asp-action="Index">@Localizer["Dashboard"]</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="RestauranteCategorias" asp-action="Index">Categorías</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="RestauranteProductos" asp-action="Index">@Localizer["Productos"]</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="RestaurantePedidos" asp-action="Index">@Localizer["Pedidos"]</a></li>
                             }
