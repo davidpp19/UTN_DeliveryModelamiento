@@ -32,6 +32,28 @@
                 <span asp-validation-for="ComentarioRestaurante" class="text-danger"></span>
             </div>
 
+            <hr />
+            <h4 class="mb-3">Calificar al Repartidor</h4>
+            
+            <input type="hidden" asp-for="RepartidorId" />
+
+            <div class="mb-3">
+                <label asp-for="CalificacionRepartidor" class="form-label">Calificación del Repartidor (Estrellas)</label>
+                <select asp-for="CalificacionRepartidor" class="form-select">
+                    <option value="5">@Localizer["CincoExcelente"]</option>
+                    <option value="4">@Localizer["CuatroMuyBueno"]</option>
+                    <option value="3">@Localizer["TresBueno"]</option>
+                    <option value="2">@Localizer["DosRegular"]</option>
+                    <option value="1">@Localizer["UnoMalo"]</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ComentarioRepartidor" class="form-label">@Localizer["ComentarioOpcionalTag"]</label>
+                <textarea asp-for="ComentarioRepartidor" class="form-control" rows="3" placeholder="¿Qué te pareció el servicio de entrega?"></textarea>
+                <span asp-validation-for="ComentarioRepartidor" class="text-danger"></span>
+            </div>
+
             <div class="mb-3">
                 <button type="submit" class="btn btn-warning fw-bold">@Localizer["EnviarCalificacionBtn"]</button>
                 <a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["CancelarBtn"]</a>

@@ -62,6 +62,9 @@ namespace Delivery.Servicios.Implementaciones
             existingUsuario.TipoUsuario = usuario.TipoUsuario;
             existingUsuario.Activo = usuario.Activo;
             existingUsuario.FotoPerfilUrl = usuario.FotoPerfilUrl;
+            existingUsuario.Cedula = usuario.Cedula;
+            existingUsuario.FechaNacimiento = usuario.FechaNacimiento;
+            existingUsuario.InformacionAdicional = usuario.InformacionAdicional;
             existingUsuario.ActualizadoEn = System.DateTime.UtcNow;
 
             await _context.SaveChangesAsync();

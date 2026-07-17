@@ -1,5 +1,5 @@
 @using Microsoft.AspNetCore.Mvc.Localization
-@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model Delivery.Modelos.Entidades.Repartidor
 @{
     ViewData["Title"] = Localizer["PerfilRepartidor"];

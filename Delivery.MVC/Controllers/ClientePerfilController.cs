@@ -62,7 +62,7 @@ namespace Delivery.MVC.Controllers
             miUsuario.Nombre = nombre;
             miUsuario.Apellidos = apellidos;
             miUsuario.Telefono = telefono;
-            if (fechaNacimiento.HasValue) miUsuario.FechaNacimiento = fechaNacimiento;
+            miUsuario.FechaNacimiento = fechaNacimiento;
             miUsuario.InformacionAdicional = informacionAdicional;
 
             try

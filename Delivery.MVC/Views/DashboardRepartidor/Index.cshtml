@@ -1,5 +1,5 @@
 @using Microsoft.AspNetCore.Mvc.Localization
-@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @{
     ViewData["Title"] = Localizer["PanelRepartidorTitle"];
     var repartidor = ViewBag.Repartidor as Delivery.Modelos.Entidades.Repartidor;
@@ -57,7 +57,6 @@ else
 
     <h4>@Localizer["AccionesRapidas"]</h4>
     <a asp-controller="RepartidorPedidos" asp-action="Index">@Localizer["VerMisPedidosAsignados"]</a>
-    <span>|</span> <a asp-controller="RepartidorUbicacion" asp-action="Index">@Localizer["ActualizarMiUbicacion"]</a>
 
     <hr />
 
