@@ -32,6 +32,14 @@ namespace Delivery.API.Controllers
             return Ok(usuario);
         }
 
+        [HttpGet("email/{email}")]
+        public async Task<ActionResult<Usuario>> GetUsuarioByEmail(string email)
+        {
+            var usuario = await _usuarioService.GetByEmailAsync(email);
+            if (usuario == null) return NotFound();
+            return Ok(usuario);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
         {

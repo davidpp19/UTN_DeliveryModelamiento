@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Verificar Cuenta";
+    var email = ViewBag.Email as string;
+}
+
+<div class="row justify-content-center my-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-5 text-center">
+                <i class="bi bi-envelope-check text-primary" style="font-size: 3rem;"></i>
+                <h3 class="mb-4">Verificación de Correo</h3>
+                
+                @if (TempData["Mensaje"] != null)
+                {
+                    <div class="alert alert-info">@TempData["Mensaje"]</div>
+                }
+
+                <p class="text-muted">Ingresa el código de 6 dígitos enviado a <strong>@email</strong></p>
+
+                <form asp-action="VerificarEmail" method="post">
+                    <input type="hidden" name="email" value="@email" />
+                    
+                    <div class="mb-4">
+                        <input type="text" name="codigo" class="form-control form-control-lg text-center" 
+                               placeholder="123456" maxlength="6" style="letter-spacing: 5px; font-weight: bold;" required />
+                    </div>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <button type="submit" class="btn btn-primary w-100 btn-lg rounded-pill">Verificar Cuenta</button>
+                </form>
+
+                <div class="mt-4">
+                    <form asp-action="ReenviarCodigo" method="post" id="form-reenviar">
+                        <input type="hidden" name="email" value="@email" />
+                        <button type="submit" class="btn btn-link text-decoration-none">¿No recibiste el código? Reenviar</button>
+                    </form>
+                    <div id="res-reenviar" class="text-success mt-2" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('form-reenviar').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const form = this;
+            const btn = form.querySelector('button');
+            btn.disabled = true;
+            btn.innerText = 'Reenviando...';
+
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form)
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('res-reenviar').innerText = data.mensaje;
+                document.getElementById('res-reenviar').style.display = 'block';
+                btn.innerText = 'Código reenviado';
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerText = '¿No recibiste el código? Reenviar';
+            });
+        });
+    </script>
+}

@@ -62,6 +62,16 @@ namespace Delivery.Modelos.Entidades
         [Column("informacion_adicional", TypeName = "text")]
         public string? InformacionAdicional { get; set; }
 
+        [Column("email_confirmado")]
+        public bool EmailConfirmado { get; set; } = false;
+
+        [Column("codigo_verificacion")]
+        [StringLength(10)]
+        public string? CodigoVerificacion { get; set; }
+
+        [Column("expiracion_codigo")]
+        public DateTime? ExpiracionCodigo { get; set; }
+
         [Required]
         [Column("creado_en")]
         public DateTime CreadoEn { get; set; }

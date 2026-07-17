@@ -8,6 +8,7 @@ namespace Delivery.Consumer.Interfaces
     {
         Task<IEnumerable<Usuario>> GetAllAsync();
         Task<Usuario?> GetByIdAsync(long id);
+        Task<Usuario?> GetByEmailAsync(string email);
         Task<Usuario?> CreateAsync(Usuario entity);
         Task<bool> UpdateAsync(long id, Usuario entity);
         Task<bool> DeleteAsync(long id);

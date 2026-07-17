@@ -16,6 +16,7 @@ builder.Services.AddControllersWithViews()
     });
 
 builder.Services.AddScoped<Delivery.MVC.Servicios.IArchivoService, Delivery.MVC.Servicios.ArchivoService>();
+builder.Services.AddScoped<Delivery.MVC.Servicios.IEmailService, Delivery.MVC.Servicios.EmailService>();
 
 // Session para el carrito (en memoria del servidor)
 builder.Services.AddDistributedMemoryCache();
