@@ -76,21 +76,18 @@ namespace Delivery.MVC.Controllers
             {
                 if (fotoPerfil != null)
                 {
-                    var fotoUrl = await _archivoService.GuardarArchivoAsync(fotoPerfil, "repartidores/fotos");
-                    if (fotoUrl != null) 
+                    var fotoUrl = await _archivoService.GuardarArchivoAsync(fotoPerfil, "repartidores/perfiles");
+                    if (fotoUrl != null)
                     {
-                        if(miUsuario != null)
+                        miUsuario.FotoPerfilUrl = fotoUrl;
+
+                        // Actualizar la cookie de autenticación para que el cambio se refleje inmediatamente
+                        if (User.Identity is System.Security.Claims.ClaimsIdentity identity)
                         {
-                            miUsuario.FotoPerfilUrl = fotoUrl;
-                            await _usuarioConsumer.UpdateAsync(userId, miUsuario);
-                            
-                            // Refrescar claim de FotoPerfilUrl
-                            var claimsIdentity = (ClaimsIdentity)User.Identity!;
-                            var existingClaim = claimsIdentity.FindFirst("FotoPerfilUrl");
-                            if (existingClaim != null) claimsIdentity.RemoveClaim(existingClaim);
-                            
-                            claimsIdentity.AddClaim(new Claim("FotoPerfilUrl", fotoUrl));
-                            await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                            var existingClaim = identity.FindFirst("FotoPerfilUrl");
+                            if (existingClaim != null) identity.RemoveClaim(existingClaim);
+                            identity.AddClaim(new System.Security.Claims.Claim("FotoPerfilUrl", fotoUrl));
+                            await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, new System.Security.Claims.ClaimsPrincipal(identity));
                         }
                     }
                 }

@@ -1,42 +1,38 @@
 @model Delivery.Modelos.Entidades.Producto
-@{ ViewData["Title"] = "Detalles Producto"; }
-<h1 class="my-4">Detalles Producto</h1><hr />
-<dl class="row">
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CategoriaId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.CategoriaId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Precio)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Precio)</dd>
-<dt class="col-sm-3">Imagen</dt>
-<dd class="col-sm-9">
-    @if (!string.IsNullOrEmpty(Model.ImagenUrl))
-    {
-        <img src="@Model.ImagenUrl" alt="Imagen del producto" class="img-fluid img-thumbnail" style="max-height: 200px;" />
-    }
-    else
-    {
-        <span class="text-muted">Sin imagen</span>
-    }
-</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Disponible)</dt>
-<dd class="col-sm-9">@(Model.Disponible ? "Sí" : "No")</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.TiempoPreparacion)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.TiempoPreparacion)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Categoria)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Categoria)</dd>
-</dl>
-<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
-<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+@{ ViewData["Title"] = "Detalles del Producto"; }
+
+<div class="container mt-4">
+    <h1 class="mb-4">Detalles del Producto</h1>
+    <div class="card shadow-sm col-md-10">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">@Model.Nombre</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+                    {
+                        <img src="@Model.ImagenUrl" alt="Imagen del producto" class="img-fluid img-thumbnail" style="max-height: 250px;" />
+                    }
+                    else
+                    {
+                        <div class="p-5 bg-light text-muted border rounded">Sin imagen</div>
+                    }
+                </div>
+                <div class="col-md-8">
+                    <p><strong>Restaurante:</strong> @ViewBag.RestauranteNombre</p>
+                    <p><strong>Categoría:</strong> @ViewBag.CategoriaNombre</p>
+                    <p><strong>Descripción:</strong> @Model.Descripcion</p>
+                    <p><strong>Precio:</strong> $@Model.Precio.ToString("0.00")</p>
+                    <p><strong>Disponible:</strong> @(Model.Disponible ? "Sí" : "No")</p>
+                    <p><strong>Tiempo de Preparación (min):</strong> @Model.TiempoPreparacion</p>
+                    <p><strong>Creado el:</strong> @Model.CreadoEn.ToLocalTime().ToString("g")</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a>
+        </div>
+    </div>
+</div>

@@ -37,6 +37,10 @@ namespace Delivery.MVC.Controllers
             var restauranteId = await GetMyRestauranteId();
             if (restauranteId == null) return View("SinRestaurante");
 
+            var restaurantes = await _restauranteConsumer.GetAllAsync();
+            var miRestaurante = restaurantes.FirstOrDefault(r => r.Id == restauranteId);
+            ViewBag.RestauranteNombre = miRestaurante?.Nombre ?? "Mi Restaurante";
+
             var todos = await _categoriaConsumer.GetAllAsync();
             var misCategorias = todos.Where(c => c.RestauranteId == restauranteId.Value);
             return View(misCategorias);
@@ -47,6 +51,11 @@ namespace Delivery.MVC.Controllers
             var restauranteId = await GetMyRestauranteId();
             var data = await _categoriaConsumer.GetByIdAsync(id);
             if (data == null || data.RestauranteId != restauranteId) return NotFound();
+
+            var restaurantes = await _restauranteConsumer.GetAllAsync();
+            var miRestaurante = restaurantes.FirstOrDefault(r => r.Id == restauranteId);
+            ViewBag.RestauranteNombre = miRestaurante?.Nombre ?? "Mi Restaurante";
+
             return View(data);
         }
 

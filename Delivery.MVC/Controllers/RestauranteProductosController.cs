@@ -67,6 +67,15 @@ namespace Delivery.MVC.Controllers
             var restauranteId = await GetMyRestauranteId();
             var data = await _productoConsumer.GetByIdAsync(id);
             if (data == null || data.RestauranteId != restauranteId) return NotFound();
+
+            var restaurantes = await _restauranteConsumer.GetAllAsync();
+            var miRestaurante = restaurantes.FirstOrDefault(r => r.Id == restauranteId);
+            ViewBag.RestauranteNombre = miRestaurante?.Nombre ?? "Mi Restaurante";
+
+            var categorias = await _categoriaConsumer.GetAllAsync();
+            var categoria = categorias.FirstOrDefault(c => c.Id == data.CategoriaId);
+            ViewBag.CategoriaNombre = categoria?.Nombre ?? "Sin Categoría";
+
             return View(data);
         }
 

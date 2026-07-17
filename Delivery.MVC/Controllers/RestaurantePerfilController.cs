@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
 using Delivery.Consumer.Interfaces;
 using Delivery.MVC.Servicios;
 
@@ -67,7 +68,26 @@ namespace Delivery.MVC.Controllers
                 if (logo != null)
                 {
                     var logoUrl = await _archivoService.GuardarArchivoAsync(logo, "restaurantes/logos");
-                    if (logoUrl != null) miRestaurante.LogoUrl = logoUrl;
+                    if (logoUrl != null)
+                    {
+                        miRestaurante.LogoUrl = logoUrl;
+                        // También actualizar la foto de perfil del usuario para el menú superior
+                        var miUsuario = await _usuarioConsumer.GetByIdAsync(userId);
+                        if (miUsuario != null)
+                        {
+                            miUsuario.FotoPerfilUrl = logoUrl;
+                            await _usuarioConsumer.UpdateAsync(userId, miUsuario);
+
+                            // Actualizar la cookie de autenticación para que el cambio se refleje inmediatamente
+                            if (User.Identity is System.Security.Claims.ClaimsIdentity identity)
+                            {
+                                var existingClaim = identity.FindFirst("FotoPerfilUrl");
+                                if (existingClaim != null) identity.RemoveClaim(existingClaim);
+                                identity.AddClaim(new System.Security.Claims.Claim("FotoPerfilUrl", logoUrl));
+                                await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, new System.Security.Claims.ClaimsPrincipal(identity));
+                            }
+                        }
+                    }
                 }
 
                 if (portada != null)

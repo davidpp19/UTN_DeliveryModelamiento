@@ -1,23 +1,21 @@
 @model Delivery.Modelos.Entidades.CategoriaProducto
-@{ ViewData["Title"] = "Detalles CategoriaProducto"; }
-<h1 class="my-4">Detalles CategoriaProducto</h1><hr />
-<dl class="row">
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreadoEn)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Productos)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Productos)</dd>
-</dl>
-<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Editar</a>
-<a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a></div>
+@{ ViewData["Title"] = "Detalles de Categoría"; }
+
+<div class="container mt-4">
+    <h1 class="mb-4">Detalles de Categoría</h1>
+    <div class="card shadow-sm col-md-8">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Información</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Restaurante:</strong> @ViewBag.RestauranteNombre</p>
+            <p><strong>Nombre:</strong> @Model.Nombre</p>
+            <p><strong>Descripción:</strong> @Model.Descripcion</p>
+            <p><strong>Creado el:</strong> @Model.CreadoEn.ToLocalTime().ToString("g")</p>
+        </div>
+        <div class="card-footer">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a>
+        </div>
+    </div>
+</div>
