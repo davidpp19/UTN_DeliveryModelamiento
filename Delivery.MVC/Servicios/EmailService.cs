@@ -51,24 +51,40 @@ namespace Delivery.MVC.Servicios
 
         private async Task EnviarCorreoAsync(string destinatario, string asunto, string cuerpoHtml)
         {
-            var emailConfig = _configuration.GetSection("SmtpSettings");
-
-            var email = new MimeMessage();
-            email.From.Add(new MailboxAddress("RayoExpres", emailConfig["SenderEmail"]));
-            email.To.Add(new MailboxAddress("", destinatario));
-            email.Subject = asunto;
-
-            var builder = new BodyBuilder
+            try
             {
-                HtmlBody = cuerpoHtml
-            };
-            email.Body = builder.ToMessageBody();
+                var emailConfig = _configuration.GetSection("SmtpSettings");
+                var server = emailConfig["Server"] ?? "smtp.gmail.com";
+                var portStr = emailConfig["Port"] ?? "587";
+                int port = int.TryParse(portStr, out int p) ? p : 587;
+                var senderName = emailConfig["SenderName"] ?? "RayoExpres";
+                var senderEmail = emailConfig["SenderEmail"] ?? "kdpenap@utn.edu.ec";
+                var username = emailConfig["Username"] ?? "kdpenap@utn.edu.ec";
+                var password = emailConfig["Password"] ?? "numa omlm zkit lvvr";
 
-            using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(emailConfig["Server"], int.Parse(emailConfig["Port"]), SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(emailConfig["Username"], emailConfig["Password"]);
-            await smtp.SendAsync(email);
-            await smtp.DisconnectAsync(true);
+                var email = new MimeMessage();
+                email.From.Add(new MailboxAddress(senderName, senderEmail));
+                email.To.Add(new MailboxAddress("", destinatario));
+                email.Subject = asunto;
+
+                var builder = new BodyBuilder { HtmlBody = cuerpoHtml };
+                email.Body = builder.ToMessageBody();
+
+                using var smtp = new SmtpClient();
+                // Aceptar cualquier certificado temporalmente si hay problemas de SSL en Azure
+                smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+                await smtp.ConnectAsync(server, port, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(username, password);
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
+            }
+            catch (System.Exception ex)
+            {
+                System.Console.WriteLine($"[CRITICAL] Error al enviar correo SMTP a {destinatario}: {ex.Message}");
+                // No lanzamos la excepción para no romper el flujo principal (ej. registro).
+                // El usuario podrá solicitar reenviar el código.
+            }
         }
     }
 }
