@@ -141,22 +141,12 @@
         }
 
         if (restLat !== 0 && cliLat !== 0) {
-            // Draw route with OSRM
-            fetch(`https://router.project-osrm.org/route/v1/driving/${restLng},${restLat};${cliLng},${cliLat}?overview=full&geometries=geojson`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.routes && data.routes.length > 0) {
-                        var route = data.routes[0].geometry.coordinates;
-                        var latLngs = route.map(coord => [coord[1], coord[0]]);
-                        L.polyline(latLngs, { color: 'blue', weight: 4 }).addTo(map);
-                        
-                        try {
-                            map.fitBounds(L.polyline(latLngs).getBounds());
-                        } catch (e) {
-                            console.error("Error al encuadrar ruta inicial:", e);
-                        }
-                    }
-                }).catch(e => console.error(e));
+            try {
+                var bounds = L.latLngBounds([restLat, restLng], [cliLat, cliLng]);
+                map.fitBounds(bounds);
+            } catch (e) {
+                console.error("Error al encuadrar el mapa:", e);
+            }
         } else if (restLat !== 0) {
             map.setView([restLat, restLng], 15);
         } else if (cliLat !== 0) {
