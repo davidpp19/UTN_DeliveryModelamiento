@@ -117,41 +117,50 @@ namespace Delivery.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registro(RegistroDto dto)
         {
-            if (!ModelState.IsValid)
+            try 
             {
+                if (!ModelState.IsValid)
+                {
+                    return View(dto);
+                }
+
+                var codigo = new Random().Next(100000, 999999).ToString();
+                var usuario = new Usuario
+                {
+                    Nombre = dto.Nombre,
+                    Apellidos = dto.Apellidos,
+                    Email = dto.Email,
+                    Telefono = dto.Telefono,
+                    Cedula = dto.Cedula,
+                    PasswordHash = dto.Password, // Se hashea en la API/Servicio
+                    TipoUsuario = Delivery.Modelos.Enums.TipoUsuarioEnum.Cliente,
+                    RolId = 4, // Cliente
+                    Activo = true,
+                    EmailConfirmado = false,
+                    CodigoVerificacion = codigo,
+                    ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15)
+                };
+
+                var created = await _usuarioConsumer.CreateAsync(usuario);
+                if (created != null)
+                {
+                    // Enviar correo de verificación
+                    await _emailService.EnviarCorreoConfirmacionAsync(created.Email, created.Nombre, codigo);
+
+                    // Redirigir a verificación
+                    TempData["Mensaje"] = "Revisa tu correo para verificar tu cuenta.";
+                    return RedirectToAction("VerificarEmail", new { email = created.Email });
+                }
+
+                ModelState.AddModelError(string.Empty, _localizer["Ocurrió un error al registrar el usuario. Es posible que el correo o la cédula ya estén registrados."]);
                 return View(dto);
             }
-
-            var codigo = new Random().Next(100000, 999999).ToString();
-            var usuario = new Usuario
+            catch (System.Exception ex)
             {
-                Nombre = dto.Nombre,
-                Apellidos = dto.Apellidos,
-                Email = dto.Email,
-                Telefono = dto.Telefono,
-                Cedula = dto.Cedula,
-                PasswordHash = dto.Password, // Se hashea en la API/Servicio
-                TipoUsuario = Delivery.Modelos.Enums.TipoUsuarioEnum.Cliente,
-                RolId = 4, // Cliente
-                Activo = true,
-                EmailConfirmado = false,
-                CodigoVerificacion = codigo,
-                ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15)
-            };
-
-            var created = await _usuarioConsumer.CreateAsync(usuario);
-            if (created != null)
-            {
-                // Enviar correo de verificación
-                await _emailService.EnviarCorreoConfirmacionAsync(created.Email, created.Nombre, codigo);
-
-                // Redirigir a verificación
-                TempData["Mensaje"] = "Revisa tu correo para verificar tu cuenta.";
-                return RedirectToAction("VerificarEmail", new { email = created.Email });
+                // Mostramos el error exacto en la vista para depurar en Azure sin la pantalla genérica de error
+                ModelState.AddModelError(string.Empty, "Error crítico interno: " + ex.Message + " | Inner: " + ex.InnerException?.Message);
+                return View(dto);
             }
-
-            ModelState.AddModelError(string.Empty, _localizer["Ocurrió un error al registrar el usuario. Es posible que el correo o la cédula ya estén registrados."]);
-            return View(dto);
         }
 
         [HttpGet]
