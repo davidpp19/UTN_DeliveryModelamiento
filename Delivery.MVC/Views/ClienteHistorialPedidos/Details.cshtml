@@ -206,10 +206,10 @@
             });
 
             if (restLat !== 0) {
-                restMarker = L.marker([restLat, restLng], { icon: restIcon }).addTo(map).bindPopup('Restaurante');
+                restMarker = L.marker([restLat, restLng], { icon: restIcon }).addTo(map).bindPopup('@Html.Raw(Model.Restaurante?.Nombre?.Replace("'", "\\'") ?? "Restaurante")');
             }
             if (cliLat !== 0) {
-                cliMarker = L.marker([cliLat, cliLng], { icon: cliIcon }).addTo(map).bindPopup('Tu Dirección');
+                cliMarker = L.marker([cliLat, cliLng], { icon: cliIcon }).addTo(map).bindPopup('Tu Dirección: @Html.Raw(Model.DireccionEntrega?.Calle?.Replace("'", "\\'") ?? "")');
             }
             
             if (restLat !== 0 && cliLat !== 0) {
@@ -238,7 +238,7 @@
                 if (repMarker) {
                     repMarker.setLatLng([lat, lng]);
                 } else {
-                    repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Repartidor');
+                    repMarker = L.marker([lat, lng], { icon: repIcon }).addTo(map).bindPopup('Repartidor: @Html.Raw(Model.Repartidor?.Usuario?.Nombre?.Replace("'", "\\'") ?? "")');
                 }
                 
                 // Centrar forzosamente el mapa en el repartidor (setView ignora la distancia máxima)

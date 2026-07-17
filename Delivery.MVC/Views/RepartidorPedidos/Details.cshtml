@@ -123,11 +123,11 @@
         });
 
         if (restLat !== 0) {
-            restMarker = L.marker([restLat, restLng], { icon: restIcon }).addTo(map).bindPopup('Restaurante');
+            restMarker = L.marker([restLat, restLng], { icon: restIcon }).addTo(map).bindPopup('@Html.Raw(Model.Restaurante?.Nombre?.Replace("'", "\\'") ?? "Restaurante")');
         }
         
         if (cliLat !== 0) {
-            cliMarker = L.marker([cliLat, cliLng], { icon: cliIcon }).addTo(map).bindPopup('Lugar de Entrega (Cliente)');
+            cliMarker = L.marker([cliLat, cliLng], { icon: cliIcon }).addTo(map).bindPopup('@Html.Raw(Model.Usuario?.Nombre?.Replace("'", "\\'") ?? "") @Html.Raw(Model.Usuario?.Apellidos?.Replace("'", "\\'") ?? "Cliente")');
         }
 
         if (restLat !== 0 && cliLat !== 0) {
@@ -224,8 +224,8 @@
                         document.getElementById('gpsStatus').innerText = "Error obteniendo GPS: " + error.message;
                     }, {
                         enableHighAccuracy: true,
-                        maximumAge: 10000,
-                        timeout: 5000
+                        maximumAge: 0,
+                        timeout: 30000
                     });
                 } else {
                     document.getElementById('gpsStatus').innerText = "Geolocalización no soportada por este navegador.";
