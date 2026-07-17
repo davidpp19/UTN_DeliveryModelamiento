@@ -84,13 +84,18 @@ namespace Delivery.MVC.Controllers
             // Refrescar claim de FotoPerfilUrl
             if (fotoPerfil != null && !string.IsNullOrEmpty(miUsuario.FotoPerfilUrl))
             {
-                var claimsIdentity = (ClaimsIdentity)User.Identity!;
-                var existingClaim = claimsIdentity.FindFirst("FotoPerfilUrl");
-                if (existingClaim != null) claimsIdentity.RemoveClaim(existingClaim);
-                
-                claimsIdentity.AddClaim(new Claim("FotoPerfilUrl", miUsuario.FotoPerfilUrl));
-                
-                await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                var authResult = await HttpContext.AuthenticateAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+                if (authResult.Succeeded && authResult.Principal != null)
+                {
+                    var identity = (System.Security.Claims.ClaimsIdentity)authResult.Principal.Identity!;
+                    var existingClaim = identity.FindFirst("FotoPerfilUrl");
+                    if (existingClaim != null) identity.RemoveClaim(existingClaim);
+                    
+                    identity.AddClaim(new System.Security.Claims.Claim("FotoPerfilUrl", miUsuario.FotoPerfilUrl));
+                    
+                    var properties = authResult.Properties ?? new Microsoft.AspNetCore.Authentication.AuthenticationProperties { IsPersistent = true };
+                    await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, new System.Security.Claims.ClaimsPrincipal(identity), properties);
+                }
             }
 
             TempData["Exito"] = "Perfil actualizado exitosamente.";

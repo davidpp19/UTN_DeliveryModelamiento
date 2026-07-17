@@ -82,12 +82,16 @@ namespace Delivery.MVC.Controllers
                         miUsuario.FotoPerfilUrl = fotoUrl;
 
                         // Actualizar la cookie de autenticación para que el cambio se refleje inmediatamente
-                        if (User.Identity is System.Security.Claims.ClaimsIdentity identity)
+                        var authResult = await HttpContext.AuthenticateAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+                        if (authResult.Succeeded && authResult.Principal != null)
                         {
+                            var identity = (System.Security.Claims.ClaimsIdentity)authResult.Principal.Identity!;
                             var existingClaim = identity.FindFirst("FotoPerfilUrl");
                             if (existingClaim != null) identity.RemoveClaim(existingClaim);
                             identity.AddClaim(new System.Security.Claims.Claim("FotoPerfilUrl", fotoUrl));
-                            await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, new System.Security.Claims.ClaimsPrincipal(identity));
+                            
+                            var properties = authResult.Properties ?? new Microsoft.AspNetCore.Authentication.AuthenticationProperties { IsPersistent = true };
+                            await HttpContext.SignInAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme, new System.Security.Claims.ClaimsPrincipal(identity), properties);
                         }
                     }
                 }
