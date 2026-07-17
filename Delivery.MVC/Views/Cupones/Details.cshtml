@@ -24,12 +24,8 @@
 <dd class="col-sm-9">@Html.DisplayFor(model => model.UsosActuales)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.CuponesUsuarios)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.CuponesUsuarios)</dd>
+<dt class="col-sm-3">Restaurante</dt>
+<dd class="col-sm-9">@(Model.Restaurante?.Nombre ?? "Global / Todos")</dd>
 </dl>
 <div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">@Localizer["EditarBtn"]</a>
 <a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["VolverListadoBtn"]</a></div>

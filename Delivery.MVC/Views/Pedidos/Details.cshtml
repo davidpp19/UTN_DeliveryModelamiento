@@ -6,14 +6,14 @@
 <dl class="row">
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RestauranteId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.RestauranteId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RepartidorId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.RepartidorId)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.DireccionEntregaId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.DireccionEntregaId)</dd>
+<dt class="col-sm-3">Cliente</dt>
+<dd class="col-sm-9">@(Model.Usuario?.Nombre + " " + Model.Usuario?.Apellidos)</dd>
+<dt class="col-sm-3">Restaurante</dt>
+<dd class="col-sm-9">@(Model.Restaurante?.Nombre)</dd>
+<dt class="col-sm-3">Repartidor</dt>
+<dd class="col-sm-9">@(Model.Repartidor?.Usuario != null ? Model.Repartidor.Usuario.Nombre + " " + Model.Repartidor.Usuario.Apellidos : "Pendiente")</dd>
+<dt class="col-sm-3">Dirección</dt>
+<dd class="col-sm-9">@(Model.DireccionEntrega?.Calle + " " + Model.DireccionEntrega?.Numero)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoPedido)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.EstadoPedido)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Subtotal)</dt>
@@ -40,18 +40,7 @@
 <dd class="col-sm-9">@Html.DisplayFor(model => model.FechaEntregaReal)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Restaurante)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Restaurante)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Repartidor)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Repartidor)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.DireccionEntrega)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.DireccionEntrega)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Detalles)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Detalles)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Pagos)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Pagos)</dd>
+
 </dl>
 <div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">@Localizer["EditarBtn"]</a>
 <a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["VolverListadoBtn"]</a></div>

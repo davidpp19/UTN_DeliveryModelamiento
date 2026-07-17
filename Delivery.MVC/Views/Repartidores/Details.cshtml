@@ -4,8 +4,8 @@
 @{ ViewData["Title"] = Localizer["DetallesRepartidorTitle"]; }
 <h1 class="my-4">@Localizer["DetallesRepartidorTitle"]</h1><hr />
 <dl class="row">
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioId)</dd>
+<dt class="col-sm-3">Repartidor</dt>
+<dd class="col-sm-9">@(Model.Usuario?.Nombre + " " + Model.Usuario?.Apellidos)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.LicenciaConducir)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.LicenciaConducir)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FotoLicenciaUrl)</dt>
@@ -13,7 +13,7 @@
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoAprobacion)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.EstadoAprobacion)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.AprobadoPor)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.AprobadoPor)</dd>
+<dd class="col-sm-9">@(Model.UsuarioAprobador != null ? Model.UsuarioAprobador.Nombre + " " + Model.UsuarioAprobador.Apellidos : "")</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaAprobacion)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.FechaAprobacion)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Estado)</dt>
@@ -24,16 +24,7 @@
 <dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Usuario)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UsuarioAprobador)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.UsuarioAprobador)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Vehiculos)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Vehiculos)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.UbicacionActual)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.UbicacionActual)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.HistorialAsignaciones)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.HistorialAsignaciones)</dd>
+
 </dl>
 <div><a asp-action="Edit" asp-route-id="@Model?.UsuarioId" class="btn btn-warning">@Localizer["EditarBtn"]</a>
 <a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["VolverListadoBtn"]</a></div>

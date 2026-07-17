@@ -6,8 +6,8 @@
 <dl class="row">
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Id)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.RolId)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.RolId)</dd>
+<dt class="col-sm-3">Rol</dt>
+<dd class="col-sm-9">@(Model.Rol?.Nombre ?? "Rol " + Model.RolId)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Apellidos)</dt>
@@ -28,10 +28,7 @@
 <dd class="col-sm-9">@Html.DisplayFor(model => model.CreadoEn)</dd>
 <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ActualizadoEn)</dt>
 <dd class="col-sm-9">@Html.DisplayFor(model => model.ActualizadoEn)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Rol)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Rol)</dd>
-<dt class="col-sm-3">@Html.DisplayNameFor(model => model.Direcciones)</dt>
-<dd class="col-sm-9">@Html.DisplayFor(model => model.Direcciones)</dd>
+
 </dl>
 <div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">@Localizer["EditarBtn"]</a>
 <a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["VolverListadoBtn"]</a></div>

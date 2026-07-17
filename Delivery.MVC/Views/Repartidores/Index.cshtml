@@ -7,18 +7,18 @@
 <div class="table-responsive">
 <table class="table table-striped table-hover align-middle">
 <thead class="table-dark"><tr>
-<th>UsuarioId</th>
+<th>Repartidor</th>
 <th>LicenciaConducir</th>
 <th>FotoLicenciaUrl</th>
 <th>EstadoAprobacion</th>
 <th>AprobadoPor</th>
 <th>@Localizer["AccionesTag"]</th></tr></thead><tbody>
 @foreach (var item in Model) {<tr>
-<td>@Html.DisplayFor(modelItem => item.UsuarioId)</td>
+<td>@(item.Usuario?.Nombre + " " + item.Usuario?.Apellidos)</td>
 <td>@Html.DisplayFor(modelItem => item.LicenciaConducir)</td>
 <td>@Html.DisplayFor(modelItem => item.FotoLicenciaUrl)</td>
 <td>@Html.DisplayFor(modelItem => item.EstadoAprobacion)</td>
-<td>@Html.DisplayFor(modelItem => item.AprobadoPor)</td>
+<td>@(item.UsuarioAprobador != null ? item.UsuarioAprobador.Nombre + " " + item.UsuarioAprobador.Apellidos : "")</td>
 <td>
 <a asp-action="Edit" asp-route-id="@item.UsuarioId" class="btn btn-sm btn-warning">@Localizer["EditarBtn"]</a>
 <a asp-action="Details" asp-route-id="@item.UsuarioId" class="btn btn-sm btn-info text-white">@Localizer["DetallesBtn"]</a>

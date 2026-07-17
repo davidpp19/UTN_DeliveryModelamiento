@@ -39,28 +39,7 @@
                                 <li class="nav-item"><a class="nav-link" asp-controller="ClienteCupones" asp-action="Index">@Localizer["MisCupones"]</a></li>
                             }
                             @* ── ADMINISTRADOR ── *@
-                            else if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        @Localizer["Administracion"]
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
-                                        <li><a class="dropdown-item" asp-controller="DashboardAdministrador" asp-action="Index">@Localizer["Dashboard"]</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminUsuarios" asp-action="Index">@Localizer["Usuarios"]</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminRestaurantes" asp-action="Index">@Localizer["Restaurantes"]</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminRepartidores" asp-action="Index">@Localizer["Repartidores"]</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminProductos" asp-action="Index">@Localizer["Productos"]</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminPedidos" asp-action="Index">@Localizer["Pedidos"]</a></li>
-                                        <li><a class="dropdown-item" asp-controller="AdminCupones" asp-action="Index">@Localizer["Cupones"]</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Repartidores">@Localizer["SolRepartidores"]</a></li>
-                                        <li><a class="dropdown-item text-warning" asp-controller="AdminAprobaciones" asp-action="Restaurantes">@Localizer["SolRestaurantes"]</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" asp-controller="Auditorias" asp-action="Index">@Localizer["Auditoria"]</a></li>
-                                    </ul>
-                                </li>
-                            }
+                            @* Movido a la barra lateral izquierda *@
                             @* ── RESTAURANTE ── *@
                             else if (User.IsInRole("Restaurante"))
                             {
@@ -179,11 +158,42 @@
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="d-flex">
+            <!-- Sidebar Administrativo -->
+            <div class="bg-dark text-white p-3 shadow" style="width: 280px; min-height: calc(100vh - 70px);">
+                <ul class="nav flex-column gap-2 mt-3">
+                    <li class="nav-item"><a class="nav-link text-white fw-semibold" asp-controller="DashboardAdministrador" asp-action="Index"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="AdminUsuarios" asp-action="Index"><i class="bi bi-people me-2"></i> Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="AdminRestaurantes" asp-action="Index"><i class="bi bi-shop me-2"></i> Restaurantes</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="AdminRepartidores" asp-action="Index"><i class="bi bi-bicycle me-2"></i> Repartidores</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="AdminProductos" asp-action="Index"><i class="bi bi-box me-2"></i> Productos</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="AdminPedidos" asp-action="Index"><i class="bi bi-receipt me-2"></i> Pedidos</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="AdminCupones" asp-action="Index"><i class="bi bi-ticket-perforated me-2"></i> Cupones</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="Auditorias" asp-action="Index"><i class="bi bi-shield-check me-2"></i> Auditoría</a></li>
+                    <li><hr class="dropdown-divider border-secondary my-2"></li>
+                    <li class="nav-item"><a class="nav-link text-warning" asp-controller="AdminAprobaciones" asp-action="Repartidores"><i class="bi bi-person-lines-fill me-2"></i> Solicitudes Repartidores</a></li>
+                    <li class="nav-item"><a class="nav-link text-warning" asp-controller="AdminAprobaciones" asp-action="Restaurantes"><i class="bi bi-shop-window me-2"></i> Solicitudes Restaurantes</a></li>
+                </ul>
+            </div>
+            
+            <!-- Contenido Principal -->
+            <div class="flex-grow-1 p-4 bg-light">
+                <main role="main" class="pb-3 bg-white p-4 rounded shadow-sm">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="container mt-4">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    }
 
     <footer class="border-top footer text-muted bg-light mt-5 py-3">
         <div class="container text-center">
