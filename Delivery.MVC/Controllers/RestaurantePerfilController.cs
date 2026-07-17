@@ -15,11 +15,13 @@ namespace Delivery.MVC.Controllers
     public class RestaurantePerfilController : Controller
     {
         private readonly IRestauranteConsumer _restauranteConsumer;
+        private readonly IUsuarioConsumer _usuarioConsumer;
         private readonly IArchivoService _archivoService;
 
-        public RestaurantePerfilController(IRestauranteConsumer restauranteConsumer, IArchivoService archivoService)
+        public RestaurantePerfilController(IRestauranteConsumer restauranteConsumer, IUsuarioConsumer usuarioConsumer, IArchivoService archivoService)
         {
             _restauranteConsumer = restauranteConsumer;
+            _usuarioConsumer = usuarioConsumer;
             _archivoService = archivoService;
         }
 
