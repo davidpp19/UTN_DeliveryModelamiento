@@ -1,11 +1,13 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @{
-    ViewData["Title"] = "Panel de Repartidor";
+    ViewData["Title"] = Localizer["PanelRepartidorTitle"];
     var repartidor = ViewBag.Repartidor as Delivery.Modelos.Entidades.Repartidor;
     var pedidosRecientes = ViewBag.PedidosRecientes as System.Collections.Generic.List<Delivery.Modelos.Entidades.Pedido>;
 }
 
-<h1>Panel de Repartidor</h1>
-<p>Bienvenido. Gestiona tus entregas y actualiza tu estado.</p>
+<h1>@Localizer["PanelRepartidorTitle"]</h1>
+<p>@Localizer["BienvenidoRepartidorMsg"]</p>
 
 @if (TempData["Exito"] != null)
 {
@@ -15,37 +17,37 @@
 @if (ViewBag.Estado == "Pendiente" || ViewBag.Estado == "Rechazado")
 {
     <div class="alert alert-warning mt-4">
-        <h4><i class="bi bi-exclamation-triangle"></i> Cuenta @ViewBag.Estado</h4>
+        <h4><i class="bi bi-exclamation-triangle"></i> @string.Format(Localizer["CuentaEstadoTitle"].Value, ViewBag.Estado)</h4>
         @if (ViewBag.Estado == "Pendiente")
         {
-            <p>Tu solicitud ha sido enviada correctamente. Un administrador revisará tu información y aprobará o rechazará tu cuenta. Mientras tanto podrás ingresar al sistema, pero tus funciones permanecerán bloqueadas.</p>
+            <p>@Localizer["CuentaPendienteMsg"]</p>
         }
         else
         {
-            <p>Tu solicitud ha sido rechazada por un administrador. Revisa tus notificaciones para conocer el motivo. No podrás operar en la plataforma.</p>
+            <p>@Localizer["CuentaRechazadaMsg"]</p>
         }
     </div>
 }
 else
 {
-    <h4>Resumen</h4>
+    <h4>@Localizer["ResumenDashboard"]</h4>
     <table class="table table-bordered" style="max-width: 500px;">
         <tr>
-            <th>Total Entregas Completadas</th>
+            <th>@Localizer["TotalEntregasDashboard"]</th>
             <td>@ViewBag.TotalEntregados</td>
         </tr>
         <tr>
-            <th>Pedidos Activos</th>
+            <th>@Localizer["PedidosActivosDashboard"]</th>
             <td>@ViewBag.PedidosActivos</td>
         </tr>
         @if (repartidor != null)
         {
             <tr>
-                <th>Calificación</th>
-                <td>@(repartidor.CalificacionPromedio?.ToString("0.0") ?? "Sin calificaciones")</td>
+                <th>@Localizer["CalificacionDashboard"]</th>
+                <td>@(repartidor.CalificacionPromedio?.ToString("0.0") ?? Localizer["SinCalificaciones"].Value)</td>
             </tr>
             <tr>
-                <th>Estado</th>
+                <th>@Localizer["EstadoDashboard"]</th>
                 <td>@repartidor.EstadoAprobacion</td>
             </tr>
         }
@@ -53,48 +55,27 @@ else
 
     <hr />
 
-    <h4>Mis Notificaciones Recientes</h4>
-    @if (ViewBag.Notificaciones != null && ((IEnumerable<Delivery.Modelos.Entidades.Notificacion>)ViewBag.Notificaciones).Any())
-    {
-        <ul class="list-group mb-4">
-            @foreach (var noti in (IEnumerable<Delivery.Modelos.Entidades.Notificacion>)ViewBag.Notificaciones)
-            {
-                <li class="list-group-item">
-                    <strong>@noti.Titulo</strong><br />
-                    <small class="text-muted">@noti.CreadaEn.ToLocalTime().ToString("g")</small>
-                    <p class="mb-0">@noti.Mensaje</p>
-                </li>
-            }
-        </ul>
-    }
-    else
-    {
-        <p>No tienes notificaciones.</p>
-    }
+    <h4>@Localizer["AccionesRapidas"]</h4>
+    <a asp-controller="RepartidorPedidos" asp-action="Index">@Localizer["VerMisPedidosAsignados"]</a>
+    <span>|</span> <a asp-controller="RepartidorUbicacion" asp-action="Index">@Localizer["ActualizarMiUbicacion"]</a>
 
     <hr />
 
-    <h4>Acciones Rápidas</h4>
-    <a asp-controller="RepartidorPedidos" asp-action="Index">Ver Mis Pedidos Asignados</a>
-    <span>|</span> <a asp-controller="RepartidorUbicacion" asp-action="Index">Actualizar Mi Ubicación</a>
-
-    <hr />
-
-    <h4>Últimos 5 Pedidos</h4>
+    <h4>@Localizer["UltimosPedidos"]</h4>
     @if (pedidosRecientes == null || !pedidosRecientes.Any())
     {
-        <p>No tienes pedidos asignados aún.</p>
+        <p>@Localizer["NoPedidosAsignados"]</p>
     }
     else
     {
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Pedido #</th>
-                    <th>Restaurante</th>
-                    <th>Estado</th>
-                    <th>Fecha</th>
-                    <th>Acciones</th>
+                    <th>@Localizer["PedidoNum"]</th>
+                    <th>@Localizer["RestauranteTh"]</th>
+                    <th>@Localizer["EstadoTh"]</th>
+                    <th>@Localizer["FechaTh"]</th>
+                    <th>@Localizer["AccionesTh"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -102,13 +83,13 @@ else
                 {
                     <tr>
                         <td>@pedido.Id</td>
-                        <td>@(pedido.Restaurante?.Nombre ?? "Restaurante")</td>
+                        <td>@(pedido.Restaurante?.Nombre ?? Localizer["RestauranteTh"].Value)</td>
                         <td>@pedido.EstadoPedido</td>
                         <td>@pedido.FechaPedido.ToLocalTime().ToString("g")</td>
                         <td>
-                            <a asp-controller="RepartidorPedidos" asp-action="Details" asp-route-id="@pedido.Id">Ver</a>
+                            <a asp-controller="RepartidorPedidos" asp-action="Details" asp-route-id="@pedido.Id">@Localizer["VerBtn"]</a>
                             |
-                            <a asp-controller="RepartidorPedidos" asp-action="CambiarEstado" asp-route-id="@pedido.Id">Cambiar Estado</a>
+                            <a asp-controller="RepartidorPedidos" asp-action="CambiarEstado" asp-route-id="@pedido.Id">@Localizer["CambiarEstadoBtn"]</a>
                         </td>
                     </tr>
                 }

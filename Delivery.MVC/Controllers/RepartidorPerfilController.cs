@@ -48,7 +48,7 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CompletarPerfil(long id, string direccion, string datosAdicionales, IFormFile? fotoPerfil)
+        public async Task<IActionResult> CompletarPerfil(long id, string nombre, string apellidos, string cedula, string telefono, string datosAdicionales, IFormFile? fotoPerfil)
         {
             var userId = GetMyUsuarioId();
             
@@ -60,7 +60,16 @@ namespace Delivery.MVC.Controllers
                 return Unauthorized();
             }
 
-            miRepartidor.Direccion = direccion;
+            var miUsuario = await _usuarioConsumer.GetByIdAsync(userId);
+            if (miUsuario != null)
+            {
+                miUsuario.Nombre = nombre;
+                miUsuario.Apellidos = apellidos;
+                miUsuario.Cedula = cedula;
+                miUsuario.Telefono = telefono;
+                await _usuarioConsumer.UpdateAsync(userId, miUsuario);
+            }
+
             miRepartidor.DatosAdicionales = datosAdicionales;
 
             try
@@ -70,7 +79,6 @@ namespace Delivery.MVC.Controllers
                     var fotoUrl = await _archivoService.GuardarArchivoAsync(fotoPerfil, "repartidores/fotos");
                     if (fotoUrl != null) 
                     {
-                        var miUsuario = await _usuarioConsumer.GetByIdAsync(userId);
                         if(miUsuario != null)
                         {
                             miUsuario.FotoPerfilUrl = fotoUrl;

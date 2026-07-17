@@ -1,10 +1,12 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @model Delivery.Modelos.Entidades.Repartidor
 @{
-    ViewData["Title"] = "Mi Perfil de Repartidor";
+    ViewData["Title"] = Localizer["PerfilRepartidor"];
 }
 
 <div class="container mt-4">
-    <h2>Mi Perfil de Repartidor</h2>
+    <h2>@Localizer["PerfilRepartidor"]</h2>
     <hr />
 
     @if (TempData["Error"] != null)
@@ -19,19 +21,34 @@
     <form asp-action="CompletarPerfil" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
         <input type="hidden" name="id" value="@Model.UsuarioId" />
 
-        <div class="mb-3">
-            <label class="form-label">Dirección Actual</label>
-            <input type="text" name="direccion" class="form-control" value="@Model.Direccion" />
-            <small class="text-muted">La dirección desde donde sueles operar o vives.</small>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">@Localizer["NombreTag"]</label>
+                <input type="text" name="nombre" class="form-control" value="@Model.Usuario?.Nombre" required />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">@Localizer["ApellidosTag"]</label>
+                <input type="text" name="apellidos" class="form-control" value="@Model.Usuario?.Apellidos" required />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">@Localizer["IdentificacionTag"]</label>
+                <input type="text" name="cedula" class="form-control" value="@Model.Usuario?.Cedula" required />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">@Localizer["TelefonoTag"]</label>
+                <input type="text" name="telefono" class="form-control" value="@Model.Usuario?.Telefono" required />
+            </div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Datos Adicionales / Horarios Disponibles</label>
+            <label class="form-label">@Localizer["DatosAdicionalesTag"]</label>
             <textarea name="datosAdicionales" class="form-control" rows="3">@Model.DatosAdicionales</textarea>
         </div>
 
         <hr />
-        <h4>Foto de Perfil</h4>
+        <h4>@Localizer["FotoPerfilTag"]</h4>
         <div class="row mt-3">
             <div class="col-md-6 mb-3">
                 @if (Model.Usuario != null && !string.IsNullOrEmpty(Model.Usuario.FotoPerfilUrl))
@@ -41,13 +58,13 @@
                     </div>
                 }
                 <input type="file" name="fotoPerfil" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
-                <small class="text-muted">Formatos: JPG, PNG, WEBP. Máx: 5MB.</small>
+                <small class="text-muted">@Localizer["FormatosImagenTag"]</small>
             </div>
         </div>
 
         <div class="mt-4">
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-            <a asp-controller="DashboardRepartidor" asp-action="Index" class="btn btn-outline-secondary">Volver al Dashboard</a>
+            <button type="submit" class="btn btn-primary">@Localizer["GuardarPerfilBtn"]</button>
+            <a asp-controller="DashboardRepartidor" asp-action="Index" class="btn btn-outline-secondary">@Localizer["VolverDashboardBtn"]</a>
         </div>
     </form>
 </div>

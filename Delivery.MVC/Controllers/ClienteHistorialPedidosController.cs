@@ -42,6 +42,10 @@ namespace Delivery.MVC.Controllers
             var userId = GetMyUsuarioId();
             var data = await _pedidoConsumer.GetByIdAsync(id);
             if (data == null || data.UsuarioId != userId) return NotFound();
+            
+            var todas = await _resenaConsumer.GetAllAsync();
+            ViewBag.HasResena = todas.Any(r => r.PedidoId == id);
+            
             return View(data);
         }
 
@@ -51,18 +55,26 @@ namespace Delivery.MVC.Controllers
             var pedido = await _pedidoConsumer.GetByIdAsync(id);
             if (pedido == null || pedido.UsuarioId != userId) return NotFound();
             
-            // Solo se puede calificar si está entregado
             if (pedido.EstadoPedido != Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
             {
                 return RedirectToAction(nameof(Index));
+            }
+
+            var todas = await _resenaConsumer.GetAllAsync();
+            if (todas.Any(r => r.PedidoId == id))
+            {
+                TempData["Exito"] = "Ya has calificado este pedido.";
+                return RedirectToAction(nameof(Details), new { id });
             }
 
             var resena = new Resena
             {
                 UsuarioId = userId,
                 RestauranteId = pedido.RestauranteId,
+                RepartidorId = pedido.RepartidorId,
                 PedidoId = pedido.Id,
-                CalificacionRestaurante = 5 // Default
+                CalificacionRestaurante = 5, // Default
+                CalificacionRepartidor = 5 // Default
             };
 
             return View(resena);
@@ -74,8 +86,14 @@ namespace Delivery.MVC.Controllers
             var userId = GetMyUsuarioId();
             entity.UsuarioId = userId;
             
+            var todas = await _resenaConsumer.GetAllAsync();
+            if (todas.Any(r => r.PedidoId == entity.PedidoId))
+            {
+                return RedirectToAction(nameof(Details), new { id = entity.PedidoId });
+            }
+
             await _resenaConsumer.CreateAsync(entity);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { id = entity.PedidoId });
         }
     }
 }

@@ -1,24 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -31,7 +31,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <!-- General -->
+  
   <data name="Idioma" xml:space="preserve">
     <value>Language</value>
   </data>
@@ -47,7 +47,7 @@
   <data name="Cancelar" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <!-- Navbar -->
+  
   <data name="Inicio" xml:space="preserve">
     <value>Home</value>
   </data>
@@ -126,7 +126,7 @@
   <data name="Registrarse" xml:space="preserve">
     <value>Sign Up</value>
   </data>
-  <!-- Auth -->
+  
   <data name="CorreoElectronico" xml:space="preserve">
     <value>Email Address</value>
   </data>
@@ -154,7 +154,7 @@
   <data name="PasswordPlaceholder" xml:space="preserve">
     <value>********</value>
   </data>
-  <!-- Home -->
+  
   <data name="MensajeBienvenida" xml:space="preserve">
     <value>Welcome back to RayoExpres. What are you craving today?</value>
   </data>
@@ -1724,4 +1724,4 @@
   <data name="CancelarVolverBtn" xml:space="preserve">
     <value>Cancel and return</value>
   </data>
-</root>
+<data name="IdentificacionTag" xml:space="preserve"><value>ID Document</value></data><data name="DatosAdicionalesTag" xml:space="preserve"><value>Additional Data / Available Hours</value></data><data name="FotoPerfilTag" xml:space="preserve"><value>Profile Picture</value></data><data name="FormatosImagenTag" xml:space="preserve"><value>Formats: JPG, PNG, WEBP. Max: 5MB.</value></data><data name="VolverDashboardBtn" xml:space="preserve"><value>Back to Dashboard</value></data><data name="PanelRepartidorTitle" xml:space="preserve"><value>Delivery Driver Dashboard</value></data><data name="BienvenidoRepartidorMsg" xml:space="preserve"><value>Welcome. Manage your deliveries and update your status.</value></data><data name="CuentaEstadoTitle" xml:space="preserve"><value>{0} Account</value></data><data name="CuentaPendienteMsg" xml:space="preserve"><value>Your request has been sent successfully. An administrator will review your information and approve or reject your account. In the meantime, you can log in, but your functions will be blocked.</value></data><data name="CuentaRechazadaMsg" xml:space="preserve"><value>Your request has been rejected by an administrator. Check your notifications for the reason. You cannot operate on the platform.</value></data><data name="ResumenDashboard" xml:space="preserve"><value>Summary</value></data><data name="TotalEntregasDashboard" xml:space="preserve"><value>Total Deliveries Completed</value></data><data name="PedidosActivosDashboard" xml:space="preserve"><value>Active Orders</value></data><data name="CalificacionDashboard" xml:space="preserve"><value>Rating</value></data><data name="EstadoDashboard" xml:space="preserve"><value>Status</value></data><data name="SinCalificaciones" xml:space="preserve"><value>No ratings yet</value></data><data name="AccionesRapidas" xml:space="preserve"><value>Quick Actions</value></data><data name="VerMisPedidosAsignados" xml:space="preserve"><value>View Assigned Orders</value></data><data name="ActualizarMiUbicacion" xml:space="preserve"><value>Update My Location</value></data><data name="UltimosPedidos" xml:space="preserve"><value>Last 5 Orders</value></data><data name="NoPedidosAsignados" xml:space="preserve"><value>You have no assigned orders yet.</value></data><data name="PedidoNum" xml:space="preserve"><value>Order #</value></data><data name="RestauranteTh" xml:space="preserve"><value>Restaurant</value></data><data name="EstadoTh" xml:space="preserve"><value>Status</value></data><data name="FechaTh" xml:space="preserve"><value>Date</value></data><data name="AccionesTh" xml:space="preserve"><value>Actions</value></data><data name="VerBtn" xml:space="preserve"><value>View</value></data><data name="CambiarEstadoBtn" xml:space="preserve"><value>Change Status</value></data><data name="PanelRestauranteTitle" xml:space="preserve"><value>Restaurant Dashboard</value></data><data name="RestauranteEstadoTitle" xml:space="preserve"><value>Restaurant {0}</value></data><data name="RestaurantePendienteMsg" xml:space="preserve"><value>Your restaurant is under review by an administrator. In the meantime, you can log in, but your functions will be blocked.</value></data><data name="RestauranteRechazadoMsg" xml:space="preserve"><value>Your restaurant request has been rejected by an administrator. Check your notifications for the reason.</value></data><data name="BienvenidoRestauranteMsg" xml:space="preserve"><value>Welcome to your restaurant management. Here you can manage your products and view the orders assigned to you.</value></data><data name="MisProductosTitle" xml:space="preserve"><value>My Products</value></data><data name="MisProductosDesc" xml:space="preserve"><value>Manage your product catalog and prices.</value></data><data name="IrMisProductosBtn" xml:space="preserve"><value>Go to My Products</value></data><data name="MisCategoriasTitle" xml:space="preserve"><value>My Categories</value></data><data name="MisCategoriasDesc" xml:space="preserve"><value>Manage your menu categories.</value></data><data name="IrCategoriasBtn" xml:space="preserve"><value>Go to Categories</value></data><data name="PedidosActivosTitle" xml:space="preserve"><value>Active Orders</value></data><data name="PedidosActivosDesc" xml:space="preserve"><value>Review customer orders and change their statuses.</value></data><data name="IrPedidosBtn" xml:space="preserve"><value>Go to Orders</value></data></root>

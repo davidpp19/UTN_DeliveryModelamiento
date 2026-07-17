@@ -1,81 +1,59 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @{
-    ViewData["Title"] = "Panel de Restaurante";
+    ViewData["Title"] = Localizer["PanelRestauranteTitle"];
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4 text-success"><i class="bi bi-shop"></i> Panel de Restaurante</h1>
+    <h1 class="mb-4 text-success"><i class="bi bi-shop"></i> @Localizer["PanelRestauranteTitle"]</h1>
     
     @if (ViewBag.Estado == "Pendiente" || ViewBag.Estado == "Rechazado")
     {
         <div class="alert alert-warning">
-            <h4><i class="bi bi-exclamation-triangle"></i> Restaurante @ViewBag.Estado</h4>
+            <h4><i class="bi bi-exclamation-triangle"></i> @string.Format(Localizer["RestauranteEstadoTitle"].Value, ViewBag.Estado)</h4>
             @if (ViewBag.Estado == "Pendiente")
             {
-                <p>Tu restaurante está en revisión por un administrador. Mientras tanto podrás ingresar, pero tus funciones permanecerán bloqueadas.</p>
+                <p>@Localizer["RestaurantePendienteMsg"]</p>
             }
             else
             {
-                <p>La solicitud de tu restaurante ha sido rechazada por un administrador. Revisa tus notificaciones para conocer el motivo.</p>
+                <p>@Localizer["RestauranteRechazadoMsg"]</p>
             }
         </div>
     }
     else
     {
-        <p class="lead">Bienvenido a la gestión de tu restaurante. Aquí puedes administrar tus productos y visualizar los pedidos asignados a ti.</p>
+        <p class="lead">@Localizer["BienvenidoRestauranteMsg"]</p>
         <hr />
 
         <div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
             <div class="col">
                 <div class="card h-100 shadow-sm border-info">
                     <div class="card-body text-center">
-                        <h5 class="card-title">Mis Productos</h5>
-                        <p class="card-text">Gestiona tu catálogo de productos y precios.</p>
-                        <a asp-controller="RestauranteProductos" asp-action="Index" class="btn btn-info text-white">Ir a Mis Productos</a>
+                        <h5 class="card-title">@Localizer["MisProductosTitle"]</h5>
+                        <p class="card-text">@Localizer["MisProductosDesc"]</p>
+                        <a asp-controller="RestauranteProductos" asp-action="Index" class="btn btn-info text-white">@Localizer["IrMisProductosBtn"]</a>
                     </div>
                 </div>
             </div>
             <div class="col">
                 <div class="card h-100 shadow-sm border-warning">
                     <div class="card-body text-center">
-                        <h5 class="card-title">Mis Categorías</h5>
-                        <p class="card-text">Administra las categorías de tu menú.</p>
-                        <a asp-controller="RestauranteCategorias" asp-action="Index" class="btn btn-warning">Ir a Categorías</a>
+                        <h5 class="card-title">@Localizer["MisCategoriasTitle"]</h5>
+                        <p class="card-text">@Localizer["MisCategoriasDesc"]</p>
+                        <a asp-controller="RestauranteCategorias" asp-action="Index" class="btn btn-warning">@Localizer["IrCategoriasBtn"]</a>
                     </div>
                 </div>
             </div>
             <div class="col">
                 <div class="card h-100 shadow-sm border-danger">
                     <div class="card-body text-center">
-                        <h5 class="card-title">Pedidos Activos</h5>
-                        <p class="card-text">Revisa los pedidos de los clientes y cambia sus estados.</p>
-                        <a asp-controller="RestaurantePedidos" asp-action="Index" class="btn btn-danger">Ir a Pedidos</a>
+                        <h5 class="card-title">@Localizer["PedidosActivosTitle"]</h5>
+                        <p class="card-text">@Localizer["PedidosActivosDesc"]</p>
+                        <a asp-controller="RestaurantePedidos" asp-action="Index" class="btn btn-danger">@Localizer["IrPedidosBtn"]</a>
                     </div>
                 </div>
             </div>
         </div>
-    }
-
-    <hr />
-    <h4>Mis Notificaciones Recientes</h4>
-    @if (ViewBag.Notificaciones != null && ((IEnumerable<Delivery.Modelos.Entidades.Notificacion>)ViewBag.Notificaciones).Any())
-    {
-        <div class="row">
-            <div class="col-md-6">
-                <ul class="list-group mb-4 shadow-sm">
-                    @foreach (var noti in (IEnumerable<Delivery.Modelos.Entidades.Notificacion>)ViewBag.Notificaciones)
-                    {
-                        <li class="list-group-item">
-                            <strong>@noti.Titulo</strong><br />
-                            <small class="text-muted">@noti.CreadaEn.ToLocalTime().ToString("g")</small>
-                            <p class="mb-0">@noti.Mensaje</p>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    }
-    else
-    {
-        <p>No tienes notificaciones.</p>
     }
 </div>
