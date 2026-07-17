@@ -29,6 +29,9 @@ namespace Delivery.Servicios.Implementaciones
                 .AsNoTracking()
                 .Include(p => p.Detalles)
                 .Include(p => p.Pagos)
+                .Include(p => p.Usuario)
+                .Include(p => p.Restaurante)
+                .Include(p => p.DireccionEntrega)
                 .ToListAsync();
         }
 
@@ -37,6 +40,10 @@ namespace Delivery.Servicios.Implementaciones
             return await _context.Pedidos
                 .Include(p => p.Detalles)
                 .Include(p => p.Pagos)
+                .Include(p => p.Usuario)
+                .Include(p => p.Restaurante)
+                .Include(p => p.DireccionEntrega)
+                .Include(p => p.Repartidor).ThenInclude(r => r.Usuario)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
