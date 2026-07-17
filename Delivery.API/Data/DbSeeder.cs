@@ -14,7 +14,6 @@ namespace Delivery.API.Data
     {
         public static async Task SeedAsync(DeliveryDbContext context, ISeguridadService seguridadService)
         {
-            await context.Database.MigrateAsync();
 
             await SeedRolesAsync(context);
             var (cliente, repartidores) = await SeedUsuariosAsync(context, seguridadService);

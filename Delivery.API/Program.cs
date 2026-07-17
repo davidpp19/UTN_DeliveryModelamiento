@@ -124,31 +124,28 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<Delivery.API.Hubs.NotificacionesHub>("/notificacionesHub");
 
-// Inicializar la Base de Datos (Seed)
-// Solo ejecutamos el seeder si estamos en Development o si la bandera explícitamente lo solicita
-bool runSeeder = app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("RunSeeder");
-
-if (runSeeder)
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
+    try 
     {
-        try 
+        var context = scope.ServiceProvider.GetRequiredService<Delivery.Modelos.DeliveryDbContext>();
+        context.Database.SetCommandTimeout(300);
+        
+        // SIEMPRE aplicar migraciones al iniciar la API, sin importar el entorno
+        context.Database.Migrate();
+
+        bool runSeeder = app.Environment.IsDevelopment() || builder.Configuration.GetValue<bool>("RunSeeder");
+        if (runSeeder)
         {
-            var context = scope.ServiceProvider.GetRequiredService<Delivery.Modelos.DeliveryDbContext>();
-            // Aumentar el CommandTimeout para esta operación pesada (5 minutos)
-            context.Database.SetCommandTimeout(300);
-            
             var seguridadService = scope.ServiceProvider.GetRequiredService<Delivery.Servicios.Interfaces.ISeguridadService>();
             await Delivery.API.Data.DbSeeder.SeedAsync(context, seguridadService);
         }
-        catch (Exception ex)
-        {
-            // Log the exception to a file so we can see what crashed it (SIGABRT 134)
-            var logPath = Path.Combine(Directory.GetCurrentDirectory(), "seeder_error.txt");
-            System.IO.File.WriteAllText(logPath, $"Error en Seeder: {ex.Message}\n\nStack: {ex.StackTrace}\n\nInner: {ex.InnerException?.Message}");
-            Console.WriteLine($"[CRITICAL] Error en DbSeeder: {ex.Message}");
-            // We do not rethrow, so the app still starts up even if seeding fails (avoids crashing the container loop)
-        }
+    }
+    catch (Exception ex)
+    {
+        var logPath = Path.Combine(Directory.GetCurrentDirectory(), "seeder_error.txt");
+        System.IO.File.WriteAllText(logPath, $"Error en Inicialización BD: {ex.Message}\n\nStack: {ex.StackTrace}\n\nInner: {ex.InnerException?.Message}");
+        Console.WriteLine($"[CRITICAL] Error en Inicialización BD: {ex.Message}");
     }
 }
 
