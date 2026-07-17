@@ -108,17 +108,16 @@
         var cliLat = @(Model.DireccionEntrega?.Latitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
         var cliLng = @(Model.DireccionEntrega?.Longitud?.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture) ?? "0");
 
-        // Custom icons usando Bootstrap Icons (ya incluido en _Layout)
         var cliIcon = L.divIcon({
-            html: '<i class="bi bi-house-door-fill text-success" style="font-size: 36px; line-height: 36px;"></i>',
-            className: 'bg-transparent border-0',
+            html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="36" height="36" fill="#198754"><path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"/><path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"/></svg>',
+            className: '',
             iconSize: [36, 36],
             iconAnchor: [18, 36]
         });
         
         var restIcon = L.divIcon({
-            html: '<i class="bi bi-shop text-danger" style="font-size: 36px; line-height: 36px;"></i>',
-            className: 'bg-transparent border-0',
+            html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="36" height="36" fill="#dc3545"><path d="M2.97 1.35A1 1 0 0 1 3.736 1h8.528a1 1 0 0 1 .766.35l2.762 3.222A.5.5 0 0 1 15.625 5H.375a.5.5 0 0 1-.168-.428L2.97 1.35z"/><path d="M1.5 6h13v8a1 1 0 0 1-1 1H2.5a1 1 0 0 1-1-1V6zm11.5 1H3v6h10V7z"/></svg>',
+            className: '',
             iconSize: [36, 36],
             iconAnchor: [18, 36]
         });
@@ -156,8 +155,8 @@
 
         // Repartidor icon
         var repIcon = L.divIcon({
-            html: '<i class="bi bi-bicycle text-primary" style="font-size: 36px; line-height: 36px;"></i>',
-            className: 'bg-transparent border-0',
+            html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="36" height="36" fill="#0d6efd"><path d="M4 4.5a.5.5 0 0 1 .5-.5H6a.5.5 0 0 1 0 1v.5h4.14l.327-.17C11.108 5.012 11.5 4.5 12 4.5h2a.5.5 0 0 1 0 1h-1.644l-2.07 1.082-.676 2.368a3 3 0 1 1-1.859-1.92l.842-2.95H5.52l-.841 2.95a3 3 0 1 1-1.859 1.92l.676-2.368L2 7.082V8.5a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5H3v-1zm-.145 5.864a2 2 0 1 0 2.87 2.158l-.842-2.95a2 2 0 0 0-2.028.792zM10.126 12.5a2 2 0 1 0 2.87-2.158l-.842 2.95a2 2 0 0 0-2.028-.792z"/></svg>',
+            className: '',
             iconSize: [36, 36],
             iconAnchor: [18, 36]
         });
