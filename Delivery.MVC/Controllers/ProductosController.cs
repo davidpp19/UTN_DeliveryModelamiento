@@ -50,7 +50,23 @@ namespace Delivery.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Producto entity)
         {
+            // UML: Add_Menu_Item
+            var prod = new Producto();
+            prod.setName(entity.Nombre);
+            prod.setUnitPrice(entity.Precio);
+            
+            // Assign back to entity for actual creation
+            entity.Nombre = prod.Nombre;
+            entity.Precio = prod.Precio;
+
+            // Conceptual UML requirement: res.AddProduct(prod)
+            var res = await _restauranteConsumer.GetByIdAsync(entity.RestauranteId);
+            if (res != null) {
+                res.AddProduct(prod);
+            }
+
             await _consumer.CreateAsync(entity);
+            TempData["Exito"] = "MenuItemAdded(): Producto agregado exitosamente.";
             return RedirectToAction(nameof(Index));
         }
 

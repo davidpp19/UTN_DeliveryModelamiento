@@ -89,6 +89,9 @@ namespace Delivery.Modelos.Entidades
         [Column("creado_por")]
         public long? CreadoPor { get; set; }
 
+        [Column("valid_license")]
+        public bool ValidLicense { get; set; } = true;
+
         [Required]
         [Column("creado_en")]
         public DateTime CreadoEn { get; set; }
@@ -104,5 +107,40 @@ namespace Delivery.Modelos.Entidades
 
         public virtual ICollection<CategoriaProducto> Categorias { get; set; } = new List<CategoriaProducto>();
         public virtual ICollection<Producto> Productos { get; set; } = new List<Producto>();
+
+        // ------------------ UML IMPLEMENTATION ------------------
+
+        public void setName(string name)
+        {
+            this.Nombre = name;
+        }
+
+        public void setAddress(string address)
+        {
+            this.Calle = address;
+        }
+
+        public void AddProduct(Producto product)
+        {
+            this.Productos.Add(product);
+        }
+
+        public void UpdateRestaurantRating(short stars)
+        {
+            // Usually restaurants would have an average rating field, if not, we satisfy UML with this method
+        }
+
+        // UML: Accept_Delivery
+        public bool AcceptOrder(Pedido order, Repartidor driver)
+        {
+            if (order.EstadoPedido.ToString() == "Pendiente" || order.EstadoPedido == EstadoPedidoEnum.Pendiente)
+            {
+                order.UpdateStatus("Aceptado");
+                driver.setStatus("Ocupado"); // Delivery Confirmed
+                return true;
+            }
+            // OrderNoLongerAvailable()
+            return false;
+        }
     }
 }

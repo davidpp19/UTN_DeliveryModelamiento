@@ -14,11 +14,13 @@ namespace Delivery.MVC.Controllers
     {
         private readonly IPedidoConsumer _pedidoConsumer;
         private readonly IRepartidorConsumer _repartidorConsumer;
+        private readonly IRestauranteConsumer _restauranteConsumer;
 
-        public RepartidorPedidosController(IPedidoConsumer pedidoConsumer, IRepartidorConsumer repartidorConsumer)
+        public RepartidorPedidosController(IPedidoConsumer pedidoConsumer, IRepartidorConsumer repartidorConsumer, IRestauranteConsumer restauranteConsumer)
         {
             _pedidoConsumer = pedidoConsumer;
             _repartidorConsumer = repartidorConsumer;
+            _restauranteConsumer = restauranteConsumer;
         }
 
         private long GetMyUsuarioId()
@@ -83,26 +85,39 @@ namespace Delivery.MVC.Controllers
             var userId = GetMyUsuarioId();
             try
             {
-                // UML: getStatus() and verify status == "Pending"
+                // UML: Accept_Delivery
                 var pedido = await _pedidoConsumer.GetByIdAsync(id);
-                if (pedido != null)
+                var repartidor = await _repartidorConsumer.GetByIdAsync(userId);
+                
+                if (pedido != null && repartidor != null)
                 {
-                    if (pedido.EstadoPedido.ToString() == "Pendiente" || pedido.EstadoPedido == EstadoPedidoEnum.Pendiente)
+                    var restaurante = await _restauranteConsumer.GetByIdAsync(pedido.RestauranteId);
+                    if (restaurante != null)
                     {
-                        var result = await _pedidoConsumer.AsignarPedidoAsync(id, userId);
-                        if (result != null)
+                        // UML: AcceptOrder() on res:Restaurant
+                        bool acceptOrder = restaurante.AcceptOrder(pedido, repartidor);
+                        if (acceptOrder)
                         {
-                            TempData["Exito"] = "Pedido asignado exitosamente.";
-                            return RedirectToAction(nameof(Index));
+                            // UML: true flow -> Delivery Confirmed()
+                            var result = await _pedidoConsumer.AsignarPedidoAsync(id, userId);
+                            if (result != null)
+                            {
+                                await _repartidorConsumer.UpdateAsync(userId, repartidor);
+                                TempData["Exito"] = "Delivery Confirmed(): Pedido asignado exitosamente.";
+                                return RedirectToAction(nameof(Index));
+                            }
+                        }
+                        else
+                        {
+                            // UML: false flow -> OrderNoLongerAvailable()
+                            TempData["Error"] = "OrderNoLongerAvailable(): El pedido ya no está pendiente.";
+                            return RedirectToAction(nameof(Disponibles));
                         }
                     }
-                    else
-                    {
-                        // UML: OrderAlreadyTaken()
-                        TempData["Error"] = "OrderAlreadyTaken: El pedido ya fue asignado a otro repartidor.";
-                        return RedirectToAction(nameof(Disponibles));
-                    }
                 }
+                
+                TempData["Error"] = "Error al asignar el pedido.";
+                return RedirectToAction(nameof(Disponibles));
             }
             catch (System.Exception)
             {
@@ -151,9 +166,33 @@ namespace Delivery.MVC.Controllers
             var data = await _pedidoConsumer.GetByIdAsync(id);
             if (data == null || data.RepartidorId != userId) return NotFound();
 
+            // UML: UpdateStatus()
+            data.UpdateStatus(nuevoEstado.ToString());
+
             var result = await _pedidoConsumer.ActualizarEstadoRepartidorAsync(id, nuevoEstado, userId);
             if (result != null)
             {
+                // UML logic for alternative flows
+                if (nuevoEstado == EstadoPedidoEnum.EnCamino)
+                {
+                    TempData["Exito"] = "StatusUpdated(): El pedido está en camino.";
+                }
+                else if (nuevoEstado == EstadoPedidoEnum.Entregado)
+                {
+                    // UML: setStatus() on Delivery Driver
+                    var repartidor = await _repartidorConsumer.GetByIdAsync(userId);
+                    if (repartidor != null)
+                    {
+                        repartidor.setStatus("Conectado"); // Assuming Conectado means available
+                        await _repartidorConsumer.UpdateAsync(userId, repartidor);
+                    }
+                    TempData["Exito"] = "Delivery Completed(): El pedido ha sido entregado.";
+                }
+                else
+                {
+                    TempData["Exito"] = "Estado del pedido actualizado.";
+                }
+
                 return RedirectToAction(nameof(Index));
             }
 

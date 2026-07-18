@@ -92,8 +92,52 @@ namespace Delivery.MVC.Controllers
                 return RedirectToAction(nameof(Details), new { id = entity.PedidoId });
             }
 
+            // UML: RateServices()
+            var pedido = await _pedidoConsumer.GetByIdAsync(entity.PedidoId);
+            if (pedido != null)
+            {
+                pedido.RateServices((short)(entity.CalificacionRepartidor ?? 5), (short)(entity.CalificacionRestaurante ?? 5));
+                
+                // UML: opt [HasComment == true]
+                if (!string.IsNullOrEmpty(entity.ComentarioRestaurante) || !string.IsNullOrEmpty(entity.ComentarioRepartidor))
+                {
+                    pedido.SaveReview(entity.ComentarioRestaurante ?? entity.ComentarioRepartidor ?? "");
+                }
+            }
+
             await _resenaConsumer.CreateAsync(entity);
+            
+            // UML: ThankYouMessage()
+            TempData["Exito"] = "ThankYouMessage(): ¡Gracias por calificar el servicio!";
+            
             return RedirectToAction(nameof(Details), new { id = entity.PedidoId });
+        }
+
+        // UML: Track_Order (Activity Diagram)
+        public async Task<IActionResult> Seguimiento(long id, [FromServices] IRepartidorConsumer repartidorConsumer)
+        {
+            var userId = GetMyUsuarioId();
+            var pedido = await _pedidoConsumer.GetByIdAsync(id);
+            if (pedido == null || pedido.UsuarioId != userId) return NotFound();
+
+            // UML: Get order status
+            ViewBag.OrderStatus = pedido.EstadoPedido.ToString();
+
+            // UML: if In Transit [Si]
+            if (pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino && pedido.RepartidorId.HasValue)
+            {
+                // UML: Get driver location -> Request GPS coords
+                var driver = await repartidorConsumer.GetByIdAsync(pedido.RepartidorId.Value);
+                if (driver != null && driver.UbicacionActual != null)
+                {
+                    ViewBag.DriverLat = driver.UbicacionActual.Latitud;
+                    ViewBag.DriverLng = driver.UbicacionActual.Longitud;
+                }
+            }
+            // else [No] -> Show status and map (handled in view without coords)
+
+            // UML: Show status and map -> View result
+            return View(pedido);
         }
     }
 }

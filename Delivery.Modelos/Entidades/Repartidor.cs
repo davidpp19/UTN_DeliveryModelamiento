@@ -92,5 +92,20 @@ namespace Delivery.Modelos.Entidades
             // By default 10% or whatever is stored
             return orderTotal * (Comission ?? 0.10);
         }
+
+        public void setStatus(string status)
+        {
+            if (Enum.TryParse<EstadoRepartidorEnum>(status, true, out var estado))
+            {
+                this.Estado = estado;
+            }
+        }
+
+        public void UpdateDriverRating(short stars)
+        {
+            // Calculate new average or simply assign
+            if (this.CalificacionPromedio == null) this.CalificacionPromedio = stars;
+            else this.CalificacionPromedio = (this.CalificacionPromedio + stars) / 2m;
+        }
     }
 }

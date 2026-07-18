@@ -59,5 +59,37 @@ namespace Delivery.MVC.Controllers
 
             return View();
         }
+
+        // UML: ViewEarnings (Calculate_Commission)
+        public async Task<IActionResult> Ganancias()
+        {
+            var userId = GetMyUsuarioId();
+            var todos = await _pedidoConsumer.GetAllAsync();
+            var misEntregados = todos.Where(p => p.RepartidorId == userId && p.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado).ToList();
+
+            var repartidor = await _repartidorConsumer.GetByIdAsync(userId);
+            if (repartidor == null) return NotFound();
+
+            double gananciasTotales = 0;
+            foreach (var ord in misEntregados)
+            {
+                // UML: getTotal() on Order
+                double return_total = (double)ord.Total;
+
+                // UML: CalculateComission()
+                double comisionPorPedido = repartidor.CalculateComission(return_total);
+                gananciasTotales += comisionPorPedido;
+            }
+
+            // UML: setComission() - The diagram calls it setComission() on itself, 
+            // usually meaning it updates its own record of total commissions earned or similar.
+            // For now, we calculate it dynamically and pass it to View
+            
+            ViewBag.GananciasTotales = gananciasTotales;
+            ViewBag.TotalPedidos = misEntregados.Count;
+
+            // UML: ShowUpdatedBalance()
+            return View(misEntregados);
+        }
     }
 }

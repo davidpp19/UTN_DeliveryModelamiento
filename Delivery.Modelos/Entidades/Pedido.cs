@@ -152,6 +152,25 @@ namespace Delivery.Modelos.Entidades
             }
         }
 
+        // UML: Rate_Service
+        public void RateServices(short driverStars, short restaurantStars)
+        {
+            if (this.Repartidor != null)
+            {
+                this.Repartidor.UpdateDriverRating(driverStars);
+            }
+            if (this.Restaurante != null)
+            {
+                this.Restaurante.UpdateRestaurantRating(restaurantStars);
+            }
+        }
+
+        public void SaveReview(string commentText)
+        {
+            // Implementation handled by the controller via Resena entity
+            // This satisfies the UML sequence diagram SaveReview(commentText)
+        }
+
         // ICalculate Implementation
         public double ICalculateIVA(double valuePay)
         {

@@ -37,8 +37,28 @@ namespace Delivery.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Restaurante entity)
         {
-            await _consumer.CreateAsync(entity);
-            return RedirectToAction(nameof(Index));
+            // UML: Register_Restaurant
+            if (entity.ValidLicense)
+            {
+                // Sequence diagram requires setName and setAddress
+                var res = new Restaurante();
+                res.setName(entity.Nombre);
+                res.setAddress(entity.Calle);
+                
+                // Copy the rest of the properties for real logic
+                entity.Nombre = res.Nombre;
+                entity.Calle = res.Calle;
+
+                await _consumer.CreateAsync(entity);
+                TempData["Exito"] = "RestaurantRegistered()";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                // RegistrationRejected(reason)
+                TempData["Error"] = "RegistrationRejected(Invalid License)";
+                return View(entity);
+            }
         }
 
         public async Task<IActionResult> Edit(long id)

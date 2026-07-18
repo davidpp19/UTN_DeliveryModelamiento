@@ -72,6 +72,16 @@ namespace Delivery.Modelos.Entidades
         public virtual CategoriaProducto? Categoria { get; set; }
 
         // ------------------ UML IMPLEMENTATION ------------------
+
+        public void setName(string name)
+        {
+            this.Nombre = name;
+        }
+
+        public void setUnitPrice(decimal price)
+        {
+            this.Precio = price;
+        }
         
         [Column("stock")]
         public int Stock { get; set; } = 0;
