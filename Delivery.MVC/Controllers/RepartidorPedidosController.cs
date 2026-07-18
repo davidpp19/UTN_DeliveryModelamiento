@@ -83,16 +83,30 @@ namespace Delivery.MVC.Controllers
             var userId = GetMyUsuarioId();
             try
             {
-                var result = await _pedidoConsumer.AsignarPedidoAsync(id, userId);
-                if (result != null)
+                // UML: getStatus() and verify status == "Pending"
+                var pedido = await _pedidoConsumer.GetByIdAsync(id);
+                if (pedido != null)
                 {
-                    TempData["Exito"] = "Pedido asignado exitosamente.";
-                    return RedirectToAction(nameof(Index));
+                    if (pedido.EstadoPedido.ToString() == "Pendiente" || pedido.EstadoPedido == EstadoPedidoEnum.Pendiente)
+                    {
+                        var result = await _pedidoConsumer.AsignarPedidoAsync(id, userId);
+                        if (result != null)
+                        {
+                            TempData["Exito"] = "Pedido asignado exitosamente.";
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+                    else
+                    {
+                        // UML: OrderAlreadyTaken()
+                        TempData["Error"] = "OrderAlreadyTaken: El pedido ya fue asignado a otro repartidor.";
+                        return RedirectToAction(nameof(Disponibles));
+                    }
                 }
             }
             catch (System.Exception)
             {
-                TempData["Error"] = "El pedido ya fue asignado o hubo un error.";
+                TempData["Error"] = "OrderAlreadyTaken: El pedido ya fue asignado o hubo un error.";
             }
 
             return RedirectToAction(nameof(Disponibles));

@@ -31,5 +31,8 @@ namespace Delivery.Modelos.DTOs
         [Required(ErrorMessage = "Confirme su contraseña")]
         [Compare("Password", ErrorMessage = "Las contraseñas no coinciden")]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La fecha de nacimiento es requerida")]
+        public DateTime FechaNacimiento { get; set; }
     }
 }

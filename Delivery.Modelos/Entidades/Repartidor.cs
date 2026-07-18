@@ -9,6 +9,28 @@ namespace Delivery.Modelos.Entidades
     [Table("repartidores")]
     public class Repartidor
     {
+        public Repartidor() { }
+
+        // Copy constructor
+        public Repartidor(Repartidor oldDriver)
+        {
+            if (oldDriver != null)
+            {
+                this.UsuarioId = oldDriver.UsuarioId;
+                this.LicenciaConducir = oldDriver.LicenciaConducir;
+                this.FotoLicenciaUrl = oldDriver.FotoLicenciaUrl;
+                this.EstadoAprobacion = oldDriver.EstadoAprobacion;
+                this.Direccion = oldDriver.Direccion;
+                this.DatosAdicionales = oldDriver.DatosAdicionales;
+                this.AprobadoPor = oldDriver.AprobadoPor;
+                this.FechaAprobacion = oldDriver.FechaAprobacion;
+                this.Estado = oldDriver.Estado;
+                this.CalificacionPromedio = oldDriver.CalificacionPromedio;
+                this.CreadoEn = oldDriver.CreadoEn;
+                this.ActualizadoEn = oldDriver.ActualizadoEn;
+                this.Comission = oldDriver.Comission;
+            }
+        }
         [Key]
         [Column("usuario_id")]
         public long UsuarioId { get; set; }
@@ -59,5 +81,16 @@ namespace Delivery.Modelos.Entidades
         public virtual ICollection<Vehiculo> Vehiculos { get; set; } = new List<Vehiculo>();
         public virtual UbicacionActualRepartidor? UbicacionActual { get; set; }
         public virtual ICollection<HistorialAsignacionesRepartidor> HistorialAsignaciones { get; set; } = new List<HistorialAsignacionesRepartidor>();
+
+        // ------------------ UML IMPLEMENTATION ------------------
+        
+        [Column("comission")]
+        public double? Comission { get; set; }
+
+        public double CalculateComission(double orderTotal)
+        {
+            // By default 10% or whatever is stored
+            return orderTotal * (Comission ?? 0.10);
+        }
     }
 }

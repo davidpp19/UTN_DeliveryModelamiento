@@ -3,12 +3,41 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Delivery.Modelos.Enums;
+using Delivery.Modelos.Interfaces;
 
 namespace Delivery.Modelos.Entidades
 {
     [Table("pedidos")]
-    public class Pedido
+    public class Pedido : ICalculate
     {
+        public Pedido() { }
+
+        // Copy constructor
+        public Pedido(Pedido oldOrder)
+        {
+            if (oldOrder != null)
+            {
+                this.Id = oldOrder.Id;
+                this.UsuarioId = oldOrder.UsuarioId;
+                this.RestauranteId = oldOrder.RestauranteId;
+                this.RepartidorId = oldOrder.RepartidorId;
+                this.DireccionEntregaId = oldOrder.DireccionEntregaId;
+                this.EstadoPedido = oldOrder.EstadoPedido;
+                this.Subtotal = oldOrder.Subtotal;
+                this.CostoEnvio = oldOrder.CostoEnvio;
+                this.Total = oldOrder.Total;
+                this.TipoMetodoPago = oldOrder.TipoMetodoPago;
+                this.MetodoPagoId = oldOrder.MetodoPagoId;
+                this.ComprobanteTransferenciaUrl = oldOrder.ComprobanteTransferenciaUrl;
+                this.CuponId = oldOrder.CuponId;
+                this.MontoDescuento = oldOrder.MontoDescuento;
+                this.Notas = oldOrder.Notas;
+                this.FechaPedido = oldOrder.FechaPedido;
+                this.FechaEntregaEstimada = oldOrder.FechaEntregaEstimada;
+                this.FechaEntregaReal = oldOrder.FechaEntregaReal;
+                this.ActualizadoEn = oldOrder.ActualizadoEn;
+            }
+        }
         [Key]
         [Column("id")]
         public long Id { get; set; }
@@ -82,5 +111,66 @@ namespace Delivery.Modelos.Entidades
 
         public virtual ICollection<DetallePedido> Detalles { get; set; } = new List<DetallePedido>();
         public virtual ICollection<Pago> Pagos { get; set; } = new List<Pago>();
+
+        // ------------------ UML IMPLEMENTATION ------------------
+        
+        public void addProduct(Producto product, int quantity)
+        {
+            var detalle = new DetallePedido
+            {
+                ProductoId = product.Id,
+                Cantidad = quantity,
+                PrecioUnitario = product.Precio,
+                Subtotal = product.Precio * quantity,
+                Producto = product
+            };
+            this.Detalles.Add(detalle);
+        }
+
+        public void UpdateStatus(string newStatus)
+        {
+            if (Enum.TryParse<EstadoPedidoEnum>(newStatus, true, out var estado))
+            {
+                this.EstadoPedido = estado;
+            }
+        }
+
+        public bool PayOrder(double amount)
+        {
+            var paymentMethod = new PaymentMethod(this.TipoMetodoPago.ToString());
+            var success = paymentMethod.ProcessPayment(amount);
+            if (success)
+            {
+                // UML: UpdateStatus() and PaymentSuccessful()
+                this.UpdateStatus("Pendiente"); 
+                return true;
+            }
+            else
+            {
+                // UML: PaymentDeclined()
+                return false;
+            }
+        }
+
+        // ICalculate Implementation
+        public double ICalculateIVA(double valuePay)
+        {
+            return valuePay * 0.15; // Assuming 15% IVA for Ecuador
+        }
+
+        public double ICalculateTotal()
+        {
+            return (double)this.Total;
+        }
+
+        public double ICalculateSubtotal()
+        {
+            return (double)this.Subtotal;
+        }
+
+        public double ICalculateCurrentTotal()
+        {
+            return (double)this.Total;
+        }
     }
 }

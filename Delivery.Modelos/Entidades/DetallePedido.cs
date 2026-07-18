@@ -2,10 +2,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Delivery.Modelos.Interfaces;
+
 namespace Delivery.Modelos.Entidades
 {
     [Table("detalle_pedido")]
-    public class DetallePedido
+    public class DetallePedido : ICalculate
     {
         [Key]
         [Column("id")]
@@ -35,5 +37,18 @@ namespace Delivery.Modelos.Entidades
 
         [ForeignKey(nameof(ProductoId))]
         public virtual Producto? Producto { get; set; }
+
+        // ------------------ UML IMPLEMENTATION ------------------
+        
+        public double ICalculateIVA(double valuePay) { return 0; }
+        
+        public double ICalculateTotal() { return 0; }
+        
+        public double ICalculateSubtotal()
+        {
+            return (double)this.Subtotal;
+        }
+        
+        public double ICalculateCurrentTotal() { return 0; }
     }
 }

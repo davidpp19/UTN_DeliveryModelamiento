@@ -540,6 +540,14 @@ namespace Delivery.MVC.Controllers
 
             if (pedidoCreado != null)
             {
+                // UML: Process Payment Flow
+                // We call the domain method to satisfy the sequence diagram
+                bool paymentSuccess = pedidoCreado.PayOrder((double)pedidoCreado.Total);
+                if (!paymentSuccess)
+                {
+                    TempData["Error"] = "PaymentDeclined: Hubo un problema al procesar tu pago.";
+                    return RedirectToAction("Checkout");
+                }
                 // MARCAR CUPÓN COMO USADO
                 if (carrito.CuponId.HasValue && cuponAplicado != null)
                 {

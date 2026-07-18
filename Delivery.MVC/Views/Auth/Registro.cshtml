@@ -40,6 +40,11 @@
                         <span asp-validation-for="Cedula" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
+                        <label asp-for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                        <input asp-for="FechaNacimiento" class="form-control" type="date" />
+                        <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
                         <label asp-for="Password" class="form-label">@Localizer["Contrasena"]</label>
                         <input asp-for="Password" class="form-control" type="password" placeholder="@Localizer["PasswordPlaceholder"]" />
                         <span asp-validation-for="Password" class="text-danger"></span>

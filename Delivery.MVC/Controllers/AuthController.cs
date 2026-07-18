@@ -132,15 +132,25 @@ namespace Delivery.MVC.Controllers
                     Email = dto.Email,
                     Telefono = dto.Telefono,
                     Cedula = dto.Cedula,
+                    FechaNacimiento = dto.FechaNacimiento,
                     PasswordHash = dto.Password, // Se hashea en la API/Servicio
                     TipoUsuario = Delivery.Modelos.Enums.TipoUsuarioEnum.Cliente,
                     RolId = 4, // Cliente
                     Activo = true,
                     EmailConfirmado = false,
                     CodigoVerificacion = codigo,
-                    ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15)
+                    ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15),
+                    CreadoEn = DateTime.UtcNow
                 };
 
+                // UML: Validar CalculateAge > 12
+                if (usuario.CalculateAge(usuario.DateBirth) <= 12)
+                {
+                    ModelState.AddModelError(string.Empty, "Debes ser mayor de 12 años para registrarte.");
+                    return View(dto);
+                }
+
+                // Generar código de verificación de 6 dígitos
                 var created = await _usuarioConsumer.CreateAsync(usuario);
                 if (created != null)
                 {
