@@ -17,13 +17,15 @@ namespace Delivery.MVC.Controllers
         private readonly IUsuarioConsumer _usuarioConsumer;
         private readonly IStringLocalizer<SharedResource> _localizer;
         private readonly Delivery.MVC.Servicios.IEmailService _emailService;
+        private readonly Delivery.MVC.Servicios.ISmsService _smsService;
 
-        public AuthController(IAuthConsumer authConsumer, IUsuarioConsumer usuarioConsumer, IStringLocalizer<SharedResource> localizer, Delivery.MVC.Servicios.IEmailService emailService)
+        public AuthController(IAuthConsumer authConsumer, IUsuarioConsumer usuarioConsumer, IStringLocalizer<SharedResource> localizer, Delivery.MVC.Servicios.IEmailService emailService, Delivery.MVC.Servicios.ISmsService smsService)
         {
             _authConsumer = authConsumer;
             _usuarioConsumer = usuarioConsumer;
             _localizer = localizer;
             _emailService = emailService;
+            _smsService = smsService;
         }
 
         [HttpGet]
@@ -144,11 +146,16 @@ namespace Delivery.MVC.Controllers
                 var created = await _usuarioConsumer.CreateAsync(usuario);
                 if (created != null)
                 {
-                    // Enviar correo de verificación
+                    // Enviar correo de verificación (ahora tiene su propio try-catch interno en EmailService)
                     await _emailService.EnviarCorreoConfirmacionAsync(created.Email, created.Nombre, codigo);
 
+                    if (!string.IsNullOrEmpty(created.Telefono))
+                    {
+                        await _smsService.EnviarSmsConfirmacionAsync(created.Telefono, codigo);
+                    }
+
                     // Redirigir a verificación
-                    TempData["Mensaje"] = "Revisa tu correo para verificar tu cuenta.";
+                    TempData["Mensaje"] = "Revisa tu correo y SMS para verificar tu cuenta.";
                     return RedirectToAction("VerificarEmail", new { email = created.Email });
                 }
 
@@ -222,9 +229,14 @@ namespace Delivery.MVC.Controllers
                 await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
 
                 await _emailService.EnviarCorreoConfirmacionAsync(usuario.Email, usuario.Nombre, codigo);
+                
+                if (!string.IsNullOrEmpty(usuario.Telefono))
+                {
+                    await _smsService.EnviarSmsConfirmacionAsync(usuario.Telefono, codigo);
+                }
             }
             // Retornamos OK incluso si no se encuentra para no filtrar emails existentes
-            return Json(new { success = true, mensaje = "Si el correo está registrado, se ha enviado un nuevo código." });
+            return Json(new { success = true, mensaje = "Si el correo está registrado, se ha enviado un nuevo código a tu correo y celular." });
         }
 
         [HttpGet]
@@ -246,9 +258,14 @@ namespace Delivery.MVC.Controllers
                 await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
 
                 await _emailService.EnviarCorreoRecuperacionAsync(usuario.Email, usuario.Nombre, codigo);
+                
+                if (!string.IsNullOrEmpty(usuario.Telefono))
+                {
+                    await _smsService.EnviarSmsRecuperacionAsync(usuario.Telefono, codigo);
+                }
             }
             
-            TempData["Mensaje"] = "Si el correo está registrado, se enviaron instrucciones para restablecer tu contraseña.";
+            TempData["Mensaje"] = "Si el correo está registrado, se enviaron instrucciones a tu correo y celular para restablecer tu contraseña.";
             return RedirectToAction("RestablecerPassword", new { email = email });
         }
 

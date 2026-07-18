@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.29.1" />
     <PackageReference Include="MailKit" Version="4.17.0" />
+    <PackageReference Include="Twilio" Version="7.14.9" />
   </ItemGroup>
 
   <PropertyGroup>

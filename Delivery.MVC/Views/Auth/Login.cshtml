@@ -44,4 +44,18 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var mensaje = '@TempData["Mensaje"]';
+            if (mensaje && mensaje.length > 0) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: mensaje,
+                    confirmButtonColor: '#FF6600'
+                });
+            }
+        });
+    </script>
 }
