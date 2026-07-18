@@ -139,5 +139,28 @@ namespace Delivery.MVC.Controllers
             // UML: Show status and map -> View result
             return View(pedido);
         }
+
+        // UML: Cancel Order (Client)
+        [HttpPost]
+        public async Task<IActionResult> Cancelar(long id)
+        {
+            var userId = GetMyUsuarioId();
+            var pedido = await _pedidoConsumer.GetByIdAsync(id);
+            if (pedido == null || pedido.UsuarioId != userId) return NotFound();
+
+            // UML logic: Can only cancel if it's pending (Pendiente) or similar initial state
+            if (pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Pendiente)
+            {
+                pedido.UpdateStatus("Cancelado");
+                await _pedidoConsumer.UpdateAsync(id, pedido);
+                TempData["Exito"] = "Pedido cancelado exitosamente.";
+            }
+            else
+            {
+                TempData["Error"] = "El pedido ya no puede ser cancelado.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

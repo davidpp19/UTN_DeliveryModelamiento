@@ -31,11 +31,16 @@
                     </div>
                 </form>
                 <div class="mt-3 text-center">
-                    <a asp-action="RecuperarPassword" class="text-decoration-none">@Localizer["OlvidasteContrasena"]</a>
+                    <a asp-action="RecuperarPassword" class="text-decoration-none">@Localizer["OlvidasteContrasena"] (Recovery Password)</a> | 
+                    <a href="#" class="text-decoration-none" onclick="alert('Recovery User')">Recovery User</a>
+                </div>
+                <div class="mt-2 text-center">
+                    <a href="#" class="text-decoration-none" onclick="alert('Unlock Account')">Unlock Account</a> | 
+                    <a href="#" class="text-decoration-none" onclick="alert('Resend Code')">Resend Code</a>
                 </div>
                 <div class="mt-3 text-center">
                     <span>@Localizer["NoTienesCuenta"] </span>
-                    <a asp-action="SeleccionTipoRegistro" class="text-decoration-none fw-bold">@Localizer["CrearCuenta"]</a>
+                    <a asp-action="SeleccionTipoRegistro" class="text-decoration-none fw-bold">@Localizer["CrearCuenta"] (Register)</a>
                 </div>
             </div>
         </div>

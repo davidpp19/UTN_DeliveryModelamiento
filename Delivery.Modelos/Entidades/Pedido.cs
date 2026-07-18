@@ -8,7 +8,7 @@ using Delivery.Modelos.Interfaces;
 namespace Delivery.Modelos.Entidades
 {
     [Table("pedidos")]
-    public class Pedido : ICalculate
+    public class Pedido : ICalculate, IOrderState
     {
         public Pedido() { }
 
