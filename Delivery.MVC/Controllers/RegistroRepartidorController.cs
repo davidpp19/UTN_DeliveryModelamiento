@@ -68,6 +68,48 @@ namespace Delivery.MVC.Controllers
                 }
             }
 
+            // UML: Send Verification Code
+            // Instead of registering immediately, we'll store the data in TempData to simulate the verification step.
+            TempData["RegistroDto"] = System.Text.Json.JsonSerializer.Serialize(dto);
+            TempData["CodigoVerificacion"] = "123456"; // Simulated code sent to driver
+            
+            return RedirectToAction(nameof(VerificarCodigo));
+        }
+
+        [HttpGet]
+        public IActionResult VerificarCodigo()
+        {
+            if (TempData["RegistroDto"] == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            TempData.Keep("RegistroDto");
+            TempData.Keep("CodigoVerificacion");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerificarCodigo(string code)
+        {
+            var storedCode = TempData["CodigoVerificacion"] as string;
+            var dtoString = TempData["RegistroDto"] as string;
+
+            if (string.IsNullOrEmpty(dtoString)) return RedirectToAction(nameof(Index));
+
+            // UML: CodeCorrect [Is not valid] -> Notify Invalid Code
+            if (code != storedCode)
+            {
+                ModelState.AddModelError(string.Empty, "Código incorrecto. Intenta de nuevo.");
+                TempData.Keep("RegistroDto");
+                TempData.Keep("CodigoVerificacion");
+                return View();
+            }
+
+            // UML: CodeCorrect [Is valid] -> Create Pending Account
+            var dto = System.Text.Json.JsonSerializer.Deserialize<RegistroRepartidorDto>(dtoString);
+            if (dto == null) return RedirectToAction(nameof(Index));
+
             AuthResponseDto? authResponse = null;
             try
             {
@@ -76,7 +118,7 @@ namespace Delivery.MVC.Controllers
             catch (System.Exception ex)
             {
                 ModelState.AddModelError(string.Empty, _localizer["Error de la API: " + ex.Message]);
-                return View(dto);
+                return View();
             }
 
             if (authResponse != null)
@@ -103,7 +145,7 @@ namespace Delivery.MVC.Controllers
                     new AuthenticationProperties 
                     { 
                         IsPersistent = true,
-                        ExpiresUtc = DateTimeOffset.UtcNow.AddHours(2)
+                        ExpiresUtc = System.DateTimeOffset.UtcNow.AddHours(2)
                     });
 
                 TempData["Exito"] = _localizer["Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador."];
@@ -111,7 +153,9 @@ namespace Delivery.MVC.Controllers
             }
 
             ModelState.AddModelError(string.Empty, _localizer["No se pudo completar el registro. El correo puede ya estar registrado."]);
-            return View(dto);
+            TempData.Keep("RegistroDto");
+            TempData.Keep("CodigoVerificacion");
+            return View();
         }
     }
 }

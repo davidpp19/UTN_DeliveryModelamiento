@@ -522,7 +522,14 @@ namespace Delivery.MVC.Controllers
                 {
                     comprobanteUrl = await _archivoService.GuardarArchivoAsync(comprobante, "comprobantes");
                 }
-                TempData["MensajePago"] = "Pago por transferencia verificado (simulación).";
+                
+                // UML: Valid NACC and Verify Founds
+                // Simulate Bank Validation
+                if (string.IsNullOrEmpty(numeroTarjeta)) // Just reusing this variable for account number if it's sent, though we just check it generally.
+                {
+                    // For the sake of the UML simulation, we will assume Valid NACC passes
+                    TempData["MensajePago"] = "Valid NACC: OK. Verify Founds: OK. Update funds: Transferencia verificada.";
+                }
             }
             else
             {

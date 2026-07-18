@@ -6,6 +6,10 @@ namespace Delivery.Modelos.DTOs
     {
         [Required]
         [EmailAddress]
+        // UML: Verify more than two characters
+        [MinLength(3, ErrorMessage = "El usuario debe tener más de dos caracteres.")]
+        // UML: Contains '@' and '.'
+        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "El usuario debe contener '@' y '.'")]
         public string Email { get; set; } = string.Empty;
 
         [Required]

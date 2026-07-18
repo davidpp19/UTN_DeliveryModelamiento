@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Reportar Incidente";
+}
+
+<div class="container mt-4">
+    <h2><i class="bi bi-exclamation-triangle text-warning"></i> Reporte de Incidentes (Incident Report Form)</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Reportar" method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label for="severity" class="form-label">Gravedad del Incidente (Validate Report Data)</label>
+                            <select name="severity" id="severity" class="form-select">
+                                <option value="Baja">Baja (ej. Retraso por tráfico)</option>
+                                <option value="Media">Media (ej. Cliente no encontrado)</option>
+                                <option value="Alta">Alta (ej. Accidente o Daño al producto)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descripción</label>
+                            <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning"><i class="bi bi-send"></i> Enviar Reporte</button>
+                        <a asp-controller="DashboardRepartidor" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

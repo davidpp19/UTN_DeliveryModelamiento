@@ -91,5 +91,30 @@ namespace Delivery.MVC.Controllers
             // UML: ShowUpdatedBalance()
             return View(misEntregados);
         }
+
+        // UML: Status Control Form -> Availability Controller
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus()
+        {
+            var userId = GetMyUsuarioId();
+            var repartidor = await _repartidorConsumer.GetByIdAsync(userId);
+            if (repartidor == null) return NotFound();
+
+            // UML: Verify Current Status -> Update Delivery Person Table
+            if (repartidor.Estado == Delivery.Modelos.Enums.EstadoRepartidorEnum.Disponible)
+            {
+                repartidor.setStatus("Desconectado");
+            }
+            else if (repartidor.Estado == Delivery.Modelos.Enums.EstadoRepartidorEnum.Desconectado)
+            {
+                repartidor.setStatus("Disponible");
+            }
+
+            await _repartidorConsumer.UpdateAsync(userId, repartidor);
+
+            // UML: Notify Server -> Broadcast Availability Status -> Ok and Return
+            TempData["Exito"] = $"Status Control: Tu estado cambió a {repartidor.Estado}.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
