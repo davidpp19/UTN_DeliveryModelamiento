@@ -16,19 +16,19 @@ namespace Delivery.MVC.Servicios
             _configuration = configuration;
         }
 
-        public async Task EnviarSmsConfirmacionAsync(string telefono, string codigoVerificacion)
+        public async Task<string> EnviarSmsConfirmacionAsync(string telefono, string codigoVerificacion)
         {
             string mensaje = $"¡Bienvenido a RayoExpres! Tu código de verificación es: {codigoVerificacion}. Expira en 15 minutos.";
-            await EnviarSmsAsync(telefono, mensaje);
+            return await EnviarSmsAsync(telefono, mensaje);
         }
 
-        public async Task EnviarSmsRecuperacionAsync(string telefono, string codigoRecuperacion)
+        public async Task<string> EnviarSmsRecuperacionAsync(string telefono, string codigoRecuperacion)
         {
             string mensaje = $"RayoExpres: Tu código para recuperar la contraseña es: {codigoRecuperacion}. Expira en 15 minutos.";
-            await EnviarSmsAsync(telefono, mensaje);
+            return await EnviarSmsAsync(telefono, mensaje);
         }
 
-        private async Task EnviarSmsAsync(string destinatario, string mensaje)
+        private async Task<string> EnviarSmsAsync(string destinatario, string mensaje)
         {
             try
             {
@@ -37,10 +37,9 @@ namespace Delivery.MVC.Servicios
                 var authToken = twilioConfig["AuthToken"];
                 var fromNumber = twilioConfig["FromPhoneNumber"];
 
-                if (string.IsNullOrEmpty(accountSid) || string.IsNullOrEmpty(authToken) || string.IsNullOrEmpty(fromNumber))
+                if (string.IsNullOrEmpty(accountSid) || accountSid == "YOUR_TWILIO_ACCOUNT_SID_AQUI")
                 {
-                    Console.WriteLine("[CRITICAL] Faltan credenciales de Twilio en la configuración.");
-                    return;
+                    return "Faltan credenciales de Twilio en la configuración de Azure.";
                 }
 
                 TwilioClient.Init(accountSid, authToken);
@@ -48,7 +47,6 @@ namespace Delivery.MVC.Servicios
                 // Asegurar formato internacional para el destinatario
                 if (!destinatario.StartsWith("+"))
                 {
-                    // Asumimos Ecuador por defecto si no tiene código de país
                     if (destinatario.StartsWith("0"))
                     {
                         destinatario = "+593" + destinatario.Substring(1);
@@ -66,12 +64,11 @@ namespace Delivery.MVC.Servicios
                 };
 
                 var msg = await MessageResource.CreateAsync(messageOptions);
-                Console.WriteLine($"[INFO] SMS enviado a {destinatario} exitosamente. SID: {msg.Sid}");
+                return string.Empty; // Éxito
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[CRITICAL] Error al enviar SMS a {destinatario}: {ex.Message}");
-                // No lanzamos la excepción para no interrumpir el flujo principal
+                return $"Error de Twilio: {ex.Message}";
             }
         }
     }

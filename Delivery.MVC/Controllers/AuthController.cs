@@ -245,7 +245,12 @@ namespace Delivery.MVC.Controllers
                 usuario.ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15);
                 await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
 
-                await _smsService.EnviarSmsConfirmacionAsync(usuario.Telefono, codigo);
+                string errorSms = await _smsService.EnviarSmsConfirmacionAsync(usuario.Telefono, codigo);
+                if (!string.IsNullOrEmpty(errorSms))
+                {
+                    return Json(new { success = false, mensaje = errorSms });
+                }
+
                 return Json(new { success = true, mensaje = "Se ha enviado un nuevo código a tu celular por SMS." });
             }
             return Json(new { success = false, mensaje = "No se pudo enviar el SMS." });
@@ -293,7 +298,12 @@ namespace Delivery.MVC.Controllers
                 usuario.ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15);
                 await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
 
-                await _smsService.EnviarSmsRecuperacionAsync(usuario.Telefono, codigo);
+                string errorSms = await _smsService.EnviarSmsRecuperacionAsync(usuario.Telefono, codigo);
+                if (!string.IsNullOrEmpty(errorSms))
+                {
+                    return Json(new { success = false, mensaje = errorSms });
+                }
+
                 return Json(new { success = true, mensaje = "Se ha enviado el código de recuperación a tu celular por SMS." });
             }
             return Json(new { success = false, mensaje = "No se pudo enviar el SMS." });
