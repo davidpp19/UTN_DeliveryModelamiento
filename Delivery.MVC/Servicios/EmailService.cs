@@ -58,9 +58,9 @@ namespace Delivery.MVC.Servicios
                 var portStr = emailConfig["Port"] ?? "587";
                 int port = int.TryParse(portStr, out int p) ? p : 587;
                 var senderName = emailConfig["SenderName"] ?? "RayoExpres";
-                var senderEmail = emailConfig["SenderEmail"] ?? "kdpenap@utn.edu.ec";
-                var username = emailConfig["Username"] ?? "kdpenap@utn.edu.ec";
-                var password = emailConfig["Password"] ?? "numa omlm zkit lvvr";
+                var senderEmail = emailConfig["SenderEmail"] ?? "kevdavidpena.06@gmail.com";
+                var username = emailConfig["Username"] ?? "kevdavidpena.06@gmail.com";
+                var password = emailConfig["Password"] ?? "iuvl gkel wadu ygwt";
 
                 var email = new MimeMessage();
                 email.From.Add(new MailboxAddress(senderName, senderEmail));
