@@ -65,6 +65,9 @@ namespace Delivery.Servicios.Implementaciones
             existingUsuario.Cedula = usuario.Cedula;
             existingUsuario.FechaNacimiento = usuario.FechaNacimiento;
             existingUsuario.InformacionAdicional = usuario.InformacionAdicional;
+            existingUsuario.EmailConfirmado = usuario.EmailConfirmado;
+            existingUsuario.CodigoVerificacion = usuario.CodigoVerificacion;
+            existingUsuario.ExpiracionCodigo = usuario.ExpiracionCodigo;
             existingUsuario.ActualizadoEn = System.DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
