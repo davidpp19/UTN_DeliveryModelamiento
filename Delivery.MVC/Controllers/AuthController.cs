@@ -146,16 +146,11 @@ namespace Delivery.MVC.Controllers
                 var created = await _usuarioConsumer.CreateAsync(usuario);
                 if (created != null)
                 {
-                    // Enviar correo de verificación (ahora tiene su propio try-catch interno en EmailService)
+                    // Enviar correo de verificación por defecto
                     await _emailService.EnviarCorreoConfirmacionAsync(created.Email, created.Nombre, codigo);
 
-                    if (!string.IsNullOrEmpty(created.Telefono))
-                    {
-                        await _smsService.EnviarSmsConfirmacionAsync(created.Telefono, codigo);
-                    }
-
                     // Redirigir a verificación
-                    TempData["Mensaje"] = "Revisa tu correo y SMS para verificar tu cuenta.";
+                    TempData["Mensaje"] = "Revisa tu correo para verificar tu cuenta.";
                     return RedirectToAction("VerificarEmail", new { email = created.Email });
                 }
 
@@ -229,14 +224,31 @@ namespace Delivery.MVC.Controllers
                 await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
 
                 await _emailService.EnviarCorreoConfirmacionAsync(usuario.Email, usuario.Nombre, codigo);
-                
-                if (!string.IsNullOrEmpty(usuario.Telefono))
-                {
-                    await _smsService.EnviarSmsConfirmacionAsync(usuario.Telefono, codigo);
-                }
             }
             // Retornamos OK incluso si no se encuentra para no filtrar emails existentes
-            return Json(new { success = true, mensaje = "Si el correo está registrado, se ha enviado un nuevo código a tu correo y celular." });
+            return Json(new { success = true, mensaje = "Si el correo está registrado, se ha enviado un nuevo código." });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EnviarCodigoSms(string email)
+        {
+            var usuario = await _usuarioConsumer.GetByEmailAsync(email);
+            if (usuario != null && !usuario.EmailConfirmado)
+            {
+                if (string.IsNullOrEmpty(usuario.Telefono))
+                {
+                    return Json(new { success = false, mensaje = "No tienes un número de teléfono registrado." });
+                }
+
+                var codigo = new Random().Next(100000, 999999).ToString();
+                usuario.CodigoVerificacion = codigo;
+                usuario.ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15);
+                await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
+
+                await _smsService.EnviarSmsConfirmacionAsync(usuario.Telefono, codigo);
+                return Json(new { success = true, mensaje = "Se ha enviado un nuevo código a tu celular por SMS." });
+            }
+            return Json(new { success = false, mensaje = "No se pudo enviar el SMS." });
         }
 
         [HttpGet]
@@ -257,16 +269,34 @@ namespace Delivery.MVC.Controllers
                 usuario.ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15);
                 await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
 
+                // Enviar correo por defecto
                 await _emailService.EnviarCorreoRecuperacionAsync(usuario.Email, usuario.Nombre, codigo);
-                
-                if (!string.IsNullOrEmpty(usuario.Telefono))
-                {
-                    await _smsService.EnviarSmsRecuperacionAsync(usuario.Telefono, codigo);
-                }
             }
             
-            TempData["Mensaje"] = "Si el correo está registrado, se enviaron instrucciones a tu correo y celular para restablecer tu contraseña.";
+            TempData["Mensaje"] = "Si el correo está registrado, se enviaron instrucciones a tu correo para restablecer tu contraseña.";
             return RedirectToAction("RestablecerPassword", new { email = email });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EnviarSmsRecuperacion(string email)
+        {
+            var usuario = await _usuarioConsumer.GetByEmailAsync(email);
+            if (usuario != null)
+            {
+                if (string.IsNullOrEmpty(usuario.Telefono))
+                {
+                    return Json(new { success = false, mensaje = "No tienes un número de teléfono registrado." });
+                }
+
+                var codigo = new Random().Next(100000, 999999).ToString();
+                usuario.CodigoVerificacion = codigo;
+                usuario.ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15);
+                await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
+
+                await _smsService.EnviarSmsRecuperacionAsync(usuario.Telefono, codigo);
+                return Json(new { success = true, mensaje = "Se ha enviado el código de recuperación a tu celular por SMS." });
+            }
+            return Json(new { success = false, mensaje = "No se pudo enviar el SMS." });
         }
 
         [HttpGet]

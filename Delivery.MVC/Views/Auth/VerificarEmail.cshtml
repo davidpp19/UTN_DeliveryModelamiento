@@ -33,9 +33,18 @@
                 <div class="mt-4">
                     <form asp-action="ReenviarCodigo" method="post" id="form-reenviar">
                         <input type="hidden" name="email" value="@email" />
-                        <button type="submit" class="btn btn-link text-decoration-none">¿No recibiste el código? Reenviar</button>
+                        <button type="submit" class="btn btn-link text-decoration-none">¿No recibiste el código por correo? Reenviar</button>
                     </form>
-                    <div id="res-reenviar" class="text-success mt-2" style="display:none;"></div>
+                    
+                    <form asp-action="EnviarCodigoSms" method="post" id="form-reenviar-sms" class="mt-2">
+                        <input type="hidden" name="email" value="@email" />
+                        <button type="submit" class="btn btn-outline-secondary btn-sm rounded-pill">
+                            <i class="bi bi-phone"></i> ¿Prefieres recibirlo por SMS? Enviar al celular
+                        </button>
+                    </form>
+
+                    <div id="res-reenviar" class="text-success mt-3" style="display:none; font-weight: bold;"></div>
+                    <div id="err-reenviar" class="text-danger mt-3" style="display:none; font-weight: bold;"></div>
                 </div>
             </div>
         </div>
@@ -46,10 +55,23 @@
     <script>
         document.getElementById('form-reenviar').addEventListener('submit', function (e) {
             e.preventDefault();
-            const form = this;
+            manejarEnvio(this, '¿No recibiste el código por correo? Reenviar', 'Reenviando al correo...', 'Código reenviado');
+        });
+
+        document.getElementById('form-reenviar-sms').addEventListener('submit', function (e) {
+            e.preventDefault();
+            manejarEnvio(this, '<i class="bi bi-phone"></i> ¿Prefieres recibirlo por SMS? Enviar al celular', 'Enviando SMS...', 'SMS enviado');
+        });
+
+        function manejarEnvio(form, originalText, loadingText, successText) {
             const btn = form.querySelector('button');
+            const resDiv = document.getElementById('res-reenviar');
+            const errDiv = document.getElementById('err-reenviar');
+            
             btn.disabled = true;
-            btn.innerText = 'Reenviando...';
+            btn.innerHTML = loadingText;
+            resDiv.style.display = 'none';
+            errDiv.style.display = 'none';
 
             fetch(form.action, {
                 method: 'POST',
@@ -57,14 +79,23 @@
             })
             .then(res => res.json())
             .then(data => {
-                document.getElementById('res-reenviar').innerText = data.mensaje;
-                document.getElementById('res-reenviar').style.display = 'block';
-                btn.innerText = 'Código reenviado';
+                if (data.success) {
+                    resDiv.innerText = data.mensaje;
+                    resDiv.style.display = 'block';
+                    btn.innerHTML = successText;
+                } else {
+                    errDiv.innerText = data.mensaje;
+                    errDiv.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
             })
             .catch(err => {
+                errDiv.innerText = "Error de conexión al enviar el código.";
+                errDiv.style.display = 'block';
                 btn.disabled = false;
-                btn.innerText = '¿No recibiste el código? Reenviar';
+                btn.innerHTML = originalText;
             });
-        });
+        }
     </script>
 }
