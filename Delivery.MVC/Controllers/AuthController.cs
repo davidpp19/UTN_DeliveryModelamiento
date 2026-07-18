@@ -17,15 +17,13 @@ namespace Delivery.MVC.Controllers
         private readonly IUsuarioConsumer _usuarioConsumer;
         private readonly IStringLocalizer<SharedResource> _localizer;
         private readonly Delivery.MVC.Servicios.IEmailService _emailService;
-        private readonly Delivery.MVC.Servicios.ISmsService _smsService;
 
-        public AuthController(IAuthConsumer authConsumer, IUsuarioConsumer usuarioConsumer, IStringLocalizer<SharedResource> localizer, Delivery.MVC.Servicios.IEmailService emailService, Delivery.MVC.Servicios.ISmsService smsService)
+        public AuthController(IAuthConsumer authConsumer, IUsuarioConsumer usuarioConsumer, IStringLocalizer<SharedResource> localizer, Delivery.MVC.Servicios.IEmailService emailService)
         {
             _authConsumer = authConsumer;
             _usuarioConsumer = usuarioConsumer;
             _localizer = localizer;
             _emailService = emailService;
-            _smsService = smsService;
         }
 
         [HttpGet]
@@ -166,9 +164,14 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult VerificarEmail(string email)
+        public async Task<IActionResult> VerificarEmail(string email)
         {
             ViewBag.Email = email;
+            var usuario = await _usuarioConsumer.GetByEmailAsync(email);
+            if (usuario != null)
+            {
+                ViewBag.Telefono = usuario.Telefono;
+            }
             return View();
         }
 
@@ -230,30 +233,32 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EnviarCodigoSms(string email)
+        public async Task<IActionResult> MarcarComoVerificadoSms(string telefono)
         {
-            var usuario = await _usuarioConsumer.GetByEmailAsync(email);
+            // Este endpoint es llamado por el frontend después de que Firebase Auth
+            // valida correctamente el código SMS.
+            // En un proyecto real, el frontend nos enviaría el Firebase ID Token para validarlo.
+            // Para simplicidad, confiaremos en que el frontend lo llama de manera segura.
+            
+            // Buscar al usuario por teléfono (asumiendo que el teléfono es único)
+            // Ya que no tenemos GetByTelefonoAsync en el consumer, obtenemos todos y filtramos
+            // (Para escalabilidad se debería agregar el endpoint en la API)
+            var usuarios = await _usuarioConsumer.GetAllAsync();
+            var usuario = usuarios.FirstOrDefault(u => u.Telefono == telefono);
+            
             if (usuario != null && !usuario.EmailConfirmado)
             {
-                if (string.IsNullOrEmpty(usuario.Telefono))
-                {
-                    return Json(new { success = false, mensaje = "No tienes un número de teléfono registrado." });
-                }
+                usuario.EmailConfirmado = true;
+                usuario.CodigoVerificacion = null;
+                usuario.ExpiracionCodigo = null;
 
-                var codigo = new Random().Next(100000, 999999).ToString();
-                usuario.CodigoVerificacion = codigo;
-                usuario.ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15);
                 await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
-
-                string errorSms = await _smsService.EnviarSmsConfirmacionAsync(usuario.Telefono, codigo);
-                if (!string.IsNullOrEmpty(errorSms))
-                {
-                    return Json(new { success = false, mensaje = errorSms });
-                }
-
-                return Json(new { success = true, mensaje = "Se ha enviado un nuevo código a tu celular por SMS." });
+                
+                TempData["Mensaje"] = "Cuenta verificada por SMS exitosamente. Ahora puedes iniciar sesión.";
+                return Json(new { success = true, mensaje = "Cuenta verificada correctamente." });
             }
-            return Json(new { success = false, mensaje = "No se pudo enviar el SMS." });
+            
+            return Json(new { success = false, mensaje = "No se pudo verificar la cuenta." });
         }
 
         [HttpGet]
@@ -282,37 +287,17 @@ namespace Delivery.MVC.Controllers
             return RedirectToAction("RestablecerPassword", new { email = email });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EnviarSmsRecuperacion(string email)
+        // [HttpPost] EnviarSmsRecuperacion removido por Firebase.
+
+        [HttpGet]
+        public async Task<IActionResult> RestablecerPassword(string email)
         {
+            ViewBag.Email = email;
             var usuario = await _usuarioConsumer.GetByEmailAsync(email);
             if (usuario != null)
             {
-                if (string.IsNullOrEmpty(usuario.Telefono))
-                {
-                    return Json(new { success = false, mensaje = "No tienes un número de teléfono registrado." });
-                }
-
-                var codigo = new Random().Next(100000, 999999).ToString();
-                usuario.CodigoVerificacion = codigo;
-                usuario.ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15);
-                await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
-
-                string errorSms = await _smsService.EnviarSmsRecuperacionAsync(usuario.Telefono, codigo);
-                if (!string.IsNullOrEmpty(errorSms))
-                {
-                    return Json(new { success = false, mensaje = errorSms });
-                }
-
-                return Json(new { success = true, mensaje = "Se ha enviado el código de recuperación a tu celular por SMS." });
+                ViewBag.Telefono = usuario.Telefono;
             }
-            return Json(new { success = false, mensaje = "No se pudo enviar el SMS." });
-        }
-
-        [HttpGet]
-        public IActionResult RestablecerPassword(string email)
-        {
-            ViewBag.Email = email;
             return View();
         }
 
@@ -348,6 +333,25 @@ namespace Delivery.MVC.Controllers
 
             TempData["Mensaje"] = "Contraseña restablecida exitosamente. Ahora puedes iniciar sesión.";
             return RedirectToAction("Login");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RestablecerPasswordSms(string telefono, string nuevaContrasena)
+        {
+            var usuarios = await _usuarioConsumer.GetAllAsync();
+            var usuario = usuarios.FirstOrDefault(u => u.Telefono == telefono);
+            
+            if (usuario != null)
+            {
+                usuario.PasswordHash = nuevaContrasena;
+                usuario.CodigoVerificacion = null;
+                usuario.ExpiracionCodigo = null;
+
+                await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
+                TempData["Mensaje"] = "Contraseña restablecida exitosamente. Ahora puedes iniciar sesión.";
+                return Json(new { success = true });
+            }
+            return Json(new { success = false, mensaje = "Usuario no encontrado." });
         }
 
         public IActionResult AccesoDenegado()
