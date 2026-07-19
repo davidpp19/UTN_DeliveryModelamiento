@@ -61,18 +61,18 @@ else
         <!-- UML: Status Control Form -> Toggle Status -->
         <form asp-controller="DashboardRepartidor" asp-action="ToggleStatus" method="post" class="d-inline">
             <button type="submit" class="btn btn-outline-info">
-                Cambiar Disponibilidad (Actualmente: @(repartidor?.Estado.ToString() ?? "Activo"))
+                @Localizer["CambiarDisponibilidadBtn"] (@Localizer["EstadoActualLBL"]: @(repartidor?.Estado.ToString() ?? "Activo"))
             </button>
         </form>
 
         <!-- UML: Incident Report Form -->
         <a asp-controller="RepartidorIncidentes" asp-action="Reportar" class="btn btn-outline-warning">
-            <i class="bi bi-exclamation-triangle"></i> Reportar Incidente
+            <i class="bi bi-exclamation-triangle"></i> @Localizer["ReportarIncidenteBtn"]
         </a>
 
         <!-- UML: ViewEarnings -> Calculate_Commission -->
         <a asp-controller="DashboardRepartidor" asp-action="Ganancias" class="btn btn-outline-success">
-            <i class="bi bi-wallet2"></i> Mis Ganancias
+            <i class="bi bi-wallet2"></i> @Localizer["MisGananciasBtn"]
         </a>
     </div>
 

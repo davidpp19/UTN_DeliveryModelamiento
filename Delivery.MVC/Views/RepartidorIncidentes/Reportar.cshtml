@@ -1,9 +1,11 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @{
-    ViewData["Title"] = "Reportar Incidente";
+    ViewData["Title"] = Localizer["ReportarIncidenteTitle"];
 }
 
 <div class="container mt-4">
-    <h2><i class="bi bi-exclamation-triangle text-warning"></i> Reporte de Incidentes (Incident Report Form)</h2>
+    <h2><i class="bi bi-exclamation-triangle text-warning"></i> @Localizer["ReportarIncidenteTitle"]</h2>
     <hr />
 
     <div class="row">
@@ -16,21 +18,21 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <div class="mb-3">
-                            <label for="severity" class="form-label">Gravedad del Incidente (Validate Report Data)</label>
+                            <label for="severity" class="form-label">@Localizer["GravedadIncidenteLBL"]</label>
                             <select name="severity" id="severity" class="form-select">
-                                <option value="Baja">Baja (ej. Retraso por tráfico)</option>
-                                <option value="Media">Media (ej. Cliente no encontrado)</option>
-                                <option value="Alta">Alta (ej. Accidente o Daño al producto)</option>
+                                <option value="Baja">@Localizer["GravedadBaja"]</option>
+                                <option value="Media">@Localizer["GravedadMedia"]</option>
+                                <option value="Alta">@Localizer["GravedadAlta"]</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Descripción</label>
+                            <label for="description" class="form-label">@Localizer["DescripcionLBL"]</label>
                             <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-warning"><i class="bi bi-send"></i> Enviar Reporte</button>
-                        <a asp-controller="DashboardRepartidor" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-warning"><i class="bi bi-send"></i> @Localizer["EnviarReporteBtn"]</button>
+                        <a asp-controller="DashboardRepartidor" asp-action="Index" class="btn btn-secondary">@Localizer["Cancelar"]</a>
                     </form>
                 </div>
             </div>
