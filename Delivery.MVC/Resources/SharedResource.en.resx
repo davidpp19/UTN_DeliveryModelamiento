@@ -1853,7 +1853,7 @@
     <value>Account Verification</value>
   </data>
   <data name="SimulacionUMLMensaje" xml:space="preserve">
-    <value>UML Simulation: A verification code has been sent. Please enter the code below. (Use: 123456)</value>
+    <value>A real verification code has been sent to your phone via SMS. Please enter the code below.</value>
   </data>
   <data name="EnterVerificationCode" xml:space="preserve">
     <value>Enter Verification Code</value>

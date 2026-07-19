@@ -1736,7 +1736,7 @@
     <value>Verificación de Cuenta</value>
   </data>
   <data name="SimulacionUMLMensaje" xml:space="preserve">
-    <value>Simulación UML: Se ha enviado un código de verificación. Por favor ingresa el código a continuación. (Usa: 123456)</value>
+    <value>Se ha enviado un código de verificación real a tu teléfono por SMS. Por favor ingresa el código a continuación.</value>
   </data>
   <data name="EnterVerificationCode" xml:space="preserve">
     <value>Ingresar Código de Verificación</value>
