@@ -17,13 +17,15 @@ namespace Delivery.MVC.Controllers
         private readonly IUsuarioConsumer _usuarioConsumer;
         private readonly IStringLocalizer<SharedResource> _localizer;
         private readonly Delivery.MVC.Servicios.IEmailService _emailService;
+        private readonly Delivery.MVC.Servicios.ISmsService _smsService;
 
-        public AuthController(IAuthConsumer authConsumer, IUsuarioConsumer usuarioConsumer, IStringLocalizer<SharedResource> localizer, Delivery.MVC.Servicios.IEmailService emailService)
+        public AuthController(IAuthConsumer authConsumer, IUsuarioConsumer usuarioConsumer, IStringLocalizer<SharedResource> localizer, Delivery.MVC.Servicios.IEmailService emailService, Delivery.MVC.Servicios.ISmsService smsService)
         {
             _authConsumer = authConsumer;
             _usuarioConsumer = usuarioConsumer;
             _localizer = localizer;
             _emailService = emailService;
+            _smsService = smsService;
         }
 
         [HttpGet]
@@ -243,32 +245,20 @@ namespace Delivery.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> MarcarComoVerificadoSms(string telefono)
+        public async Task<IActionResult> ReenviarCodigoSms(string email)
         {
-            // Este endpoint es llamado por el frontend después de que Firebase Auth
-            // valida correctamente el código SMS.
-            // En un proyecto real, el frontend nos enviaría el Firebase ID Token para validarlo.
-            // Para simplicidad, confiaremos en que el frontend lo llama de manera segura.
-            
-            // Buscar al usuario por teléfono (asumiendo que el teléfono es único)
-            // Ya que no tenemos GetByTelefonoAsync en el consumer, obtenemos todos y filtramos
-            // (Para escalabilidad se debería agregar el endpoint en la API)
-            var usuarios = await _usuarioConsumer.GetAllAsync();
-            var usuario = usuarios.FirstOrDefault(u => u.Telefono == telefono);
-            
-            if (usuario != null && !usuario.EmailConfirmado)
+            var usuario = await _usuarioConsumer.GetByEmailAsync(email);
+            if (usuario != null && !usuario.EmailConfirmado && !string.IsNullOrEmpty(usuario.Telefono))
             {
-                usuario.EmailConfirmado = true;
-                usuario.CodigoVerificacion = null;
-                usuario.ExpiracionCodigo = null;
-
+                var codigo = new Random().Next(100000, 999999).ToString();
+                usuario.CodigoVerificacion = codigo;
+                usuario.ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15);
                 await _usuarioConsumer.UpdateAsync(usuario.Id, usuario);
-                
-                TempData["Mensaje"] = "Cuenta verificada por SMS exitosamente. Ahora puedes iniciar sesión.";
-                return Json(new { success = true, mensaje = "Cuenta verificada correctamente." });
+
+                string smsMessage = $"Tu código de verificación para RayoExpres es: {codigo}";
+                await _smsService.SendSmsAsync(usuario.Telefono, smsMessage);
             }
-            
-            return Json(new { success = false, mensaje = "No se pudo verificar la cuenta." });
+            return Json(new { success = true, mensaje = "Si el celular está registrado, se ha enviado un SMS." });
         }
 
         [HttpGet]
