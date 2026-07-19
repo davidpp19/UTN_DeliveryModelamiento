@@ -36,13 +36,6 @@
                         <button type="submit" class="btn btn-link text-decoration-none">¿No recibiste el código por correo? Reenviar</button>
                     </form>
                     
-                    <form id="form-reenviar-sms" class="mt-2">
-                        <input type="hidden" name="email" value="@email" />
-                        <button type="button" id="btn-enviar-sms" class="btn btn-outline-secondary btn-sm rounded-pill">
-                            <i class="bi bi-phone"></i> ¿Prefieres recibirlo por SMS? Enviar al celular
-                        </button>
-                    </form>
-
                     <div id="res-reenviar" class="text-success mt-3" style="display:none; font-weight: bold;"></div>
                     <div id="err-reenviar" class="text-danger mt-3" style="display:none; font-weight: bold;"></div>
                 </div>
@@ -56,13 +49,6 @@
         document.getElementById('form-reenviar').addEventListener('submit', function (e) {
             e.preventDefault();
             manejarEnvio(this, '¿No recibiste el código por correo? Reenviar', 'Reenviando al correo...', 'Código reenviado');
-        });
-
-        document.getElementById('btn-enviar-sms').addEventListener('click', function () {
-            const formSms = document.getElementById('form-reenviar-sms');
-            // Reusamos la función manejarEnvio pero apuntando al endpoint de SMS
-            formSms.action = '@Url.Action("ReenviarCodigoSms", "Auth")';
-            manejarEnvio(formSms, '<i class="bi bi-phone"></i> ¿Prefieres recibirlo por SMS? Enviar al celular', 'Enviando SMS...', 'SMS enviado (revisa tu teléfono)');
         });
 
         function manejarEnvio(form, originalText, loadingText, successText) {

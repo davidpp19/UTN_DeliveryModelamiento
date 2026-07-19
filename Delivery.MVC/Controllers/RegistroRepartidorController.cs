@@ -14,13 +14,11 @@ namespace Delivery.MVC.Controllers
     {
         private readonly IAuthConsumer _authConsumer;
         private readonly IStringLocalizer<SharedResource> _localizer;
-        private readonly Delivery.MVC.Servicios.ISmsService _smsService;
 
-        public RegistroRepartidorController(IAuthConsumer authConsumer, IStringLocalizer<SharedResource> localizer, Delivery.MVC.Servicios.ISmsService smsService)
+        public RegistroRepartidorController(IAuthConsumer authConsumer, IStringLocalizer<SharedResource> localizer)
         {
             _authConsumer = authConsumer;
             _localizer = localizer;
-            _smsService = smsService;
         }
 
         [HttpGet]
@@ -71,14 +69,12 @@ namespace Delivery.MVC.Controllers
             }
 
             // UML: Send Verification Code
+            // Ya no enviamos SMS real. Solo guardamos el DTO para verificar.
             var r = new System.Random();
             string verificationCode = r.Next(100000, 999999).ToString();
             
             TempData["RegistroDto"] = System.Text.Json.JsonSerializer.Serialize(dto);
             TempData["CodigoVerificacion"] = verificationCode;
-            
-            string smsMessage = $"Tu código de verificación para RayoExpres es: {verificationCode}";
-            await _smsService.SendSmsAsync(dto.Telefono, smsMessage);
             
             return RedirectToAction(nameof(VerificarCodigo));
         }
