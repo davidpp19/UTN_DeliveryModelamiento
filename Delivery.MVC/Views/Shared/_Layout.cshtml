@@ -31,7 +31,6 @@
                             @* ── CLIENTE ── *@
                             if (User.IsInRole("Cliente"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">@Localizer["Inicio"]</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">@Localizer["Restaurantes"]</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="ClienteCarrito" asp-action="Index">@Localizer["MiCarrito"]</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="ClienteHistorialPedidos" asp-action="Index">@Localizer["MisPedidos"]</a></li>

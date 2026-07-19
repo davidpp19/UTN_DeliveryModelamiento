@@ -52,7 +52,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var mensaje = '@TempData["Mensaje"]';
+            var mensaje = '@Html.Raw(TempData["Mensaje"])';
             if (mensaje && mensaje.length > 0) {
                 Swal.fire({
                     icon: 'success',
