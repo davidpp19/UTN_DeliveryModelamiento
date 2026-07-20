@@ -381,3 +381,43 @@ select.form-select.bg-dark option {
     border-color: rgba(168, 85, 247, 0.6) !important;
     box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.25) !important;
 }
+
+/* ============================================================
+   GLOBAL FORM SELECT DARK THEME
+   Fix for native <select> browser rendering overriding Bootstrap
+   Applies to ALL form-select elements across the site
+   ============================================================ */
+.form-select {
+    background-color: #1a1a2e !important;
+    color: #f0f0f0 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.form-select option {
+    background-color: #1a1a2e !important;
+    color: #f0f0f0 !important;
+}
+
+.form-select:focus {
+    background-color: #1a1a2e !important;
+    color: #f0f0f0 !important;
+    border-color: rgba(168, 85, 247, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.25) !important;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    color: #f0f0f0 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f0f0f0 !important;
+    border-color: rgba(168, 85, 247, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.25) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(200, 200, 200, 0.5) !important;
+}
