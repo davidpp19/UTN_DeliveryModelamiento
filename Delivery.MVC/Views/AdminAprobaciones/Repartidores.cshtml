@@ -57,7 +57,7 @@
                             <!-- Formulario Aprobar -->
                             <form method="post" asp-action="AprobarRepartidor" class="d-inline">
                                 <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" class="btn btn-sm btn-success me-1 btn-confirm" data-title="¿Aprobar solicitud?" data-text="Confirmar la aprobación de este registro" data-confirm="Sí, aprobar">
+                                <button type="submit" class="btn btn-sm btn-success me-1 btn-confirm" data-title="ï¿½Aprobar solicitud?" data-text="Confirmar la aprobaciï¿½n de este registro" data-confirm="Sï¿½, aprobar">
                                     <i class="bi bi-check-circle"></i> Aprobar
                                 </button>
                             </form>
@@ -74,14 +74,13 @@
         </div>
 
         @section Modals {
-    <!-- MODALS PLACED OUTSIDE THE TABLE TO PREVENT Z-INDEX/BACKDROP BUGS -->
-        @foreach (var item in Model)
-        {
-            var avatarUrl = !string.IsNullOrEmpty(item.FotoPerfilUrl) ? item.FotoPerfilUrl : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(item.Nombres) + "&background=random";
-            var modalId = "modalRepartidor" + item.Id;
-            var modalRechazoId = "modalRechazo" + item.Id;
+            @foreach (var item in Model)
+            {
+                var avatarUrl = !string.IsNullOrEmpty(item.FotoPerfilUrl) ? item.FotoPerfilUrl : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(item.Nombres) + "&background=random";
+                var modalId = "modalRepartidor" + item.Id;
+                var modalRechazoId = "modalRechazo" + item.Id;
 
-            <!-- Modal Mostrar InformaciÃ³n -->
+                <!-- Modal Mostrar InformaciÃ³n -->
                     <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@(modalId)Label" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -143,19 +142,17 @@
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CancelarBtn"]</button>
-                                <button type="submit" class="btn btn-danger btn-confirm" data-title="¿Eliminar registro?" data-text="Esta acción no se puede deshacer" data-danger="true" data-confirm="Sí, eliminar">@Localizer["ConfirmarDenegacionBtn"]</button>
+                                <button type="submit" class="btn btn-danger btn-confirm" data-title="ï¿½Eliminar registro?" data-text="Esta acciï¿½n no se puede deshacer" data-danger="true" data-confirm="Sï¿½, eliminar">@Localizer["ConfirmarDenegacionBtn"]</button>
                               </div>
                           </form>
                         </div>
                       </div>
                     </div>
                 }
+        }
     }
 </div>
 
 
 
 
-
-
-}
