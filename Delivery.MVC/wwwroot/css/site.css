@@ -355,3 +355,29 @@ h1, h2, h3, h4, h5, h6 {
 .modal-backdrop {
     backdrop-filter: blur(4px);
 }
+
+/* ============================================================
+   COUPON SELECT + CHECKOUT FORM - Dark theme fix
+   ============================================================ */
+#cuponInput,
+.form-select.bg-dark,
+select.form-select.bg-dark {
+    background-color: #1a1a2e !important;
+    color: #f0f0f0 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+#cuponInput option,
+.form-select.bg-dark option,
+select.form-select.bg-dark option {
+    background-color: #1a1a2e !important;
+    color: #f0f0f0 !important;
+}
+
+#cuponInput:focus,
+.form-select.bg-dark:focus {
+    background-color: #1a1a2e !important;
+    color: #f0f0f0 !important;
+    border-color: rgba(168, 85, 247, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.25) !important;
+}
