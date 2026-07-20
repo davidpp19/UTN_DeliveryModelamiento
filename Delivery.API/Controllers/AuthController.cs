@@ -61,11 +61,11 @@ namespace Delivery.API.Controllers
                 if (usuario.IntentosFallidos >= 5)
                 {
                     usuario.BloqueadoHasta = DateTime.UtcNow.AddMinutes(15);
-                    await _usuarioService.UpdateAsync(usuario.Id, usuario);
+                    await _usuarioService.UpdateAsync(usuario);
                     return StatusCode(403, new { message = "Ha superado el número máximo de intentos. Su cuenta ha sido bloqueada por 15 minutos." });
                 }
                 
-                await _usuarioService.UpdateAsync(usuario.Id, usuario);
+                await _usuarioService.UpdateAsync(usuario);
                 return Unauthorized(new { message = $"Credenciales incorrectas. Le quedan {5 - usuario.IntentosFallidos} intentos." });
             }
 
@@ -74,7 +74,7 @@ namespace Delivery.API.Controllers
             {
                 usuario.IntentosFallidos = 0;
                 usuario.BloqueadoHasta = null;
-                await _usuarioService.UpdateAsync(usuario.Id, usuario);
+                await _usuarioService.UpdateAsync(usuario);
             }
 
             var rolNombre = usuario.Rol?.Nombre ?? "Cliente";
