@@ -46,10 +46,13 @@ body {
   --bg-dark: #0f172a;
 }
 
+body, *, h1, h2, h3, h4, h5, h6, p, a, span, div, input, button {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
 body {
   background-color: var(--bg-dark);
   color: var(--text-light);
-  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   margin-bottom: 60px;
   background-image: 
     radial-gradient(circle at 15% 50%, rgba(109, 40, 217, 0.15), transparent 25%),

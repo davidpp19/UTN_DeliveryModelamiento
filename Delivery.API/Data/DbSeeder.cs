@@ -186,7 +186,7 @@ namespace Delivery.API.Data
                         Apellidos    = "Administrador",
                         Email        = email,
                         Telefono     = "062600000",
-                        Cedula       = "100000000" + (context.Usuarios.Count() % 10).ToString(), // Fake cedula
+                        Cedula       = "100" + new Random().Next(1000000, 9999999).ToString(), // Fake unique cedula
                         PasswordHash = seguridadService.HashearPassword("Restaurante123*"),
                         RolId        = rolRestaurante.Id,
                         TipoUsuario  = TipoUsuarioEnum.Restaurante,
