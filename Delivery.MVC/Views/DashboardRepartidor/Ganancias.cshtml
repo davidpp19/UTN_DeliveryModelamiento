@@ -24,8 +24,8 @@
     <h4>Detalle de Pedidos Entregados</h4>
     @if (Model != null && Model.Any())
     {
-        <table class="table skeleton-loader table-striped table-hover mt-3">
-            <thead class="table-dark">
+        <table class="table table-dark table-hover table-borderless align-middle skeleton-loader mb-0">
+            <thead class="border-bottom border-secondary">
                 <tr>
                     <th>ID Pedido</th>
                     <th>Fecha</th>
@@ -60,4 +60,5 @@
         <a asp-action="Index" class="btn btn-secondary">Volver al Panel</a>
     </div>
 </div>
+
 

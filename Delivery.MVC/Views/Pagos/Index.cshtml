@@ -4,9 +4,9 @@
 @{ ViewData["Title"] = Localizer["PagosTitle"]; }
 <h1 class="my-4">@Localizer["PagosTitle"]</h1>
 <p><a asp-action="Create" class="btn btn-primary">@Localizer["CrearNuevoBtn"]</a></p>
-<div class="table-responsive table-scrollable">
-<table class="table skeleton-loader table-striped table-hover align-middle">
-<thead class="table-dark"><tr>
+<div class="table-responsive glass-card p-4 rounded-4 shadow-lg border-0 mt-3 table-scrollable">
+<table class="table table-dark table-hover table-borderless align-middle skeleton-loader mb-0">
+<thead class="border-bottom border-secondary"><tr>
 <th>Id</th>
 <th>PedidoId</th>
 <th>TipoMetodoPago</th>
@@ -25,5 +25,6 @@
 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger btn-confirm" data-title="¿Eliminar registro?" data-text="Esta acción no se puede deshacer" data-danger="true" data-confirm="Sí, eliminar">@Localizer["EliminarBtn"]</a>
 </td></tr>}
 </tbody></table></div>
+
 
 

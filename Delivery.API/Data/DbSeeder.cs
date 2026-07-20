@@ -36,6 +36,9 @@ namespace Delivery.API.Data
 
             // Parche: Confirmar correos específicos
             await PatchEmailsVerificadosAsync(context);
+
+            // Parche: Nuevas fotos específicas
+            await PatchProductosEspecificosImagesAsync(context);
         }
 
         // =====================================================================
@@ -622,6 +625,34 @@ namespace Delivery.API.Data
             foreach (var user in usuarios)
             {
                 user.EmailConfirmado = true;
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        // =====================================================================
+        // PARCHE: FOTOS ESPECIFICAS PARA ALGUNOS PRODUCTOS
+        // =====================================================================
+        private static async Task PatchProductosEspecificosImagesAsync(DeliveryDbContext context)
+        {
+            var updateMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "Costillas BBQ", "/img/productos/costillas_bbq.png" },
+                { "Anticuchos de res", "/img/productos/anticuchos_res.png" },
+                { "Quesadilla", "/img/productos/quesadilla.png" },
+                { "Spaghetti bolognesa", "/img/productos/spaghetti_bolognese.png" }
+            };
+
+            var productos = await context.Productos
+                .Where(p => updateMap.Keys.Contains(p.Nombre))
+                .ToListAsync();
+
+            foreach(var prod in productos)
+            {
+                if(updateMap.TryGetValue(prod.Nombre, out string newImg))
+                {
+                    prod.ImagenUrl = newImg;
+                }
             }
 
             await context.SaveChangesAsync();
