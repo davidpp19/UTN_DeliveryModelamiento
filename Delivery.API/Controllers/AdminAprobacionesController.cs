@@ -108,16 +108,28 @@ namespace Delivery.API.Controllers
             if (repartidor == null) return NotFound();
 
             repartidor.EstadoAprobacion = EstadoAprobacionEnum.Aprobado;
-            repartidor.Estado = EstadoRepartidorEnum.Disponible; // <-- Solución de causa raíz
+            repartidor.Estado = EstadoRepartidorEnum.Disponible;
             repartidor.AprobadoPor = GetAdminId();
             repartidor.FechaAprobacion = DateTime.UtcNow;
             await _repartidorService.UpdateAsync(repartidor);
 
+            // CRITICAL FIX: Mark email as confirmed so the user can log in
+            var usuario = await _usuarioService.GetByIdAsync(repartidor.UsuarioId);
+            if (usuario != null)
+            {
+                usuario.EmailConfirmado = true;
+                usuario.CodigoVerificacion = null;
+                usuario.ExpiracionCodigo = null;
+                usuario.IntentosFallidos = 0;
+                usuario.BloqueadoHasta = null;
+                await _usuarioService.UpdateAsync(usuario);
+            }
+
             await _notificacionService.EnviarNotificacionAsync(new MensajeNotificacionDto
             {
                 UsuarioDestinoId = repartidor.UsuarioId,
-                Asunto = "¡Cuenta Aprobada!",
-                Contenido = "Tu solicitud como repartidor ha sido aprobada. ¡Ya puedes empezar a recibir pedidos!",
+                Asunto = "Cuenta Aprobada!",
+                Contenido = "Tu solicitud como repartidor ha sido aprobada. Ya puedes iniciar sesion y empezar a recibir pedidos!",
                 Canal = CanalNotificacionEnum.Push
             });
 
@@ -153,18 +165,30 @@ namespace Delivery.API.Controllers
             if (restaurante == null) return NotFound();
 
             restaurante.Estado = EstadoRestauranteEnum.Aprobado;
-            restaurante.Abierto = true; // Para asegurar que quede disponible
+            restaurante.Abierto = true;
             restaurante.AprobadoPor = GetAdminId();
             restaurante.FechaAprobacion = DateTime.UtcNow;
             await _restauranteService.UpdateAsync(restaurante);
 
+            // CRITICAL FIX: Mark owner email as confirmed so they can log in
             if (restaurante.CreadoPor.HasValue)
             {
+                var usuarioPropietario = await _usuarioService.GetByIdAsync(restaurante.CreadoPor.Value);
+                if (usuarioPropietario != null)
+                {
+                    usuarioPropietario.EmailConfirmado = true;
+                    usuarioPropietario.CodigoVerificacion = null;
+                    usuarioPropietario.ExpiracionCodigo = null;
+                    usuarioPropietario.IntentosFallidos = 0;
+                    usuarioPropietario.BloqueadoHasta = null;
+                    await _usuarioService.UpdateAsync(usuarioPropietario);
+                }
+
                 await _notificacionService.EnviarNotificacionAsync(new MensajeNotificacionDto
                 {
                     UsuarioDestinoId = restaurante.CreadoPor.Value,
-                    Asunto = "¡Restaurante Aprobado!",
-                    Contenido = "Tu restaurante ha sido aprobado y ya es visible en la plataforma.",
+                    Asunto = "Restaurante Aprobado!",
+                    Contenido = "Tu restaurante ha sido aprobado y ya es visible en la plataforma. Ya puedes iniciar sesion.",
                     Canal = CanalNotificacionEnum.Push
                 });
             }

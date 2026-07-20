@@ -45,24 +45,66 @@ namespace Delivery.API.Controllers
         {
             try
             {
+                // Fix 1: Always verify admin/test emails
                 var emailsAConfirmar = new[] { "admin@rayoexpres.com", "davidtomas@gmail.com", "admin@admin.com" };
-                
-                // Opción 1: Actualizar usando EF Core
-                var usuarios = await _context.Usuarios
+                var usuariosAdmin = await _context.Usuarios
                     .Where(u => emailsAConfirmar.Contains(u.Email))
                     .ToListAsync();
 
-                foreach (var user in usuarios)
+                foreach (var user in usuariosAdmin)
                 {
                     user.EmailConfirmado = true;
-                    // También resetear intentos por si acaso
                     user.IntentosFallidos = 0;
                     user.BloqueadoHasta = null;
                 }
 
+                // Fix 2: Also confirm ALL repartidores/restaurantes that are already approved
+                // These were blocked from login because approval didn't mark EmailConfirmado=true
+                var repartidoresAprobados = await _context.Repartidores
+                    .Where(r => r.EstadoAprobacion == EstadoAprobacionEnum.Aprobado)
+                    .Include(r => r.Usuario)
+                    .ToListAsync();
+
+                foreach (var rep in repartidoresAprobados)
+                {
+                    if (rep.Usuario != null && !rep.Usuario.EmailConfirmado)
+                    {
+                        rep.Usuario.EmailConfirmado = true;
+                        rep.Usuario.IntentosFallidos = 0;
+                        rep.Usuario.BloqueadoHasta = null;
+                        rep.Usuario.CodigoVerificacion = null;
+                        rep.Usuario.ExpiracionCodigo = null;
+                    }
+                }
+
+                var restaurantesAprobados = await _context.Restaurantes
+                    .Where(r => r.Estado == EstadoRestauranteEnum.Aprobado && r.CreadoPor != null)
+                    .ToListAsync();
+
+                foreach (var rest in restaurantesAprobados)
+                {
+                    if (rest.CreadoPor.HasValue)
+                    {
+                        var usuarioRest = await _context.Usuarios.FindAsync(rest.CreadoPor.Value);
+                        if (usuarioRest != null && !usuarioRest.EmailConfirmado)
+                        {
+                            usuarioRest.EmailConfirmado = true;
+                            usuarioRest.IntentosFallidos = 0;
+                            usuarioRest.BloqueadoHasta = null;
+                            usuarioRest.CodigoVerificacion = null;
+                            usuarioRest.ExpiracionCodigo = null;
+                        }
+                    }
+                }
+
                 await _context.SaveChangesAsync();
 
-                return Ok(new { message = "Cuentas verificadas exitosamente en la base de datos.", usuariosActualizados = usuarios.Count });
+                return Ok(new { 
+                    message = "Verificacion masiva completada.",
+                    adminsActualizados = usuariosAdmin.Count,
+                    repartidoresActualizados = repartidoresAprobados.Count,
+                    restaurantesActualizados = restaurantesAprobados.Count
+                });
             }
             catch (Exception ex)
             {
