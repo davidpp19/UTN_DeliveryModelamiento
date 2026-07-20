@@ -30,34 +30,58 @@ body {
   text-align: start;
 }
 
+/* ==========================================================================
+   CUPONES ANIMATION
+   ========================================================================== */
+.coupon-card {
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+  border: 1px solid var(--glass-border);
+}
+
+.coupon-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 15px 35px var(--primary-neon-glow);
+  border-color: var(--primary-neon);
+}
+.coupon-card:hover i.bi-ticket-detailed {
+  color: var(--primary-neon) !important;
+  text-shadow: 0 0 15px var(--primary-neon);
+}
+
 /* ==========================================================
    UNSTUDIO CORPORATE REDESIGN - LIQUID GLASS AESTHETICS
    ========================================================== */
 :root {
-  --glass-bg: rgba(30, 30, 35, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --primary-neon: #6d28d9;
-  --primary-neon-glow: rgba(109, 40, 217, 0.5);
-  --secondary-neon: #2563eb;
-  --accent-neon: #ec4899;
-  --text-light: #f8fafc;
-  --text-dim: #94a3b8;
-  --bg-dark: #0f172a;
+  --glass-bg: rgba(20, 20, 20, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  --primary-neon: #a855f7;
+  --primary-neon-glow: rgba(168, 85, 247, 0.4);
+  --secondary-neon: #3b82f6;
+  --text-light: #ffffff;
+  --text-dim: #a1a1aa;
+  --bg-dark: #000000;
 }
 
 body, *, h1, h2, h3, h4, h5, h6, p, a, span, div, input, button {
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif !important;
 }
 
+::selection {
+  background-color: var(--primary-neon);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: var(--primary-neon);
+  color: #ffffff;
+}
+
 body {
   background-color: var(--bg-dark);
   color: var(--text-light);
   margin-bottom: 60px;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(109, 40, 217, 0.15), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(37, 99, 235, 0.15), transparent 25%);
-  background-attachment: fixed;
+  background-image: none;
 }
 
 /* Typography Overrides */
@@ -68,9 +92,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Navbar Glass */
 .navbar-glass {
-  background: rgba(15, 23, 42, 0.7) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--glass-border) !important;
 }
 

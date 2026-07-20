@@ -30,87 +30,95 @@
 }
 else
 {
-    <h4>@Localizer["ResumenDashboard"]</h4>
-    <table class="table table-bordered" style="max-width: 500px;">
-        <tr>
-            <th>@Localizer["TotalEntregasDashboard"]</th>
-            <td>@ViewBag.TotalEntregados</td>
-        </tr>
-        <tr>
-            <th>@Localizer["PedidosActivosDashboard"]</th>
-            <td>@ViewBag.PedidosActivos</td>
-        </tr>
+    <h4 class="mt-4 mb-3 text-primary">@Localizer["ResumenDashboard"]</h4>
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+        <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="card glass-card h-100 text-center p-3">
+                <i class="bi bi-box-seam text-primary fs-1 mb-2"></i>
+                <h5 class="text-light">@Localizer["TotalEntregasDashboard"]</h5>
+                <h2 class="fw-bold" style="color: #a78bfa;">@ViewBag.TotalEntregados</h2>
+            </div>
+        </div>
+        <div class="col" data-aos="fade-up" data-aos-delay="200">
+            <div class="card glass-card h-100 text-center p-3">
+                <i class="bi bi-bicycle text-success fs-1 mb-2"></i>
+                <h5 class="text-light">@Localizer["PedidosActivosDashboard"]</h5>
+                <h2 class="fw-bold text-success">@ViewBag.PedidosActivos</h2>
+            </div>
+        </div>
         @if (repartidor != null)
         {
-            <tr>
-                <th>@Localizer["CalificacionDashboard"]</th>
-                <td>@(repartidor.CalificacionPromedio?.ToString("0.0") ?? Localizer["SinCalificaciones"].Value)</td>
-            </tr>
-            <tr>
-                <th>@Localizer["EstadoDashboard"]</th>
-                <td>@repartidor.EstadoAprobacion</td>
-            </tr>
+            <div class="col" data-aos="fade-up" data-aos-delay="300">
+                <div class="card glass-card h-100 text-center p-3">
+                    <i class="bi bi-star-fill text-warning fs-1 mb-2"></i>
+                    <h5 class="text-light">@Localizer["CalificacionDashboard"]</h5>
+                    <h2 class="fw-bold text-warning">@(repartidor.CalificacionPromedio?.ToString("0.0") ?? Localizer["SinCalificaciones"].Value)</h2>
+                </div>
+            </div>
+            <div class="col" data-aos="fade-up" data-aos-delay="400">
+                <div class="card glass-card h-100 text-center p-3">
+                    <i class="bi bi-shield-check text-info fs-1 mb-2"></i>
+                    <h5 class="text-light">@Localizer["EstadoDashboard"]</h5>
+                    <h2 class="fw-bold text-info">@repartidor.EstadoAprobacion</h2>
+                </div>
+            </div>
         }
-    </table>
+    </div>
 
-    <hr />
+    <hr style="border-color: var(--glass-border);" />
 
-    <div class="d-flex flex-wrap gap-2 mb-3">
-        <a asp-controller="RepartidorPedidos" asp-action="Index" class="btn btn-outline-primary">@Localizer["VerMisPedidosAsignados"]</a>
-        
+    <div class="d-flex flex-wrap gap-3 mb-4">
+        <a asp-controller="RepartidorPedidos" asp-action="Index" class="btn btn-liquid btn-liquid-primary flex-grow-1">@Localizer["VerMisPedidosAsignados"]</a>
+        <a asp-controller="RepartidorPerfil" asp-action="Index" class="btn btn-liquid flex-grow-1">@Localizer["MiPerfil"]</a>
+        <a asp-controller="RepartidorUbicacion" asp-action="Index" class="btn btn-liquid flex-grow-1">@Localizer["ActualizarUbicacion"]</a>
+    </div>
+
+    <div class="d-flex flex-wrap gap-3 mt-4">
         <!-- UML: Status Control Form -> Toggle Status -->
-        <form asp-controller="DashboardRepartidor" asp-action="ToggleStatus" method="post" class="d-inline">
-            <button type="submit" class="btn btn-outline-info">
+        <form asp-controller="DashboardRepartidor" asp-action="ToggleStatus" method="post" class="d-inline flex-grow-1">
+            <button type="submit" class="btn btn-liquid w-100">
                 @Localizer["CambiarDisponibilidadBtn"] (@Localizer["EstadoActualLBL"]: @(repartidor?.Estado.ToString() ?? "Activo"))
             </button>
         </form>
 
         <!-- UML: Incident Report Form -->
-        <a asp-controller="RepartidorIncidentes" asp-action="Reportar" class="btn btn-outline-warning">
+        <a asp-controller="RepartidorIncidentes" asp-action="Reportar" class="btn btn-liquid flex-grow-1" style="--liquid-bg: #f59e0b; --liquid-bg-hover: #d97706;">
             <i class="bi bi-exclamation-triangle"></i> @Localizer["ReportarIncidenteBtn"]
         </a>
 
         <!-- UML: ViewEarnings -> Calculate_Commission -->
-        <a asp-controller="DashboardRepartidor" asp-action="Ganancias" class="btn btn-outline-success">
+        <a asp-controller="DashboardRepartidor" asp-action="Ganancias" class="btn btn-liquid flex-grow-1" style="--liquid-bg: #10b981; --liquid-bg-hover: #059669;">
             <i class="bi bi-wallet2"></i> @Localizer["MisGananciasBtn"]
         </a>
     </div>
 
-    <hr />
+    <hr style="border-color: var(--glass-border);" class="my-5" />
 
-    <h4>@Localizer["UltimosPedidos"]</h4>
+    <h4 class="mb-4 text-primary">@Localizer["UltimosPedidos"]</h4>
     @if (pedidosRecientes == null || !pedidosRecientes.Any())
     {
-        <p>@Localizer["NoPedidosAsignados"]</p>
+        <p class="text-muted">@Localizer["NoPedidosAsignados"]</p>
     }
     else
     {
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>@Localizer["PedidoNum"]</th>
-                    <th>@Localizer["RestauranteTh"]</th>
-                    <th>@Localizer["EstadoTh"]</th>
-                    <th>@Localizer["FechaTh"]</th>
-                    <th>@Localizer["AccionesTh"]</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var pedido in pedidosRecientes)
-                {
-                    <tr>
-                        <td>@pedido.Id</td>
-                        <td>@(pedido.Restaurante?.Nombre ?? Localizer["RestauranteTh"].Value)</td>
-                        <td>@pedido.EstadoPedido</td>
-                        <td>@pedido.FechaPedido.ToLocalTime().ToString("g")</td>
-                        <td>
-                            <a asp-controller="RepartidorPedidos" asp-action="Details" asp-route-id="@pedido.Id">@Localizer["VerBtn"]</a>
-                            |
-                            <a asp-controller="RepartidorPedidos" asp-action="CambiarEstado" asp-route-id="@pedido.Id">@Localizer["CambiarEstadoBtn"]</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            @foreach (var pedido in pedidosRecientes)
+            {
+                <div class="col" data-aos="fade-up">
+                    <div class="card glass-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary fw-bold">@Localizer["PedidoNum"] #@pedido.Id</h5>
+                            <p class="card-text text-light"><strong>@Localizer["RestauranteTh"]:</strong> @(pedido.Restaurante?.Nombre ?? Localizer["RestauranteTh"].Value)</p>
+                            <p class="card-text text-light"><strong>@Localizer["EstadoTh"]:</strong> <span class="badge bg-info">@pedido.EstadoPedido</span></p>
+                            <p class="card-text text-muted small"><i class="bi bi-clock"></i> @pedido.FechaPedido.ToLocalTime().ToString("g")</p>
+                        </div>
+                        <div class="card-footer border-top-0 bg-transparent d-flex gap-2">
+                            <a asp-controller="RepartidorPedidos" asp-action="Details" asp-route-id="@pedido.Id" class="btn btn-sm btn-outline-info flex-grow-1">@Localizer["VerBtn"]</a>
+                            <a asp-controller="RepartidorPedidos" asp-action="CambiarEstado" asp-route-id="@pedido.Id" class="btn btn-sm btn-outline-primary flex-grow-1">@Localizer["CambiarEstadoBtn"]</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     }
 }

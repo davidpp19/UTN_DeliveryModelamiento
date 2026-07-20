@@ -52,39 +52,47 @@ namespace Delivery.MVC.Controllers
                 return RedirectToAction("VerificarEmail", new { email = dto.Email });
             }
 
-            var authResponse = await _authConsumer.LoginAsync(dto);
-            if (authResponse != null)
+            try
             {
-                var claims = new List<Claim>
+                var authResponse = await _authConsumer.LoginAsync(dto);
+                if (authResponse != null)
                 {
-                    new Claim(ClaimTypes.NameIdentifier, authResponse.UsuarioId.ToString()),
-                    new Claim(ClaimTypes.Name, authResponse.Nombre),
-                    new Claim(ClaimTypes.Email, authResponse.Email),
-                    new Claim(ClaimTypes.Role, authResponse.Rol),
-                    new Claim("JwtToken", authResponse.Token) // Guardamos el token por si el frontend lo necesita
-                };
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, authResponse.UsuarioId.ToString()),
+                        new Claim(ClaimTypes.Name, authResponse.Nombre),
+                        new Claim(ClaimTypes.Email, authResponse.Email),
+                        new Claim(ClaimTypes.Role, authResponse.Rol),
+                        new Claim("JwtToken", authResponse.Token)
+                    };
 
-                if (!string.IsNullOrEmpty(authResponse.FotoPerfilUrl))
-                {
-                    claims.Add(new Claim("FotoPerfilUrl", authResponse.FotoPerfilUrl));
+                    if (!string.IsNullOrEmpty(authResponse.FotoPerfilUrl))
+                    {
+                        claims.Add(new Claim("FotoPerfilUrl", authResponse.FotoPerfilUrl));
+                    }
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddHours(2)
+                    };
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
+                    return RedirectToRoleDashboard(authResponse.Rol);
                 }
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var authProperties = new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(2)
-                };
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
-
-                return RedirectToRoleDashboard(authResponse.Rol);
+                ModelState.AddModelError(string.Empty, _localizer["Credenciales incorrectas."]);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            ModelState.AddModelError(string.Empty, _localizer["Credenciales incorrectas."]);
             return View(dto);
         }
 

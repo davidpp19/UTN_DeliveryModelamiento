@@ -47,10 +47,35 @@ namespace Delivery.API.Controllers
             if (usuario == null || !usuario.Activo)
                 return Unauthorized(new { message = "Credenciales incorrectas o usuario inactivo." });
 
+            if (usuario.BloqueadoHasta.HasValue && usuario.BloqueadoHasta.Value > DateTime.UtcNow)
+            {
+                var minutosRestantes = (int)(usuario.BloqueadoHasta.Value - DateTime.UtcNow).TotalMinutes;
+                return StatusCode(403, new { message = $"Su cuenta está bloqueada por demasiados intentos fallidos. Intente de nuevo en {minutosRestantes} minutos o póngase en contacto con soporte." });
+            }
+
             var esPasswordValido = _seguridadService.VerificarPassword(loginDto.Password, usuario.PasswordHash);
 
             if (!esPasswordValido)
-                return Unauthorized(new { message = "Credenciales incorrectas." });
+            {
+                usuario.IntentosFallidos++;
+                if (usuario.IntentosFallidos >= 5)
+                {
+                    usuario.BloqueadoHasta = DateTime.UtcNow.AddMinutes(15);
+                    await _usuarioService.UpdateAsync(usuario.Id, usuario);
+                    return StatusCode(403, new { message = "Ha superado el número máximo de intentos. Su cuenta ha sido bloqueada por 15 minutos." });
+                }
+                
+                await _usuarioService.UpdateAsync(usuario.Id, usuario);
+                return Unauthorized(new { message = $"Credenciales incorrectas. Le quedan {5 - usuario.IntentosFallidos} intentos." });
+            }
+
+            // Reseteo de intentos
+            if (usuario.IntentosFallidos > 0 || usuario.BloqueadoHasta.HasValue)
+            {
+                usuario.IntentosFallidos = 0;
+                usuario.BloqueadoHasta = null;
+                await _usuarioService.UpdateAsync(usuario.Id, usuario);
+            }
 
             var rolNombre = usuario.Rol?.Nombre ?? "Cliente";
             var token = _seguridadService.GenerarTokenJwt(usuario.Id, usuario.Email, rolNombre);

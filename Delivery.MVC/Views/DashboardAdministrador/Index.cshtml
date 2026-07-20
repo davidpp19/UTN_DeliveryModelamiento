@@ -10,102 +10,113 @@
     <hr />
 
     <div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
-        <div class="col">
-            <div class="card h-100 shadow-sm border-primary">
+        <div class="col" data-aos="fade-up" data-aos-delay="100">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["UsuariosCardTitle"]</h5>
-                    <p class="card-text">@Localizer["GestionaUsuariosDesc"]</p>
-                    <a asp-controller="Usuarios" asp-action="Index" class="btn btn-primary">@Localizer["IrAUsuariosBtn"]</a>
+                    <i class="bi bi-people-fill fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["UsuariosCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["GestionaUsuariosDesc"]</p>
+                    <a asp-controller="Usuarios" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrAUsuariosBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-success">
+        <div class="col" data-aos="fade-up" data-aos-delay="150">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["RestaurantesCardTitle"]</h5>
-                    <p class="card-text">@Localizer["AdministraRestaurantesDesc"]</p>
-                    <a asp-controller="Restaurantes" asp-action="Index" class="btn btn-success">@Localizer["IrARestaurantesBtn"]</a>
+                    <i class="bi bi-shop fs-1 text-success mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["RestaurantesCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["AdministraRestaurantesDesc"]</p>
+                    <a asp-controller="Restaurantes" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrARestaurantesBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-info">
+        <div class="col" data-aos="fade-up" data-aos-delay="200">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["ProductosCardTitle"]</h5>
-                    <p class="card-text">@Localizer["ControlGeneralCatalogoDesc"]</p>
-                    <a asp-controller="Productos" asp-action="Index" class="btn btn-info text-white">@Localizer["IrAProductosBtn"]</a>
+                    <i class="bi bi-box-seam fs-1 text-info mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["ProductosCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["ControlGeneralCatalogoDesc"]</p>
+                    <a asp-controller="Productos" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrAProductosBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-warning">
+        <div class="col" data-aos="fade-up" data-aos-delay="250">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["CategoriasCardTitle"]</h5>
-                    <p class="card-text">@Localizer["GestionCategoriasDesc"]</p>
-                    <a asp-controller="CategoriasProducto" asp-action="Index" class="btn btn-warning">@Localizer["IrACategoriasBtn"]</a>
+                    <i class="bi bi-tags fs-1 text-warning mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["CategoriasCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["GestionCategoriasDesc"]</p>
+                    <a asp-controller="CategoriasProducto" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrACategoriasBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-danger">
+        <div class="col" data-aos="fade-up" data-aos-delay="300">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["PedidosCardTitle"]</h5>
-                    <p class="card-text">@Localizer["VisualizaPedidosDesc"]</p>
-                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-danger">@Localizer["IrAPedidosBtn"]</a>
+                    <i class="bi bi-bag-check fs-1 text-danger mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["PedidosCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["VisualizaPedidosDesc"]</p>
+                    <a asp-controller="Pedidos" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrAPedidosBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-secondary">
+        <div class="col" data-aos="fade-up" data-aos-delay="350">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["RepartidoresCardTitle"]</h5>
-                    <p class="card-text">@Localizer["GestionRepartidoresEstadosDesc"]</p>
-                    <a asp-controller="Repartidores" asp-action="Index" class="btn btn-secondary">@Localizer["IrARepartidoresBtn"]</a>
+                    <i class="bi bi-bicycle fs-1 text-secondary mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["RepartidoresCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["GestionRepartidoresEstadosDesc"]</p>
+                    <a asp-controller="Repartidores" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrARepartidoresBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-dark">
+        <div class="col" data-aos="fade-up" data-aos-delay="400">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["VehiculosCardTitle"]</h5>
-                    <p class="card-text">@Localizer["GestionVehiculosDesc"]</p>
-                    <a asp-controller="Vehiculos" asp-action="Index" class="btn btn-dark">@Localizer["IrAVehiculosBtn"]</a>
+                    <i class="bi bi-car-front fs-1 mb-3" style="color: #a78bfa;"></i>
+                    <h5 class="card-title text-light">@Localizer["VehiculosCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["GestionVehiculosDesc"]</p>
+                    <a asp-controller="Vehiculos" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrAVehiculosBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-primary">
+        <div class="col" data-aos="fade-up" data-aos-delay="450">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["CuponesCardTitle"]</h5>
-                    <p class="card-text">@Localizer["AdministracionPromocionesDesc"]</p>
-                    <a asp-controller="Cupones" asp-action="Index" class="btn btn-outline-primary">@Localizer["IrACuponesBtn"]</a>
+                    <i class="bi bi-ticket-perforated fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["CuponesCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["AdministracionPromocionesDesc"]</p>
+                    <a asp-controller="Cupones" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrACuponesBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-success">
+        <div class="col" data-aos="fade-up" data-aos-delay="500">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["PagosCardTitle"]</h5>
-                    <p class="card-text">@Localizer["HistorialTransaccionesDesc"]</p>
-                    <a asp-controller="Pagos" asp-action="Index" class="btn btn-outline-success">@Localizer["IrAPagosBtn"]</a>
+                    <i class="bi bi-cash-coin fs-1 text-success mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["PagosCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["HistorialTransaccionesDesc"]</p>
+                    <a asp-controller="Pagos" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrAPagosBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-warning">
+        <div class="col" data-aos="fade-up" data-aos-delay="550">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["CalificacionesCardTitle"]</h5>
-                    <p class="card-text">@Localizer["ModeracionResenasDesc"]</p>
-                    <a asp-controller="Resenas" asp-action="Index" class="btn btn-outline-warning">@Localizer["IrAResenasBtn"]</a>
+                    <i class="bi bi-star-fill fs-1 text-warning mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["CalificacionesCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["ModeracionResenasDesc"]</p>
+                    <a asp-controller="Resenas" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrAResenasBtn"]</a>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="card h-100 shadow-sm border-danger">
+        <div class="col" data-aos="fade-up" data-aos-delay="600">
+            <div class="card glass-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">@Localizer["AuditoriaCardTitle"]</h5>
-                    <p class="card-text">@Localizer["RegistrosAccionesDesc"]</p>
-                    <a asp-controller="Auditorias" asp-action="Index" class="btn btn-outline-danger">@Localizer["IrAAuditoriaBtn"]</a>
+                    <i class="bi bi-shield-lock fs-1 text-danger mb-3"></i>
+                    <h5 class="card-title text-light">@Localizer["AuditoriaCardTitle"]</h5>
+                    <p class="card-text text-muted small">@Localizer["RegistrosAccionesDesc"]</p>
+                    <a asp-controller="Auditorias" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrAAuditoriaBtn"]</a>
                 </div>
             </div>
         </div>

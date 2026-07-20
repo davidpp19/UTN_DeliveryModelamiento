@@ -23,34 +23,37 @@
     }
     else
     {
-        <p class="lead">@Localizer["BienvenidoRestauranteMsg"]</p>
-        <hr />
+        <p class="lead text-light mb-4">@Localizer["BienvenidoRestauranteMsg"]</p>
+        <hr style="border-color: var(--glass-border);" />
 
-        <div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
-            <div class="col">
-                <div class="card h-100 shadow-sm border-info">
+        <div class="row row-cols-1 row-cols-md-3 g-4 mt-2 mb-5">
+            <div class="col" data-aos="fade-up" data-aos-delay="100">
+                <div class="card glass-card h-100">
                     <div class="card-body text-center">
-                        <h5 class="card-title">@Localizer["MisProductosTitle"]</h5>
-                        <p class="card-text">@Localizer["MisProductosDesc"]</p>
-                        <a asp-controller="RestauranteProductos" asp-action="Index" class="btn btn-info text-white">@Localizer["IrMisProductosBtn"]</a>
+                        <i class="bi bi-box-seam fs-1 text-info mb-3"></i>
+                        <h5 class="card-title text-light">@Localizer["MisProductosTitle"]</h5>
+                        <p class="card-text text-muted small">@Localizer["MisProductosDesc"]</p>
+                        <a asp-controller="RestauranteProductos" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrMisProductosBtn"]</a>
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card h-100 shadow-sm border-warning">
+            <div class="col" data-aos="fade-up" data-aos-delay="200">
+                <div class="card glass-card h-100">
                     <div class="card-body text-center">
-                        <h5 class="card-title">@Localizer["MisCategoriasTitle"]</h5>
-                        <p class="card-text">@Localizer["MisCategoriasDesc"]</p>
-                        <a asp-controller="RestauranteCategorias" asp-action="Index" class="btn btn-warning">@Localizer["IrCategoriasBtn"]</a>
+                        <i class="bi bi-tags fs-1 text-warning mb-3"></i>
+                        <h5 class="card-title text-light">@Localizer["MisCategoriasTitle"]</h5>
+                        <p class="card-text text-muted small">@Localizer["MisCategoriasDesc"]</p>
+                        <a asp-controller="RestauranteCategorias" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrCategoriasBtn"]</a>
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card h-100 shadow-sm border-danger">
+            <div class="col" data-aos="fade-up" data-aos-delay="300">
+                <div class="card glass-card h-100">
                     <div class="card-body text-center">
-                        <h5 class="card-title">@Localizer["PedidosActivosTitle"]</h5>
-                        <p class="card-text">@Localizer["PedidosActivosDesc"]</p>
-                        <a asp-controller="RestaurantePedidos" asp-action="Index" class="btn btn-danger">@Localizer["IrPedidosBtn"]</a>
+                        <i class="bi bi-bag-check fs-1 text-danger mb-3"></i>
+                        <h5 class="card-title text-light">@Localizer["PedidosActivosTitle"]</h5>
+                        <p class="card-text text-muted small">@Localizer["PedidosActivosDesc"]</p>
+                        <a asp-controller="RestaurantePedidos" asp-action="Index" class="btn btn-liquid w-100">@Localizer["IrPedidosBtn"]</a>
                     </div>
                 </div>
             </div>

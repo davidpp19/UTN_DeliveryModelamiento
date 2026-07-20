@@ -108,6 +108,12 @@ namespace Delivery.Modelos.Entidades
         [Column("actualizado_en")]
         public DateTime? ActualizadoEn { get; set; }
 
+        [Column("intentos_fallidos")]
+        public int IntentosFallidos { get; set; } = 0;
+
+        [Column("bloqueado_hasta")]
+        public DateTime? BloqueadoHasta { get; set; }
+
         [ForeignKey(nameof(RolId))]
         public virtual Rol? Rol { get; set; }
 

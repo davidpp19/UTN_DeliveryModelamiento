@@ -5,13 +5,22 @@
     ViewData["Title"] = Localizer["IniciarSesion"];
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="text-center mb-4 text-primary">@Localizer["IniciarSesion"]</h3>
+<div class="row justify-content-center mt-5" data-aos="zoom-in">
+    <div class="col-md-5">
+        <div class="card glass-card">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <img src="~/img/logo.png" alt="RayoExpres Logo" style="height: 60px; object-fit: contain; mix-blend-mode: screen; margin-bottom: 10px;" />
+                    <h3 class="text-primary fw-bold">@Localizer["IniciarSesion"]</h3>
+                </div>
                 <form asp-action="Login" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div class="alert alert-danger" style="background: rgba(220,53,69,0.1); border: 1px solid #dc3545; color: #ff6b6b; border-radius: 8px;">
+                            <div asp-validation-summary="ModelOnly" class="mb-0"></div>
+                        </div>
+                    }
                     <div class="mb-3">
                         <label asp-for="Email" class="form-label">@Localizer["CorreoElectronico"]</label>
                         <input asp-for="Email" class="form-control" type="email" placeholder="@Localizer["EmailPlaceholder"]" />
@@ -22,12 +31,12 @@
                         <input asp-for="Password" class="form-control" type="password" placeholder="@Localizer["PasswordPlaceholder"]" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
-                    <div class="mb-3 form-check">
+                    <div class="mb-3 form-check text-muted">
                         <input asp-for="RememberMe" class="form-check-input" />
                         <label asp-for="RememberMe" class="form-check-label">@Localizer["Recordarme"]</label>
                     </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">@Localizer["Ingresar"]</button>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-liquid btn-liquid-primary btn-lg">@Localizer["Ingresar"]</button>
                     </div>
                 </form>
                 <div class="mt-3 text-center">

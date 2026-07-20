@@ -22,7 +22,16 @@ namespace Delivery.Consumer.Implementaciones
             {
                 return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
             }
-            return null;
+            
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorObj = System.Text.Json.JsonDocument.Parse(errorContent);
+            string message = "Credenciales incorrectas.";
+            if (errorObj.RootElement.TryGetProperty("message", out var msgProp))
+            {
+                message = msgProp.GetString() ?? message;
+            }
+            
+            throw new System.Exception(message);
         }
 
         public async Task<bool> RecuperarPasswordAsync(string email)
