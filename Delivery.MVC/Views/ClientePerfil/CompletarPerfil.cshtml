@@ -5,67 +5,88 @@
     ViewData["Title"] = "Mi Perfil";
 }
 
-<div class="container mt-4">
-    <h2>Mi Perfil</h2>
-    <hr />
+<div class="container mt-5 mb-5" data-aos="fade-up">
+    <div class="d-flex align-items-center mb-4 border-bottom border-secondary pb-3">
+        <i class="bi bi-person-circle fs-1 text-primary me-3"></i>
+        <h2 class="mb-0 text-light">Mi Perfil</h2>
+    </div>
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">@TempData["Error"]</div>
+        <div class="alert alert-danger glass-card" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3);">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        </div>
     }
     @if (TempData["Exito"] != null)
     {
-        <div class="alert alert-success">@TempData["Exito"]</div>
+        <div class="alert alert-success glass-card" style="background: rgba(25, 135, 84, 0.1); border: 1px solid rgba(25, 135, 84, 0.3);">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Exito"]
+        </div>
     }
 
-    <form asp-action="CompletarPerfil" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
-        <input type="hidden" name="id" value="@Model.Id" />
-        
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label class="form-label">@Localizer["NombresTag"]</label>
-                <input type="text" name="nombre" class="form-control" value="@Model.Nombre" required />
+    <form asp-action="CompletarPerfil" method="post" enctype="multipart/form-data">
+        <div class="card glass-card p-4 p-md-5">
+            <input type="hidden" name="id" value="@Model.Id" />
+            
+            <h4 class="mb-4 text-info border-bottom border-secondary pb-2"><i class="bi bi-person-vcard"></i> Datos Personales</h4>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label text-light">@Localizer["NombresTag"]</label>
+                    <input type="text" name="nombre" class="form-control" value="@Model.Nombre" required />
+                </div>
+                <div class="col-md-6 mb-4">
+                    <label class="form-label text-light">@Localizer["ApellidosTag"]</label>
+                    <input type="text" name="apellidos" class="form-control" value="@Model.Apellidos" required />
+                </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <label class="form-label">@Localizer["ApellidosTag"]</label>
-                <input type="text" name="apellidos" class="form-control" value="@Model.Apellidos" required />
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label class="form-label">@Localizer["TelefonoTag"]</label>
-                <input type="text" name="telefono" class="form-control" value="@Model.Telefono" />
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label text-light">@Localizer["TelefonoTag"]</label>
+                    <input type="text" name="telefono" class="form-control" value="@Model.Telefono" />
+                </div>
+                <div class="col-md-6 mb-4">
+                    <label class="form-label text-light">Fecha de Nacimiento</label>
+                    <input type="date" name="fechaNacimiento" class="form-control bg-dark text-light border-secondary" value="@Model.FechaNacimiento?.ToString("yyyy-MM-dd")" />
+                </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Fecha de Nacimiento</label>
-                <input type="date" name="fechaNacimiento" class="form-control" value="@Model.FechaNacimiento?.ToString("yyyy-MM-dd")" />
+
+            <div class="mb-4">
+                <label class="form-label text-light">Información Adicional <span class="text-muted">(Alergias, Preferencias, etc.)</span></label>
+                <textarea name="informacionAdicional" class="form-control" rows="3">@Model.InformacionAdicional</textarea>
             </div>
-        </div>
 
-        <div class="mb-3">
-            <label class="form-label">Información Adicional (Alergias, Preferencias, etc.)</label>
-            <textarea name="informacionAdicional" class="form-control" rows="3">@Model.InformacionAdicional</textarea>
-        </div>
-
-        <hr />
-        <h4>Foto de Perfil</h4>
-        <div class="row mt-3">
-            <div class="col-md-6 mb-3">
-                @if (!string.IsNullOrEmpty(Model.FotoPerfilUrl))
-                {
-                    <div class="mb-2">
-                        <img src="@Model.FotoPerfilUrl" alt="Foto de perfil" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" />
+            <h4 class="mb-4 mt-5 text-warning border-bottom border-secondary pb-2"><i class="bi bi-image"></i> Foto de Perfil</h4>
+            
+            <div class="row mt-3">
+                <div class="col-md-8 mb-4">
+                    <div class="d-flex align-items-center gap-4 p-3 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                        @if (!string.IsNullOrEmpty(Model.FotoPerfilUrl))
+                        {
+                            <div class="position-relative">
+                                <img src="@Model.FotoPerfilUrl" alt="Foto de perfil" class="rounded-circle shadow-lg" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--primary-neon);" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="bg-dark rounded-circle d-flex justify-content-center align-items-center shadow-lg" style="width: 120px; height: 120px; border: 3px solid var(--glass-border);">
+                                <i class="bi bi-person text-secondary" style="font-size: 4rem;"></i>
+                            </div>
+                        }
+                        <div class="flex-grow-1">
+                            <label class="form-label text-light mb-2">Cambiar imagen</label>
+                            <input type="file" name="fotoPerfil" class="form-control bg-dark text-light border-secondary" accept=".jpg,.jpeg,.png,.webp" />
+                            <small class="text-muted d-block mt-2"><i class="bi bi-info-circle"></i> Formatos aceptados: JPG, PNG, WEBP. Tamaño máximo: 5MB.</small>
+                        </div>
                     </div>
-                }
-                <input type="file" name="fotoPerfil" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
-                <small class="text-muted">Formatos: JPG, PNG, WEBP. Máx: 5MB.</small>
+                </div>
             </div>
-        </div>
 
-        <div class="mt-4">
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Volver al Inicio</a>
+            <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top border-secondary">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-info rounded-pill px-4"><i class="bi bi-arrow-left"></i> Volver al Inicio</a>
+                <button type="submit" class="btn btn-liquid btn-liquid-primary px-5 py-2"><i class="bi bi-save2"></i> Guardar Cambios</button>
+            </div>
         </div>
     </form>
 </div>

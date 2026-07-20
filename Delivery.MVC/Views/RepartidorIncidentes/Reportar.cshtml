@@ -4,37 +4,39 @@
     ViewData["Title"] = Localizer["ReportarIncidenteTitle"];
 }
 
-<div class="container mt-4">
-    <h2><i class="bi bi-exclamation-triangle text-warning"></i> @Localizer["ReportarIncidenteTitle"]</h2>
-    <hr />
+<div class="container mt-5 mb-5" data-aos="fade-up">
+    <div class="d-flex align-items-center mb-4 border-bottom border-secondary pb-3">
+        <i class="bi bi-exclamation-triangle fs-1 text-warning me-3"></i>
+        <h2 class="mb-0 text-light">@Localizer["ReportarIncidenteTitle"]</h2>
+    </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <form asp-action="Reportar" method="post">
-                        @Html.AntiForgeryToken()
-                        
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card glass-card p-4 p-md-5">
+                <form asp-action="Reportar" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        <div class="mb-3">
-                            <label for="severity" class="form-label">@Localizer["GravedadIncidenteLBL"]</label>
-                            <select name="severity" id="severity" class="form-select">
-                                <option value="Baja">@Localizer["GravedadBaja"]</option>
-                                <option value="Media">@Localizer["GravedadMedia"]</option>
-                                <option value="Alta">@Localizer["GravedadAlta"]</option>
-                            </select>
-                        </div>
+                    <div class="mb-4">
+                        <label for="severity" class="form-label text-light fw-bold">@Localizer["GravedadIncidenteLBL"]</label>
+                        <select name="severity" id="severity" class="form-select bg-dark text-light border-secondary">
+                            <option value="Baja">@Localizer["GravedadBaja"]</option>
+                            <option value="Media">@Localizer["GravedadMedia"]</option>
+                            <option value="Alta">@Localizer["GravedadAlta"]</option>
+                        </select>
+                    </div>
 
-                        <div class="mb-3">
-                            <label for="description" class="form-label">@Localizer["DescripcionLBL"]</label>
-                            <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
-                        </div>
+                    <div class="mb-4">
+                        <label for="description" class="form-label text-light fw-bold">@Localizer["DescripcionLBL"]</label>
+                        <textarea name="description" id="description" class="form-control bg-dark text-light border-secondary" rows="5" required placeholder="Describe el incidente aquí..."></textarea>
+                    </div>
 
-                        <button type="submit" class="btn btn-warning"><i class="bi bi-send"></i> @Localizer["EnviarReporteBtn"]</button>
-                        <a asp-controller="DashboardRepartidor" asp-action="Index" class="btn btn-secondary">@Localizer["Cancelar"]</a>
-                    </form>
-                </div>
+                    <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top border-secondary">
+                        <a asp-controller="DashboardRepartidor" asp-action="Index" class="btn btn-outline-info rounded-pill px-4"><i class="bi bi-x-circle"></i> @Localizer["Cancelar"]</a>
+                        <button type="submit" class="btn btn-liquid btn-liquid-warning px-5 py-2"><i class="bi bi-send"></i> @Localizer["EnviarReporteBtn"]</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

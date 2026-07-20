@@ -61,6 +61,7 @@ body {
   --text-light: #ffffff;
   --text-dim: #a1a1aa;
   --bg-dark: #000000;
+  caret-color: var(--primary-neon);
 }
 
 body, *, h1, h2, h3, h4, h5, h6, p, a, span, div, input, button {
@@ -68,13 +69,13 @@ body, *, h1, h2, h3, h4, h5, h6, p, a, span, div, input, button {
 }
 
 ::selection {
-  background-color: var(--primary-neon);
-  color: #ffffff;
+  background-color: var(--primary-neon) !important;
+  color: #ffffff !important;
 }
 
 ::-moz-selection {
-  background-color: var(--primary-neon);
-  color: #ffffff;
+  background-color: var(--primary-neon) !important;
+  color: #ffffff !important;
 }
 
 body {
@@ -187,10 +188,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Fix text colors for inputs inside dark mode */
-.form-control, .form-select {
-  background-color: rgba(255,255,255,0.05);
-  border: 1px solid var(--glass-border);
-  color: #fff;
+.form-control, .form-select, textarea {
+  background-color: rgba(255,255,255,0.05) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: #fff !important;
+  caret-color: #fff !important;
 }
 .form-control:focus, .form-select:focus {
   background-color: rgba(255,255,255,0.1);

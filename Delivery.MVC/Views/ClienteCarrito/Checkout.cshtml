@@ -44,85 +44,89 @@
     }
 </style>
 
-<div class="container mt-4">
-    <h2>@Localizer["ProcesoPago"]</h2>
-    <hr />
+<div class="container mt-5 mb-5" data-aos="fade-up">
+    <div class="d-flex align-items-center mb-4 border-bottom border-secondary pb-3">
+        <i class="bi bi-credit-card fs-1 text-primary me-3"></i>
+        <h2 class="mb-0 text-light">@Localizer["ProcesoPago"]</h2>
+    </div>
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">@TempData["Error"]</div>
+        <div class="alert alert-danger glass-card" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3);">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        </div>
     }
 
     <div class="row">
         <!-- Resumen de Costos -->
         <div class="col-md-5 order-md-2 mb-4">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted">@Localizer["TuCarrito"]</span>
-                <span class="badge badge-secondary badge-pill">@Model.Items.Count</span>
+                <span class="text-info"><i class="bi bi-cart3"></i> @Localizer["TuCarrito"]</span>
+                <span class="badge bg-primary rounded-pill px-3">@Model.Items.Count</span>
             </h4>
-            <ul class="list-group mb-3">
-                @foreach (var item in Model.Items)
-                {
-                    <li class="list-group-item d-flex justify-content-between lh-condensed">
-                        <div>
-                            <h6 class="my-0">@item.NombreProducto</h6>
-                            <small class="text-muted">@Localizer["Cantidad"] @item.Cantidad</small>
-                        </div>
-                        <span class="text-muted">$@item.Subtotal.ToString("0.00")</span>
-                    </li>
-                }
-                
-                <li class="list-group-item bg-light">
-                    <div class="d-flex justify-content-between">
-                        <h6 class="my-0">@Localizer["Subtotal"]</h6>
+            <div class="card glass-card border-0 mb-3">
+                <ul class="list-group list-group-flush bg-transparent">
+                    @foreach (var item in Model.Items)
+                    {
+                        <li class="list-group-item d-flex justify-content-between lh-condensed bg-transparent border-secondary text-light">
+                            <div>
+                                <h6 class="my-0 fw-bold">@item.NombreProducto</h6>
+                                <small class="text-muted">@Localizer["Cantidad"] @item.Cantidad</small>
+                            </div>
+                            <span class="text-success">$@item.Subtotal.ToString("0.00")</span>
+                        </li>
+                    }
+                    
+                    <li class="list-group-item d-flex justify-content-between bg-transparent border-secondary text-light mt-2 pt-3">
+                        <h6 class="my-0 text-muted">@Localizer["Subtotal"]</h6>
                         <strong id="subtotalUI">$@Model.Subtotal.ToString("0.00")</strong>
-                    </div>
-                </li>
+                    </li>
 
-                <li class="list-group-item bg-light">
-                    <div class="d-flex justify-content-between">
-                        <h6 class="my-0">@Localizer["DistanciaTiempo"]</h6>
-                        <strong id="distanciaInfo">@Localizer["Pendiente"]</strong>
-                    </div>
-                    <small class="text-muted" id="tiempoInfo">@Localizer["SeleccioneDireccionMapa"]</small>
-                </li>
-                <li class="list-group-item d-flex justify-content-between lh-condensed bg-light">
-                    <div>
-                        <h6 class="my-0">@Localizer["CostoEnvio"]</h6>
-                    </div>
-                    <span class="text-success" id="costoEnvioUI">@Localizer["Pendiente"]</span>
-                </li>
+                    <li class="list-group-item bg-transparent border-secondary text-light">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="my-0 text-muted">@Localizer["DistanciaTiempo"]</h6>
+                            <strong id="distanciaInfo" class="text-info">@Localizer["Pendiente"]</strong>
+                        </div>
+                        <small class="text-muted" id="tiempoInfo">@Localizer["SeleccioneDireccionMapa"]</small>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-condensed bg-transparent border-secondary text-light">
+                        <div>
+                            <h6 class="my-0 text-muted">@Localizer["CostoEnvio"]</h6>
+                        </div>
+                        <span class="text-warning fw-bold" id="costoEnvioUI">@Localizer["Pendiente"]</span>
+                    </li>
 
-                <li class="list-group-item d-flex justify-content-between lh-condensed bg-success text-white" id="descuentoRow" style="display:none !important;">
-                    <div>
-                        <h6 class="my-0">@Localizer["CuponAplicado"]</h6>
-                        <small id="codigoCuponAplicadoUI"></small>
-                    </div>
-                    <span id="descuentoUI">-$0.00</span>
-                </li>
+                    <li class="list-group-item d-flex justify-content-between lh-condensed bg-success text-white border-0" id="descuentoRow" style="display:none !important;">
+                        <div>
+                            <h6 class="my-0"><i class="bi bi-tags"></i> @Localizer["CuponAplicado"]</h6>
+                            <small id="codigoCuponAplicadoUI"></small>
+                        </div>
+                        <span id="descuentoUI" class="fw-bold">-$0.00</span>
+                    </li>
 
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>@Localizer["TotalUSD"]</span>
-                    <strong id="totalUI" class="text-primary fs-5">$@Model.Subtotal.ToString("0.00")</strong>
-                </li>
-            </ul>
+                    <li class="list-group-item d-flex justify-content-between bg-transparent border-top border-secondary pt-3 mt-1 text-light">
+                        <span class="fs-5">@Localizer["TotalUSD"]</span>
+                        <strong id="totalUI" class="text-primary fs-4">$@Model.Subtotal.ToString("0.00")</strong>
+                    </li>
+                </ul>
+            </div>
+            
             <input type="hidden" id="subtotalValue" value="@Model.Subtotal" />
             <input type="hidden" id="descuentoValue" value="0" />
             
-            <div class="card p-2 mb-3">
+            <div class="card glass-card p-3 mb-4 border-0">
+                <label class="form-label text-light fw-bold"><i class="bi bi-ticket-perforated text-warning"></i> ¿Tienes un cupón?</label>
                 <div class="input-group">
-                    <select class="form-control" id="cuponInput" asp-items="ViewBag.Cupones">
+                    <select class="form-select bg-dark text-light border-secondary" id="cuponInput" asp-items="ViewBag.Cupones">
                         <option value="">@Localizer["SeleccionarCupon"]</option>
                     </select>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-secondary" onclick="aplicarCupon()">@Localizer["AplicarCuponBtn"]</button>
-                    </div>
+                    <button type="button" class="btn btn-outline-warning" onclick="aplicarCupon()">@Localizer["AplicarCuponBtn"]</button>
                 </div>
                 <small id="cuponMensaje" class="form-text mt-2" style="display:none;"></small>
             </div>
             
-            <div class="alert alert-info">
-                <strong>@Localizer["TarifaEnvioTag"]</strong> @Localizer["TarifaEnvioDesc"]
+            <div class="alert alert-info glass-card border-info text-light" style="background: rgba(13, 202, 240, 0.1);">
+                <i class="bi bi-info-circle-fill text-info me-2"></i><strong>@Localizer["TarifaEnvioTag"]</strong> @Localizer["TarifaEnvioDesc"]
             </div>
         </div>
         
@@ -131,46 +135,48 @@
             <form asp-action="Confirmar" method="post" id="checkoutForm" enctype="multipart/form-data" onsubmit="return validarFormulario(event)">
                 <input type="hidden" id="cuponCodigoForm" name="cuponCodigo" value="" />
                 
-                <h4 class="mb-3">@Localizer["DireccionEntrega"]</h4>
+                <h4 class="mb-4 text-warning border-bottom border-secondary pb-2"><i class="bi bi-geo-alt"></i> @Localizer["DireccionEntrega"]</h4>
                 
-                <div class="mb-3">
-                    <label for="selectDireccion">@Localizer["TusDirecciones"]</label>
-                    <select class="form-control" id="selectDireccion" name="direccionId" asp-items="ViewBag.Direcciones">
+                <div class="mb-4">
+                    <label for="selectDireccion" class="form-label text-light">@Localizer["TusDirecciones"]</label>
+                    <select class="form-select bg-dark text-light border-secondary" id="selectDireccion" name="direccionId" asp-items="ViewBag.Direcciones">
                         <option value="0">@Localizer["UsarOtraDireccion"]</option>
                     </select>
                 </div>
 
                 <div class="search-container" id="buscadorContainer">
-                    <input type="text" id="buscadorDireccion" class="form-control form-control-lg" placeholder="@Localizer["BuscarCallePlaceHolder"]" autocomplete="off">
-                    <div id="listaResultados"></div>
+                    <input type="text" id="buscadorDireccion" class="form-control bg-dark text-light border-secondary" placeholder="@Localizer["BuscarCallePlaceHolder"]" autocomplete="off">
+                    <div id="listaResultados" class="bg-dark border-secondary text-light"></div>
                 </div>
 
-                <div id="mapaCheckout"></div>
-                <small class="text-muted d-block mt-1 mb-3">@Localizer["ArrastrarMarcadorDesc"]</small>
+                <div class="card overflow-hidden border-0 shadow-lg mb-2">
+                    <div id="mapaCheckout"></div>
+                </div>
+                <small class="text-muted d-block mt-1 mb-4"><i class="bi bi-info-circle"></i> @Localizer["ArrastrarMarcadorDesc"]</small>
 
                 <!-- Campos ocultos y opcionales para la nueva dirección -->
-                <div id="nuevaDireccionCampos" style="display:none;" class="card p-3 mb-4 border-info">
-                    <h5 class="text-info">@Localizer["DetallesUbicacion"]</h5>
+                <div id="nuevaDireccionCampos" style="display:none;" class="card glass-card p-4 mb-4 border-info">
+                    <h5 class="text-info mb-3"><i class="bi bi-card-text"></i> @Localizer["DetallesUbicacion"]</h5>
                     <div class="row">
-                        <div class="col-md-12 mb-2">
-                            <label>@Localizer["CalleAvenidaDetectada"]</label>
-                            <input type="text" class="form-control" id="nuevaCalle" name="nuevaCalle" readonly>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label text-light">@Localizer["CalleAvenidaDetectada"]</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" id="nuevaCalle" name="nuevaCalle" readonly>
                         </div>
                     </div>
                     
-                    <div class="custom-control custom-checkbox mb-3 mt-2">
-                        <input type="checkbox" class="custom-control-input" id="guardarDireccion" name="guardarDireccion" value="true">
-                        <label class="custom-control-label fw-bold" for="guardarDireccion">@Localizer["GuardarDireccionParaCompras"]</label>
+                    <div class="form-check form-switch mb-3 mt-2">
+                        <input type="checkbox" class="form-check-input" id="guardarDireccion" name="guardarDireccion" value="true">
+                        <label class="form-check-label text-light fw-bold" for="guardarDireccion">@Localizer["GuardarDireccionParaCompras"]</label>
                     </div>
 
                     <div id="camposGuardado" style="display:none;">
                         <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <label>@Localizer["AliasEjemplo"]</label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-light">@Localizer["AliasEjemplo"]</label>
                                 <input type="text" class="form-control" name="nuevoAlias" placeholder="@Localizer["CasaPlaceholder"]">
                             </div>
-                            <div class="col-md-6 mb-2">
-                                <label>@Localizer["Referencia"]</label>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-light">@Localizer["Referencia"]</label>
                                 <input type="text" class="form-control" name="nuevaReferencia" placeholder="@Localizer["FrenteParquePlaceholder"]">
                             </div>
                         </div>
@@ -181,70 +187,79 @@
                 <input type="hidden" id="nuevaLatitud" name="nuevaLatitudStr">
                 <input type="hidden" id="nuevaLongitud" name="nuevaLongitudStr">
 
-                <hr class="mb-4">
+                <h4 class="mb-4 mt-5 text-primary border-bottom border-secondary pb-2"><i class="bi bi-wallet2"></i> @Localizer["MetodoPago"]</h4>
 
-                <h4 class="mb-3">@Localizer["MetodoPago"]</h4>
-
-                <div class="d-block my-3">
-                    <div class="custom-control custom-radio">
-                        <input id="efectivo" name="metodoPago" type="radio" class="custom-control-input" value="Efectivo" checked required onchange="togglePaymentSections()">
-                        <label class="custom-control-label" for="efectivo">@Localizer["EfectivoDesc"]</label>
+                <div class="d-flex flex-column gap-3 my-4">
+                    <div class="form-check custom-radio-glass">
+                        <input id="efectivo" name="metodoPago" type="radio" class="form-check-input" value="Efectivo" checked required onchange="togglePaymentSections()">
+                        <label class="form-check-label text-light w-100" for="efectivo">
+                            <i class="bi bi-cash-coin text-success fs-5 me-2"></i> @Localizer["EfectivoDesc"]
+                        </label>
                     </div>
-                    <div class="custom-control custom-radio">
-                        <input id="tarjeta" name="metodoPago" type="radio" class="custom-control-input" value="Tarjeta" required onchange="togglePaymentSections()">
-                        <label class="custom-control-label" for="tarjeta">@Localizer["TarjetaDesc"]</label>
+                    <div class="form-check custom-radio-glass">
+                        <input id="tarjeta" name="metodoPago" type="radio" class="form-check-input" value="Tarjeta" required onchange="togglePaymentSections()">
+                        <label class="form-check-label text-light w-100" for="tarjeta">
+                            <i class="bi bi-credit-card-2-front text-info fs-5 me-2"></i> @Localizer["TarjetaDesc"]
+                        </label>
                     </div>
-                    <div class="custom-control custom-radio">
-                        <input id="transferencia" name="metodoPago" type="radio" class="custom-control-input" value="Transferencia" required onchange="togglePaymentSections()">
-                        <label class="custom-control-label" for="transferencia">@Localizer["TransferenciaDesc"]</label>
+                    <div class="form-check custom-radio-glass">
+                        <input id="transferencia" name="metodoPago" type="radio" class="form-check-input" value="Transferencia" required onchange="togglePaymentSections()">
+                        <label class="form-check-label text-light w-100" for="transferencia">
+                            <i class="bi bi-bank text-warning fs-5 me-2"></i> @Localizer["TransferenciaDesc"]
+                        </label>
                     </div>
                 </div>
 
                 <!-- SECCIÓN TARJETA -->
-                <div id="seccionTarjeta" style="display:none;" class="card p-3 mb-4 bg-light">
-                    <h5>@Localizer["DetallesTarjeta"]</h5>
+                <div id="seccionTarjeta" style="display:none;" class="card glass-card p-4 mb-4">
+                    <h5 class="text-info mb-4"><i class="bi bi-credit-card"></i> @Localizer["DetallesTarjeta"]</h5>
                     <div id="tarjetaError" class="alert alert-danger" style="display: none;"></div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="titular">@Localizer["NombreTarjeta"]</label>
+                            <label for="titular" class="form-label text-light">@Localizer["NombreTarjeta"]</label>
                             <input type="text" class="form-control" id="titular" name="titular" placeholder="@Localizer["EjemploJuanPerez"]">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="numeroTarjeta">@Localizer["NumeroTarjeta"] <span id="tarjetaTipo" class="badge bg-secondary ms-2"></span></label>
+                            <label for="numeroTarjeta" class="form-label text-light">@Localizer["NumeroTarjeta"] <span id="tarjetaTipo" class="badge bg-primary ms-2"></span></label>
                             <input type="text" class="form-control" id="numeroTarjeta" name="numeroTarjeta" placeholder="XXXX XXXX XXXX XXXX" oninput="formatearTarjeta(this)">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label for="expiracion">@Localizer["Expiracion"]</label>
-                            <input type="text" class="form-control" id="expiracion" name="expiracion" placeholder="MM/AA" maxlength="5" oninput="formatearExpiracion(this)">
+                        <div class="col-md-4 mb-3">
+                            <label for="expiracion" class="form-label text-light">@Localizer["Expiracion"]</label>
+                            <input type="text" class="form-control text-center" id="expiracion" name="expiracion" placeholder="MM/AA" maxlength="5" oninput="formatearExpiracion(this)">
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="cvv">@Localizer["CVV"]</label>
-                            <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                        <div class="col-md-4 mb-3">
+                            <label for="cvv" class="form-label text-light">@Localizer["CVV"]</label>
+                            <input type="password" class="form-control text-center" id="cvv" name="cvv" placeholder="***" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                         </div>
                     </div>
                 </div>
 
                 <!-- SECCIÓN TRANSFERENCIA -->
-                <div id="seccionTransferencia" style="display:none;" class="card p-3 mb-4 bg-light">
-                    <h5>@Localizer["DatosTransferencia"]</h5>
-                    <p>@Localizer["TransferenciaInstrucciones"]</p>
-                    <ul>
-                        <li><strong>@Localizer["BancoTag"]</strong> Banco RayoExpres</li>
-                        <li><strong>@Localizer["BeneficiarioTag"]</strong> RayoExpres S.A.</li>
-                        <li><strong>@Localizer["RUCTag"]</strong> 0999999999001</li>
-                        <li><strong>@Localizer["TipoCuentaTag"]</strong> Corriente</li>
-                        <li><strong>@Localizer["NumCuentaTag"]</strong> 220045678901</li>
-                    </ul>
+                <div id="seccionTransferencia" style="display:none;" class="card glass-card p-4 mb-4">
+                    <h5 class="text-warning mb-3"><i class="bi bi-bank"></i> @Localizer["DatosTransferencia"]</h5>
+                    <p class="text-muted">@Localizer["TransferenciaInstrucciones"]</p>
+                    <div class="bg-dark p-3 rounded mb-4 border border-secondary">
+                        <ul class="list-unstyled text-light mb-0" style="line-height: 2;">
+                            <li><i class="bi bi-building text-secondary me-2"></i><strong>@Localizer["BancoTag"]</strong> Banco RayoExpres</li>
+                            <li><i class="bi bi-person text-secondary me-2"></i><strong>@Localizer["BeneficiarioTag"]</strong> RayoExpres S.A.</li>
+                            <li><i class="bi bi-file-earmark-text text-secondary me-2"></i><strong>@Localizer["RUCTag"]</strong> 0999999999001</li>
+                            <li><i class="bi bi-card-list text-secondary me-2"></i><strong>@Localizer["TipoCuentaTag"]</strong> Corriente</li>
+                            <li><i class="bi bi-hash text-secondary me-2"></i><strong>@Localizer["NumCuentaTag"]</strong> <span class="text-info fs-5 fw-bold">220045678901</span></li>
+                        </ul>
+                    </div>
                     <div class="mb-3">
-                        <label for="comprobante" class="form-label">@Localizer["SubirComprobante"]</label>
-                        <input class="form-control" type="file" id="comprobante" name="comprobante" accept=".jpg,.png,.pdf">
+                        <label for="comprobante" class="form-label text-light"><i class="bi bi-upload"></i> @Localizer["SubirComprobante"]</label>
+                        <input class="form-control bg-dark text-light border-secondary" type="file" id="comprobante" name="comprobante" accept=".jpg,.png,.pdf">
                     </div>
                 </div>
 
-                <hr class="mb-4">
-                <button class="btn btn-primary btn-lg btn-block" type="submit" id="btnSubmit">@Localizer["ConfirmarPagarBtn"]</button>
+                <div class="d-grid mt-5">
+                    <button class="btn btn-liquid btn-liquid-primary btn-lg" type="submit" id="btnSubmit">
+                        <i class="bi bi-check2-circle"></i> @Localizer["ConfirmarPagarBtn"]
+                    </button>
+                </div>
             </form>
         </div>
     </div>

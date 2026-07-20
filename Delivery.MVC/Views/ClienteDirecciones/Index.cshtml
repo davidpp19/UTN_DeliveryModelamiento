@@ -35,9 +35,9 @@
                             <p class="card-text text-muted mb-1"><i class="bi bi-signpost-2"></i> @item.Calle @item.Numero</p>
                             <p class="card-text text-muted"><i class="bi bi-building"></i> @item.Ciudad</p>
                         </div>
-                        <div class="card-footer bg-transparent border-top-0 d-flex gap-2">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info flex-grow-1">@Localizer["EditarBtn"]</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger flex-grow-1">@Localizer["EliminarBtn"]</a>
+                        <div class="card-footer bg-transparent border-top-0 d-flex gap-3 pb-4 px-4">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-liquid flex-grow-1 text-center" style="--liquid-bg: #0dcaf0; --liquid-bg-hover: #0bb5d8;">@Localizer["EditarBtn"]</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-liquid flex-grow-1 text-center" style="--liquid-bg: #dc3545; --liquid-bg-hover: #c82333;">@Localizer["EliminarBtn"]</a>
                         </div>
                     </div>
                 </div>

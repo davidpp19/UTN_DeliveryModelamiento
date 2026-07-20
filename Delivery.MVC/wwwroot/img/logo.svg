@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <defs>
+        <linearGradient id="neonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#a855f7" />
+            <stop offset="100%" stop-color="#3b82f6" />
+        </linearGradient>
+        <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="15" result="blur" />
+            <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+    <!-- Background is fully transparent -->
+    <!-- Hexagon Frame -->
+    <polygon points="256,40 460,150 460,362 256,472 52,362 52,150" 
+             fill="none" 
+             stroke="url(#neonGradient)" 
+             stroke-width="16" 
+             filter="url(#neonGlow)"/>
+    
+    <!-- Letter R -->
+    <path d="M180,180 h60 c40,0 60,20 60,50 c0,25 -15,40 -40,45 l50,75 h-40 l-45,-70 h-15 v70 h-30 v-170 z m30,75 h25 c15,0 30,-10 30,-25 c0,-15 -15,-25 -30,-25 h-25 v50 z" 
+          fill="url(#neonGradient)" 
+          filter="url(#neonGlow)"/>
+    
+    <!-- Letter E -->
+    <path d="M330,180 h70 v25 h-40 v40 h35 v25 h-35 v55 h45 v25 h-75 v-170 z" 
+          fill="url(#neonGradient)" 
+          filter="url(#neonGlow)"/>
+          
+    <!-- Lightning Bolt intersecting -->
+    <path d="M280,100 L210,280 L260,280 L230,420 L330,220 L280,220 Z" 
+          fill="#0dcaf0" 
+          filter="url(#neonGlow)"/>
+</svg>

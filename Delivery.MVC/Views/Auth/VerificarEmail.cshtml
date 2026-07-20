@@ -3,37 +3,40 @@
     var email = ViewBag.Email as string;
 }
 
-<div class="row justify-content-center my-5">
-    <div class="col-md-5">
-        <div class="card shadow border-0 rounded-4">
+<div class="row justify-content-center my-5" data-aos="fade-up">
+    <div class="col-md-6 col-lg-5">
+        <div class="card glass-card">
             <div class="card-body p-5 text-center">
-                <i class="bi bi-envelope-check text-primary" style="font-size: 3rem;"></i>
-                <h3 class="mb-4">Verificación de Correo</h3>
+                <i class="bi bi-envelope-check text-primary mb-3" style="font-size: 3.5rem;"></i>
+                <h3 class="fw-bold text-light mb-4">Verificación de Correo</h3>
                 
                 @if (TempData["Mensaje"] != null)
                 {
-                    <div class="alert alert-info">@TempData["Mensaje"]</div>
+                    <div class="alert alert-info glass-card" style="background: rgba(13, 202, 240, 0.1); border: 1px solid rgba(13, 202, 240, 0.3);">@TempData["Mensaje"]</div>
                 }
 
-                <p class="text-muted">Ingresa el código de 6 dígitos enviado a <strong>@email</strong></p>
+                <p class="text-muted mb-4">Ingresa el código de 6 dígitos enviado a <strong class="text-info">@email</strong></p>
 
                 <form asp-action="VerificarEmail" method="post">
                     <input type="hidden" name="email" value="@email" />
                     
                     <div class="mb-4">
-                        <input type="text" name="codigo" class="form-control form-control-lg text-center" 
-                               placeholder="123456" maxlength="6" style="letter-spacing: 5px; font-weight: bold;" required />
+                        <input type="text" name="codigo" class="form-control form-control-lg text-center text-primary" 
+                               placeholder="123456" maxlength="6" style="letter-spacing: 5px; font-weight: bold; font-size: 1.25rem;" required />
                     </div>
 
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                    <button type="submit" class="btn btn-primary w-100 btn-lg rounded-pill">Verificar Cuenta</button>
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-liquid btn-liquid-primary btn-lg">Verificar Cuenta</button>
+                    </div>
                 </form>
 
+                <hr style="border-color: var(--glass-border);" class="my-4" />
                 <div class="mt-4">
                     <form asp-action="ReenviarCodigo" method="post" id="form-reenviar">
                         <input type="hidden" name="email" value="@email" />
-                        <button type="submit" class="btn btn-link text-decoration-none">¿No recibiste el código por correo? Reenviar</button>
+                        <button type="submit" class="btn btn-outline-info rounded-pill px-4">¿No recibiste el código? Reenviar</button>
                     </form>
                     
                     <div id="res-reenviar" class="text-success mt-3" style="display:none; font-weight: bold;"></div>

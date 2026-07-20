@@ -10,29 +10,31 @@
 @if (isCliente)
 {
     <!-- HOME CLIENTE -->
-    <div class="container mt-4">
-        <div class="alert alert-primary" role="alert">
-            <h4>@Localizer["HolaUsuario", User.Identity?.Name ?? ""]</h4>
-            <p>@Localizer["MensajeBienvenida"]</p>
+    <div class="container mt-5 mb-5" data-aos="fade-up">
+        <div class="card glass-card p-4 p-md-5 mb-5 text-center" style="background: radial-gradient(circle at center, rgba(168, 85, 247, 0.15) 0%, transparent 70%); border: 1px solid rgba(168, 85, 247, 0.3);">
+            <i class="bi bi-stars fs-1 text-primary mb-3"></i>
+            <h2 class="text-light fw-bold">@Localizer["HolaUsuario", User.Identity?.Name ?? ""]</h2>
+            <p class="text-muted fs-5 mb-0">@Localizer["MensajeBienvenida"]</p>
         </div>
 
         @if (Model.Cupones.Any())
         {
-            <h5>@Localizer["TusCuponesActivos"]</h5>
-            <div class="d-flex flex-row overflow-auto gap-3 pb-2 mb-4">
+            <h4 class="mb-4 text-warning border-bottom border-secondary pb-2"><i class="bi bi-ticket-perforated"></i> @Localizer["TusCuponesActivos"]</h4>
+            <div class="d-flex flex-row overflow-auto gap-4 pb-4 mb-5 px-2">
                 @foreach (var cupon in Model.Cupones)
                 {
-                    <div class="card border-success" style="min-width: 220px;">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">@cupon.Codigo</h5>
-                            <p>@(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje ? $"{cupon.ValorDescuento}%" : $"${cupon.ValorDescuento}") @Localizer["DeDescuento"]</p>
+                    <div class="card glass-card border-warning coupon-card flex-shrink-0" style="min-width: 250px; background: rgba(255, 193, 7, 0.05);">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-ticket-detailed fs-1 text-warning mb-2 d-block" style="transition: all 0.3s ease;"></i>
+                            <h4 class="card-title text-light fw-bold mb-3">@cupon.Codigo</h4>
+                            <p class="mb-0 text-info fw-bold fs-5">@(cupon.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje ? $"{cupon.ValorDescuento}%" : $"${cupon.ValorDescuento}") @Localizer["DeDescuento"]</p>
                         </div>
                     </div>
                 }
             </div>
         }
 
-        <h3 id="restaurantes" data-aos="fade-up">@Localizer["RestaurantesDisponibles"]</h3>
+        <h4 id="restaurantes" data-aos="fade-up" class="mb-4 text-info border-bottom border-secondary pb-2"><i class="bi bi-shop"></i> @Localizer["RestaurantesDisponibles"]</h4>
         @if (Model.RestaurantesDestacados.Any())
         {
             <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
@@ -65,22 +67,23 @@
             <p>@Localizer["NoHayRestaurantes"]</p>
         }
 
-        <h3 class="mb-3">@Localizer["ProductosPopulares"]</h3>
+        <h4 class="mb-4 mt-5 text-success border-bottom border-secondary pb-2"><i class="bi bi-fire"></i> @Localizer["ProductosPopulares"]</h4>
         @if (Model.ProductosDestacados.Any())
         {
             <div class="row row-cols-2 row-cols-md-4 g-4 mb-5">
                 @foreach (var prod in Model.ProductosDestacados)
                 {
-                    <div class="col">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <h6>@prod.Nombre</h6>
-                                <p class="text-success">$@prod.Precio.ToString("0.00")</p>
+                    <div class="col" data-aos="fade-up">
+                        <div class="card glass-card h-100">
+                            <div class="card-body p-4 text-center">
+                                <i class="bi bi-basket text-primary fs-2 mb-3"></i>
+                                <h5 class="text-light fw-bold">@prod.Nombre</h5>
+                                <p class="text-success fs-4 fw-bold mb-4">$@prod.Precio.ToString("0.00")</p>
                                 <form asp-controller="ClienteCarrito" asp-action="Agregar" method="post">
                                     <input type="hidden" name="productoId" value="@prod.Id" />
                                     <input type="hidden" name="cantidad" value="1" />
                                     <input type="hidden" name="restauranteId" value="@prod.RestauranteId" />
-                                    <button type="submit" class="btn btn-sm btn-outline-primary">@Localizer["AgregarAlCarrito"]</button>
+                                    <button type="submit" class="btn btn-liquid btn-liquid-success w-100"><i class="bi bi-cart-plus"></i> @Localizer["AgregarAlCarrito"]</button>
                                 </form>
                             </div>
                         </div>

@@ -6,53 +6,67 @@
     var productos = ViewBag.Productos as IEnumerable<Delivery.Modelos.Entidades.Producto>;
 }
 
-<div class="row mt-4">
-    <div class="col-md-4">
-        <div class="card shadow-sm border-danger">
-            <div class="card-body text-center">
-                <h3 class="text-danger">@Model.Nombre</h3>
-                <p class="text-muted">@Model.Categoria</p>
-                <p><i class="bi bi-geo-alt text-secondary"></i> @Model.Calle, @Model.Ciudad</p>
-                @if(Model.HoraApertura.HasValue && Model.HoraCierre.HasValue)
-                {
-                    <p><i class="bi bi-clock text-secondary"></i> @Model.HoraApertura - @Model.HoraCierre</p>
-                }
-                <p><i class="bi bi-truck text-secondary"></i> Envío desde: $1.50 (Base)</p>
+<div class="row mt-4 mb-5" data-aos="fade-up">
+    <div class="col-md-4 mb-4">
+        <div class="card glass-card text-center p-4 sticky-top" style="top: 100px;">
+            <div class="card-body">
+                <div class="mb-3">
+                    <i class="bi bi-shop text-danger" style="font-size: 4rem;"></i>
+                </div>
+                <h3 class="text-light fw-bold">@Model.Nombre</h3>
+                <span class="badge bg-danger mb-3 fs-6">@Model.Categoria</span>
+                
+                <hr style="border-color: var(--glass-border);" />
+                
+                <div class="text-start mt-3">
+                    <p class="text-light mb-2"><i class="bi bi-geo-alt-fill text-danger me-2"></i> @Model.Calle, @Model.Ciudad</p>
+                    @if(Model.HoraApertura.HasValue && Model.HoraCierre.HasValue)
+                    {
+                        <p class="text-light mb-2"><i class="bi bi-clock-fill text-warning me-2"></i> @Model.HoraApertura - @Model.HoraCierre</p>
+                    }
+                    <p class="text-light mb-0"><i class="bi bi-truck text-info me-2"></i> Envío desde: $1.50 (Base)</p>
+                </div>
             </div>
         </div>
     </div>
     
     <div class="col-md-8">
-        <h3 class="mb-4">@Localizer["MenuDelRestaurante"]</h3>
+        <h3 class="mb-4 text-light fw-bold border-bottom border-secondary pb-2"><i class="bi bi-book text-primary"></i> @Localizer["MenuDelRestaurante"]</h3>
         @if (productos != null && productos.Any())
         {
             <div class="row row-cols-1 row-cols-md-2 g-4">
                 @foreach (var p in productos)
                 {
-                    <div class="col">
-                        <div class="card h-100 shadow-sm">
+                    <div class="col" data-aos="fade-left">
+                        <div class="card glass-card h-100 border-0">
                             @if (!string.IsNullOrEmpty(p.ImagenUrl))
                             {
-                                <img src="@p.ImagenUrl" class="card-img-top" alt="@p.Nombre" style="height: 150px; object-fit: cover;">
+                                <img src="@p.ImagenUrl" class="card-img-top rounded-top" alt="@p.Nombre" style="height: 180px; object-fit: cover;">
                             }
-                            <div class="card-body">
-                                <h5 class="card-title">@p.Nombre</h5>
-                                <p class="card-text small text-muted">@p.Descripcion</p>
-                                <h6 class="text-success fw-bold">$@p.Precio.ToString("0.00")</h6>
+                            else
+                            {
+                                <div class="bg-dark d-flex justify-content-center align-items-center rounded-top" style="height: 180px;">
+                                    <i class="bi bi-cup-hot text-secondary" style="font-size: 4rem;"></i>
+                                </div>
+                            }
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-light fw-bold">@p.Nombre</h5>
+                                <p class="card-text small text-muted flex-grow-1">@p.Descripcion</p>
+                                <h4 class="text-success fw-bold mt-2">$@p.Precio.ToString("0.00")</h4>
                             </div>
-                            <div class="card-footer bg-white border-top-0 d-grid">
+                            <div class="card-footer bg-transparent border-top-0 d-grid pb-3 pt-0 px-3">
                                 @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente"))
                                 {
                                     <form asp-controller="ClienteCarrito" asp-action="Agregar" method="post">
                                         <input type="hidden" name="ProductoId" value="@p.Id" />
                                         <input type="hidden" name="Cantidad" value="1" />
                                         <input type="hidden" name="RestauranteId" value="@Model.Id" />
-                                        <button type="submit" class="btn btn-danger w-100"><i class="bi bi-cart-plus"></i> Añadir al Carrito</button>
+                                        <button type="submit" class="btn btn-liquid w-100" style="--liquid-bg: var(--danger-neon); --liquid-bg-hover: #dc2626;"><i class="bi bi-cart-plus"></i> Añadir al Carrito</button>
                                     </form>
                                 }
                                 else
                                 {
-                                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary w-100">@Localizer["IniciaSesionPedir"]</a>
+                                    <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-info w-100">@Localizer["IniciaSesionPedir"]</a>
                                 }
                             </div>
                         </div>
@@ -62,7 +76,10 @@
         }
         else
         {
-            <div class="alert alert-secondary">@Localizer["NoProductosDisponiblesRest"]</div>
+            <div class="alert alert-info glass-card text-center py-4" style="background: rgba(13, 202, 240, 0.1); border: 1px solid rgba(13, 202, 240, 0.3);">
+                <i class="bi bi-basket text-info fs-1 d-block mb-3"></i>
+                @Localizer["NoProductosDisponiblesRest"]
+            </div>
         }
     </div>
 </div>

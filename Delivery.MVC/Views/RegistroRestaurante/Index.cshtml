@@ -5,154 +5,166 @@
     ViewData["Title"] = Localizer["RegRestauranteTitulo"];
 }
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5" data-aos="fade-up">
     <div class="row justify-content-center">
-        <h2 class="text-center mb-4">@Localizer["RegRestauranteTitulo"]</h2>
-        
-        <form asp-action="Index" method="post" class="card shadow-sm p-4 w-100">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="col-lg-10">
+            <div class="card glass-card">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-shop fs-1 text-danger mb-2"></i>
+                        <h2 class="text-light fw-bold">@Localizer["RegRestauranteTitulo"]</h2>
+                        <p class="text-muted">Únete como restaurante y expande tu negocio.</p>
+                    </div>
+                    
+                    <form asp-action="Index" method="post" class="w-100">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div class="row">
-                <!-- Columna Izquierda: Formulario -->
-                <div class="col-md-6">
-                    <h4 class="mb-3">@Localizer["DatosPropietario"]</h4>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="NombrePropietario" class="form-label">@Localizer["Nombres"]</label>
-                            <input asp-for="NombrePropietario" class="form-control" />
-                            <span asp-validation-for="NombrePropietario" class="text-danger"></span>
+                <div class="row mt-4">
+                    <!-- Columna Izquierda: Formulario -->
+                    <div class="col-md-6 mb-4">
+                        <h4 class="mb-4 text-primary border-bottom border-secondary pb-2"><i class="bi bi-person-workspace"></i> @Localizer["DatosPropietario"]</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="NombrePropietario" class="form-label text-light">@Localizer["Nombres"]</label>
+                                <input asp-for="NombrePropietario" class="form-control" />
+                                <span asp-validation-for="NombrePropietario" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ApellidosPropietario" class="form-label text-light">@Localizer["Apellidos"]</label>
+                                <input asp-for="ApellidosPropietario" class="form-control" />
+                                <span asp-validation-for="ApellidosPropietario" class="text-danger"></span>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="ApellidosPropietario" class="form-label">@Localizer["Apellidos"]</label>
-                            <input asp-for="ApellidosPropietario" class="form-control" />
-                            <span asp-validation-for="ApellidosPropietario" class="text-danger"></span>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label text-light">@Localizer["CorreoElectronico"]</label>
+                                <input asp-for="Email" type="email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Telefono" class="form-label text-light">@Localizer["Telefono"]</label>
+                                <input asp-for="Telefono" class="form-control" />
+                                <span asp-validation-for="Telefono" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="Cedula" class="form-label text-light">@Localizer["Cedula"]</label>
+                                <input asp-for="Cedula" class="form-control" />
+                                <span asp-validation-for="Cedula" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Password" class="form-label text-light">@Localizer["Contrasena"]</label>
+                                <input asp-for="Password" type="password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ConfirmarPassword" class="form-label text-light">@Localizer["ConfirmarContrasena"]</label>
+                                <input asp-for="ConfirmarPassword" type="password" class="form-control" />
+                                <span asp-validation-for="ConfirmarPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <h4 class="mb-4 mt-5 text-warning border-bottom border-secondary pb-2"><i class="bi bi-shop-window"></i> @Localizer["DatosRestaurante"]</h4>
+
+                        <div class="mb-3">
+                            <label asp-for="NombreRestaurante" class="form-label text-light">@Localizer["NombreRestaurante"]</label>
+                            <input asp-for="NombreRestaurante" class="form-control" />
+                            <span asp-validation-for="NombreRestaurante" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label text-light">@Localizer["Descripcion"]</label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="RUC" class="form-label text-light">@Localizer["RUC"]</label>
+                                <input asp-for="RUC" class="form-control" />
+                                <span asp-validation-for="RUC" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Categoria" class="form-label text-light">@Localizer["CategoriaEjemplo"]</label>
+                                <input asp-for="Categoria" class="form-control" />
+                                <span asp-validation-for="Categoria" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="HoraApertura" class="form-label text-light">@Localizer["HoraApertura"]</label>
+                                <input asp-for="HoraApertura" type="time" class="form-control" />
+                                <span asp-validation-for="HoraApertura" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="HoraCierre" class="form-label text-light">@Localizer["HoraCierre"]</label>
+                                <input asp-for="HoraCierre" type="time" class="form-control" />
+                                <span asp-validation-for="HoraCierre" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Email" class="form-label">@Localizer["CorreoElectronico"]</label>
-                            <input asp-for="Email" type="email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Telefono" class="form-label">@Localizer["Telefono"]</label>
-                            <input asp-for="Telefono" class="form-control" />
-                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                    <!-- Columna Derecha: Mapa de Ubicación -->
+                    <div class="col-md-6">
+                        <div class="glass-card p-4 h-100" style="background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05);">
+                            <h4 class="mb-3 text-info"><i class="bi bi-geo-alt"></i> Ubicación del Restaurante</h4>
+                            <p class="text-muted small mb-4">Busca en el mapa o haz clic para ubicar la dirección exacta de tu local.</p>
+
+                            <div class="mb-3">
+                                <label class="form-label text-light">Buscar Lugar</label>
+                                <div class="input-group">
+                                    <input type="text" id="buscador-mapa" class="form-control" placeholder="Ej: Ibarra, Parque Ciudad Blanca..." />
+                                    <button class="btn btn-outline-info" type="button" id="btn-buscar">Buscar</button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Calle" class="form-label text-light">Dirección (Calle Principal)</label>
+                                <input asp-for="Calle" id="calle-input" class="form-control" placeholder="Ej: Av. 17 de Julio" />
+                                <span asp-validation-for="Calle" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Ciudad" class="form-label text-light">@Localizer["Ciudad"]</label>
+                                <input asp-for="Ciudad" id="ciudad-input" class="form-control" placeholder="Ej: Ibarra" />
+                                <span asp-validation-for="Ciudad" class="text-danger"></span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-light">Latitud</label>
+                                    <input type="text" name="latStr" id="lat-input" class="form-control bg-dark text-light border-secondary" readonly value="@Model.Latitud?.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                    <span asp-validation-for="Latitud" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-light">Longitud</label>
+                                    <input type="text" name="lngStr" id="lng-input" class="form-control bg-dark text-light border-secondary" readonly value="@Model.Longitud?.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                    <span asp-validation-for="Longitud" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="card overflow-hidden border-0 mt-3 shadow-lg">
+                                <div id="map" style="height: 350px; width: 100%; z-index: 1;"></div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label asp-for="Cedula" class="form-label">@Localizer["Cedula"]</label>
-                            <input asp-for="Cedula" class="form-control" />
-                            <span asp-validation-for="Cedula" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Password" class="form-label">@Localizer["Contrasena"]</label>
-                            <input asp-for="Password" type="password" class="form-control" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="ConfirmarPassword" class="form-label">@Localizer["ConfirmarContrasena"]</label>
-                            <input asp-for="ConfirmarPassword" type="password" class="form-control" />
-                            <span asp-validation-for="ConfirmarPassword" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <hr class="my-4" />
-                    <h4 class="mb-3">@Localizer["DatosRestaurante"]</h4>
-
-                    <div class="mb-3">
-                        <label asp-for="NombreRestaurante" class="form-label">@Localizer["NombreRestaurante"]</label>
-                        <input asp-for="NombreRestaurante" class="form-control" />
-                        <span asp-validation-for="NombreRestaurante" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Descripcion" class="form-label">@Localizer["Descripcion"]</label>
-                        <textarea asp-for="Descripcion" class="form-control" rows="2"></textarea>
-                        <span asp-validation-for="Descripcion" class="text-danger"></span>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="RUC" class="form-label">@Localizer["RUC"]</label>
-                            <input asp-for="RUC" class="form-control" />
-                            <span asp-validation-for="RUC" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Categoria" class="form-label">@Localizer["CategoriaEjemplo"]</label>
-                            <input asp-for="Categoria" class="form-control" />
-                            <span asp-validation-for="Categoria" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="HoraApertura" class="form-label">@Localizer["HoraApertura"]</label>
-                            <input asp-for="HoraApertura" type="time" class="form-control" />
-                            <span asp-validation-for="HoraApertura" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="HoraCierre" class="form-label">@Localizer["HoraCierre"]</label>
-                            <input asp-for="HoraCierre" type="time" class="form-control" />
-                            <span asp-validation-for="HoraCierre" class="text-danger"></span>
-                        </div>
-                    </div>
-
                 </div>
 
-                <!-- Columna Derecha: Mapa de Ubicación -->
-                <div class="col-md-6">
-                    <h4 class="mb-3">Ubicación del Restaurante</h4>
-                    <p class="text-muted small">Busca en el mapa o haz clic para ubicar la dirección exacta de tu local.</p>
-
-                    <div class="mb-3">
-                        <label class="form-label">Buscar Lugar</label>
-                        <div class="input-group">
-                            <input type="text" id="buscador-mapa" class="form-control" placeholder="Ej: Ibarra, Parque Ciudad Blanca..." />
-                            <button class="btn btn-primary" type="button" id="btn-buscar">Buscar</button>
-                        </div>
+                    <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top border-secondary">
+                        <a asp-controller="Auth" asp-action="SeleccionTipoRegistro" class="btn btn-outline-info rounded-pill px-4"><i class="bi bi-arrow-left"></i> Volver</a>
+                        <button type="submit" class="btn btn-liquid btn-liquid-primary px-5 py-2">@Localizer["RegRestauranteBtn"]</button>
                     </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Calle" class="form-label">Dirección (Calle Principal)</label>
-                        <input asp-for="Calle" id="calle-input" class="form-control" placeholder="Ej: Av. 17 de Julio" />
-                        <span asp-validation-for="Calle" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Ciudad" class="form-label">@Localizer["Ciudad"]</label>
-                        <input asp-for="Ciudad" id="ciudad-input" class="form-control" placeholder="Ej: Ibarra" />
-                        <span asp-validation-for="Ciudad" class="text-danger"></span>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Latitud</label>
-                            <input type="text" name="latStr" id="lat-input" class="form-control bg-light" readonly value="@Model.Latitud?.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
-                            <span asp-validation-for="Latitud" class="text-danger"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Longitud</label>
-                            <input type="text" name="lngStr" id="lng-input" class="form-control bg-light" readonly value="@Model.Longitud?.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
-                            <span asp-validation-for="Longitud" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div id="map" style="height: 400px; width: 100%; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 20px;"></div>
+                    </form>
                 </div>
             </div>
-
-            <div class="d-grid mt-4">
-                <button type="submit" class="btn btn-primary btn-lg">@Localizer["RegRestauranteBtn"]</button>
-                <a asp-controller="Auth" asp-action="SeleccionTipoRegistro" class="btn btn-outline-secondary mt-2">Volver al área de registro</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
