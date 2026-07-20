@@ -5,89 +5,85 @@
     ViewData["Title"] = Localizer["MiCarrito"];
 }
 
-<h1>@Localizer["MiCarrito"]</h1>
-<hr />
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-@if (TempData["Exito"] != null)
-{
-    <div class="alert alert-success">@TempData["Exito"]</div>
-}
-
-@if (Model == null || !Model.Items.Any())
-{
-    <div class="alert alert-info">
-        <h4>@Localizer["CarritoVacio"]</h4>
-        <p>@Localizer["CarritoVacioDesc"]</p>
-        <a asp-controller="Home" asp-action="Index">@Localizer["VerRestaurantesBtn"]</a>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary fw-bold m-0"><i class="bi bi-cart3"></i> @Localizer["MiCarrito"]</h1>
     </div>
+    <hr style="border-color: var(--glass-border);" />
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger glass-card" style="background: rgba(220,53,69,0.1); border: 1px solid rgba(220,53,69,0.3); color: #ff6b6b;">@TempData["Error"]</div>
+    }
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success glass-card" style="background: rgba(25,135,84,0.1); border: 1px solid rgba(25,135,84,0.3); color: #34d399;">@TempData["Exito"]</div>
+    }
+
+    @if (Model == null || !Model.Items.Any())
+    {
+        <div class="alert alert-info text-center glass-card" style="background: rgba(13, 202, 240, 0.1); border: 1px solid rgba(13, 202, 240, 0.3);">
+            <i class="bi bi-cart-x fs-1 d-block mb-3 text-info"></i>
+            <h4 class="text-info fw-bold">@Localizer["CarritoVacio"]</h4>
+            <p class="text-light">@Localizer["CarritoVacioDesc"]</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-liquid mt-3">@Localizer["VerRestaurantesBtn"]</a>
+        </div>
 }
 else
 {
-    <p><strong>@Localizer["RestauranteTag"]:</strong> @Model.NombreRestaurante</p>
+        <h5 class="text-light mb-4"><i class="bi bi-shop text-primary"></i> <strong>@Localizer["RestauranteTag"]:</strong> @Model.NombreRestaurante</h5>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>@Localizer["ProductoCol"]</th>
-                <th>@Localizer["PrecioUnitarioCol"]</th>
-                <th>@Localizer["CantidadCol"]</th>
-                <th>@Localizer["SubtotalCol"]</th>
-                <th>@Localizer["AccionCol"]</th>
-            </tr>
-        </thead>
-        <tbody>
+        <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
             @foreach (var item in Model.Items)
             {
-                <tr>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            @if (!string.IsNullOrEmpty(item.ImagenUrl))
-                            {
-                                <img src="@item.ImagenUrl" alt="@item.NombreProducto" class="rounded me-2" style="width: 50px; height: 50px; object-fit: cover;" />
-                            }
-                            <span>@item.NombreProducto</span>
+                <div class="col" data-aos="fade-up">
+                    <div class="card glass-card h-100 p-3 d-flex flex-row align-items-center">
+                        @if (!string.IsNullOrEmpty(item.ImagenUrl))
+                        {
+                            <img src="@item.ImagenUrl" alt="@item.NombreProducto" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" />
+                        }
+                        <div class="flex-grow-1">
+                            <h5 class="text-primary mb-1">@item.NombreProducto</h5>
+                            <p class="text-muted mb-0 small">@item.Cantidad x $@item.PrecioUnitario.ToString("0.00")</p>
+                            <h6 class="text-light mt-1">@Localizer["SubtotalCol"]: $@item.Subtotal.ToString("0.00")</h6>
                         </div>
-                    </td>
-                    <td class="align-middle">$@item.PrecioUnitario.ToString("0.00")</td>
-                    <td class="align-middle">@item.Cantidad</td>
-                    <td class="align-middle">$@item.Subtotal.ToString("0.00")</td>
-                    <td class="align-middle">
-                        <form asp-action="Quitar" method="post" style="display:inline;">
-                            <input type="hidden" name="productoId" value="@item.ProductoId" />
-                            <button type="submit">@Localizer["QuitarBtn"]</button>
-                        </form>
-                    </td>
-                </tr>
+                        <div class="ms-3">
+                            <form asp-action="Quitar" method="post">
+                                <input type="hidden" name="productoId" value="@item.ProductoId" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="@Localizer["QuitarBtn"]">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3"><strong>@Localizer["TotalCol"]</strong></td>
-                <td colspan="2"><strong>$@Model.Subtotal.ToString("0.00")</strong></td>
-            </tr>
-        </tfoot>
-    </table>
+        </div>
 
-    <form asp-action="Vaciar" method="post" style="display:inline;">
-        <button type="submit">@Localizer["VaciarCarritoBtn"]</button>
-    </form>
+        <div class="d-flex justify-content-between align-items-center mb-4 p-4 glass-card">
+            <h3 class="text-light mb-0">@Localizer["TotalCol"]</h3>
+            <h2 class="text-primary fw-bold mb-0">$@Model.Subtotal.ToString("0.00")</h2>
+        </div>
 
-    <hr />
+        <div class="d-flex gap-3">
+            <form asp-action="Vaciar" method="post">
+                <button type="submit" class="btn btn-outline-danger px-4">@Localizer["VaciarCarritoBtn"]</button>
+            </form>
+
+    <hr style="border-color: var(--glass-border);" class="my-4" />
 
     @if (ViewBag.SinDireccion == true)
     {
-        <div class="alert alert-warning">
-            <strong>@Localizer["SinDireccionAlert"]</strong><br />
-            @Localizer["SinDireccionDesc"]
+        <div class="alert alert-warning glass-card text-center" style="background: rgba(255,193,7,0.1); border: 1px solid rgba(255,193,7,0.3); color: #fcd34d;">
+            <i class="bi bi-geo-alt-fill fs-2 d-block mb-2"></i>
+            <strong class="fs-5">@Localizer["SinDireccionAlert"]</strong><br />
+            <p class="mb-3">@Localizer["SinDireccionDesc"]</p>
+            <a asp-controller="ClienteDirecciones" asp-action="Create" class="btn btn-liquid" style="--liquid-bg: #f59e0b; --liquid-bg-hover: #d97706;">@Localizer["AgregarDireccionBtn"]</a>
         </div>
-        <a asp-controller="ClienteDirecciones" asp-action="Create">@Localizer["AgregarDireccionBtn"]</a>
     }
     else
     {
-        <a asp-action="Checkout" class="btn btn-primary btn-lg">@Localizer["ProcederPagoBtn"]</a>
+        <a asp-action="Checkout" class="btn btn-liquid btn-liquid-primary btn-lg px-5">@Localizer["ProcederPagoBtn"]</a>
     }
 }
+</div>

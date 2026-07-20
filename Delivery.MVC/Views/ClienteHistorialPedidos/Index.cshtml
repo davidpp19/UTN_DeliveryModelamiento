@@ -5,38 +5,45 @@
     ViewData["Title"] = "Historial de Pedidos";
 }
 
-<h1 class="my-4"><i class="bi bi-clock-history"></i> Mi Historial de Pedidos</h1>
-<hr />
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary fw-bold"><i class="bi bi-clock-history"></i> Mi Historial de Pedidos</h1>
+    <hr style="border-color: var(--glass-border);" />
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">Aún no tienes pedidos en tu historial.</div>
-}
-else
-{
-    <div class="row row-cols-1 row-cols-md-2 g-4">
-        @foreach (var pedido in Model)
-        {
-            <div class="col">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <strong>@Localizer["PedidoTag"] #@pedido.Id</strong>
-                        <span class="badge bg-secondary">@pedido.EstadoPedido</span>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-1"><i class="bi bi-calendar"></i> @pedido.FechaPedido.ToLocalTime().ToString("g")</p>
-                        <p class="mb-1"><i class="bi bi-shop"></i> @(pedido.Restaurante?.Nombre ?? "Restaurante Desconocido")</p>
-                        <p class="mb-3"><i class="bi bi-cash"></i> @Localizer["TotalTag"]: $@pedido.Total.ToString("0.00")</p>
-                        
-                        <a asp-action="Details" asp-route-id="@pedido.Id" class="btn btn-sm btn-outline-primary">@Localizer["VerDetallesBtn"]</a>
-                        
-                        @if (pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
-                        {
-                            <a asp-action="Calificar" asp-route-id="@pedido.Id" class="btn btn-sm btn-warning ms-2"><i class="bi bi-star"></i> Calificar</a>
-                        }
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center glass-card" style="background: rgba(13, 202, 240, 0.1); border: 1px solid rgba(13, 202, 240, 0.3);">
+            <i class="bi bi-inbox fs-1 d-block mb-3 text-info"></i>
+            <p class="mb-0">Aún no tienes pedidos en tu historial.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 g-4 mt-2">
+            @foreach (var pedido in Model)
+            {
+                <div class="col" data-aos="fade-up">
+                    <div class="card glass-card h-100">
+                        <div class="card-header bg-transparent border-bottom-0 d-flex justify-content-between align-items-center pt-4 px-4">
+                            <strong class="text-light fs-5">@Localizer["PedidoTag"] #@pedido.Id</strong>
+                            <span class="badge bg-secondary">@pedido.EstadoPedido</span>
+                        </div>
+                        <div class="card-body px-4">
+                            <p class="mb-2 text-muted"><i class="bi bi-calendar"></i> @pedido.FechaPedido.ToLocalTime().ToString("g")</p>
+                            <p class="mb-2 text-muted"><i class="bi bi-shop"></i> @(pedido.Restaurante?.Nombre ?? "Restaurante Desconocido")</p>
+                            <p class="mb-3 text-primary fw-bold fs-5"><i class="bi bi-cash"></i> @Localizer["TotalTag"]: $@pedido.Total.ToString("0.00")</p>
+                            
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@pedido.Id" class="btn btn-liquid flex-grow-1">@Localizer["VerDetallesBtn"]</a>
+                                
+                                @if (pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
+                                {
+                                    <a asp-action="Calificar" asp-route-id="@pedido.Id" class="btn btn-liquid flex-grow-1" style="--liquid-bg: #f59e0b; --liquid-bg-hover: #d97706;"><i class="bi bi-star"></i> Calificar</a>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-}
+            }
+        </div>
+    }
+</div>
