@@ -6,7 +6,7 @@
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4 text-primary fw-bold"><i class="bi bi-clock-history"></i> Mi Historial de Pedidos</h1>
+    <h1 class="mb-4 text-primary fw-bold"><i class="bi bi-clock-history"></i> @Localizer["MisPedidos"]</h1>
     <hr style="border-color: var(--glass-border);" />
 
     @if (!Model.Any())
@@ -37,7 +37,7 @@
                                 
                                 @if (pedido.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.Entregado)
                                 {
-                                    <a asp-action="Calificar" asp-route-id="@pedido.Id" class="btn btn-liquid flex-grow-1" style="--liquid-bg: #f59e0b; --liquid-bg-hover: #d97706;"><i class="bi bi-star"></i> Calificar</a>
+                                    <a asp-action="Calificar" asp-route-id="@pedido.Id" class="btn btn-liquid flex-grow-1" style="--liquid-bg: #f59e0b; --liquid-bg-hover: #d97706;"><i class="bi bi-star"></i> @Localizer["CalificarBtn"]</a>
                                 }
                             </div>
                         </div>
