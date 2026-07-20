@@ -58,10 +58,11 @@ namespace Delivery.MVC.Controllers
             }
             
             var todos = await _pedidoConsumer.GetAllAsync();
-            // Mostrar pedidos que no tengan repartidor y que no estén cancelados ni entregados
+            // Show orders without a repartidor that are ready: Pendiente or ListoParaRecoger
             var pedidosListos = todos.Where(p => p.RepartidorId == null && 
-                                                 p.EstadoPedido != EstadoPedidoEnum.Cancelado && 
-                                                 p.EstadoPedido != EstadoPedidoEnum.Entregado)
+                                                 (p.EstadoPedido == EstadoPedidoEnum.Pendiente ||
+                                                  p.EstadoPedido == EstadoPedidoEnum.ListoParaRecoger ||
+                                                  p.EstadoPedido == EstadoPedidoEnum.Aceptado))
                                      .OrderByDescending(p => p.FechaPedido);
             return View(pedidosListos);
         }
@@ -95,6 +96,7 @@ namespace Delivery.MVC.Controllers
                     if (restaurante != null)
                     {
                         // UML: AcceptOrder() on res:Restaurant
+                        // Now accepts Pendiente, ListoParaRecoger, and Aceptado states
                         bool acceptOrder = restaurante.AcceptOrder(pedido, repartidor);
                         if (acceptOrder)
                         {
@@ -103,25 +105,25 @@ namespace Delivery.MVC.Controllers
                             if (result != null)
                             {
                                 await _repartidorConsumer.UpdateAsync(userId, repartidor);
-                                TempData["Exito"] = "Delivery Confirmed(): Pedido asignado exitosamente.";
+                                TempData["Exito"] = "Pedido aceptado correctamente. Dirígete al restaurante a recogerlo.";
                                 return RedirectToAction(nameof(Index));
                             }
                         }
                         else
                         {
                             // UML: false flow -> OrderNoLongerAvailable()
-                            TempData["Error"] = "OrderNoLongerAvailable(): El pedido ya no está pendiente.";
+                            TempData["Error"] = "Este pedido ya fue tomado por otro repartidor o fue cancelado.";
                             return RedirectToAction(nameof(Disponibles));
                         }
                     }
                 }
                 
-                TempData["Error"] = "Error al asignar el pedido.";
+                TempData["Error"] = "Error al asignar el pedido. Intenta de nuevo.";
                 return RedirectToAction(nameof(Disponibles));
             }
             catch (System.Exception)
             {
-                TempData["Error"] = "OrderAlreadyTaken: El pedido ya fue asignado o hubo un error.";
+                TempData["Error"] = "El pedido ya fue asignado a otro repartidor.";
             }
 
             return RedirectToAction(nameof(Disponibles));
@@ -144,6 +146,7 @@ namespace Delivery.MVC.Controllers
             var estadosPermitidos = new System.Collections.Generic.List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
             switch (data.EstadoPedido)
             {
+                case EstadoPedidoEnum.Aceptado:
                 case EstadoPedidoEnum.ListoParaRecoger:
                     estadosPermitidos.Add(new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = "Recogido", Value = "Recogido" });
                     break;

@@ -135,13 +135,16 @@ namespace Delivery.Modelos.Entidades
         // UML: Accept_Delivery
         public bool AcceptOrder(Pedido order, Repartidor driver)
         {
-            if (order.EstadoPedido.ToString() == "Pendiente" || order.EstadoPedido == EstadoPedidoEnum.Pendiente)
+            // Accept orders that are Pending OR already marked as ReadyForPickup by restaurant
+            // The flow is: Pendiente -> restaurant prepares -> ListoParaRecoger -> repartidor accepts
+            if (order.EstadoPedido == EstadoPedidoEnum.Pendiente ||
+                order.EstadoPedido == EstadoPedidoEnum.ListoParaRecoger ||
+                order.EstadoPedido == EstadoPedidoEnum.Aceptado)
             {
-                order.UpdateStatus("Aceptado");
                 driver.setStatus("Ocupado"); // Delivery Confirmed
                 return true;
             }
-            // OrderNoLongerAvailable()
+            // OrderNoLongerAvailable() - order is cancelled, delivered or already taken
             return false;
         }
     }
