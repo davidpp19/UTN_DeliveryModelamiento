@@ -57,17 +57,22 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 3. SweetAlert2 Confirmation Hooks for Links (anchor tags)
-    // usage: <a href="..." class="btn-confirm" data-title="¿Eliminar?" data-text="..." data-confirm="Sí">
+    // 3. SweetAlert2 Confirmation Hooks for Links AND Submit Buttons
+    // usage: <a href="..." class="btn-confirm" ...> OR <button type="submit" class="btn-confirm" ...>
     const confirmLinks = document.querySelectorAll('.btn-confirm');
     
     confirmLinks.forEach(link => {
         link.addEventListener('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
+
             const href = link.getAttribute('href');
-            const title = link.getAttribute('data-title') || '¿Estás seguro?';
-            const text = link.getAttribute('data-text') || 'Esta acción no se puede deshacer';
-            const confirmText = link.getAttribute('data-confirm') || 'Sí, confirmar';
+            const isSubmitBtn = link.tagName === 'BUTTON' && (link.type === 'submit' || !link.type);
+            const parentForm = isSubmitBtn ? link.closest('form') : null;
+
+            const title = link.getAttribute('data-title') || 'Estas seguro?';
+            const text = link.getAttribute('data-text') || 'Esta accion no se puede deshacer';
+            const confirmText = link.getAttribute('data-confirm') || 'Si, confirmar';
             const isDanger = link.hasAttribute('data-danger') || link.classList.contains('btn-danger') || link.classList.contains('text-danger');
 
             Swal.fire({
@@ -88,7 +93,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = href;
+                    if (parentForm) {
+                        // It's a submit button inside a form — submit the form
+                        parentForm.submit();
+                    } else if (href && href !== 'null' && href !== '') {
+                        // It's an anchor link
+                        window.location.href = href;
+                    }
                 }
             });
         });
