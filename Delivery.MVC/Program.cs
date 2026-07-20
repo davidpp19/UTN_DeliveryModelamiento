@@ -69,7 +69,8 @@ app.UseRequestLocalization(localizationOptions);
 
 app.UseRouting();
 
-app.UseSession(); // DEBE ir antes de Authentication y Authorization
+// DEBE ir antes de Authentication y Authorization
+app.UseSession(); 
 
 app.UseAuthentication();
 app.UseAuthorization();
