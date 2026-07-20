@@ -285,3 +285,73 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 8px;
   animation: skeleton-loading 1.5s infinite ease-in-out;
 }
+/* ============================================================
+   MODAL DARK THEME OVERRIDE - Force dark background on all modals
+   ============================================================ */
+.modal-content {
+    background: #1a1a2e !important;
+    color: #f0f0f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(168, 85, 247, 0.2) !important;
+}
+
+.modal-header {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #f0f0f0 !important;
+}
+
+.modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%) !important;
+}
+
+.modal-body {
+    background: transparent !important;
+    color: #e0e0e0 !important;
+}
+
+.modal-body strong {
+    color: #ffffff !important;
+}
+
+.modal-body p, .modal-body h6, .modal-body h5 {
+    color: #e0e0e0 !important;
+}
+
+.modal-footer {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.modal-title {
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+.modal-header.bg-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    border-bottom: 1px solid rgba(239, 68, 68, 0.4) !important;
+}
+
+.modal .form-control,
+.modal textarea {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #f0f0f0 !important;
+}
+
+.modal .form-control:focus,
+.modal textarea:focus {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(168, 85, 247, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(168, 85, 247, 0.25) !important;
+    color: #f0f0f0 !important;
+}
+
+.modal .form-label {
+    color: #c0c0c0 !important;
+}
+
+.modal-backdrop {
+    backdrop-filter: blur(4px);
+}
