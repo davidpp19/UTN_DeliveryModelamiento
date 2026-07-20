@@ -14,11 +14,13 @@ namespace Delivery.MVC.Controllers
     {
         private readonly IAuthConsumer _authConsumer;
         private readonly IStringLocalizer<SharedResource> _localizer;
+        private readonly Delivery.MVC.Servicios.IEmailService _emailService;
 
-        public RegistroRestauranteController(IAuthConsumer authConsumer, IStringLocalizer<SharedResource> localizer)
+        public RegistroRestauranteController(IAuthConsumer authConsumer, IStringLocalizer<SharedResource> localizer, Delivery.MVC.Servicios.IEmailService emailService)
         {
             _authConsumer = authConsumer;
             _localizer = localizer;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -68,31 +70,12 @@ namespace Delivery.MVC.Controllers
                 return View(dto);
             }
 
-            // Auto-login
-            var claims = new System.Collections.Generic.List<Claim>
+            if (!string.IsNullOrEmpty(response.CodigoVerificacion))
             {
-                new Claim(ClaimTypes.NameIdentifier, response.UsuarioId.ToString()),
-                new Claim(ClaimTypes.Name, response.Nombre),
-                new Claim(ClaimTypes.Email, response.Email),
-                new Claim(ClaimTypes.Role, response.Rol),
-                new Claim("JwtToken", response.Token)
-            };
-
-            if (!string.IsNullOrEmpty(response.FotoPerfilUrl))
-            {
-                claims.Add(new Claim("FotoPerfilUrl", response.FotoPerfilUrl));
+                await _emailService.EnviarCorreoConfirmacionAsync(response.Email, response.Nombre, response.CodigoVerificacion);
+                TempData["Mensaje"] = "Revisa tu correo para verificar tu cuenta de restaurante. Una vez verificada, el administrador deberá aprobarla.";
+                return RedirectToAction("VerificarEmail", "Auth", new { email = response.Email });
             }
-
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(2)
-            };
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
             return RedirectToAction("Index", "DashboardRestaurante");
         }

@@ -14,11 +14,13 @@ namespace Delivery.MVC.Controllers
     {
         private readonly IAuthConsumer _authConsumer;
         private readonly IStringLocalizer<SharedResource> _localizer;
+        private readonly Delivery.MVC.Servicios.IEmailService _emailService;
 
-        public RegistroRepartidorController(IAuthConsumer authConsumer, IStringLocalizer<SharedResource> localizer)
+        public RegistroRepartidorController(IAuthConsumer authConsumer, IStringLocalizer<SharedResource> localizer, Delivery.MVC.Servicios.IEmailService emailService)
         {
             _authConsumer = authConsumer;
             _localizer = localizer;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -81,30 +83,12 @@ namespace Delivery.MVC.Controllers
 
             if (authResponse != null)
             {
-                // Auto-login después del registro
-                var claims = new List<Claim>
+                if (!string.IsNullOrEmpty(authResponse.CodigoVerificacion))
                 {
-                    new Claim(ClaimTypes.NameIdentifier, authResponse.UsuarioId.ToString()),
-                    new Claim(ClaimTypes.Name, authResponse.Nombre),
-                    new Claim(ClaimTypes.Email, authResponse.Email),
-                    new Claim(ClaimTypes.Role, authResponse.Rol),
-                    new Claim("JwtToken", authResponse.Token)
-                };
-
-                if (!string.IsNullOrEmpty(authResponse.FotoPerfilUrl))
-                {
-                    claims.Add(new Claim("FotoPerfilUrl", authResponse.FotoPerfilUrl));
+                    await _emailService.EnviarCorreoConfirmacionAsync(authResponse.Email, authResponse.Nombre, authResponse.CodigoVerificacion);
+                    TempData["Mensaje"] = "Revisa tu correo para verificar tu cuenta de repartidor. Una vez verificada, el administrador deberá aprobarla.";
+                    return RedirectToAction("VerificarEmail", "Auth", new { email = authResponse.Email });
                 }
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new System.Security.Claims.ClaimsPrincipal(claimsIdentity),
-                    new AuthenticationProperties 
-                    { 
-                        IsPersistent = true,
-                        ExpiresUtc = System.DateTimeOffset.UtcNow.AddHours(2)
-                    });
 
                 TempData["Exito"] = _localizer["Registro exitoso. Tu cuenta está pendiente de aprobación por el administrador."];
                 return RedirectToAction("Index", "DashboardRepartidor");

@@ -128,6 +128,7 @@ namespace Delivery.API.Controllers
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                var codigo = new Random().Next(100000, 999999).ToString();
                 // 1. Crear Usuario
                 var usuario = new Usuario
                 {
@@ -140,6 +141,9 @@ namespace Delivery.API.Controllers
                     RolId        = rolRepartidor.Id,
                     TipoUsuario  = TipoUsuarioEnum.Repartidor,
                     Activo       = true,
+                    EmailConfirmado = false,
+                    CodigoVerificacion = codigo,
+                    ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15),
                     CreadoEn     = ahora
                 };
                 var usuarioCreado = await _usuarioService.CreateAsync(usuario);
@@ -187,7 +191,8 @@ namespace Delivery.API.Controllers
                     Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
                     Email    = usuarioCreado.Email,
                     Rol      = "Repartidor",
-                    FotoPerfilUrl = usuarioCreado.FotoPerfilUrl
+                    FotoPerfilUrl = usuarioCreado.FotoPerfilUrl,
+                    CodigoVerificacion = codigo
                 });
             }
             catch (Exception ex)
@@ -227,6 +232,7 @@ namespace Delivery.API.Controllers
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                var codigo = new Random().Next(100000, 999999).ToString();
                 // 1. Crear Usuario
                 var usuario = new Usuario
                 {
@@ -239,6 +245,9 @@ namespace Delivery.API.Controllers
                     RolId        = rolRestaurante.Id,
                     TipoUsuario  = TipoUsuarioEnum.Restaurante,
                     Activo       = true,
+                    EmailConfirmado = false,
+                    CodigoVerificacion = codigo,
+                    ExpiracionCodigo = DateTime.UtcNow.AddMinutes(15),
                     CreadoEn     = ahora
                 };
                 var usuarioCreado = await _usuarioService.CreateAsync(usuario);
@@ -280,7 +289,8 @@ namespace Delivery.API.Controllers
                     Nombre   = $"{usuarioCreado.Nombre} {usuarioCreado.Apellidos}".Trim(),
                     Email    = usuarioCreado.Email,
                     Rol      = "Restaurante",
-                    FotoPerfilUrl = usuarioCreado.FotoPerfilUrl
+                    FotoPerfilUrl = usuarioCreado.FotoPerfilUrl,
+                    CodigoVerificacion = codigo
                 });
             }
             catch (Exception ex)
