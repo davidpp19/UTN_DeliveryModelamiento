@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Delivery.Modelos.DTOs;
 using Delivery.Modelos.Entidades;
@@ -38,6 +40,35 @@ namespace Delivery.API.Controllers
             _context = context;
         }
 
+        [HttpGet("forzar-verificacion")]
+        public async Task<IActionResult> ForzarVerificacion()
+        {
+            try
+            {
+                var emailsAConfirmar = new[] { "admin@rayoexpres.com", "davidtomas@gmail.com", "admin@admin.com" };
+                
+                // Opción 1: Actualizar usando EF Core
+                var usuarios = await _context.Usuarios
+                    .Where(u => emailsAConfirmar.Contains(u.Email))
+                    .ToListAsync();
+
+                foreach (var user in usuarios)
+                {
+                    user.EmailConfirmado = true;
+                    // También resetear intentos por si acaso
+                    user.IntentosFallidos = 0;
+                    user.BloqueadoHasta = null;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Cuentas verificadas exitosamente en la base de datos.", usuariosActualizados = usuarios.Count });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al verificar cuentas.", error = ex.Message, details = ex.InnerException?.Message });
+            }
+        }
 
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginDto loginDto)
