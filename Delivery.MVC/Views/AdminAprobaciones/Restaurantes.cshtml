@@ -88,10 +88,10 @@
                 <!-- Modal Mostrar Información -->
                     <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@(modalId)Label" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                          <div class="modal-header">
+                        <div class="modal-content bg-dark text-light border-secondary shadow-lg">
+                          <div class="modal-header border-secondary">
                             <h5 class="modal-title" id="@(modalId)Label">@Localizer["InfoRestauranteTitle"]</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
                             <div class="row">
@@ -117,7 +117,7 @@
                                 </div>
                             </div>
                           </div>
-                          <div class="modal-footer">
+                          <div class="modal-footer border-secondary">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CerrarBtn"]</button>
                           </div>
                         </div>
@@ -127,7 +127,7 @@
                     <!-- Modal Rechazar -->
                     <div class="modal fade" id="@modalRechazoId" tabindex="-1" aria-labelledby="@(modalRechazoId)Label" aria-hidden="true">
                       <div class="modal-dialog">
-                        <div class="modal-content">
+                        <div class="modal-content bg-dark text-light border-secondary shadow-lg">
                           <form method="post" asp-action="RechazarRestaurante">
                               <div class="modal-header bg-danger text-white">
                                 <h5 class="modal-title" id="@(modalRechazoId)Label">@Localizer["DenegarSolicitudTitle"]</h5>
@@ -141,7 +141,7 @@
                                     <textarea name="motivoRechazo" class="form-control" rows="3" required></textarea>
                                 </div>
                               </div>
-                              <div class="modal-footer">
+                              <div class="modal-footer border-secondary">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CancelarBtn"]</button>
                                 <button type="submit" class="btn btn-danger btn-confirm" data-title="�Eliminar registro?" data-text="Esta acci�n no se puede deshacer" data-danger="true" data-confirm="S�, eliminar">@Localizer["ConfirmarDenegacionBtn"]</button>
                               </div>
