@@ -33,6 +33,9 @@ namespace Delivery.API.Data
 
             // Parche Liquid Glass: Actualizar imágenes de restaurantes existentes y variar sus coordenadas en Ibarra
             await PatchRestaurantesLiquidGlassImagesAsync(context);
+
+            // Parche: Confirmar correos específicos
+            await PatchEmailsVerificadosAsync(context);
         }
 
         // =====================================================================
@@ -599,6 +602,26 @@ namespace Delivery.API.Data
                     };
                     rest.LogoUrl = genericAesthetics[rng.Next(genericAesthetics.Length)];
                 }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        // =====================================================================
+        // PARCHE: CONFIRMAR CORREOS
+        // =====================================================================
+        private static async Task PatchEmailsVerificadosAsync(DeliveryDbContext context)
+        {
+            var emailsAConfirmar = new[] { "admin@rayoexpres.com", "davidtomas@gmail.com", "admin@admin.com" };
+            var usuarios = await context.Usuarios
+                .Where(u => emailsAConfirmar.Contains(u.Email))
+                .ToListAsync();
+
+            if (!usuarios.Any()) return;
+
+            foreach (var user in usuarios)
+            {
+                user.EmailConfirmado = true;
             }
 
             await context.SaveChangesAsync();
