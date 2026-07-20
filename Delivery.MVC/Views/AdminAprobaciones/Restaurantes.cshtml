@@ -30,7 +30,7 @@
                         <th class="text-uppercase text-muted small fw-bold">@Localizer["CategoriaTag"]</th>
                         <th class="text-uppercase text-muted small fw-bold">@Localizer["PropietarioTag"]</th>
                         <th class="text-uppercase text-muted small fw-bold">@Localizer["FechaRegistroTag"]</th>
-                        <th class="text-uppercase text-muted small fw-bold text-center">@Localizer["AccionesTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold text-center text-nowrap" style="min-width: 280px;">@Localizer["AccionesTag"]</th>
                     </tr>
                 </thead>
             <tbody>
@@ -52,7 +52,7 @@
                             @item.NombresPropietario
                         </td>
                         <td class="text-light">@item.CreadoEn.ToString("dd/MM/yyyy")</td>
-                        <td class="text-center">
+                        <td class="text-center text-nowrap d-flex gap-2 justify-content-center">
                             <!-- Botón Mostrar Información -->
                             <button type="button" class="btn btn-sm btn-info text-white me-1" data-bs-toggle="modal" data-bs-target="#@modalId">
                                 <i class="bi bi-eye"></i> Mostrar información
@@ -67,13 +67,25 @@
                             </form>
                             
                             <!-- Botón Denegar -->
-                            <button type="button" class="btn btn-sm btn-danger btn-confirm" data-title="�Eliminar registro?" data-text="Esta acci�n no se puede deshacer" data-danger="true" data-confirm="S�, eliminar" data-bs-toggle="modal" data-bs-target="#@modalRechazoId">
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#@modalRechazoId">
                                 <i class="bi bi-x-circle"></i> Denegar
                             </button>
                         </td>
                     </tr>
+                }
+            </tbody>
+        </table>
+        </div>
 
-                    <!-- Modal Mostrar Información -->
+        <!-- MODALS PLACED OUTSIDE THE TABLE TO PREVENT Z-INDEX/BACKDROP BUGS -->
+        @foreach (var item in Model)
+        {
+            var logoUrl = !string.IsNullOrEmpty(item.LogoUrl) ? item.LogoUrl : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(item.Nombre) + "&background=random";
+            var avatarPropietario = !string.IsNullOrEmpty(item.FotoPerfilUrl) ? item.FotoPerfilUrl : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(item.NombresPropietario) + "&background=random";
+            var modalId = "modalRestaurante" + item.Id;
+            var modalRechazoId = "modalRechazo" + item.Id;
+
+            <!-- Modal Mostrar Información -->
                     <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="@(modalId)Label" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -138,11 +150,9 @@
                       </div>
                     </div>
                 }
-            </tbody>
-        </table>
-        </div>
     }
 </div>
+
 
 
 
