@@ -1,4 +1,4 @@
-@model IEnumerable<Delivery.Modelos.Entidades.Pedido>
+ï»¿@model IEnumerable<Delivery.Modelos.Entidades.Pedido>
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 @{
@@ -43,7 +43,7 @@
                     <div class="card-footer bg-white border-top-0">
                         <form asp-action="AceptarPedido" method="post">
                             <input type="hidden" name="id" value="@item.Id" />
-                            <button type="submit" class="btn btn-warning w-100 fw-bold btn-confirm" data-title="¿Confirmar acción?" data-text="Por favor confirma esta acción" data-confirm="Sí, continuar">Â¡Aceptar Pedido!</button>
+                            <button type="submit" class="btn btn-warning w-100 fw-bold btn-confirm" data-title="ï¿½Confirmar acciï¿½n?" data-text="Por favor confirma esta acciï¿½n" data-confirm="Sï¿½, continuar">Â¡Aceptar Pedido!</button>
                         </form>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script>
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('@(Configuration["ApiSettings:BaseUrl"] ?? Configuration["ApiUrl"] ?? "https://localhost:7087")'.replace(/\/$/, "") + "/notificacionesHub")
+            .withUrl('@(Configuration["ApiSettings:BaseUrl"] ?? Configuration["ApiUrl"] ?? "https://localhost:7278")'.replace(/\/$/, "") + "/notificacionesHub")
             .withAutomaticReconnect()
             .build();
 
@@ -86,7 +86,7 @@
                                 <div class="card-footer bg-white border-top-0">
                                     <form action="/RepartidorPedidos/AceptarPedido" method="post">
                                         <input type="hidden" name="id" value="${data.id}" />
-                                        <button type="submit" class="btn btn-warning w-100 fw-bold btn-confirm" data-title="¿Confirmar acción?" data-text="Por favor confirma esta acción" data-confirm="Sí, continuar">Â¡Aceptar Pedido!</button>
+                                        <button type="submit" class="btn btn-warning w-100 fw-bold btn-confirm" data-title="ï¿½Confirmar acciï¿½n?" data-text="Por favor confirma esta acciï¿½n" data-confirm="Sï¿½, continuar">Â¡Aceptar Pedido!</button>
                                     </form>
                                 </div>
                             </div>

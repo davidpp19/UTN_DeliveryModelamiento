@@ -20,7 +20,9 @@ namespace Delivery.Consumer.Implementaciones
         {
             _httpClient = httpClient;
             _logger = logger;
-            _httpClient.BaseAddress = new Uri(configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7087/api/");
+            var baseUrl = configuration["ApiSettings:BaseUrl"] ?? configuration["ApiUrl"] ?? "https://localhost:7278/";
+            if (!baseUrl.EndsWith("/")) baseUrl += "/";
+            _httpClient.BaseAddress = new Uri(baseUrl + "api/");
         }
 
         public async Task<IEnumerable<NotificacionDto>?> GetMisNotificacionesAsync()

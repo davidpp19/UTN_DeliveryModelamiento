@@ -168,7 +168,7 @@
     <script>
         // SIEMPRE conectarse a SignalR para escuchar cambios de estado
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('@(Configuration["ApiSettings:BaseUrl"] ?? Configuration["ApiUrl"] ?? "https://localhost:7087")'.replace(/\/$/, "") + "/notificacionesHub")
+            .withUrl('@(Configuration["ApiSettings:BaseUrl"] ?? Configuration["ApiUrl"] ?? "https://localhost:7278")'.replace(/\/$/, "") + "/notificacionesHub")
             .withAutomaticReconnect()
             .build();
 

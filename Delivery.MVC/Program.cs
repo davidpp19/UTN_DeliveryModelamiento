@@ -40,7 +40,7 @@ builder.Services.AddDeliveryConsumers(client =>
 {
     // Cambiamos a HTTPS para evitar que HttpClient pierda el header Authorization
     // al seguir una redirección 307 (HTTP -> HTTPS).
-    var apiUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? builder.Configuration["ApiUrl"] ?? "https://localhost:7087/";
+    var apiUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? builder.Configuration["ApiUrl"] ?? "https://localhost:7278/";
     client.BaseAddress = new Uri(apiUrl);
 });
 
