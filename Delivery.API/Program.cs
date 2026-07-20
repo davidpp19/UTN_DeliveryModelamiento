@@ -143,8 +143,12 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        var logPath = Path.Combine(Directory.GetCurrentDirectory(), "seeder_error.txt");
-        System.IO.File.WriteAllText(logPath, $"Error en Inicialización BD: {ex.Message}\n\nStack: {ex.StackTrace}\n\nInner: {ex.InnerException?.Message}");
+        try 
+        {
+            var logPath = Path.Combine(Directory.GetCurrentDirectory(), "seeder_error.txt");
+            System.IO.File.WriteAllText(logPath, $"Error en Inicialización BD: {ex.Message}\n\nStack: {ex.StackTrace}\n\nInner: {ex.InnerException?.Message}");
+        }
+        catch { /* Ignorar error de escritura en Azure */ }
         Console.WriteLine($"[CRITICAL] Error en Inicialización BD: {ex.Message}");
     }
 }
