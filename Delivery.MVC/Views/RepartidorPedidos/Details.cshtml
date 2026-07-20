@@ -51,7 +51,7 @@
                     <h5 class="mb-0">Acciones del Pedido</h5>
                 </div>
                 <div class="card-body">
-                    <a asp-action="CambiarEstado" asp-route-id="@Model.Id" class="btn btn-warning mb-3 w-100">Actualizar Estado</a>
+                    <a asp-action="CambiarEstado" asp-route-id="@Model.Id" class="btn btn-warning mb-3 w-100 btn-confirm" data-title="¿Confirmar acción?" data-text="Por favor confirma esta acción" data-confirm="Sí, continuar">Actualizar Estado</a>
                     
                     @if (Model.EstadoPedido == Delivery.Modelos.Enums.EstadoPedidoEnum.EnCamino)
                     {
@@ -239,3 +239,4 @@
         }
     </script>
 }
+

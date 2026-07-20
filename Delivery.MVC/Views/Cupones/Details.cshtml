@@ -27,5 +27,6 @@
 <dt class="col-sm-3">Restaurante</dt>
 <dd class="col-sm-9">@(Model.Restaurante?.Nombre ?? "Global / Todos")</dd>
 </dl>
-<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">@Localizer["EditarBtn"]</a>
+<div><a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning btn-confirm" data-title="¿Confirmar acción?" data-text="Por favor confirma esta acción" data-confirm="Sí, continuar">@Localizer["EditarBtn"]</a>
 <a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["VolverListadoBtn"]</a></div>
+

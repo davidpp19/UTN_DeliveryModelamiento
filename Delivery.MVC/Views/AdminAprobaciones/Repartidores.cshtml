@@ -21,8 +21,8 @@
     }
     else
     {
-        <div class="table-responsive glass-card p-4 rounded-4 shadow-lg border-0">
-            <table class="table table-dark table-hover table-borderless align-middle mb-0">
+        <div class="table-responsive table-scrollable glass-card p-4 rounded-4 shadow-lg border-0">
+            <table class="table skeleton-loader table-dark table-hover table-borderless align-middle skeleton-loader mb-0">
                 <thead class="border-bottom border-secondary">
                     <tr>
                         <th class="text-uppercase text-muted small fw-bold">@Localizer["PerfilTag"]</th>
@@ -57,13 +57,13 @@
                             <!-- Formulario Aprobar -->
                             <form method="post" asp-action="AprobarRepartidor" class="d-inline">
                                 <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" class="btn btn-sm btn-success me-1">
+                                <button type="submit" class="btn btn-sm btn-success me-1 btn-confirm" data-title="¿Aprobar solicitud?" data-text="Confirmar la aprobación de este registro" data-confirm="Sí, aprobar">
                                     <i class="bi bi-check-circle"></i> Aprobar
                                 </button>
                             </form>
                             
                             <!-- BotÃ³n Denegar (Abre Modal de Rechazo) -->
-                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#@modalRechazoId">
+                            <button type="button" class="btn btn-sm btn-danger btn-confirm" data-title="¿Eliminar registro?" data-text="Esta acción no se puede deshacer" data-danger="true" data-confirm="Sí, eliminar" data-bs-toggle="modal" data-bs-target="#@modalRechazoId">
                                 <i class="bi bi-x-circle"></i> Denegar
                             </button>
                         </td>
@@ -131,7 +131,7 @@
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CancelarBtn"]</button>
-                                <button type="submit" class="btn btn-danger">@Localizer["ConfirmarDenegacionBtn"]</button>
+                                <button type="submit" class="btn btn-danger btn-confirm" data-title="¿Eliminar registro?" data-text="Esta acción no se puede deshacer" data-danger="true" data-confirm="Sí, eliminar">@Localizer["ConfirmarDenegacionBtn"]</button>
                               </div>
                           </form>
                         </div>
@@ -143,3 +143,6 @@
         </div>
     }
 </div>
+
+
+

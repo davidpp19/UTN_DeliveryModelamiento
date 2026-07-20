@@ -43,7 +43,8 @@
     </div>
     
     <div class="mt-3">
-        <a asp-action="CambiarEstado" asp-route-id="@Model.Id" class="btn btn-warning">Cambiar Estado</a>
+        <a asp-action="CambiarEstado" asp-route-id="@Model.Id" class="btn btn-warning btn-confirm" data-title="¿Confirmar acción?" data-text="Por favor confirma esta acción" data-confirm="Sí, continuar">Cambiar Estado</a>
         <a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver a Pedidos</a>
     </div>
 </div>
+

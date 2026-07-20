@@ -71,7 +71,7 @@
                 <label asp-for="EsPrincipal" class="form-check-label">Â¿Es mi direcciÃ³n principal?</label>
             </div>
 
-            <button type="submit" class="btn btn-success mb-3">Actualizar DirecciÃ³n</button>
+            <button type="submit" class="btn btn-success mb-3 btn-confirm" data-title="¿Aprobar solicitud?" data-text="Confirmar la aprobación de este registro" data-confirm="Sí, aprobar">Actualizar DirecciÃ³n</button>
             <a asp-action="Index" class="btn btn-outline-secondary mb-3">Cancelar</a>
         </form>
     </div>
@@ -176,3 +176,4 @@
         });
     </script>
 }
+

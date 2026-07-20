@@ -14,8 +14,9 @@
             <p><strong>Creado el:</strong> @Model.CreadoEn.ToLocalTime().ToString("g")</p>
         </div>
         <div class="card-footer">
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Editar</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-confirm" data-title="¿Confirmar acción?" data-text="Por favor confirma esta acción" data-confirm="Sí, continuar">Editar</a>
             <a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver al listado</a>
         </div>
     </div>
 </div>
+

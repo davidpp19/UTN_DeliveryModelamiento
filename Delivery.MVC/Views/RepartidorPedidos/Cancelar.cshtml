@@ -15,6 +15,7 @@
 </dl>
 <form asp-action="CancelarConfirmado" method="post">
     <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle"></i> SÃ­, cancelar entrega</button>
+    <button type="submit" class="btn btn-danger btn-confirm" data-title="¿Eliminar registro?" data-text="Esta acción no se puede deshacer" data-danger="true" data-confirm="Sí, eliminar"><i class="bi bi-x-circle"></i> SÃ­, cancelar entrega</button>
     <a asp-action="Index" class="btn btn-outline-secondary ms-2">Volver</a>
 </form>
+

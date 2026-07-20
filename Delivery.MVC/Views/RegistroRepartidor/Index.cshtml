@@ -45,13 +45,13 @@
 
                     <div class="mb-3">
                         <label asp-for="Telefono" class="form-label text-light">@Localizer["Telefono"]</label>
-                        <input asp-for="Telefono" type="tel" class="form-control" placeholder="0991234567" />
+                        <input asp-for="Telefono" type="tel" class="form-control" placeholder="0991234567" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                         <span asp-validation-for="Telefono" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Cedula" class="form-label text-light">@Localizer["Cedula"]</label>
-                        <input asp-for="Cedula" class="form-control" placeholder="1234567890" />
+                        <input asp-for="Cedula" class="form-control" placeholder="1234567890" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                         <span asp-validation-for="Cedula" class="text-danger"></span>
                     </div>
 

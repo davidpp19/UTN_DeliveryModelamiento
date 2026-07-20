@@ -227,3 +227,61 @@ h1, h2, h3, h4, h5, h6 {
 .glass-card:hover .glass-img {
   transform: scale(1.08);
 }
+
+/* ==========================================================
+   UI ENHANCEMENTS: SCROLLABLE TABLES & SKELETON LOADER
+   ========================================================== */
+
+/* Scrollable Container for Tables */
+.table-scrollable {
+  max-height: 500px;
+  overflow-y: auto;
+  display: block;
+  width: 100%;
+}
+
+/* Webkit Scrollbar styling for table-scrollable */
+.table-scrollable::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.table-scrollable::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+.table-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+.table-scrollable::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-neon-glow);
+}
+
+/* Skeleton Loading Animation */
+@keyframes skeleton-loading {
+  0% { background-color: rgba(255, 255, 255, 0.05); }
+  50% { background-color: rgba(255, 255, 255, 0.15); }
+  100% { background-color: rgba(255, 255, 255, 0.05); }
+}
+
+.skeleton-loader tbody td, .skeleton-loader tbody th {
+  position: relative;
+  overflow: hidden;
+  color: transparent !important; /* Hide text while loading */
+  border-color: transparent !important;
+}
+
+.skeleton-loader tbody td *, .skeleton-loader tbody th * {
+  visibility: hidden; /* Hide nested elements like badges, icons, images */
+}
+
+.skeleton-loader tbody td::before, .skeleton-loader tbody th::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 5%;
+  width: 90%;
+  height: 70%;
+  border-radius: 8px;
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+}

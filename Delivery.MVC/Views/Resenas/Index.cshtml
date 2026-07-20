@@ -4,8 +4,8 @@
 @{ ViewData["Title"] = Localizer["ResenasTitle"]; }
 <h1 class="my-4">@Localizer["ResenasTitle"]</h1>
 <p><a asp-action="Create" class="btn btn-primary">@Localizer["CrearNuevoBtn"]</a></p>
-<div class="table-responsive">
-<table class="table table-striped table-hover align-middle">
+<div class="table-responsive table-scrollable">
+<table class="table skeleton-loader table-striped table-hover align-middle">
 <thead class="table-dark"><tr>
 <th>Id</th>
 <th>PedidoId</th>
@@ -20,8 +20,10 @@
 <td>@Html.DisplayFor(modelItem => item.RestauranteId)</td>
 <td>@Html.DisplayFor(modelItem => item.RepartidorId)</td>
 <td>
-<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">@Localizer["EditarBtn"]</a>
+<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning btn-confirm" data-title="¿Confirmar acción?" data-text="Por favor confirma esta acción" data-confirm="Sí, continuar">@Localizer["EditarBtn"]</a>
 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">@Localizer["DetallesBtn"]</a>
-<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">@Localizer["EliminarBtn"]</a>
+<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger btn-confirm" data-title="¿Eliminar registro?" data-text="Esta acción no se puede deshacer" data-danger="true" data-confirm="Sí, eliminar">@Localizer["EliminarBtn"]</a>
 </td></tr>}
 </tbody></table></div>
+
+

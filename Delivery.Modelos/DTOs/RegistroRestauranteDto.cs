@@ -24,16 +24,21 @@ namespace Delivery.Modelos.DTOs
         public string ConfirmarPassword { get; set; } = null!;
 
         [Required(ErrorMessage = "La cédula es obligatoria")]
-        [StringLength(20)]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "La cédula debe tener 10 dígitos")]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Solo se permiten números")]
         public string Cedula { get; set; } = null!;
 
         [Required(ErrorMessage = "El nombre del restaurante es obligatorio")]
         public string NombreRestaurante { get; set; } = null!;
 
         [Required(ErrorMessage = "El RUC es obligatorio")]
-        public string RUC { get; set; } = null!; // Lo podemos guardar temporalmente en teléfono u otra tabla si no existe RUC en Usuario/Restaurante (Wait, Restaurante no tiene RUC? I will use 'Descripcion' or I should add 'RUC' to Restaurante, let me just add it to the DTO and I can map it). Actually I'll see if I need a migration for RUC later.
+        [StringLength(13, MinimumLength = 13, ErrorMessage = "El RUC debe tener 13 dígitos")]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Solo se permiten números")]
+        public string RUC { get; set; } = null!;
 
         [Required(ErrorMessage = "El teléfono es obligatorio")]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "El teléfono debe tener 10 dígitos")]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Solo se permiten números")]
         public string Telefono { get; set; } = null!;
 
         [Required(ErrorMessage = "La dirección (calle) es obligatoria")]

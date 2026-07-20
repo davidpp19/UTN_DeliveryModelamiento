@@ -47,7 +47,8 @@ namespace Delivery.Modelos.Entidades
 
         [Required]
         [Column("cedula")]
-        [StringLength(20)]
+        [StringLength(10)]
+        [RegularExpression("^[0-9]*$")]
         public string Cedula { get; set; } = null!;
 
         [Required]
@@ -73,7 +74,8 @@ namespace Delivery.Modelos.Entidades
 
         [Phone]
         [Column("telefono")]
-        [StringLength(20)]
+        [StringLength(10)]
+        [RegularExpression("^[0-9]*$")]
         public string? Telefono { get; set; }
 
         [Column("tipo_usuario")]

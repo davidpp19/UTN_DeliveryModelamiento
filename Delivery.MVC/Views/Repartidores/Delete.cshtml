@@ -37,6 +37,7 @@
 </dl>
 <form asp-action="Delete">
 <input type="hidden" asp-for="UsuarioId" />
-<button type="submit" class="btn btn-danger">@Localizer["EliminarConfirmadoBtn"]</button>
+<button type="submit" class="btn btn-danger btn-confirm" data-title="¿Eliminar registro?" data-text="Esta acción no se puede deshacer" data-danger="true" data-confirm="Sí, eliminar">@Localizer["EliminarConfirmadoBtn"]</button>
 <a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["CancelarBtn"]</a>
 </form>
+

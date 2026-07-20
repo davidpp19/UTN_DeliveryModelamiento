@@ -31,6 +31,7 @@
 </dl>
 <form asp-action="Delete">
 <input type="hidden" asp-for="Id" />
-<button type="submit" class="btn btn-danger">Eliminar Confirmado</button>
+<button type="submit" class="btn btn-danger btn-confirm" data-title="¿Eliminar registro?" data-text="Esta acción no se puede deshacer" data-danger="true" data-confirm="Sí, eliminar">Eliminar Confirmado</button>
 <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
 </form>
+

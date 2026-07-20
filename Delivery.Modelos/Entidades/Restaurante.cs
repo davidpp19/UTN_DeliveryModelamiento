@@ -26,7 +26,8 @@ namespace Delivery.Modelos.Entidades
         public string? Categoria { get; set; }
 
         [Column("ruc")]
-        [StringLength(20)]
+        [StringLength(13)]
+        [RegularExpression("^[0-9]*$")]
         public string? Ruc { get; set; }
 
 
@@ -48,7 +49,8 @@ namespace Delivery.Modelos.Entidades
 
         [Phone]
         [Column("telefono")]
-        [StringLength(20)]
+        [StringLength(10)]
+        [RegularExpression("^[0-9]*$")]
         public string? Telefono { get; set; }
 
         [EmailAddress]

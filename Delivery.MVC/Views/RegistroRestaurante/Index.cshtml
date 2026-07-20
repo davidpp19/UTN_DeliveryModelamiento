@@ -44,7 +44,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label asp-for="Telefono" class="form-label text-light">@Localizer["Telefono"]</label>
-                                <input asp-for="Telefono" class="form-control" />
+                                <input asp-for="Telefono" class="form-control" type="tel" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                                 <span asp-validation-for="Telefono" class="text-danger"></span>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label asp-for="Cedula" class="form-label text-light">@Localizer["Cedula"]</label>
-                                <input asp-for="Cedula" class="form-control" />
+                                <input asp-for="Cedula" class="form-control" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                                 <span asp-validation-for="Cedula" class="text-danger"></span>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label asp-for="RUC" class="form-label text-light">@Localizer["RUC"]</label>
-                                <input asp-for="RUC" class="form-control" />
+                                <input asp-for="RUC" class="form-control" maxlength="13" minlength="13" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                                 <span asp-validation-for="RUC" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 mb-3">

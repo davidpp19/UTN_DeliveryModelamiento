@@ -26,11 +26,13 @@ namespace Delivery.Modelos.DTOs
         public string ConfirmPassword { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El teléfono es requerido")]
-        [Phone]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "El teléfono debe tener 10 dígitos")]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Solo se permiten números")]
         public string Telefono { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "La cédula es requerida")]
-        [StringLength(20, ErrorMessage = "Máximo 20 caracteres")]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "La cédula debe tener 10 dígitos")]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Solo se permiten números")]
         public string Cedula { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El número de licencia es requerido")]

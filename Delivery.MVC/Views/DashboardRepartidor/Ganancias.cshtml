@@ -24,7 +24,7 @@
     <h4>Detalle de Pedidos Entregados</h4>
     @if (Model != null && Model.Any())
     {
-        <table class="table table-striped table-hover mt-3">
+        <table class="table skeleton-loader table-striped table-hover mt-3">
             <thead class="table-dark">
                 <tr>
                     <th>ID Pedido</th>
@@ -60,3 +60,4 @@
         <a asp-action="Index" class="btn btn-secondary">Volver al Panel</a>
     </div>
 </div>
+
