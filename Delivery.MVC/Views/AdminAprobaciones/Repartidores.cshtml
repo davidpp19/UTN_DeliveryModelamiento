@@ -73,7 +73,8 @@
         </table>
         </div>
 
-        <!-- MODALS PLACED OUTSIDE THE TABLE TO PREVENT Z-INDEX/BACKDROP BUGS -->
+        @section Modals {
+    <!-- MODALS PLACED OUTSIDE THE TABLE TO PREVENT Z-INDEX/BACKDROP BUGS -->
         @foreach (var item in Model)
         {
             var avatarUrl = !string.IsNullOrEmpty(item.FotoPerfilUrl) ? item.FotoPerfilUrl : "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(item.Nombres) + "&background=random";
@@ -156,3 +157,5 @@
 
 
 
+
+}
