@@ -29,3 +29,152 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* ==========================================================
+   UNSTUDIO CORPORATE REDESIGN - LIQUID GLASS AESTHETICS
+   ========================================================== */
+:root {
+  --glass-bg: rgba(30, 30, 35, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --primary-neon: #6d28d9;
+  --primary-neon-glow: rgba(109, 40, 217, 0.5);
+  --secondary-neon: #2563eb;
+  --accent-neon: #ec4899;
+  --text-light: #f8fafc;
+  --text-dim: #94a3b8;
+  --bg-dark: #0f172a;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  margin-bottom: 60px;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(109, 40, 217, 0.15), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(37, 99, 235, 0.15), transparent 25%);
+  background-attachment: fixed;
+}
+
+/* Typography Overrides */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Navbar Glass */
+.navbar-glass {
+  background: rgba(15, 23, 42, 0.7) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border) !important;
+}
+
+/* Glass Card */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--glass-shadow);
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--primary-neon-glow);
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Liquid Glass Buttons */
+.btn-liquid {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  color: #fff;
+  border-radius: 50px;
+  padding: 10px 24px;
+  font-weight: 600;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.btn-liquid::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.3), rgba(255,255,255,0));
+  transform: skewX(-25deg);
+  transition: all 0.5s ease;
+  z-index: -1;
+}
+
+.btn-liquid:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 0 15px var(--primary-neon-glow);
+  border-color: rgba(255,255,255,0.3);
+  transform: scale(1.05);
+}
+
+.btn-liquid:hover::before {
+  left: 200%;
+}
+
+.btn-liquid-primary {
+  background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+  border: none;
+  box-shadow: 0 4px 15px var(--primary-neon-glow);
+}
+.btn-liquid-primary:hover {
+  background: linear-gradient(135deg, #7c3aed, #3b82f6);
+  box-shadow: 0 8px 25px var(--primary-neon-glow);
+}
+
+/* Fix text colors for inputs inside dark mode */
+.form-control, .form-select {
+  background-color: rgba(255,255,255,0.05);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+}
+.form-control:focus, .form-select:focus {
+  background-color: rgba(255,255,255,0.1);
+  color: #fff;
+  border-color: var(--primary-neon);
+  box-shadow: 0 0 0 0.25rem var(--primary-neon-glow);
+}
+.form-control::placeholder {
+  color: var(--text-dim);
+}
+
+/* General Layout adjustments for Dark Mode */
+.text-dark { color: #e2e8f0 !important; }
+.bg-light { background-color: transparent !important; }
+.bg-white { background-color: var(--bg-dark) !important; }
+.navbar-light .navbar-nav .nav-link { color: #cbd5e1; }
+.navbar-light .navbar-nav .nav-link:hover { color: #fff; }
+.navbar-light .navbar-brand { color: #fff; }
+.card { background-color: var(--glass-bg); border-color: var(--glass-border); color: #fff; }
+.text-muted { color: var(--text-dim) !important; }
+.dropdown-menu { background-color: #1e293b; border: 1px solid var(--glass-border); }
+.dropdown-item { color: #cbd5e1; }
+.dropdown-item:hover { background-color: rgba(255,255,255,0.1); color: #fff; }
+
+/* Image tweaks */
+.glass-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.glass-card:hover .glass-img {
+  transform: scale(1.08);
+}

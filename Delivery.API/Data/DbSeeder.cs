@@ -30,6 +30,9 @@ namespace Delivery.API.Data
 
             // Parche: Establecer como Disponible a repartidores ya aprobados que estén Desconectados
             await PatchRepartidoresAprobadosAsync(context);
+
+            // Parche Liquid Glass: Actualizar imágenes de restaurantes existentes y variar sus coordenadas en Ibarra
+            await PatchRestaurantesLiquidGlassImagesAsync(context);
         }
 
         // =====================================================================
@@ -160,6 +163,13 @@ namespace Delivery.API.Data
                 ("Pastas San Miguel",     "Italiana",     "Pastas caseras y lasagna al horno todos los días.",              1.75m, "pastassanmiguel@rayoexpres.com"),
                 ("La Esquina del Hornado","Comida Típica","Hornado completo con llapingachos y mote.",                      1.50m, "esquinahornado@rayoexpres.com"),
                 ("Green Bowl Ibarra",     "Ensaladas",    "Bowls nutritivos y opciones vegetarianas frescas.",              1.00m, "greenbowl@rayoexpres.com"),
+                // NUEVOS RESTAURANTES (Liquid Glass)
+                ("Wok & Roll",            "Asiática",     "Fideos salteados, arroz frito y comida oriental urbana.",        1.75m, "wokandroll@rayoexpres.com"),
+                ("Sweet Dreams Bakery",   "Postres",      "Pasteles, cheesecakes y macarons artesanales.",                  1.00m, "sweetdreams@rayoexpres.com"),
+                ("Desayunos de la Abuela","Desayunos",    "Desayunos completos, bolones, tigrillos y café pasado.",         1.25m, "desayunosabuela@rayoexpres.com"),
+                ("El Rey del Marisco",    "Mariscos",     "Ceviches, encocados y parrilladas de mariscos.",                 2.00m, "reymarisco@rayoexpres.com"),
+                ("Shawarma Express",      "Árabe",        "Shawarmas, falafel y comida árabe rápida.",                      1.25m, "shawarmaexpress@rayoexpres.com"),
+                ("Vegan Paradise",        "Vegetariana",  "Opciones 100% plant-based, hamburguesas de lenteja.",            1.50m, "veganparadise@rayoexpres.com")
             };
 
             foreach (var (nombre, categoria, desc, envio, email) in restaurantesData)
@@ -240,6 +250,12 @@ namespace Delivery.API.Data
                 ["Hamburguesas"] = new() { ("Hamburguesa clásica", 5.99m, "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80"), ("Doble carne", 7.99m, "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500&q=80"), ("Volcán BBQ", 9.50m, "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500&q=80"), ("Vegetariana", 6.50m, "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=500&q=80") },
                 ["Italiana"]     = new() { ("Spaghetti bolognesa", 8.50m, "https://images.unsplash.com/photo-1621996311210-91136b856e87?w=500&q=80"), ("Fettuccine alfredo", 9.00m, "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=500&q=80"), ("Lasagna", 10.50m, "https://images.unsplash.com/photo-1619895092538-128341789043?w=500&q=80"), ("Ravioli", 9.50m, "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=500&q=80") },
                 ["Ensaladas"]    = new() { ("Ensalada César", 5.50m, "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=500&q=80"), ("Bowl de quinoa", 7.00m, "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&q=80"), ("Ensalada griega", 6.50m, "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&q=80"), ("Bowl proteico", 8.00m, "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500&q=80") },
+                ["Asiática"]     = new() { ("Chow Mein", 6.50m, "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&q=80"), ("Arroz frito", 5.00m, "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=500&q=80"), ("Rollitos de primavera", 3.50m, "https://images.unsplash.com/photo-1544378730-8b5a0cb08197?w=500&q=80") },
+                ["Postres"]      = new() { ("Cheesecake de frutos rojos", 4.50m, "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=500&q=80"), ("Tarta de chocolate", 3.50m, "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80"), ("Macarons x6", 6.00m, "https://images.unsplash.com/photo-1569864358642-9d1684040f43?w=500&q=80") },
+                ["Desayunos"]    = new() { ("Bolón mixto", 3.50m, "https://images.unsplash.com/photo-1628191010210-a59de33e5941?w=500&q=80"), ("Tigrillo", 4.50m, "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=500&q=80"), ("Desayuno continental", 5.00m, "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=500&q=80") },
+                ["Mariscos"]     = new() { ("Ceviche de camarón", 8.00m, "https://images.unsplash.com/photo-1599084990807-33458368615c?w=500&q=80"), ("Encocado de pescado", 9.50m, "https://images.unsplash.com/photo-1615719413546-198b25453f85?w=500&q=80"), ("Arroz marinero", 10.00m, "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=500&q=80") },
+                ["Árabe"]        = new() { ("Shawarma mixto", 5.50m, "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=500&q=80"), ("Falafel", 4.00m, "https://images.unsplash.com/photo-1593006526979-4f8fb252669e?w=500&q=80"), ("Hummus con pan pita", 3.50m, "https://images.unsplash.com/photo-1576082260775-690a424231b2?w=500&q=80") },
+                ["Vegetariana"]  = new() { ("Burger de lenteja", 6.50m, "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=500&q=80"), ("Wrap de vegetales", 5.00m, "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=500&q=80"), ("Bowl vegano", 7.50m, "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&q=80") }
             };
 
             // Fallback si la categoría no está en el mapa
@@ -540,6 +556,49 @@ namespace Delivery.API.Data
             foreach (var rep in repartidoresBuggeados)
             {
                 rep.Estado = Delivery.Modelos.Enums.EstadoRepartidorEnum.Disponible;
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        // =====================================================================
+        // PARCHE: LIQUID GLASS IMAGES & LOCATIONS
+        // =====================================================================
+        private static async Task PatchRestaurantesLiquidGlassImagesAsync(DeliveryDbContext context)
+        {
+            var restaurantes = await context.Restaurantes.ToListAsync();
+            if (!restaurantes.Any()) return;
+
+            var rng = new Random();
+            double baseLat = 0.3517;
+            double baseLng = -78.1222;
+
+            foreach (var rest in restaurantes)
+            {
+                // Variar coordenadas geográficas fuertemente para dispersar restaurantes en el mapa
+                double latOffset = (rng.NextDouble() - 0.5) * 0.08;
+                double lngOffset = (rng.NextDouble() - 0.5) * 0.08;
+                rest.Latitud = (decimal)(baseLat + latOffset);
+                rest.Longitud = (decimal)(baseLng + lngOffset);
+
+                // Asignar los logos estéticos generados
+                if (rest.Categoria == "Hamburguesas" || rest.Categoria == "Pollo")
+                    rest.LogoUrl = "/img/restaurantes/burger.png";
+                else if (rest.Categoria == "Pizza" || rest.Categoria == "Italiana")
+                    rest.LogoUrl = "/img/restaurantes/pizza.png";
+                else if (rest.Categoria == "Sushi" || rest.Categoria == "Asiática")
+                    rest.LogoUrl = "/img/restaurantes/sushi.png";
+                else if (string.IsNullOrEmpty(rest.LogoUrl))
+                {
+                    // Random aesthetic images for others
+                    var genericAesthetics = new[] {
+                        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80",
+                        "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80",
+                        "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
+                        "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=600&q=80"
+                    };
+                    rest.LogoUrl = genericAesthetics[rng.Next(genericAesthetics.Length)];
+                }
             }
 
             await context.SaveChangesAsync();
