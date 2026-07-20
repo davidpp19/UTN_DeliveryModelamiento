@@ -5,8 +5,10 @@
     ViewData["Title"] = Localizer["AprobacionesRestaurantes"];
 }
 
-<div class="container mt-4">
-    <h2>@Localizer["SolicitudesRestaurantesPendientes"]</h2>
+<div class="container-fluid mt-4" data-aos="fade-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary fw-bold m-0"><i class="bi bi-shop me-2"></i> @Localizer["SolicitudesRestaurantesPendientes"]</h1>
+    </div>
 
     @if (TempData["Mensaje"] != null)
     {
@@ -19,17 +21,18 @@
     }
     else
     {
-        <table class="table table-striped table-hover mt-3 align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>@Localizer["LogoTag"]</th>
-                    <th>@Localizer["RestauranteTag"]</th>
-                    <th>@Localizer["CategoriaTag"]</th>
-                    <th>@Localizer["PropietarioTag"]</th>
-                    <th>@Localizer["FechaRegistroTag"]</th>
-                    <th class="text-center">@Localizer["AccionesTag"]</th>
-                </tr>
-            </thead>
+        <div class="table-responsive glass-card p-4 rounded-4 shadow-lg border-0">
+            <table class="table table-dark table-hover table-borderless align-middle mb-0">
+                <thead class="border-bottom border-secondary">
+                    <tr>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["LogoTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["RestauranteTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["CategoriaTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["PropietarioTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["FechaRegistroTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold text-center">@Localizer["AccionesTag"]</th>
+                    </tr>
+                </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
@@ -38,17 +41,17 @@
                     var modalId = "modalRestaurante" + item.Id;
                     var modalRechazoId = "modalRechazo" + item.Id;
 
-                    <tr>
+                    <tr class="glass-row">
                         <td>
-                            <img src="@logoUrl" alt="Logo" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
+                            <img src="@logoUrl" alt="Logo" class="rounded-circle border border-success" style="width: 40px; height: 40px; object-fit: cover;" />
                         </td>
-                        <td>@item.Nombre</td>
-                        <td>@item.Categoria</td>
-                        <td>
-                            <img src="@avatarPropietario" alt="Avatar" class="rounded-circle me-1" style="width: 25px; height: 25px; object-fit: cover;" />
+                        <td class="text-light fw-bold">@item.Nombre</td>
+                        <td><span class="badge bg-info text-dark rounded-pill">@item.Categoria</span></td>
+                        <td class="text-light">
+                            <img src="@avatarPropietario" alt="Avatar" class="rounded-circle me-1 border border-secondary" style="width: 25px; height: 25px; object-fit: cover;" />
                             @item.NombresPropietario
                         </td>
-                        <td>@item.CreadoEn.ToString("dd/MM/yyyy")</td>
+                        <td class="text-light">@item.CreadoEn.ToString("dd/MM/yyyy")</td>
                         <td class="text-center">
                             <!-- Botón Mostrar Información -->
                             <button type="button" class="btn btn-sm btn-info text-white me-1" data-bs-toggle="modal" data-bs-target="#@modalId">
@@ -137,5 +140,6 @@
                 }
             </tbody>
         </table>
+        </div>
     }
 </div>

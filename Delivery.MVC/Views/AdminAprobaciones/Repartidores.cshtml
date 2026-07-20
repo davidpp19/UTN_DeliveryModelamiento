@@ -5,8 +5,10 @@
     ViewData["Title"] = Localizer["AprobacionesRepartidores"];
 }
 
-<div class="container mt-4">
-    <h2>@Localizer["SolicitudesRepartidoresPendientes"]</h2>
+<div class="container-fluid mt-4" data-aos="fade-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary fw-bold m-0"><i class="bi bi-bicycle me-2"></i> @Localizer["SolicitudesRepartidoresPendientes"]</h1>
+    </div>
 
     @if (TempData["Mensaje"] != null)
     {
@@ -19,17 +21,18 @@
     }
     else
     {
-        <table class="table table-striped table-hover mt-3 align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>@Localizer["PerfilTag"]</th>
-                    <th>@Localizer["NombreTag"]</th>
-                    <th>@Localizer["EmailTag"]</th>
-                    <th>@Localizer["CedulaTag"]</th>
-                    <th>@Localizer["FechaRegistroTag"]</th>
-                    <th class="text-center">@Localizer["AccionesTag"]</th>
-                </tr>
-            </thead>
+        <div class="table-responsive glass-card p-4 rounded-4 shadow-lg border-0">
+            <table class="table table-dark table-hover table-borderless align-middle mb-0">
+                <thead class="border-bottom border-secondary">
+                    <tr>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["PerfilTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["NombreTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["EmailTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["CedulaTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold">@Localizer["FechaRegistroTag"]</th>
+                        <th class="text-uppercase text-muted small fw-bold text-center">@Localizer["AccionesTag"]</th>
+                    </tr>
+                </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
@@ -37,14 +40,14 @@
                     var modalId = "modalRepartidor" + item.Id;
                     var modalRechazoId = "modalRechazo" + item.Id;
 
-                    <tr>
+                    <tr class="glass-row">
                         <td>
-                            <img src="@avatarUrl" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;" />
+                            <img src="@avatarUrl" alt="Avatar" class="rounded-circle border border-info" style="width: 40px; height: 40px; object-fit: cover;" />
                         </td>
-                        <td>@(item.Nombres) @(item.Apellidos)</td>
-                        <td>@item.Email</td>
-                        <td>@item.Cedula</td>
-                        <td>@item.CreadoEn.ToString("dd/MM/yyyy")</td>
+                        <td class="text-light fw-bold">@(item.Nombres) @(item.Apellidos)</td>
+                        <td class="text-light">@item.Email</td>
+                        <td class="text-light">@item.Cedula</td>
+                        <td class="text-light">@item.CreadoEn.ToString("dd/MM/yyyy")</td>
                         <td class="text-center">
                             <!-- Botón Mostrar Información -->
                             <button type="button" class="btn btn-sm btn-info text-white me-1" data-bs-toggle="modal" data-bs-target="#@modalId">
@@ -137,5 +140,6 @@
                 }
             </tbody>
         </table>
+        </div>
     }
 </div>

@@ -2,12 +2,58 @@
 @inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model IEnumerable<Delivery.Modelos.Entidades.Cupon>
 @{ ViewData["Title"] = Localizer["GestionCupones"]; }
-<h1>@Localizer["CuponesSistema"]</h1>
-<table class="table">
-    <thead><tr><th>ID</th><th>@Localizer["CodigoTag"]</th><th>@Localizer["DescuentoTag"]</th><th>@Localizer["ActivoTag"]</th></tr></thead>
-    <tbody>
-        @foreach (var item in Model) {
-            <tr><td>@item.Id</td><td>@item.Codigo</td><td>@item.ValorDescuento</td><td>@(item.Activo ? "Sí" : "No")</td></tr>
-        }
-    </tbody>
-</table>
+<div class="container-fluid mt-4" data-aos="fade-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary fw-bold m-0"><i class="bi bi-ticket-perforated me-2"></i> @Localizer["CuponesSistema"]</h1>
+    </div>
+
+    <div class="table-responsive glass-card p-4 rounded-4 shadow-lg border-0">
+        <table class="table table-dark table-hover table-borderless align-middle mb-0">
+            <thead class="border-bottom border-secondary">
+                <tr>
+                    <th class="text-uppercase text-muted small fw-bold">ID</th>
+                    <th class="text-uppercase text-muted small fw-bold">@Localizer["CodigoTag"]</th>
+                    <th class="text-uppercase text-muted small fw-bold">Tipo</th>
+                    <th class="text-uppercase text-muted small fw-bold">@Localizer["DescuentoTag"]</th>
+                    <th class="text-uppercase text-muted small fw-bold">@Localizer["ActivoTag"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model) {
+                    <tr class="glass-row">
+                        <td class="text-light fw-bold">@item.Id</td>
+                        <td>
+                            <span class="badge bg-primary text-white p-2 border border-info" style="font-family: monospace; font-size: 0.9rem;">
+                                <i class="bi bi-tag-fill me-1"></i> @item.Codigo
+                            </span>
+                        </td>
+                        <td class="text-light">
+                            @if (item.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje) {
+                                <span class="badge bg-info text-dark"><i class="bi bi-percent me-1"></i> Porcentaje</span>
+                            } else {
+                                <span class="badge bg-success text-white"><i class="bi bi-currency-dollar me-1"></i> Fijo</span>
+                            }
+                        </td>
+                        <td class="text-warning fw-bold">
+                            @if (item.TipoDescuento == Delivery.Modelos.Enums.TipoDescuentoEnum.Porcentaje) {
+                                <span>@item.ValorDescuento%</span>
+                            } else {
+                                <span>$@item.ValorDescuento.ToString("0.00")</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Activo)
+                            {
+                                <span class="badge bg-success text-white p-2 rounded-pill shadow-sm"><i class="bi bi-check-circle me-1"></i> Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger text-white p-2 rounded-pill shadow-sm"><i class="bi bi-x-circle me-1"></i> Inactivo</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

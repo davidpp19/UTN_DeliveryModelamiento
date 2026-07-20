@@ -2,13 +2,64 @@
 @inject IHtmlLocalizer<Delivery.MVC.SharedResource> Localizer
 @model IEnumerable<Delivery.Modelos.Entidades.Restaurante>
 @{ ViewData["Title"] = Localizer["GestionRestaurantes"]; }
-<h1>@Localizer["RestaurantesRegistrados"]</h1>
-<div class="alert alert-info">@Localizer["VistaBasicaAdminParaAprobarRest"]</div>
-<table class="table">
-    <thead><tr><th>ID</th><th>@Localizer["NombreComercialTag"]</th><th>@Localizer["DireccionTag"]</th><th>@Localizer["EstadoTag"]</th></tr></thead>
-    <tbody>
-        @foreach (var item in Model) {
-            <tr><td>@item.Id</td><td>@item.Nombre</td><td>@item.Calle</td><td>@item.Estado</td></tr>
-        }
-    </tbody>
-</table>
+<div class="container-fluid mt-4" data-aos="fade-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary fw-bold m-0"><i class="bi bi-shop me-2"></i> @Localizer["RestaurantesRegistrados"]</h1>
+    </div>
+
+    <div class="table-responsive glass-card p-4 rounded-4 shadow-lg border-0">
+        <table class="table table-dark table-hover table-borderless align-middle mb-0">
+            <thead class="border-bottom border-secondary">
+                <tr>
+                    <th class="text-uppercase text-muted small fw-bold">ID</th>
+                    <th class="text-uppercase text-muted small fw-bold">Restaurante / RUC</th>
+                    <th class="text-uppercase text-muted small fw-bold">@Localizer["DireccionTag"]</th>
+                    <th class="text-uppercase text-muted small fw-bold">Creador (ID)</th>
+                    <th class="text-uppercase text-muted small fw-bold">@Localizer["EstadoTag"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model) {
+                    <tr class="glass-row">
+                        <td class="text-light fw-bold">@item.Id</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                @if(!string.IsNullOrEmpty(item.LogoUrl)) {
+                                    <img src="@item.LogoUrl" class="rounded-circle me-3 border border-success" style="width: 40px; height: 40px; object-fit: cover;" />
+                                } else {
+                                    <div class="bg-success rounded-circle me-3 d-flex justify-content-center align-items-center text-white fw-bold" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-shop"></i>
+                                    </div>
+                                }
+                                <div>
+                                    <div class="fw-bold text-white">@item.Nombre</div>
+                                    <small class="text-muted">RUC: @item.Ruc</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-light">
+                            <i class="bi bi-geo-alt text-danger me-1"></i> @item.Calle
+                        </td>
+                        <td>
+                            <span class="text-info"><i class="bi bi-person me-1"></i> ID: @item.CreadoPor</span>
+                        </td>
+                        <td>
+                            @if (item.Estado == Delivery.Modelos.Enums.EstadoRestauranteEnum.Aprobado)
+                            {
+                                <span class="badge bg-success text-white p-2 rounded-pill shadow-sm"><i class="bi bi-check-circle me-1"></i> Aprobado</span>
+                            }
+                            else if (item.Estado == Delivery.Modelos.Enums.EstadoRestauranteEnum.Pendiente)
+                            {
+                                <span class="badge bg-warning text-dark p-2 rounded-pill shadow-sm"><i class="bi bi-clock-history me-1"></i> Pendiente</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger text-white p-2 rounded-pill shadow-sm"><i class="bi bi-x-circle me-1"></i> @item.Estado</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
